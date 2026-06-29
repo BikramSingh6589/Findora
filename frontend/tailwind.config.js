@@ -1,0 +1,61 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#4143d5',
+        'primary-container': '#5b5fef',
+        'on-primary': '#ffffff',
+        'on-primary-container': '#f9f6ff',
+        'inverse-primary': '#c0c1ff',
+        secondary: '#6b38d4',
+        'secondary-container': '#8455ef',
+        'on-secondary': '#ffffff',
+        'on-secondary-container': '#fffbff',
+        tertiary: '#735500',
+        'tertiary-container': '#916c00',
+        surface: '#f7f9fb',
+        'surface-container-lowest': '#ffffff',
+        'surface-container-low': '#f2f4f6',
+        'surface-container': '#eceef0',
+        'surface-container-high': '#e6e8ea',
+        'surface-container-highest': '#e0e3e5',
+        'on-surface': '#191c1e',
+        'on-surface-variant': '#464555',
+        outline: '#767586',
+        'outline-variant': '#c6c5d7',
+        success: '#22C55E',
+        warning: '#FB923C',
+        danger: '#F43F5E',
+        'info-ai': '#38BDF8',
+        'text-primary': '#111827',
+        'text-secondary': '#6B7280',
+        'card-bg': '#ffffff',
+        'border-default': '#E5E7EB',
+        background: '#f7f9fb',
+      },
+      fontFamily: {
+        sans: ['Plus Jakarta Sans', 'sans-serif'],
+      },
+      boxShadow: {
+        card: '0 8px 30px rgba(0, 0, 0, 0.08)',
+        'card-hover': '0 16px 48px rgba(0, 0, 0, 0.14)',
+        modal: '0 24px 64px rgba(0, 0, 0, 0.2)',
+        'glow-primary': '0 0 20px rgba(91, 95, 239, 0.25)',
+      },
+      borderRadius: {
+        sm: '0.25rem',
+        DEFAULT: '0.5rem',
+        md: '0.75rem',
+        lg: '1rem',
+        xl: '1.5rem',
+        full: '9999px',
+      }
+    },
+  },
+  plugins: [],
+}

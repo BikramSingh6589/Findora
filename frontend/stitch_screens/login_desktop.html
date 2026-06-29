@@ -1,0 +1,305 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Login | Lost&amp;Found AI</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#735500",
+                        "dark-card": "#1F2937",
+                        "background": "#f7f9fb",
+                        "surface-tint": "#474adb",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#767586",
+                        "tertiary-fixed": "#ffdf9f",
+                        "warning": "#FB923C",
+                        "card-bg": "#FFFFFF",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#c0c1ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "on-primary-container": "#f9f6ff",
+                        "on-background": "#191c1e",
+                        "surface-container": "#eceef0",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#fff7ee",
+                        "text-primary": "#111827",
+                        "on-secondary-fixed": "#23005c",
+                        "secondary-container": "#8455ef",
+                        "success": "#22C55E",
+                        "border-default": "#E5E7EB",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary": "#6b38d4",
+                        "tertiary-container": "#916c00",
+                        "on-primary-fixed": "#05006c",
+                        "dark-bg": "#111827",
+                        "outline-variant": "#c6c5d7",
+                        "text-secondary": "#6B7280",
+                        "surface-dim": "#d8dadc",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "primary-container": "#5b5fef",
+                        "error-container": "#ffdad6",
+                        "surface": "#f7f9fb",
+                        "on-surface-variant": "#464555",
+                        "info-ai": "#38BDF8",
+                        "danger": "#F43F5E",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary": "#ffffff",
+                        "dark-primary": "#8B80FF",
+                        "primary-fixed": "#e1e0ff",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-fixed": "#e9ddff",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-tertiary-fixed": "#261a00",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "primary": "#4143d5",
+                        "on-surface": "#191c1e",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#f9bd22"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "2xl": "48px",
+                        "sm": "8px",
+                        "3xl": "64px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "margin-desktop": "32px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .brand-gradient {
+            background: linear-gradient(135deg, #5B5FEF 0%, #8B5CF6 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .active-scale:active {
+            transform: scale(0.95);
+        }
+        .hover-lift {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 10px 25px -5px rgba(91, 95, 239, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-body-md text-text-primary overflow-x-hidden">
+<!-- Main Container -->
+<main class="min-h-screen w-full flex flex-col md:flex-row">
+<!-- Left Side: Brand Panel (Visible on md+) -->
+<section class="hidden md:flex relative md:w-1/2 brand-gradient overflow-hidden flex-col justify-between p-xl">
+<!-- Animated Shader Background (Atmospheric) -->
+
+<div class="relative z-10 flex flex-col h-full justify-between">
+<!-- Brand Identity -->
+<div class="flex items-center gap-sm">
+<div class="bg-white/20 p-sm rounded-xl backdrop-blur-md">
+<span class="material-symbols-outlined text-white text-[32px]" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<span class="font-page-title text-page-title text-white tracking-tight">Lost&amp;Found AI</span>
+</div>
+<!-- Hero Message & Bento-style Mockup -->
+<div class="flex flex-col gap-lg">
+<h1 class="font-hero-title text-hero-title text-white leading-[1.1]">
+                        Welcome Back! <br>
+<span class="text-white/80 font-medium">Find what's lost, celebrate what's found.</span>
+</h1>
+<!-- Decorative Glass Bento Grid -->
+<div class="grid grid-cols-2 gap-md mt-xl">
+<div class="glass-panel rounded-2xl p-lg flex flex-col gap-sm">
+<span class="material-symbols-outlined text-primary-fixed" data-icon="psychology">psychology</span>
+<p class="text-white font-bold font-label-md text-label-md">AI Matching</p>
+<p class="text-white/70 text-caption font-caption">Our neural network finds your keys in seconds.</p>
+</div>
+<div class="glass-panel rounded-2xl p-lg flex flex-col gap-sm translate-y-8">
+<span class="material-symbols-outlined text-warning" data-icon="leaderboard">leaderboard</span>
+<p class="text-white font-bold font-label-md text-label-md">Active Community</p>
+<p class="text-white/70 text-caption font-caption">Join 5,000+ students helping each other daily.</p>
+</div>
+</div>
+</div>
+<!-- Footer Text -->
+<div class="flex items-center justify-between text-white/60 text-caption font-caption">
+<p class="">© 2024 Lost&amp;Found AI Campus Network</p>
+<div class="flex gap-md">
+<span class="">Privacy</span>
+<span class="">Terms</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side: Login Form -->
+<section class="w-full md:w-1/2 min-h-screen flex items-center justify-center p-gutter md:p-2xl bg-white dark:bg-dark-bg">
+<div class="w-full max-w-[480px] flex flex-col">
+<!-- Mobile Branding (Hidden on md+) -->
+<div class="md:hidden flex flex-col items-center gap-sm mb-xl">
+<div class="bg-primary p-md rounded-2xl shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-[32px]" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<h2 class="font-page-title-mobile text-page-title-mobile text-primary">Lost&amp;Found AI</h2>
+</div>
+<!-- Form Header -->
+<div class="mb-xl text-center md:text-left">
+<h2 class="font-section-title text-section-title text-text-primary mb-xs">Sign In</h2>
+<p class="text-text-secondary">Enter your campus credentials to continue.</p>
+</div>
+<!-- Social Logins -->
+
+<!-- Separator -->
+
+<!-- Login Form -->
+<form class="flex flex-col gap-lg" id="loginForm">
+<!-- Email Field -->
+<div class="flex flex-col gap-sm">
+<label class="font-label-md text-label-md text-text-primary ml-1" for="email">University Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="alternate_email">alternate_email</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none text-body-md font-body-md" id="email" placeholder="student@university.edu" required="" type="email">
+</div>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-sm">
+<div class="flex justify-between items-center px-1">
+<label class="font-label-md text-label-md text-text-primary" for="password">Password</label>
+<a class="text-caption font-caption text-primary hover:underline font-semibold" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="lock">lock</span>
+<input class="w-full pl-12 pr-12 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none text-body-md font-body-md" id="password" placeholder="••••••••" required="" type="password">
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" onclick="togglePasswordVisibility()" type="button">
+<span class="material-symbols-outlined" data-icon="visibility" id="eyeIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Options -->
+<div class="flex items-center gap-sm px-1">
+<input class="w-5 h-5 rounded-lg border-border-default text-primary focus:ring-primary" id="remember" type="checkbox">
+<label class="text-caption font-caption text-text-secondary select-none" for="remember">Remember this device for 30 days</label>
+</div>
+<!-- Sign In Button -->
+<button class="w-full brand-gradient text-white font-label-md text-label-md py-lg rounded-2xl shadow-lg shadow-primary/20 hover-lift active-scale mt-md" type="submit">
+                        Sign In
+                    </button><div class="flex justify-center mt-md"><a href="#" class="text-caption font-caption text-text-secondary hover:text-primary transition-colors flex items-center gap-xs"><span class="material-symbols-outlined text-[18px]" data-icon="admin_panel_settings">admin_panel_settings</span>Admin Portal Login</a></div>
+<!-- Sign Up Link -->
+<p class="text-center text-body-md font-body-md text-text-secondary mt-xl">
+                        New on campus? <a class="text-primary font-bold hover:underline" href="#">Create an Account</a>
+</p>
+</form>
+<!-- Help Link -->
+<div class="mt-2xl flex justify-center">
+<button class="flex items-center gap-xs text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="help_outline">help_outline</span>
+<span class="text-caption font-caption">Help &amp; Support</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = 'visibility';
+            }
+        }
+
+        // Handle form submission with a small tactile effect
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Connecting...';
+            
+            // Artificial delay to simulate login process
+            setTimeout(() => {
+                btn.innerHTML = 'Success! Welcome Back';
+                btn.style.backgroundColor = '#22C55E';
+                btn.classList.remove('brand-gradient');
+                
+                setTimeout(() => {
+                    // Reset or redirect
+                    btn.disabled = false;
+                    btn.innerHTML = originalContent;
+                    btn.classList.add('brand-gradient');
+                }, 1500);
+            }, 1000);
+        });
+
+        // Add some atmospheric console logging for the developer personality
+        console.log("Lost&Found AI: Identity System Initialized.");
+        console.log("Campus Senior AI Assistant: Online. Level 12 Ready.");
+    </script>
+
+
+</body></html>

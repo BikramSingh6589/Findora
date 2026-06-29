@@ -1,0 +1,490 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>User Profile | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e1e0ff;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4143d5;
+        }
+        .bento-card {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+        }
+        .bento-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(65, 67, 213, 0.1);
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#2c2cc3",
+                      "on-surface": "#191c1e",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#464555",
+                      "on-secondary-fixed": "#23005c",
+                      "on-background": "#191c1e",
+                      "on-tertiary-container": "#fff7ee",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#ffdf9f",
+                      "dark-bg": "#111827",
+                      "success": "#22C55E",
+                      "surface-container-lowest": "#ffffff",
+                      "outline-variant": "#c6c5d7",
+                      "on-secondary-container": "#fffbff",
+                      "primary": "#4143d5",
+                      "surface-bright": "#f7f9fb",
+                      "surface-tint": "#474adb",
+                      "on-tertiary-fixed": "#261a00",
+                      "outline": "#767586",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "danger": "#F43F5E",
+                      "on-error-container": "#93000a",
+                      "on-primary": "#ffffff",
+                      "inverse-surface": "#2d3133",
+                      "text-primary": "#111827",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "surface-variant": "#e0e3e5",
+                      "tertiary-container": "#916c00",
+                      "primary-container": "#5b5fef",
+                      "inverse-on-surface": "#eff1f3",
+                      "surface-container-highest": "#e0e3e5",
+                      "text-secondary": "#6B7280",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "error-container": "#ffdad6",
+                      "surface": "#f7f9fb",
+                      "border-default": "#E5E7EB",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "surface-container-low": "#f2f4f6",
+                      "surface-container-high": "#e6e8ea",
+                      "tertiary": "#735500",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#eceef0",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "card-bg": "#FFFFFF",
+                      "dark-card": "#1F2937",
+                      "primary-fixed": "#e1e0ff",
+                      "warning": "#FB923C",
+                      "secondary": "#6b38d4",
+                      "background": "#f7f9fb",
+                      "secondary-fixed": "#e9ddff",
+                      "dark-primary": "#8B80FF",
+                      "secondary-container": "#8455ef",
+                      "inverse-primary": "#c0c1ff",
+                      "on-primary-container": "#f9f6ff",
+                      "surface-dim": "#d8dadc",
+                      "on-primary-fixed": "#05006c",
+                      "info-ai": "#38BDF8"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "margin-desktop": "32px",
+                      "sm": "8px",
+                      "3xl": "64px",
+                      "gutter": "16px",
+                      "base": "8px",
+                      "margin-mobile": "16px",
+                      "2xl": "48px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-md": ["Plus Jakarta Sans"],
+                      "section-title": ["Plus Jakarta Sans"],
+                      "page-title": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "card-title": ["Plus Jakarta Sans"],
+                      "hero-title": ["Plus Jakarta Sans"],
+                      "caption": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "page-title-mobile": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-background">
+<!-- TopNavBar -->
+<header class="bg-surface/80 backdrop-blur-md font-body-md text-body-md docked full-width top-0 sticky shadow-sm z-50 px-margin-mobile md:px-margin-desktop py-md flex justify-between items-center w-full">
+<div class="flex items-center gap-lg">
+<span class="font-page-title text-page-title-mobile md:text-page-title font-bold text-primary">Lost&amp;Found AI</span>
+<div class="hidden md:flex bg-surface-container-low border border-outline-variant/20 px-md py-sm rounded-full items-center gap-sm w-96 transition-all focus-within:border-primary focus-within:bg-white focus-within:shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full placeholder:text-on-surface-variant/60" placeholder="Search for items, badges, or students..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">auto_awesome</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">leaderboard</button>
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden border-2 border-primary">
+<img class="w-full h-full object-cover" data-alt="A portrait of a cheerful university student wearing a tech-inspired campus hoodie. The photo is well-lit with soft natural sunlight, emphasizing a friendly and approachable personality. The background shows a modern campus hallway with soft focus. The style is professional yet casual, fitting a helpful campus assistant persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnQNgJuluvo84WaPHIEK5ac1d3_mVJ7lhiIhMVQ0memzM53BtghLkAM7w3LJBO8_L8yZ3gsZWxsS4QzlMYDQnTnKCyv90oSJgPTlgqAGArf9TfDbZxdwgQ8YJaI1fgm1NJLgJPJjYaZAoLnUS1k12VLj6La8etXYzsGz3V6PmIS84HDW2Ps41uMUyy252GtqZxZMYrBbWM5XGWn1zmXPfcn5-c3dRnCWJnm2mAAEMx1lhGZ0piExYwYqfEgJyXOYhbInDIcq_4R60">
+</div>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="bg-card-bg h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col shadow-md font-label-md text-label-md p-md gap-lg pt-24">
+<div class="flex flex-col gap-sm"><a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#report">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="">Report Item</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#map"><span class="material-symbols-outlined">groups</span><span class="">Community Board</span></a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#ai-matches">
+<span class="material-symbols-outlined">psychology</span>
+<span class="">AI Matches</span>
+</a>
+<a class="flex items-center gap-md bg-primary-fixed/30 text-primary rounded-xl px-md py-sm transition-all duration-200" href="#history">
+<span class="material-symbols-outlined fill-icon">history</span>
+<span class="">My History</span>
+</a></div>
+<div class="mt-auto flex flex-col gap-sm"><button class="bg-primary text-on-primary rounded-xl py-sm px-md font-bold shadow-lg hover:scale-[1.03] active:translate-x-1 transition-all">
+                    Report Found Item
+                </button>
+<div class="h-px bg-outline-variant my-md"></div>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="">Settings</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all" href="#help">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="">Help Support</span>
+</a></div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop mt-4 pb-24">
+<div class="max-w-6xl mx-auto space-y-lg">
+<!-- Hero Profile Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Profile Identity Card -->
+<div class="md:col-span-8 bg-card-bg rounded-3xl p-xl shadow-sm relative overflow-hidden bento-card">
+
+<div class="relative flex flex-col md:flex-row gap-xl items-center">
+<div class="relative">
+<div class="w-32 h-32 rounded-3xl overflow-hidden shadow-xl rotate-3">
+<img class="w-full h-full object-cover" data-alt="A close-up high-resolution profile picture of Alex Rivers, a friendly-looking university student with a bright smile. The lighting is soft and golden hour, with a clean aesthetic. He is wearing a minimalist navy blue hoodie. The background is a soft bokeh of a library's bookshelves, giving a scholarly yet approachable vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY-UjqY27wb1O3eLbIb-_d8pBlMSZceqFSaHVrNzO2eLd66FtaehEP5bkQaij-wLnAQAd_HiVdI0c9lSuz0z3F5MeBs7BN1PSdM5SwyiehN_uqnc1ofRMP1Wq4Nm2oRcy9YPXAA6X8W-cU5ziav31g9HYNAYjtYk9CgJ5ybZllXw5X_LruDwY1b82m-vIX1KFh8BjKYWVQNM_BxV5TJTvWad4OYIiJSKSzaKKdRKqJ3zx3L7kZLw4OhIOpqW3NE6y9-zDQbLk89Wk">
+</div>
+<div class="absolute -bottom-2 -right-2 bg-warning text-white p-2 rounded-xl shadow-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-sm fill-icon">star</span>
+<span class="text-xs font-bold">TOP FINDER</span>
+</div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<h1 class="font-page-title text-page-title text-primary">Alex Rivers</h1>
+<p class="text-text-secondary font-body-lg">Senior Student AI · Helper Level 12</p>
+<div class="mt-md flex flex-wrap justify-center md:justify-start gap-sm">
+<span class="px-md py-1 bg-primary-fixed/30 text-on-primary-fixed-variant rounded-full text-caption font-bold">Class of 2024</span>
+<span class="px-md py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-caption font-bold">Design Major</span>
+<span class="px-md py-1 bg-surface-container-high text-on-surface-variant rounded-full text-caption">Student Ambassador</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<div class="text-center">
+<div class="text-hero-title font-bold text-primary">982<span class="ml-2">🏆</span></div>
+<div class="text-caption font-bold text-text-secondary uppercase tracking-widest">Reputation</div>
+</div>
+<button class="mt-sm bg-primary-container text-on-primary-container px-lg py-sm rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-md">
+                                    Share Profile
+                                </button>
+</div>
+</div>
+</div>
+<!-- XP / Explorer Level Card -->
+<div class="md:col-span-4 bg-gradient-to-br from-primary to-secondary rounded-3xl p-xl shadow-xl text-white flex flex-col justify-between bento-card relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-20">
+<span class="material-symbols-outlined text-[80px]">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-card-title text-card-title opacity-90">Explorer Level</h3>
+<div class="text-hero-title font-black mt-xs">LVL 12</div>
+</div>
+<div class="space-y-sm mt-xl">
+<div class="flex justify-between text-caption font-bold">
+<span class="">PROGRESS TO LVL 13</span>
+<span class="">2,450 / 3,000 XP</span>
+</div>
+<div class="w-full h-4 bg-white/20 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-warning to-tertiary-fixed-dim rounded-full" style="width: 82%;"></div>
+</div>
+<p class="text-caption opacity-80 italic">"Return 1 more high-value item to reach level 13!"</p>
+</div>
+</div>
+</section>
+<!-- Statistics & Badges Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Quick Stats -->
+<div class="md:col-span-3 grid grid-rows-2 gap-lg"><div class="absolute -top-4 -right-4 w-20 h-20 opacity-40 pointer-events-none">https://lh3.googleusercontent.com/aida-public/AB6AXuD4sTZYVsAPwAlpu6wXWxo35_y56xNWEOugm68fUsAun4TSPQp6U4TANUm6u3sQBo2iwXxDj7--XivxRWvwOMRxUIqhKjGW6hhtostVKOPdLZ6LWpdbqJMXB5e2Zx_VTRILKOr6aaQGOKRBpDnvQiQXu1d_-ONnQq4ZVPmW5bSU_q0hL1eEQjYchTpbubMT7BnBtluDGth_3nCt4a1man34y2gEL6bxneyozHrR3EGemLGRiNbeJx_Mofy5zjWBb74pF9tH3AgEdjA</div>
+<div class="bg-card-bg rounded-3xl p-lg shadow-sm border border-outline-variant/30 flex flex-col items-center justify-center text-center bento-card">
+<span class="material-symbols-outlined text-primary text-3xl mb-xs">handshake</span>
+<div class="text-page-title font-bold text-on-surface">14</div>
+<div class="text-caption text-text-secondary">Items Returned</div>
+</div>
+<div class="bg-card-bg rounded-3xl p-lg shadow-sm border border-outline-variant/30 flex flex-col items-center justify-center text-center bento-card">
+<span class="material-symbols-outlined text-secondary text-3xl mb-xs">verified</span>
+<div class="text-page-title font-bold text-on-surface">100%</div>
+<div class="text-caption text-text-secondary">Honesty Score</div>
+</div>
+</div>
+<!-- Badge Gallery -->
+<div class="md:col-span-9 bg-card-bg rounded-3xl p-xl shadow-sm bento-card">
+<div class="flex justify-between items-center mb-xl">
+<h2 class="font-section-title text-section-title text-on-surface">Earned Badges</h2>
+<button class="text-primary font-bold hover:underline">View All Badges</button>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-xl">
+<!-- Badge Item -->
+<div class="flex flex-col items-center text-center group cursor-help">
+<div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center relative transition-transform group-hover:scale-110 bg-success/10">
+<div class="absolute inset-0 bg-success/10 rounded-full animate-pulse"></div>
+<span class="material-symbols-outlined text-success text-4xl fill-icon">shield_person</span>
+</div>
+<span class="mt-sm font-bold text-sm">Honest Finder</span>
+<span class="text-[10px] text-text-secondary uppercase tracking-tighter">Level 3</span>
+</div>
+<!-- Badge Item -->
+<div class="flex flex-col items-center text-center group cursor-help">
+<div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center relative transition-transform group-hover:scale-110 bg-primary/10">
+<div class="absolute inset-0 bg-primary/10 rounded-full"></div>
+<span class="material-symbols-outlined text-primary text-4xl fill-icon">speed</span>
+</div>
+<span class="mt-sm font-bold text-sm">Quick Match</span>
+<span class="text-[10px] text-text-secondary uppercase tracking-tighter">Level 2</span>
+</div>
+<!-- Badge Item -->
+<div class="flex flex-col items-center text-center group cursor-help">
+<div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center relative transition-transform group-hover:scale-110 bg-warning/10">
+<div class="absolute inset-0 bg-warning/10 rounded-full"></div>
+<span class="material-symbols-outlined text-warning text-4xl fill-icon">explore</span>
+</div>
+<span class="mt-sm font-bold text-sm">Eagle Eye</span>
+<span class="text-[10px] text-text-secondary uppercase tracking-tighter">Gold</span>
+</div>
+<!-- Badge Item -->
+<div class="flex flex-col items-center text-center group cursor-help">
+<div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center relative transition-transform group-hover:scale-110 bg-secondary/10">
+<div class="absolute inset-0 bg-secondary/10 rounded-full"></div>
+<span class="material-symbols-outlined text-secondary text-4xl fill-icon">volunteer_activism</span>
+<div class="absolute -top-1 -right-1 bg-primary text-white text-[8px] px-1 rounded-full font-bold">NEW</div>
+</div>
+<span class="mt-sm font-bold text-sm">Kind Soul</span>
+<span class="text-[10px] text-text-secondary uppercase tracking-tighter">Level 5</span>
+</div>
+<!-- Badge Item (Locked) -->
+<div class="flex flex-col items-center text-center opacity-40 filter grayscale">
+<div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-4xl">lock</span>
+</div>
+<span class="mt-sm font-bold text-sm">Legendary Guardian</span>
+<span class="text-[10px] text-text-secondary uppercase tracking-tighter">Locked</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Activity History Section -->
+<section class="bg-card-bg rounded-3xl shadow-sm overflow-hidden border border-outline-variant/20">
+<div class="p-xl border-b border-outline-variant/10 flex justify-between items-center">
+<h2 class="font-section-title text-section-title">Item History</h2>
+<div class="flex bg-surface-container-low rounded-xl p-1">
+<button class="px-md py-1 bg-white shadow-sm rounded-lg text-sm font-bold text-primary">All Activity</button>
+<button class="px-md py-1 text-sm font-medium text-text-secondary">Found</button>
+<button class="px-md py-1 text-sm font-medium text-text-secondary">Lost</button>
+</div>
+</div>
+<div class="divide-y divide-outline-variant/10">
+<!-- History Item -->
+<div class="p-lg flex flex-col md:flex-row gap-lg hover:bg-surface transition-colors">
+<div class="w-full md:w-48 h-32 rounded-2xl overflow-hidden shadow-inner flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A photo of a set of keys with a distinctive blue university lanyard and a small silver USB drive attached. The keys are lying on a wooden table with soft focus lighting. The atmosphere is sharp and realistic, showing clear details of the key ridges and the fabric texture of the lanyard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA59zLZX0JuZe4QRt7EYvPGQxdWXAGo1qOzxgArAKCshagZXt3YtifhIMCx0xbPECMiNI7UhzFksuHLk9ZwTOOkpQJR8VLacYOYu617TNaz6vHyt8biMs2jc7vz3vw1JJZiylt6QHImZGbdDsGDXe3F_4ZMeBdudmPyKrNtERBIgg4iRtBUkDCq-fNpZs8S_rftosFABeF5HJyjTDXAsH89KmM_ENQSc6_L4Fzvs1Z_XsdR9EHxvuNsWoSKzgnkqidlEGuAVMwHUrw">
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-card-title text-on-surface">Keys with Blue Lanyard</h3>
+<span class="px-md py-1 bg-success/10 text-success rounded-full text-[10px] font-bold uppercase">Returned Successfully</span>
+</div>
+<p class="text-text-secondary text-body-md mt-1">Found near the Main Library Cafeteria. Handed over to the front desk after owner verification.</p>
+</div>
+<div class="mt-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-1 text-caption text-text-secondary">
+<span class="material-symbols-outlined text-sm text-primary">calendar_month</span>
+                                            Oct 12, 2023
+                                        </div>
+<div class="flex items-center gap-1 text-caption text-primary font-bold">
+<span class="material-symbols-outlined text-sm fill-icon text-primary">add_circle</span>
+                                            +50 Reputation
+                                        </div>
+</div>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                                        View Case Details <span class="material-symbols-outlined text-sm text-primary">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- History Item 2 -->
+<div class="p-lg flex flex-col md:flex-row gap-lg hover:bg-surface transition-colors">
+<div class="w-full md:w-48 h-32 rounded-2xl overflow-hidden shadow-inner flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A sleek black noise-canceling headphone lying on a modern campus lounge chair. The design is contemporary and high-tech. The shot has a shallow depth of field, highlighting the metallic finish and leather padding of the headphones. The lighting is cool-toned, creating a professional and modern look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcRryFbNwUAaRGk9z23FVEMhwjkHXql84aCggk1jbFgqydjHk7P7u8uP_RmuVilHn8JQGecXKEQ3WgW33btFMjnx70aDC65Du-mKM3P-ttQOrgOaw8tCYmkMczB5Bl2Q2mjml4SBvWjWpFTL_rg66rkmsPQ88km_hIU_z7aV77LR1hpCh7rJ1eCUv21iXM-4uOgJzSn_QD6k9ySNMIlVjZm-oWjz11n2hk-kNA4n5sllYbtIx2pWg4HEWXgf1Jt-CGYKY3q8FulYA">
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-card-title text-on-surface">Bose Headphones</h3>
+<span class="px-md py-1 bg-primary-fixed/50 text-on-primary-fixed-variant rounded-full text-[10px] font-bold uppercase">Reported Lost</span>
+</div>
+<p class="text-text-secondary text-body-md mt-1">Left behind in the Engineering Lab. Still waiting for a verified finder to match.</p>
+</div>
+<div class="mt-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-1 text-caption text-text-secondary">
+<span class="material-symbols-outlined text-sm text-primary">calendar_month</span>
+                                            Oct 05, 2023
+                                        </div>
+<div class="flex items-center gap-1 text-caption text-info-ai font-bold">
+<span class="material-symbols-outlined text-sm text-primary">smart_toy</span>
+                                            2 AI Matches
+                                        </div>
+</div>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                                        Check Matches <span class="material-symbols-outlined text-sm text-primary">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- History Item 3 -->
+<div class="p-lg flex flex-col md:flex-row gap-lg hover:bg-surface transition-colors">
+<div class="w-full md:w-48 h-32 rounded-2xl overflow-hidden shadow-inner flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A vintage-style leather wallet sitting on a stone bench outdoors on a university campus. The wallet looks slightly worn and textured. The background shows vibrant autumn leaves and a blurred campus pathway. The image is warm and inviting, capturing a specific moment in time on campus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEFXq-OfTB3iBMRAMS_glNt4rPiY3nn9u7LBl_gJK2m8NWZIUHXsqfgYYB6C2Hln0ZyeE45hMgQ1DBpkL3NS72zTSNEdFR1WrPbDDYxAKubfVlJTkgiO8pyu1w6K3KZIB9OHg_4HEXs8rTIlZke3HfBsl38mthHJMX_Dbnlw76yuOxOhl-3-1ZWybBSziOJ8_w7YjVa5F_Pu_jSiccHQy-Ba7qUjChK9-G8hQZLxaQILuNdBAMOu8e3sDwL9tNLYSAFESWaszx2uw">
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-card-title text-on-surface">Leather Wallet</h3>
+<span class="px-md py-1 bg-success/10 text-success rounded-full text-[10px] font-bold uppercase">Returned Successfully</span>
+</div>
+<p class="text-text-secondary text-body-md mt-1">Found at the South Gate Bus Stop. Returned within 30 minutes of matching!</p>
+</div>
+<div class="mt-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-1 text-caption text-text-secondary">
+<span class="material-symbols-outlined text-sm text-primary">calendar_month</span>
+                                            Sep 28, 2023
+                                        </div>
+<div class="flex items-center gap-1 text-caption text-primary font-bold">
+<span class="material-symbols-outlined text-sm fill-icon text-primary">add_circle</span>
+                                            +120 Reputation
+                                        </div>
+</div>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                                        View Case Details <span class="material-symbols-outlined text-sm text-primary">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="p-lg bg-surface-container-low text-center">
+<button class="text-primary font-bold hover:scale-105 transition-all">Load More History</button>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface border-t border-outline-variant/10 lg:hidden pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">add_box</span>
+<span class="text-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-caption">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary-fixed/30 rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined fill-icon">person</span>
+<span class="text-caption font-bold">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions and effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.bento-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    // Light tactile feedback could go here
+                });
+            });
+
+            // Handle badge tooltips (simple console log for demo)
+            const badges = document.querySelectorAll('.group.cursor-help');
+            badges.forEach(badge => {
+                badge.addEventListener('click', () => {
+                    const title = badge.querySelector('span:nth-child(2)').innerText;
+                    console.log(`Viewing badge info for: ${title}`);
+                });
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+
+</body></html>

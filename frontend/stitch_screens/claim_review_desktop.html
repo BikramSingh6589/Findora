@@ -1,0 +1,361 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Claim Ownership - Review &amp; Submit | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .gradient-button {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .gradient-button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(91, 95, 239, 0.25);
+        }
+        .step-line {
+            background: linear-gradient(90deg, #4143d5 100%, #e1e0ff 0%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e9ddff",
+                        "inverse-surface": "#2d3133",
+                        "text-secondary": "#6B7280",
+                        "tertiary-container": "#916c00",
+                        "surface": "#f7f9fb",
+                        "primary-container": "#5b5fef",
+                        "success": "#22C55E",
+                        "dark-bg": "#111827",
+                        "card-bg": "#FFFFFF",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-tint": "#474adb",
+                        "on-surface": "#191c1e",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "dark-primary": "#8B80FF",
+                        "border-default": "#E5E7EB",
+                        "on-secondary-container": "#fffbff",
+                        "on-secondary-fixed": "#23005c",
+                        "inverse-primary": "#c0c1ff",
+                        "surface-dim": "#d8dadc",
+                        "error-container": "#ffdad6",
+                        "on-background": "#191c1e",
+                        "on-primary-fixed": "#05006c",
+                        "surface-container": "#eceef0",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "secondary-container": "#8455ef",
+                        "on-tertiary-fixed": "#261a00",
+                        "warning": "#FB923C",
+                        "surface-container-lowest": "#ffffff",
+                        "dark-card": "#1F2937",
+                        "background": "#f7f9fb",
+                        "info-ai": "#38BDF8",
+                        "on-surface-variant": "#464555",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "outline-variant": "#c6c5d7",
+                        "on-primary-container": "#f9f6ff",
+                        "on-tertiary": "#ffffff",
+                        "danger": "#F43F5E",
+                        "outline": "#767586",
+                        "tertiary": "#735500",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-container": "#fff7ee",
+                        "surface-variant": "#e0e3e5",
+                        "primary": "#4143d5",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "text-primary": "#111827",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary": "#6b38d4",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-primary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "base": "8px",
+                        "sm": "8px",
+                        "3xl": "64px",
+                        "2xl": "48px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "page-title": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-dark-bg/80 backdrop-blur-md font-body-md text-body-md docked full-width top-0 sticky shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md z-50">
+<div class="flex items-center gap-md">
+<h1 class="font-page-title text-page-title-mobile font-bold text-primary dark:text-dark-primary">Lost&amp;Found AI</h1>
+<div class="hidden md:flex items-center ml-xl gap-lg">
+<a class="text-on-surface-variant dark:text-text-secondary hover:text-primary transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-primary dark:text-dark-primary font-bold border-b-2 border-primary" href="#">Report Item</a>
+<a class="text-on-surface-variant dark:text-text-secondary hover:text-primary transition-colors duration-200" href="#">Map View</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="auto_awesome">auto_awesome</span>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A portrait of a friendly university student with a warm smile, wearing a modern tech-casual outfit. The background is a soft-focus university campus setting with bright, airy light-mode colors and subtle hints of vibrant indigo and lavender accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwbbxyYYOp6chRCcP3_HsZMvUZRD99kisreKPM9Vn8VSjiZkgQEScipYUIOP7hoGjhJo_Klun-61s1kGWThb1Uo3yEybbBdM9tPNbFGhrGW3k7s8EcyJ1PpQF7VTQOihqeAQpWPvvSF6B6WE9W-xlLDDz4eShETCrtEIuC8Mh0D3y0OohYl3rNi25cie-3fKvYdigtWyGXhQOJEXxxiCVvqHlP8jDqRbxT5AnJ-z-597skmUSNVyNTna8s3SQNktZ-_2J6JutXmhM">
+</div>
+</div>
+</header>
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="bg-card-bg dark:bg-dark-card font-label-md text-label-md h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col shadow-md flex flex-col h-full p-md gap-lg z-40 mt-[72px]">
+<div class="flex flex-col gap-sm">
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</div>
+<div class="flex items-center gap-md bg-primary-fixed dark:bg-primary-container text-on-primary-fixed-variant dark:text-on-primary-container rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span>Report Item</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200 cursor-pointer"><span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="">Community Board</span></div>
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span>AI Matches</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>My History</span>
+</div>
+</div>
+<div class="mt-auto flex flex-col gap-sm border-t border-surface-container pt-md">
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm transition-all duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Help Support</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop bg-surface">
+<div class="max-w-4xl mx-auto">
+<!-- Stepper -->
+<nav class="flex items-center justify-between mb-xl px-md">
+<div class="flex flex-col items-center gap-xs relative">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold z-10">
+<span class="material-symbols-outlined" data-icon="check">check</span>
+</div>
+<span class="text-caption font-semibold text-primary">Verify Identity</span>
+<div class="absolute left-1/2 w-[calc(200%-40px)] h-1 top-5 bg-primary -z-0"></div>
+</div>
+<div class="flex flex-col items-center gap-xs relative">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold z-10">
+<span class="material-symbols-outlined" data-icon="check">check</span>
+</div>
+<span class="text-caption font-semibold text-primary">Upload Proof</span>
+<div class="absolute left-1/2 w-[calc(200%-40px)] h-1 top-5 bg-primary-fixed -z-0"></div>
+</div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold z-10 ring-4 ring-primary-fixed">3</div>
+<span class="text-caption font-semibold text-primary">Review &amp; Submit</span>
+</div>
+</nav>
+<!-- Header Section -->
+<div class="mb-xl">
+<h2 class="font-page-title text-page-title text-primary mb-sm">Review Your Claim</h2>
+<p class="font-body-lg text-body-lg text-text-secondary">Please double-check your information before final submission. Our AI will review this to verify your ownership.</p>
+</div>
+<!-- Bento Grid Content -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Proof Thumbnail -->
+<div class="md:col-span-1">
+<div class="bg-card-bg rounded-[20px] p-md shadow-sm border border-surface-container h-full">
+<h3 class="font-card-title text-card-title mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="image">image</span>
+                                Proof Provided
+                            </h3>
+<div class="relative group rounded-xl overflow-hidden aspect-square shadow-sm">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A high-quality, clear photo of a student ID card and a personal accessory, laid out on a clean white desk with soft, natural lighting. The image emphasizes clarity and security, with a modern, professional feel. Subtle purple and indigo light reflections add a touch of the brand's aesthetic while maintaining a trustworthy atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtQ9cOBJmUjpkos6g8yAbIQWxcoDCuF-0Y_Gnurybw_Dby5XrAOa6gAKpKPIa9Ut2Lx1GxfRHoondlLw5NfX4eRfP4N5aavOpXgEd4QMFc0MlZX1JFj0NvCkALSgAiixDgYOf3lyUcuVYNqadPMcRovA0sjfN3l-LAGZH0-5e2lW-DnDkromkC9COkzZf75-yvafOgP788C1U3V4SM3ka9RebjlLbx0WNN_xupvyn54iFCxWiwA0aI0lfPF6A1MneEGf99KrEb4IU">
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<button class="bg-white/20 backdrop-blur-md p-sm rounded-full text-white">
+<span class="material-symbols-outlined" data-icon="zoom_in">zoom_in</span>
+</button>
+</div>
+</div>
+<p class="mt-md text-caption text-text-secondary text-center">proof_of_ownership_id.jpg</p>
+</div>
+</div>
+<!-- Summary Card -->
+<div class="md:col-span-2">
+<div class="bg-card-bg rounded-[20px] p-lg shadow-sm border border-surface-container h-full">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-card-title text-card-title flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="description">description</span>
+                                    Questionnaire Summary
+                                </h3>
+<button class="text-primary font-semibold flex items-center gap-xs hover:underline decoration-2 underline-offset-4">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+                                    Edit Answers
+                                </button>
+</div>
+<div class="space-y-lg">
+<div class="p-md rounded-xl bg-surface-container-low border-l-4 border-primary">
+<p class="text-caption font-bold text-primary mb-xs uppercase tracking-wider">Item Details</p>
+<p class="font-body-md text-text-secondary">Where did you last see the item?</p>
+<p class="font-label-md mt-xs">Main Library, 2nd Floor Study Lounge</p>
+</div>
+<div class="p-md rounded-xl bg-surface-container-low border-l-4 border-primary">
+<p class="text-caption font-bold text-primary mb-xs uppercase tracking-wider">Unique Features</p>
+<p class="font-body-md text-text-secondary">Are there any specific markings or stickers?</p>
+<p class="font-label-md mt-xs">A small scratch on the bottom left corner and a 'Senior Student' sticker on the front lid.</p>
+</div>
+<div class="p-md rounded-xl bg-surface-container-low border-l-4 border-primary" style="background-color: rgb(242, 244, 246); transition: background-color 0.3s;">
+<p class="text-caption font-bold text-primary mb-xs uppercase tracking-wider">Estimated Time</p>
+<p class="font-body-md text-text-secondary">Approximate time of loss?</p>
+<p class="font-label-md mt-xs">Tuesday, Oct 24th, between 2:00 PM and 4:30 PM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Reassurance & Action Area -->
+<div class="mt-2xl glass-card rounded-[20px] p-lg border-primary-fixed/30 flex flex-col md:flex-row items-center justify-between gap-xl">
+<div class="flex items-center gap-lg">
+<div class="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center text-success">
+<span class="material-symbols-outlined text-[40px]" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div>
+<div class="inline-flex items-center px-sm py-xs rounded-full bg-success/10 text-success text-[12px] font-bold mb-xs">
+<span class="material-symbols-outlined text-[14px] mr-xs" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+                                SAFE &amp; SECURE
+                            </div>
+<h4 class="font-label-md text-on-surface">Data Protection Guaranteed</h4>
+<p class="text-caption text-text-secondary">Your proof is encrypted and visible only to verified staff.</p>
+</div>
+</div>
+<div class="flex flex-col items-end md:items-start gap-xs mb-xs md:mb-0">
+    <div class="inline-flex items-center px-sm py-1 rounded-full bg-primary-fixed/30 text-primary text-[12px] font-bold">
+        <span class="material-symbols-outlined text-[14px] mr-xs" data-icon="info">info</span>
+        Admin Mediation Required
+    </div>
+</div><div class="flex gap-md w-full md:w-auto"><button class="flex-1 md:flex-none px-xl py-md rounded-full border-2 border-surface-container text-text-secondary font-bold bg-surface-container-low cursor-not-allowed flex items-center justify-center gap-sm" disabled="">
+    <span class="material-symbols-outlined text-[20px]" data-icon="lock">lock</span>
+    <span class="">Waiting for Finder Permission</span>
+</button>
+<button class="flex-1 md:flex-none px-xl py-md rounded-full border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-all">
+                            Save Draft
+                        </button>
+<button class="flex-1 md:flex-none gradient-button px-3xl py-md rounded-full text-white font-bold flex items-center justify-center gap-sm">
+                            Submit Claim
+                            <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Terms Notice -->
+<p class="mt-lg text-center text-caption text-text-secondary">
+                    By clicking "Submit Claim", you agree to our <a class="text-primary hover:underline" href="#">Community Guidelines</a> and confirm the accuracy of your statements.
+                </p>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile only) -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface dark:bg-dark-bg pb-safe shadow-lg lg:hidden rounded-t-xl border-t border-surface-container">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-caption">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary dark:text-dark-primary bg-primary-fixed/30 rounded-full px-4 py-1 scale-90">
+<span class="material-symbols-outlined" data-icon="add_box">add_box</span>
+<span class="text-caption">Report</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="text-caption">Matches</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-caption">Profile</span>
+</div>
+</footer>
+<script>
+        // Micro-interaction for submit button
+        const submitBtn = document.querySelector('.gradient-button');
+        if(submitBtn) {
+            submitBtn.addEventListener('mousedown', () => {
+                submitBtn.style.transform = 'scale(0.95)';
+            });
+            submitBtn.addEventListener('mouseup', () => {
+                submitBtn.style.transform = 'scale(1.03)';
+            });
+        }
+
+        // Simple hover effect for card summaries
+        const summaries = document.querySelectorAll('.bg-surface-container-low');
+        summaries.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.backgroundColor = '#e1e0ff';
+                card.style.transition = 'background-color 0.3s ease';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.backgroundColor = '#f2f4f6';
+            });
+        });
+    </script>
+
+
+</body></html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Handover QR Code - Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .qr-gradient-border {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+            padding: 4px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-subtle 3s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f7f9fb",
+                      "text-secondary": "#6B7280",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-primary-fixed-variant": "#2c2cc3",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#f7f9fb",
+                      "border-default": "#E5E7EB",
+                      "surface-variant": "#e0e3e5",
+                      "surface-container-high": "#e6e8ea",
+                      "on-tertiary-fixed": "#261a00",
+                      "on-tertiary-container": "#fff7ee",
+                      "surface-container-lowest": "#ffffff",
+                      "dark-bg": "#111827",
+                      "primary-container": "#5b5fef",
+                      "primary-fixed": "#e1e0ff",
+                      "secondary": "#6b38d4",
+                      "inverse-surface": "#2d3133",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "on-surface": "#191c1e",
+                      "on-error-container": "#93000a",
+                      "outline": "#767586",
+                      "tertiary-fixed": "#ffdf9f",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "on-secondary-container": "#fffbff",
+                      "surface-tint": "#474adb",
+                      "success": "#22C55E",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-error": "#ffffff",
+                      "error": "#ba1a1a",
+                      "tertiary-container": "#916c00",
+                      "inverse-primary": "#c0c1ff",
+                      "on-primary-container": "#f9f6ff",
+                      "on-background": "#191c1e",
+                      "info-ai": "#38BDF8",
+                      "on-secondary": "#ffffff",
+                      "dark-card": "#1F2937",
+                      "background": "#f7f9fb",
+                      "outline-variant": "#c6c5d7",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "card-bg": "#FFFFFF",
+                      "on-primary-fixed": "#05006c",
+                      "surface-dim": "#d8dadc",
+                      "on-surface-variant": "#464555",
+                      "dark-primary": "#8B80FF",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "danger": "#F43F5E",
+                      "on-tertiary": "#ffffff",
+                      "primary": "#4143d5",
+                      "surface-container": "#eceef0",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "surface-container-low": "#f2f4f6",
+                      "text-primary": "#111827",
+                      "secondary-fixed": "#e9ddff",
+                      "warning": "#FB923C",
+                      "tertiary": "#735500",
+                      "secondary-container": "#8455ef",
+                      "on-secondary-fixed": "#23005c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px",
+                      "gutter": "16px",
+                      "base": "8px",
+                      "sm": "8px",
+                      "3xl": "64px",
+                      "md": "16px",
+                      "2xl": "48px"
+              },
+              "fontFamily": {
+                      "section-title": ["Plus Jakarta Sans"],
+                      "card-title": ["Plus Jakarta Sans"],
+                      "page-title": ["Plus Jakarta Sans"],
+                      "hero-title": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "caption": ["Plus Jakarta Sans"],
+                      "page-title-mobile": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface overflow-x-hidden min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 backdrop-blur-md sticky top-0 z-50 flex justify-between items-center w-full px-margin-mobile py-md shadow-sm">
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-page-title-mobile text-page-title-mobile font-bold text-primary">Handover</h1>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center border-2 border-white overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up professional headshot of a friendly young university student, smiling warmly at the camera with a blurred campus background. The student has diverse features, clean styling, and represents a helpful peer-to-peer personality. High quality photography with soft natural lighting and a bright, optimistic light-mode color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5somwXzKkziaQkTaQiyxh2Zn2UfpdlhcFSml043q2-4pinN_VpUcy0zr_s1Fkf7uoKBlAKvjrYX27xZJueJceDyRhGy2wO8MsCduLm0Cg5R-E8w7IGjzSYdcN2F8BUZlvDA_M-pILC6J5NWghr4h-lgYw0J-41lgazrinxS7_HokX6JM7daF7hHImrDuQHOym5vlKjcYca9webzFB0CL3DT_gIL6GlhNjpc17WTaauH9wjxSP2LIdgSrYrLR-rrNsd8DqSSxtqRw">
+</div>
+</div>
+</header>
+<main class="px-margin-mobile pt-lg pb-32 flex flex-col gap-lg max-w-md mx-auto">
+<!-- Status Banner -->
+<div class="bg-primary-fixed/40 p-md rounded-2xl flex items-center gap-md border border-primary/10 animate-pulse-slow">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">sync</span>
+</div>
+<div>
+<p class="font-label-md text-primary">Handover in Progress</p>
+<p class="font-caption text-on-surface-variant">Waiting for owner confirmation...</p>
+</div>
+</div>
+<!-- QR Code Section -->
+<div class="bg-card-bg rounded-[32px] p-lg shadow-sm border border-border-default flex flex-col items-center gap-lg">
+<div class="qr-gradient-border rounded-[24px]">
+<div class="bg-white p-lg rounded-[20px]">
+<img class="w-64 h-64" data-alt="A clean, high-contrast, professional QR code centered on a white background. The QR code has rounded square modules and a distinct tech-oriented aesthetic. The overall presentation is minimalist and functional, designed for mobile scanning. Subtle corner markings in the corporate indigo brand color indicate the focus area." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDq3SwIun2GEKBEbzzB_sp48lMmqt_VmEr6okZdFnyrcJYjm_c24n1EUnHtMln-gZ5z9EclfPKNeKLQKTPB_eKO4j99wEBteuaPnOaheNgULImrjD47cBPOi-hd_ksS7fdTt2ktKPMrlacnQtNuv9SXhjYLBYrTt-9C8-5EJ5RyX-LQdIe16Y7UkXy_D55SQtYeZTlxz6mT-TXEkwpRp-hA9mnlOm7ZMoDcHdsNLP9BWzuxM_3i0RBHwaMNgsAsucuiMUx4uWFnhrg">
+</div>
+</div>
+<div class="text-center space-y-sm px-sm">
+<p class="font-body-md text-on-surface font-semibold">
+                    Let the owner scan this code to confirm receipt.
+                </p>
+<p class="font-caption text-text-secondary">
+                    This confirms that the item has been safely returned to its rightful owner.
+                </p>
+</div>
+</div>
+<!-- Item & Owner Context -->
+<div class="bg-card-bg rounded-2xl p-md shadow-sm border border-border-default flex items-center gap-md">
+<div class="w-20 h-20 rounded-xl overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-quality studio photograph of a premium black metallic water bottle with a slight textured finish. The lighting is soft and professional, highlighting the contours and quality materials of the bottle. The image has a clean, airy aesthetic consistent with a modern student-focused campus application. Light neutral background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDxyn14KbpUaXEubvR0K9qazIlruW-GQis71s1rzE4GTLPAfnk3JqvAo4UTLMchjlVxF8AQ1MbWXK_-wvW68nHrpPERysBubxHhowkrN_5ix-2v_nscZZRIeta0CLa989ioo3bbKRCPn2OUrCDqaiOUgqc8Hdqu3j1TrwjkYfyZyqgZWE3qmka_argLZ0nssTB49Eyegb3BGdnPKMvbaDcko0CNEkTc8iwtgEs-eb2qtZ8jcpj_35GLZI6xVtRxbIqhThDSZgZsn4">
+</div>
+<div class="flex-1">
+<h3 class="font-label-md text-on-surface">HydroFlask Black (24oz)</h3>
+<div class="flex items-center gap-xs mt-1">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">person</span>
+<p class="font-caption text-text-secondary">Owner: <span class="text-on-surface font-semibold">Alex Rivera</span></p>
+</div>
+<div class="flex items-center gap-xs mt-1">
+<span class="material-symbols-outlined text-secondary text-[18px]">workspace_premium</span>
+<p class="font-caption text-secondary font-bold">+50 XP Pending</p>
+</div>
+</div>
+</div>
+<!-- Help Section -->
+<div class="flex flex-col gap-sm mt-4">
+<button class="w-full py-md px-lg rounded-xl border border-outline-variant font-label-md text-on-surface flex items-center justify-center gap-sm active:scale-95 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">support_agent</span>
+                Handover Issues?
+            </button>
+<button class="w-full py-md px-lg rounded-xl text-error font-label-md flex items-center justify-center gap-sm active:scale-95 transition-all">
+                Cancel Handover
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface dark:bg-dark-bg pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-1 transition-colors">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-caption text-caption">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-dark-primary bg-primary-fixed/30 rounded-full px-4 py-1 active:scale-90 duration-100">
+<span class="material-symbols-outlined" data-icon="add_box" style="font-variation-settings: 'FILL' 1;">add_box</span>
+<span class="font-caption text-caption">Report</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-1 transition-colors">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-caption text-caption">Matches</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full px-4 py-1 transition-colors">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-caption text-caption">Profile</span>
+</button>
+</nav>
+<script>
+        // Simple micro-interaction for the QR code
+        document.querySelector('.qr-gradient-border').addEventListener('click', function() {
+            this.classList.add('scale-95');
+            setTimeout(() => {
+                this.classList.remove('scale-95');
+                this.classList.add('scale-105');
+                setTimeout(() => this.classList.remove('scale-105'), 200);
+            }, 100);
+        });
+
+        // Simulating the handover process success
+        setTimeout(() => {
+            console.log("Handover confirmation polling started...");
+        }, 2000);
+    </script>
+</body></html>

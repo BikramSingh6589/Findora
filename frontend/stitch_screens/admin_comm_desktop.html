@@ -1,0 +1,479 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Communication Moderation | FoundIt AI Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "border-default": "#E5E7EB",
+                    "inverse-surface": "#2d3133",
+                    "inverse-primary": "#c0c1ff",
+                    "surface-dim": "#d8dadc",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary-container": "#8455ef",
+                    "background": "#f7f9fb",
+                    "warning": "#FB923C",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#05006c",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "on-primary-container": "#f9f6ff",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "secondary-fixed": "#e9ddff",
+                    "outline": "#767586",
+                    "outline-variant": "#c6c5d7",
+                    "dark-bg": "#111827",
+                    "surface-variant": "#e0e3e5",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "error": "#ba1a1a",
+                    "secondary": "#6b38d4",
+                    "inverse-on-surface": "#eff1f3",
+                    "tertiary-container": "#916c00",
+                    "on-error": "#ffffff",
+                    "dark-card": "#1F2937",
+                    "tertiary-fixed": "#ffdf9f",
+                    "card-bg": "#FFFFFF",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-container": "#fff7ee",
+                    "primary": "#4143d5",
+                    "on-tertiary": "#ffffff",
+                    "info-ai": "#38BDF8",
+                    "primary-container": "#5b5fef",
+                    "on-secondary-container": "#fffbff",
+                    "on-surface-variant": "#464555",
+                    "on-secondary-fixed": "#23005c",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#261a00",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "on-background": "#191c1e",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#e1e0ff",
+                    "dark-primary": "#8B80FF",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "tertiary": "#735500",
+                    "success": "#22C55E",
+                    "surface": "#f7f9fb",
+                    "text-primary": "#111827",
+                    "text-secondary": "#6B7280",
+                    "surface-container-high": "#e6e8ea",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "danger": "#F43F5E",
+                    "on-surface": "#191c1e",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#474adb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "32px",
+                    "3xl": "64px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "sm": "8px",
+                    "base": "8px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "section-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: #5b5fef;
+            color: #f9f6ff;
+            border-radius: 0.5rem;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e0e3e5;
+            border-radius: 10px;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-text-primary overflow-hidden h-screen flex">
+<!-- SideNavBar (Desktop Only based on JSON) -->
+<aside class="hidden md:flex flex-col h-full p-lg bg-card-bg border-r border-border-default w-64 shrink-0 shadow-sm z-50">
+<div class="mb-xl">
+<h1 class="font-page-title text-page-title text-primary tracking-tight">FoundIt AI</h1>
+<p class="text-text-secondary font-caption">Campus Admin Portal</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-md px-md py-base text-text-secondary hover:bg-surface-container-low transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-base bg-primary-container text-on-primary-container rounded-lg font-label-md shadow-sm" href="#">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+<span class="font-label-md">Claim Management</span>
+</a>
+<a class="flex items-center gap-md px-md py-base text-text-secondary hover:bg-surface-container-low transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">verified</span>
+<span class="font-label-md">Item Moderation</span>
+</a>
+<a class="flex items-center gap-md px-md py-base text-text-secondary hover:bg-surface-container-low transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md">User Management</span>
+</a>
+<a class="flex items-center gap-md px-md py-base text-text-secondary hover:bg-surface-container-low transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto space-y-1">
+<button class="w-full mb-md py-3 px-4 bg-primary text-on-primary font-label-md rounded-xl shadow-[0_8px_20px_rgba(91,95,239,0.25)] hover:scale-[1.03] transition-all">
+                Add New Item
+            </button>
+<a class="flex items-center gap-md px-md py-base text-text-secondary hover:bg-surface-container-low transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-base text-text-secondary hover:bg-surface-container-low transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md">Support</span>
+</a>
+<div class="flex items-center gap-md pt-md border-t border-border-default mt-md">
+<img class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="A professional headshot of a university administrator in their late 30s, wearing a modern smart-casual outfit. The background is a clean, out-of-focus university office with soft daylight. High-quality corporate photography style with natural lighting and a helpful, approachable expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbEf_u2XwRshSVLCe_xkv7DaRwEmT2O_9__iicxigEegjlso6APzyqbJv_T_nDWD4sY14slNXxQ7asj25N445aoGT_q4u4H5W2eclKmwJrc-_jkSmKrny9TfkwuNBtDce5wEM97LayV_3pqIg-IpUm6Dopa4tg4AFMemWFPmaWKCM7A7WrDCiRQaiZSwnml_FURgy-gc6fzWJFRMETMl4fsDJARz_-tqxpaM_TaVjcvnJ-vm4HP2_S1uZxv6Q7HOW7cXEOx3su5Ag">
+<div>
+<p class="font-label-md text-text-primary leading-none">Alex Rivers</p>
+<p class="font-caption text-text-secondary">Senior Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-desktop py-base bg-surface/80 backdrop-blur-md border-b border-border-default sticky top-0 z-40">
+<div class="flex items-center gap-xl flex-grow">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Search claims, users, or items..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="relative p-2 text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full"></span>
+</button>
+<button class="p-2 text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<!-- Moderation Split View Content -->
+<div class="flex-grow flex overflow-hidden">
+<!-- Left Panel: Pending Requests List -->
+<section class="w-[400px] border-r border-border-default flex flex-col bg-surface-container-low/30 overflow-hidden">
+<div class="p-lg border-b border-border-default">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-section-title text-section-title tracking-tight">Active Requests</h2>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-label-md text-sm">24 Total</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-md text-sm shadow-sm">All</button>
+<button class="bg-white text-text-secondary border border-border-default px-4 py-1.5 rounded-full font-label-md text-sm hover:bg-surface-variant transition-colors">High Match</button>
+<button class="bg-white text-text-secondary border border-border-default px-4 py-1.5 rounded-full font-label-md text-sm hover:bg-surface-variant transition-colors">Urgent</button>
+</div>
+</div>
+<div class="flex-grow overflow-y-auto custom-scrollbar p-md space-y-md">
+<!-- Request Card 1 (Selected) -->
+<div class="p-md bg-card-bg rounded-2xl shadow-md border-2 border-primary cursor-pointer hover:scale-[1.02] transition-all group">
+<div class="flex justify-between items-start mb-base">
+<span class="font-caption text-primary font-bold">CLAIM #FD-8832</span>
+<div class="flex items-center gap-1 bg-success/10 text-success px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="text-xs font-bold">98% Match</span>
+</div>
+</div>
+<h3 class="font-card-title text-[18px] leading-tight mb-xs">Blue Leather Wallet</h3>
+<p class="text-text-secondary text-sm mb-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span>
+                            Claimant: Jamie Chen
+                        </p>
+<div class="flex items-center justify-between">
+<span class="text-xs text-text-secondary">Requested 2h ago</span>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Request Card 2 -->
+<div class="p-md bg-card-bg/60 rounded-2xl border border-border-default cursor-pointer hover:bg-white hover:shadow-sm hover:scale-[1.02] transition-all group">
+<div class="flex justify-between items-start mb-base">
+<span class="font-caption text-text-secondary font-bold">CLAIM #FD-9014</span>
+<div class="flex items-center gap-1 bg-warning/10 text-warning px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="text-xs font-bold">82% Match</span>
+</div>
+</div>
+<h3 class="font-card-title text-[18px] leading-tight mb-xs">MacBook Pro 14" M2</h3>
+<p class="text-text-secondary text-sm mb-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span>
+                            Claimant: Sarah Johnson
+                        </p>
+<div class="flex items-center justify-between">
+<span class="text-xs text-text-secondary">Requested 5h ago</span>
+<span class="material-symbols-outlined text-text-secondary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Request Card 3 -->
+<div class="p-md bg-card-bg/60 rounded-2xl border border-border-default cursor-pointer hover:bg-white hover:shadow-sm hover:scale-[1.02] transition-all group">
+<div class="flex justify-between items-start mb-base">
+<span class="font-caption text-text-secondary font-bold">CLAIM #FD-7721</span>
+<div class="flex items-center gap-1 bg-info-ai/10 text-info-ai px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="text-xs font-bold">65% Match</span>
+</div>
+</div>
+<h3 class="font-card-title text-[18px] leading-tight mb-xs">Sony WH-1000XM4</h3>
+<p class="text-text-secondary text-sm mb-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span>
+                            Claimant: Marcus Bell
+                        </p>
+<div class="flex items-center justify-between">
+<span class="text-xs text-text-secondary">Requested 1d ago</span>
+<span class="material-symbols-outlined text-text-secondary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Detailed View -->
+<section class="flex-grow flex flex-col bg-background overflow-y-auto custom-scrollbar">
+<!-- Hero Detail Header -->
+<div class="p-xl bg-white border-b border-border-default">
+<div class="flex justify-between items-start mb-lg">
+<div>
+<div class="flex items-center gap-md mb-base">
+<h1 class="font-page-title text-page-title tracking-tight">Claim Moderation</h1>
+<span class="px-3 py-1 bg-warning/10 text-warning font-label-md rounded-lg text-sm border border-warning/20">Awaiting Mediation</span>
+</div>
+<p class="text-body-lg text-text-secondary">Detailed review for Case <strong>#FD-8832</strong>: Blue Leather Wallet</p>
+</div>
+<div class="flex gap-md">
+<button class="px-6 py-3 bg-error text-on-error font-label-md rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-md">
+                                Reject Request
+                            </button>
+<button class="px-6 py-3 border-2 border-primary text-primary font-label-md rounded-xl hover:bg-primary/5 active:scale-95 transition-all">
+                                Mediate Personally
+                            </button>
+<button class="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md rounded-xl hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_30px_rgba(91,95,239,0.25)]">
+                                Approve Direct Contact
+                            </button>
+</div>
+</div>
+<!-- Bento-style Metadata -->
+<div class="grid grid-cols-3 gap-lg">
+<div class="p-md bg-surface-container-low rounded-2xl border border-border-default">
+<div class="flex items-center gap-2 text-primary mb-xs">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md">Claimant Information</span>
+</div>
+<p class="font-bold text-lg">Jamie Chen</p>
+<p class="text-sm text-text-secondary">ID: 2024-STU-882</p>
+<p class="text-sm text-text-secondary">Reliability Score: <span class="text-success font-bold">94%</span></p>
+</div>
+<div class="p-md bg-surface-container-low rounded-2xl border border-border-default">
+<div class="flex items-center gap-2 text-secondary mb-xs">
+<span class="material-symbols-outlined">person_search</span>
+<span class="font-label-md">Finder Preference</span>
+</div>
+<p class="font-bold text-lg">Jordan Smith</p>
+<p class="text-sm text-danger font-bold italic flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+                                Anonymous / No Direct Contact
+                            </p>
+<p class="text-sm text-text-secondary">Prefers: Admin Mediation</p>
+</div>
+<div class="p-md bg-info-ai/5 rounded-2xl border border-info-ai/20 ring-1 ring-info-ai/10">
+<div class="flex items-center gap-2 text-info-ai mb-xs">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md">AI Verification</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full mt-2">
+<div class="bg-info-ai h-full rounded-full w-[98%]"></div>
+</div>
+<p class="text-xs text-info-ai mt-2 font-bold uppercase tracking-wider">Extremely High Confidence</p>
+</div>
+</div>
+</div>
+<!-- Main Content Body -->
+<div class="p-xl grid grid-cols-12 gap-lg pb-3xl">
+<!-- Left: Evidence & Proof -->
+<div class="col-span-7 space-y-lg">
+<div class="bg-white p-lg rounded-3xl shadow-sm border border-border-default">
+<h2 class="font-section-title text-[24px] mb-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">description</span>
+                                Claimant's Proof of Ownership
+                            </h2>
+<div class="space-y-md">
+<div class="p-md bg-surface-container-low rounded-xl">
+<p class="text-sm font-bold text-text-secondary uppercase mb-xs">Written Description</p>
+<p class="text-body-md italic text-text-primary">"It's a navy blue leather wallet with a slightly frayed edge on the bottom left. Inside, there's my student ID, a Starbucks card with about $4 left, and a polaroid of my golden retriever, Max, tucked behind the pocket."</p>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="relative group">
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all text-3xl cursor-pointer">zoom_in</span>
+</div>
+<img class="w-full h-48 object-cover rounded-2xl border border-border-default" data-alt="A close-up photograph of a worn navy blue leather wallet on a wooden table. The lighting is soft and warm, showcasing the texture of the grain and a specific frayed edge on the lower left corner. The style is clear, evidentiary, and highly detailed to support the claims management process." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo2o9-GYyjlLH_WpBE0CnYAzLtPSQmAfzinfVFBbAPgTs8FhA6sEoSAOPgy3zy7TEZSLslVbw_L7BLUg_twR0-znNttYaPIg3CcuCWJZbajFxOrHU6JWJ74RF1t33YlLCweWbE-MVmXz0JdFyCeJdeaPIqXeRkeYlvAPz54ha3GCa34hQc0rJzZrr_kDjw8pFjyb3YLeogvZpjP_qf5Yo0ytKW7d4Zij-rbsgE7IvQlPfP83dARFskCVZTr9TsyRsbCgtZCdw_vvA">
+</div>
+<div class="relative group">
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all text-3xl cursor-pointer">zoom_in</span>
+</div>
+<img class="w-full h-48 object-cover rounded-2xl border border-border-default" data-alt="A small, slightly faded Polaroid photo of a golden retriever dog sitting on a green lawn. The dog has a bright, happy expression. The photo is shown held between fingers to provide scale and context. The aesthetic is nostalgic and personal, consistent with a sentimental item found inside a lost wallet." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe71TKRJeIBieyZfDhW5XT0zqOwaZKkgdv9_D8nXG78VJQYtc_5YenlZuLFwVEvRNGC88Zs79XBkKk49SHxvR2QKQrG91acS6cy8Xxbcim6pi4tHa_1VuV7cZQryQoh7D-amS8t6F2YxF0keLW_xPMnj51lMKVrcfBhVLPgcw2vIlqhRGZ6VdT74OD3CcjDFE6MosZKaWtAcIvULqHnt8jADA3xNN1Ekzvj-kLfgUI8PAdBz4sIr7KOmBIukA6pPbxDYnkiJELdd4">
+</div>
+</div>
+<div class="p-md border-l-4 border-success bg-success/5 rounded-r-xl">
+<p class="text-sm font-bold text-success flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+                                        ADMIN NOTE
+                                    </p>
+<p class="text-sm">The Polaroid description exactly matches the item image provided by the finder during intake.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Finder context & Timeline -->
+<div class="col-span-5 space-y-lg">
+<!-- Finder Context -->
+<div class="bg-white p-lg rounded-3xl shadow-sm border border-border-default">
+<h2 class="font-section-title text-[24px] mb-md flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">handshake</span>
+                                Finder Context
+                            </h2>
+<div class="space-y-base">
+<div class="flex items-center justify-between py-2 border-b border-border-default">
+<span class="text-text-secondary">Found Date</span>
+<span class="font-bold">Oct 24, 2023</span>
+</div>
+<div class="flex items-center justify-between py-2 border-b border-border-default">
+<span class="text-text-secondary">Found Location</span>
+<span class="font-bold">Student Union (Level 2)</span>
+</div>
+<div class="flex items-center justify-between py-2 border-b border-border-default">
+<span class="text-text-secondary">Communication Mode</span>
+<span class="text-danger font-bold">Admin-Only (Strict)</span>
+</div>
+<div class="py-2">
+<p class="text-sm font-bold text-text-secondary mb-xs">Finder's Message to Admin</p>
+<p class="text-sm text-text-primary p-md bg-surface-container rounded-xl border border-border-default">"I'm very busy with finals and would rather not meet up in person. Please just verify the student and I can drop it off at the Lost &amp; Found hub desk."</p>
+</div>
+</div>
+</div>
+<!-- Match Audit Log -->
+<div class="bg-white p-lg rounded-3xl shadow-sm border border-border-default">
+<h2 class="font-section-title text-[24px] mb-md flex items-center gap-2">
+<span class="material-symbols-outlined text-info-ai">history</span>
+                                Match Audit
+                            </h2>
+<div class="space-y-md relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-border-default">
+<div class="flex gap-md relative">
+<div class="w-[24px] h-[24px] bg-success rounded-full flex items-center justify-center z-10 shrink-0">
+<span class="material-symbols-outlined text-[14px] text-white" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<div>
+<p class="font-label-md text-sm">AI Match Confidence: 98%</p>
+<p class="text-xs text-text-secondary">Today, 10:42 AM</p>
+</div>
+</div>
+<div class="flex gap-md relative">
+<div class="w-[24px] h-[24px] bg-primary rounded-full flex items-center justify-center z-10 shrink-0">
+<span class="material-symbols-outlined text-[14px] text-white">person</span>
+</div>
+<div>
+<p class="font-label-md text-sm">Claimant requested contact</p>
+<p class="text-xs text-text-secondary">Today, 11:15 AM</p>
+</div>
+</div>
+<div class="flex gap-md relative">
+<div class="w-[24px] h-[24px] bg-warning rounded-full flex items-center justify-center z-10 shrink-0">
+<span class="material-symbols-outlined text-[14px] text-white">priority_high</span>
+</div>
+<div>
+<p class="font-label-md text-sm">Moderation Ticket Opened</p>
+<p class="text-xs text-text-secondary">Today, 11:20 AM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple hover lift effect for cards handled by tailwind (hover:scale-[1.02])
+        // Interaction logic for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.classList.add('scale-95');
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.classList.remove('scale-95');
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.classList.remove('scale-95');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>

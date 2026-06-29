@@ -1,0 +1,357 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Admin Communication Moderation | FoundIt AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "border-default": "#E5E7EB",
+                    "inverse-surface": "#2d3133",
+                    "inverse-primary": "#c0c1ff",
+                    "surface-dim": "#d8dadc",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary-container": "#8455ef",
+                    "background": "#f7f9fb",
+                    "warning": "#FB923C",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#05006c",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "on-primary-container": "#f9f6ff",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "secondary-fixed": "#e9ddff",
+                    "outline": "#767586",
+                    "outline-variant": "#c6c5d7",
+                    "dark-bg": "#111827",
+                    "surface-variant": "#e0e3e5",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "error": "#ba1a1a",
+                    "secondary": "#6b38d4",
+                    "inverse-on-surface": "#eff1f3",
+                    "tertiary-container": "#916c00",
+                    "on-error": "#ffffff",
+                    "dark-card": "#1F2937",
+                    "tertiary-fixed": "#ffdf9f",
+                    "card-bg": "#FFFFFF",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-container": "#fff7ee",
+                    "primary": "#4143d5",
+                    "on-tertiary": "#ffffff",
+                    "info-ai": "#38BDF8",
+                    "primary-container": "#5b5fef",
+                    "on-secondary-container": "#fffbff",
+                    "on-surface-variant": "#464555",
+                    "on-secondary-fixed": "#23005c",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#261a00",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "on-background": "#191c1e",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#e1e0ff",
+                    "dark-primary": "#8B80FF",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "tertiary": "#735500",
+                    "success": "#22C55E",
+                    "surface": "#f7f9fb",
+                    "text-primary": "#111827",
+                    "text-secondary": "#6B7280",
+                    "surface-container-high": "#e6e8ea",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "danger": "#F43F5E",
+                    "on-surface": "#191c1e",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#474adb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "32px",
+                    "3xl": "64px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "sm": "8px",
+                    "base": "8px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "section-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .custom-shadow {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+        .active-tab-glow {
+            box-shadow: 0 0 15px rgba(91,95,239,0.25);
+        }
+        .animate-slide-up {
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Top App Bar -->
+<header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-border-default h-16 flex items-center px-margin-mobile">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">find_replace</span>
+</div>
+<div>
+<h1 class="font-page-title-mobile text-page-title-mobile text-primary leading-none">FoundIt AI</h1>
+<p class="text-[10px] uppercase tracking-wider font-bold text-text-secondary">Moderation Portal</p>
+</div>
+</div>
+<div class="ml-auto flex items-center gap-3">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-text-secondary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5">
+<img class="w-full h-full rounded-full object-cover" data-alt="A professional headshot of a university administrator with a friendly and approachable expression, wearing a navy blazer over a light blue shirt. The lighting is soft and studio-quality, emphasizing a bright and professional tone consistent with a modern university campus aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9Xk5qiqP79_qvxCvqTHfP-HsqWCvPi5IRKB9DzD-hEzrfQmBVadq64qHzx8Q5feCL-R9v5ilCC6rST5g_xvzJhKaiCkql7MkBQyV2TbDN8yHKSsnN8PYDQ_BnUwM1cQO53VaYQMdaUFrttfiI_efbCJaf_nbUrsOGNeeoUhS6Shx0xNq9yXlJ-giGFXaNLJSA8wduS9ZuEpsYWMi9My5ee2s0Rh0MIW8aMC9DEzdgiq3MJlfWlj42hkW_J_Fy-cmvZ4qSZPqgKQY">
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-20 pb-24 px-margin-mobile">
+<div class="flex flex-col gap-2 mb-6">
+<h2 class="font-section-title text-section-title text-text-primary">Communication Requests</h2>
+<p class="font-body-md text-body-md text-text-secondary">Review pending requests for claimant communication.</p>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-4 py-2 rounded-full bg-primary text-white font-label-md text-label-md active:scale-95 transition-transform">All Requests</button>
+<button class="px-4 py-2 rounded-full bg-white border border-border-default text-text-secondary font-label-md text-label-md active:scale-95 transition-transform">Urgent</button>
+<button class="px-4 py-2 rounded-full bg-white border border-border-default text-text-secondary font-label-md text-label-md active:scale-95 transition-transform">Electronics</button>
+<button class="px-4 py-2 rounded-full bg-white border border-border-default text-text-secondary font-label-md text-label-md active:scale-95 transition-transform">Documents</button>
+</div>
+<!-- List of Cards -->
+<div class="space-y-4">
+<!-- Card 1 -->
+<div class="bg-card-bg rounded-2xl p-4 custom-shadow border border-transparent hover:border-primary/20 active:scale-95 transition-all duration-200 animate-slide-up" onclick="openModerationDetail('MacBook Pro 14', 'Alex Rivera', 'image-macbook')" style="animation-delay: 0.1s;">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-xl overflow-hidden bg-surface-container shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-quality studio photograph of a space gray Apple MacBook Pro 14-inch on a clean, white surface. The lighting is crisp and bright, highlighting the sleek metallic finish and modern design, aligned with a premium corporate technology aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF5GL40Ma62wF2cB6y80XTvjIYV7i99RGElAE_mq9ZVKns3tlnYmeX-Xca6eZTUKpsg619UL-QvF_7V_9TOgs8Ror6t4yUkD-fHyqwqUMw1fUYb5PO-qrG-PCjt3TKDT3N-ebxH4Ht_msoA2OUbJW5wUBd22omh9vhAqJmBRVZDKC-bHDFssvSN0MwoOJtktuqyo_-Wt8idp9bhWaab3CUx-5xBRbD3Grz17IcqFtNntr0l_j8gn0whpuc27LAonnS4zdxSzq35Ho">
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-label-md text-text-primary truncate">MacBook Pro 14"</h3>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-warning/10 text-warning text-[10px] font-bold uppercase tracking-wider">Pending Admin</span>
+</div>
+<p class="font-body-md text-caption text-text-secondary mt-1">Claimant: <span class="text-text-primary font-semibold">Alex Rivera</span></p>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-[16px] text-primary">chat_bubble</span>
+<p class="text-caption text-primary font-medium">New message moderation</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-card-bg rounded-2xl p-4 custom-shadow border border-transparent hover:border-primary/20 active:scale-95 transition-all duration-200 animate-slide-up" onclick="openModerationDetail('Leather Wallet', 'Sarah Jenkins', 'image-wallet')" style="animation-delay: 0.2s;">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-xl overflow-hidden bg-surface-container shrink-0">
+<img class="w-full h-full object-cover" data-alt="A detailed shot of a premium tan leather bifold wallet resting on a minimalist oak table. The lighting is warm and natural, creating soft shadows and emphasizing the tactile texture of the leather. The overall mood is reliable and high-quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDc_kM4XtgCWlmeOr26HRv33FiDz6mfQDymWgX2zn25mcEPDdVNWWP9AwlxXcqmOEtg925dMG7PwDoVMpWgztTh7mG0F81ymrPQVAYMwfT-ZG6zpFx9oxAbT8L3henhz8PMjbh0tzSKO9xjDQIVtygOVnOrCdU13nODJ5sI6qG14J1Up8v_sYRa-zn9l-unE1fCx16-Wn5lH7lqc8do3OoTs-Jf57XiZ3UWX-VuQIQHyvV93ryr0j0Uv07vrIXMwwbk3ig5z-3LHPQ">
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-label-md text-text-primary truncate">Leather Wallet</h3>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-warning/10 text-warning text-[10px] font-bold uppercase tracking-wider">Pending Admin</span>
+</div>
+<p class="font-body-md text-caption text-text-secondary mt-1">Claimant: <span class="text-text-primary font-semibold">Sarah Jenkins</span></p>
+<div class="flex items-center gap-2 mt-2 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">history</span>
+<p class="text-caption">Requested 2h ago</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-card-bg rounded-2xl p-4 custom-shadow border border-transparent hover:border-primary/20 active:scale-95 transition-all duration-200 animate-slide-up" onclick="openModerationDetail('HydroFlask White', 'Mark Zhang', 'image-bottle')" style="animation-delay: 0.3s;">
+<div class="flex gap-4">
+<div class="w-20 h-20 rounded-xl overflow-hidden bg-surface-container shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist product photograph of a white HydroFlask water bottle with a silver cap. The background is a soft, light-blue gradient that reflects a fresh and energetic campus vibe. The lighting is even and optimistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjhQ_qExB8ek214n_0DRWo1AlUA-vAhzyHuGmazt9iDX77cbAIXFcbKRRhDvSPAe1Nxy0Xm1-naB-gAzZnc1gxl4c_O1ZVq14ppljPmLtU1rR1hFAE9QVjQ8v1DV4tYirqtSHi3DWz3iH_h3qC_13dLb8cZZP2fpTbBvU91gr92DBSYxGh212b0KgQApUOcVW069qydBfBjDl6d3_ZQHxegrjDA_sANyVK6th1PDiDcWJuuQkWD96uTReGDG0Y3rJUWeBePV8Kpxk">
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-label-md text-text-primary truncate">HydroFlask White</h3>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-warning/10 text-warning text-[10px] font-bold uppercase tracking-wider">Pending Admin</span>
+</div>
+<p class="font-body-md text-caption text-text-secondary mt-1">Claimant: <span class="text-text-primary font-semibold">Mark Zhang</span></p>
+<div class="flex items-center gap-2 mt-2 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">history</span>
+<p class="text-caption">Requested 5h ago</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Detail Modal Overlay (Hidden by default) -->
+<div class="fixed inset-0 z-[60] hidden" id="detail-modal">
+<div class="absolute inset-0 bg-inverse-surface/40 backdrop-blur-sm" onclick="closeModerationDetail()"></div>
+<div class="absolute bottom-0 left-0 right-0 glass-panel rounded-t-[32px] p-margin-mobile flex flex-col gap-6 transform translate-y-full transition-transform duration-300 ease-out" id="modal-content">
+<div class="w-12 h-1.5 bg-border-default rounded-full mx-auto"></div>
+<div class="flex gap-4 items-center">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container shrink-0" id="modal-item-img"></div>
+<div class="flex-1">
+<h3 class="font-section-title text-[20px] text-text-primary" id="modal-item-name"></h3>
+<p class="font-body-md text-body-md text-text-secondary" id="modal-claimant-name"></p>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-text-secondary" onclick="closeModerationDetail()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="bg-surface-container-low rounded-2xl p-4">
+<h4 class="font-label-md text-label-md text-text-primary mb-2">Claimant Message:</h4>
+<p class="font-body-md text-body-md text-on-surface-variant italic">
+                    "I lost my laptop yesterday in the library near the coffee shop. It has a 'Geology Rules' sticker on the lid. Please let me contact the finder to arrange a pickup!"
+                </p>
+</div>
+<div class="flex flex-col gap-3 pb-8">
+<button class="w-full py-4 bg-primary text-white font-label-md rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-primary/20" onclick="handleAction('Approved')">
+<span class="material-symbols-outlined">verified</span>
+                    Approve Communication
+                </button>
+<button class="w-full py-4 border-2 border-primary text-primary font-label-md rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all" onclick="handleAction('Mediating')">
+<span class="material-symbols-outlined">gavel</span>
+                    Mediate Request
+                </button>
+<button class="w-full py-4 text-danger font-label-md rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all" onclick="handleAction('Denied')">
+<span class="material-symbols-outlined">block</span>
+                    Decline Request
+                </button>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar (Admin) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-xl md:hidden px-4 py-2 flex justify-around items-center safe-area-bottom">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center text-text-secondary p-2 hover:bg-surface-variant transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-caption text-caption">Dashboard</span>
+</a>
+<!-- Claims -->
+<a class="flex flex-col items-center justify-center text-text-secondary p-2 hover:bg-surface-variant transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-caption text-caption">Claims</span>
+</a>
+<!-- Moderate (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl p-2 active-tab-glow" href="#">
+<span class="material-symbols-outlined" data-icon="rule" style="font-variation-settings: 'FILL' 1;">rule</span>
+<span class="font-caption text-caption">Moderate</span>
+</a>
+<!-- Alerts -->
+<a class="flex flex-col items-center justify-center text-text-secondary p-2 hover:bg-surface-variant transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-caption text-caption">Alerts</span>
+</a>
+</nav>
+<script>
+        function openModerationDetail(itemName, claimantName, imgId) {
+            document.getElementById('modal-item-name').innerText = itemName;
+            document.getElementById('modal-claimant-name').innerText = 'Claimed by ' + claimantName;
+            
+            // Set image placeholder with appropriate alt
+            const imgContainer = document.getElementById('modal-item-img');
+            let altText = "";
+            if(itemName.includes("MacBook")) {
+                altText = "A detailed product photo of a silver MacBook laptop from a high angle, displaying its sleek chassis and clean keyboard. Set against a professional university-themed studio background with cool blue tones and soft lighting.";
+            } else if(itemName.includes("Wallet")) {
+                altText = "A close-up shot of a leather bifold wallet with visible stitching detail, resting on a clean white desk. The lighting is soft and natural, emphasizing textures and quality in a bright, modern light-mode setting.";
+            } else {
+                altText = "A pristine white reusable water bottle with a minimalist silver cap, placed in a vibrant and clean university common area. The scene is bright and airy with modern architectural details blurred in the background.";
+            }
+            
+            imgContainer.innerHTML = `<img src="placeholder" data-alt="${altText}" class="w-full h-full object-cover">`;
+            
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('modal-content');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closeModerationDetail() {
+            const content = document.getElementById('modal-content');
+            content.classList.add('translate-y-full');
+            setTimeout(() => {
+                document.getElementById('detail-modal').classList.add('hidden');
+            }, 300);
+        }
+
+        function handleAction(action) {
+            alert('Request ' + action);
+            closeModerationDetail();
+        }
+
+        // Simple haptic feedback simulation for buttons
+        document.querySelectorAll('button, a, div[onclick]').forEach(el => {
+            el.addEventListener('touchstart', () => {
+                if ('vibrate' in navigator) navigator.vibrate(5);
+            });
+        });
+    </script>
+</body></html>

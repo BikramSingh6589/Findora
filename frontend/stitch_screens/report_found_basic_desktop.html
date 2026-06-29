@@ -1,0 +1,345 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Report Found Item - Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .stepper-line {
+            height: 2px;
+            background: #E5E7EB;
+            flex-grow: 1;
+            margin: 0 16px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .input-focus-ring:focus {
+            outline: none;
+            border-color: #4143d5;
+            box-shadow: 0 0 0 4px rgba(91, 95, 239, 0.15);
+        }
+    </style>
+<!-- Tailwind Config Verbatim -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface": "#f7f9fb",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "surface-container-low": "#f2f4f6",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-primary-fixed-variant": "#2c2cc3",
+                      "secondary-container": "#8455ef",
+                      "surface-bright": "#f7f9fb",
+                      "text-primary": "#111827",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "on-primary-container": "#f9f6ff",
+                      "outline": "#767586",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed": "#05006c",
+                      "tertiary-fixed": "#ffdf9f",
+                      "on-surface-variant": "#464555",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "primary-fixed": "#e1e0ff",
+                      "primary": "#4143d5",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#e9ddff",
+                      "background": "#f7f9fb",
+                      "tertiary": "#735500",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "dark-card": "#1F2937",
+                      "text-secondary": "#6B7280",
+                      "surface-dim": "#d8dadc",
+                      "success": "#22C55E",
+                      "on-secondary-fixed": "#23005c",
+                      "border-default": "#E5E7EB",
+                      "surface-variant": "#e0e3e5",
+                      "error": "#ba1a1a",
+                      "card-bg": "#FFFFFF",
+                      "tertiary-container": "#916c00",
+                      "surface-tint": "#474adb",
+                      "warning": "#FB923C",
+                      "danger": "#F43F5E",
+                      "secondary": "#6b38d4",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "surface-container-high": "#e6e8ea",
+                      "inverse-surface": "#2d3133",
+                      "on-error-container": "#93000a",
+                      "info-ai": "#38BDF8",
+                      "on-tertiary-container": "#fff7ee",
+                      "dark-bg": "#111827",
+                      "outline-variant": "#c6c5d7",
+                      "on-background": "#191c1e",
+                      "on-surface": "#191c1e",
+                      "on-tertiary-fixed": "#261a00",
+                      "surface-container": "#eceef0",
+                      "dark-primary": "#8B80FF",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-secondary-container": "#fffbff",
+                      "primary-container": "#5b5fef",
+                      "inverse-primary": "#c0c1ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "margin-mobile": "16px",
+                      "xl": "32px",
+                      "gutter": "16px",
+                      "xs": "4px",
+                      "2xl": "48px",
+                      "margin-desktop": "32px",
+                      "md": "16px",
+                      "base": "8px",
+                      "sm": "8px",
+                      "3xl": "64px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "section-title": ["Plus Jakarta Sans"],
+                      "hero-title": ["Plus Jakarta Sans"],
+                      "page-title-mobile": ["Plus Jakarta Sans"],
+                      "caption": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "card-title": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "page-title": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-text-primary">
+<!-- Top Navigation (Mobile/Standard Shell) -->
+<nav class="bg-surface/80 backdrop-blur-md font-body-md text-body-md flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md z-50 fixed top-0 docked full-width shadow-sm">
+<div class="flex items-center gap-md">
+<span class="font-page-title text-page-title-mobile font-bold text-primary">Lost&amp;Found AI</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex gap-lg">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Dashboard</a>
+<a class="text-primary font-bold border-b-2 border-primary" href="#">Report Item</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Community Board</a>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant">auto_awesome</span>
+<img alt="User profile" class="w-8 h-8 rounded-full border-2 border-primary-fixed" data-alt="A professional student profile portrait, smiling, high-quality lighting, soft studio background, modern campus attire, vibrant yet clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvL4siXCZuR7XVbRw2LMKwXLpfL6Gz0O_iP4NRixvkVrg9XaXRQNzhgA1h3gvgpUUVqWU3I3XwRpV9S0BjwbrwL5eamF3AKX9xCLKwR0mA2CeCa0j20h2NMvlVRwh-olXp0W-EzSdzSbiQd0jG59rLqFeDMYA9OJANGZ4NebK2KTqRAaDeF3KqB1jjeJaXVS2nRRcj8XdC98LklmoSOtl7lrk4KrMNY4TrIIaGlRJxJ0-ykIbH7k-BE79RtlreEEVK0Qvf6qACwqo">
+</div>
+</div>
+</nav>
+<!-- Sidebar (Desktop Anchor) -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-card-bg shadow-md p-md gap-lg z-40 pt-24">
+<div class="px-md">
+<div class="bg-surface-container-low rounded-xl p-md flex items-center gap-sm mb-lg">
+<img alt="Campus AI Assistant" class="w-10 h-10 rounded-full" data-alt="A friendly 3D rendered student avatar icon, wearing a cap, cheerful expression, soft clay-style textures, clean white background, vibrant colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtiDAyzad4CR8GkWkt1govKWm4VKB0G-1-p6i-YrdJlq055lWcxpc_eKcTQWgeAdDYsRGfk6uGaR6g9Wk8q10Cv2PxiCDdtpfhz20psYMbhh3H0XkZrI255h9VxONzC-xiJpHOJCl6Mdc3Q3zqipAG481-PlYmA_fHUcNPFUyaqf2SSaJRHxzxyyeIO2Nvvw_HS1Lt9ZGG1AgB0Et8w6afHw7Rasn3g9hIPGsWixGdaCpRCNVWbLQIaWiR5VQ6MU0hJj72KEK9teE">
+<div>
+<h3 class="font-label-md text-label-md text-text-primary">Senior Student AI</h3>
+<p class="text-caption font-caption text-text-secondary">Helper Level 12</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-sm px-sm">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md bg-primary-fixed text-on-primary-fixed-variant rounded-xl px-md py-sm transition-all duration-200 active:translate-x-1" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md text-label-md">Map View</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">My History</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-sm px-sm border-t border-surface-container pt-md">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md">Help Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 pt-24 pb-32 px-margin-mobile md:px-margin-desktop min-h-screen flex flex-col items-center">
+<div class="w-full max-w-4xl">
+<!-- Stepper -->
+<div class="mb-xl flex items-center justify-between px-lg">
+<div class="flex flex-col items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_0_15px_rgba(65,67,213,0.3)]">
+<span class="font-bold">1</span>
+</div>
+<span class="font-label-md text-label-md text-primary">Basic Info</span>
+</div>
+<div class="stepper-line"></div>
+<div class="flex flex-col items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="font-bold">2</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Detail &amp; Image</span>
+</div>
+<div class="stepper-line"></div>
+<div class="flex flex-col items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="font-bold">3</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Review</span>
+</div>
+</div>
+<!-- Content Card -->
+<div class="bg-card-bg rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-xl border border-surface-container overflow-hidden relative">
+<!-- Background decorative element -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+<header class="mb-xl relative z-10">
+<h1 class="font-page-title text-page-title text-text-primary mb-xs">Found something?</h1>
+<p class="font-body-md text-body-md text-text-secondary">Great job! Let's get this item back to its owner. Start with the basics.</p>
+</header>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-lg relative z-10">
+<!-- Item Name -->
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md text-text-primary mb-sm">Item Name</label>
+<input class="w-full px-md py-sm rounded-xl border border-border-default bg-surface-container-lowest input-focus-ring font-body-md transition-all duration-200" placeholder="e.g., Blue Bottle, Silver MacBook Air" type="text">
+</div>
+<!-- Category -->
+<div>
+<label class="block font-label-md text-label-md text-text-primary mb-sm">Category</label>
+<div class="relative">
+<select class="w-full appearance-none px-md py-sm rounded-xl border border-border-default bg-surface-container-lowest input-focus-ring font-body-md transition-all duration-200">
+<option disabled="" selected="" value="">Select a category</option>
+<option>Electronics</option>
+<option>Books &amp; Stationary</option>
+<option>Clothing &amp; Accessories</option>
+<option>Wallets &amp; IDs</option>
+<option>Keys</option>
+<option>Other</option>
+</select>
+<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">expand_more</span>
+</div>
+</div>
+<!-- Placeholder/Spaced context -->
+<div class="hidden md:block">
+<div class="h-full flex items-center p-md bg-info-ai/5 rounded-xl border border-info-ai/20">
+<span class="material-symbols-outlined text-info-ai mr-md" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="text-caption font-caption text-text-secondary">Our AI will use these details to automatically find potential owners once you finish!</p>
+</div>
+</div>
+<!-- Found Date -->
+<div>
+<label class="block font-label-md text-label-md text-text-primary mb-sm">Found Date</label>
+<div class="relative">
+<input class="w-full px-md py-sm rounded-xl border border-border-default bg-surface-container-lowest input-focus-ring font-body-md transition-all duration-200" type="date">
+<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">calendar_today</span>
+</div>
+</div>
+<!-- Found Time -->
+<div>
+<label class="block font-label-md text-label-md text-text-primary mb-sm">Found Time (Approx.)</label>
+<div class="relative">
+<input class="w-full px-md py-sm rounded-xl border border-border-default bg-surface-container-lowest input-focus-ring font-body-md transition-all duration-200" type="time">
+<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary">schedule</span>
+</div>
+</div>
+<div class="md:col-span-2 pt-lg flex justify-end items-center gap-md">
+<button class="px-xl py-md rounded-full font-label-md text-label-md text-text-secondary hover:bg-surface-container transition-all duration-200" type="button">
+                            Save as Draft
+                        </button>
+<button class="px-3xl py-md rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-[0_8px_20px_rgba(65,67,213,0.25)] hover:scale-[1.03] active:scale-95 transition-all duration-200 flex items-center gap-sm" type="submit">
+                            Next Step
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Tip Card -->
+<div class="mt-lg flex items-center gap-md p-md bg-secondary-fixed/30 rounded-xl border border-secondary-fixed text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined text-secondary">tips_and_updates</span>
+<p class="text-caption font-caption">Tip: Being specific with the item name helps our AI assistant match your find with lost reports faster!</p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only Shell) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe lg:hidden">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors p-1 rounded-lg">
+<span class="material-symbols-outlined">home</span>
+<span class="font-caption text-caption">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary bg-primary-fixed/30 rounded-full px-4 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_box</span>
+<span class="font-caption text-caption">Report</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors p-1 rounded-lg">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-caption text-caption">Matches</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors p-1 rounded-lg">
+<span class="material-symbols-outlined">person</span>
+<span class="font-caption text-caption">Profile</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for form inputs
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', () => {
+                element.parentElement.closest('.grid > div').style.transform = 'translateY(-2px)';
+                element.parentElement.closest('.grid > div').style.transition = 'transform 0.2s ease';
+            });
+            element.addEventListener('blur', () => {
+                element.parentElement.closest('.grid > div').style.transform = 'translateY(0)';
+            });
+        });
+
+        // Prevention of form submission for demo
+        document.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Animation or transition to next step logic would go here
+        });
+    </script>
+
+
+</body></html>

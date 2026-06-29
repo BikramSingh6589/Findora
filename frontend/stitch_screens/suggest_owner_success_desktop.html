@@ -1,0 +1,285 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Lost&amp;Found AI | Suggestion Confirmed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Config Verbatim -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#4143d5",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#474adb",
+                    "on-tertiary-fixed": "#261a00",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-secondary-container": "#fffbff",
+                    "secondary-container": "#8455ef",
+                    "outline": "#767586",
+                    "dark-card": "#1F2937",
+                    "text-primary": "#111827",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-dim": "#d8dadc",
+                    "surface-container-high": "#e6e8ea",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "surface-container-lowest": "#ffffff",
+                    "info-ai": "#38BDF8",
+                    "outline-variant": "#c6c5d7",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "primary-container": "#5b5fef",
+                    "inverse-surface": "#2d3133",
+                    "on-surface": "#191c1e",
+                    "on-primary-container": "#f9f6ff",
+                    "border-default": "#E5E7EB",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "on-primary-fixed": "#05006c",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#916c00",
+                    "dark-bg": "#111827",
+                    "surface-variant": "#e0e3e5",
+                    "on-surface-variant": "#464555",
+                    "text-secondary": "#6B7280",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "dark-primary": "#8B80FF",
+                    "surface": "#f7f9fb",
+                    "on-error-container": "#93000a",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "card-bg": "#FFFFFF",
+                    "warning": "#FB923C",
+                    "surface-container-low": "#f2f4f6",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-background": "#191c1e",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "background": "#f7f9fb",
+                    "secondary-fixed": "#e9ddff",
+                    "secondary": "#6b38d4",
+                    "success": "#22C55E",
+                    "tertiary": "#735500",
+                    "primary-fixed": "#e1e0ff",
+                    "on-tertiary-container": "#fff7ee",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "inverse-primary": "#c0c1ff",
+                    "danger": "#F43F5E",
+                    "on-secondary-fixed": "#23005c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "margin-mobile": "16px",
+                    "md": "16px",
+                    "gutter": "16px",
+                    "base": "8px",
+                    "3xl": "64px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f7f9fb;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .success-gradient-bg {
+            background: linear-gradient(135deg, #4143d5 0%, #8455ef 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #4143d5;
+            border-radius: 50%;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar Suppression: Page is Linear/Transactional Success -->
+<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-margin-desktop relative">
+<!-- Background Elements -->
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<div class="absolute top-[-10%] right-[-5%] w-96 h-96 rounded-full bg-primary/5 blur-3xl"></div>
+<div class="absolute bottom-[-10%] left-[-5%] w-80 h-80 rounded-full bg-secondary/5 blur-3xl"></div>
+</div>
+<div class="max-w-5xl w-full z-10">
+<div class="bg-card-bg rounded-[40px] shadow-[0_20px_50px_rgba(65,67,213,0.1)] p-lg md:p-3xl border border-surface-container overflow-hidden">
+<div class="flex flex-col lg:flex-row gap-2xl items-center">
+<!-- Left Column: Visual & Stats -->
+<div class="w-full lg:w-5/12 flex flex-col items-center lg:items-start text-center lg:text-left gap-xl">
+<div class="relative w-full max-w-[320px] animate-float">
+<div class="absolute inset-0 bg-primary/10 rounded-full blur-2xl scale-75"></div>
+<img class="w-full h-auto relative z-10 drop-shadow-2xl" data-alt="A vibrant, modern 3D illustration of a friendly student character high-fiving a floating robotic AI helper. The character is wearing a stylish university hoodie in shades of indigo. The background features floating geometric shapes and soft purple gradients, creating a warm, celebratory, and tech-savvy atmosphere typical of a high-end educational app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEAa66kom0qlxBt5goiz6Zwzvxgcx-A5LoSns4xe_GR8In4XZ_Xc0Hzp6QWsZ_65wJr4_Vw6KZt0R3PYz54-4ikn5fYVvCLanUv3sIk0uYDxcS4n4VkFGubCyh7-qdpp1etH1nalINWZ0lYPnKdbJl6ZZQgMhdzndbzz-wA38cHRfsXlbxhaFLvm35yCwBj4bkaOD_kOGrVNI6aCdimINQCU4c6xV12hD4dX2h_1RlmlDsyqi6kOGGt2Cr3GRX-Wb1JYZb8TWnQ9I">
+</div>
+<!-- Match Confidence Card -->
+<div class="w-full bg-surface-container-low rounded-3xl p-lg border border-outline-variant/30 flex flex-col gap-sm">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Match Confidence</span>
+<span class="material-symbols-outlined text-info-ai" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex items-end gap-xs">
+<span class="font-page-title text-page-title text-primary leading-none">85%</span>
+<span class="font-label-md text-label-md text-text-secondary mb-1">Probability</span>
+</div>
+<div class="w-full h-3 bg-surface-variant rounded-full overflow-hidden mt-sm">
+<div class="h-full success-gradient-bg rounded-full transition-all duration-1000 ease-out" style="width: 85%;"></div>
+</div>
+<p class="font-caption text-caption text-text-secondary mt-xs">Based on user profile tags and historical item proximity.</p>
+</div>
+</div>
+<!-- Right Column: Success Messaging & Actions -->
+<div class="w-full lg:w-7/12 flex flex-col gap-xl">
+<div class="space-y-md">
+<div class="inline-flex items-center gap-sm bg-success/10 text-success px-md py-xs rounded-full">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-md text-label-md">Contribution Successfully Logged</span>
+</div>
+<h1 class="font-hero-title text-page-title md:text-hero-title text-primary tracking-tight">
+                                Thank You for Your Help!
+                            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                                Your suggestion has been logged! Our AI is now checking if <span class="font-bold text-on-surface">Alex Rivera</span> has a matching lost item report in the campus database.
+                            </p>
+</div>
+<!-- Info Bento Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="bg-surface-container-lowest p-md rounded-2xl border border-border-default flex gap-md items-start">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary" data-icon="rocket_launch">rocket_launch</span>
+</div>
+<div class="space-y-xs">
+<h4 class="font-label-md text-label-md text-text-primary">XP Awarded</h4>
+<p class="font-caption text-caption text-text-secondary">+50 Points for helping the community.</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-2xl border border-border-default flex gap-md items-start">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary" data-icon="notification_important">notification_important</span>
+</div>
+<div class="space-y-xs">
+<h4 class="font-label-md text-label-md text-text-primary">Alex Notified</h4>
+<p class="font-caption text-caption text-text-secondary">We've sent a discreet ping to Alex to verify.</p>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="flex flex-col sm:flex-row gap-md pt-lg border-t border-surface-variant">
+<button class="flex-1 success-gradient-bg text-on-primary font-label-md text-label-md py-md px-xl rounded-2xl shadow-[0_8px_20px_rgba(65,67,213,0.25)] hover:scale-[1.03] active:scale-95 transition-all duration-200 flex items-center justify-center gap-sm group">
+                                Return to Community Board
+                                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="flex-1 bg-transparent border-2 border-primary text-primary font-label-md text-label-md py-md px-xl rounded-2xl hover:bg-primary/5 active:scale-95 transition-all duration-200 flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" data-icon="person_search">person_search</span>
+                                View My Contributions
+                            </button>
+</div>
+<p class="text-center md:text-left font-caption text-caption text-text-secondary">
+                            Helping a fellow student reduces campus stress by 25%. You're a hero! 🎓
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Suppression: Linear Journey -->
+<script>
+        // Confetti micro-interaction
+        function createConfetti() {
+            const colors = ['#4143d5', '#8455ef', '#38BDF8', '#ffdf9f'];
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                confetti.style.opacity = Math.random();
+                confetti.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Trigger on load
+        window.addEventListener('load', () => {
+            setTimeout(createConfetti, 500);
+        });
+
+        // Interactive hover for the match card
+        const matchCard = document.querySelector('.bg-surface-container-low');
+        matchCard.addEventListener('mousemove', (e) => {
+            const rect = matchCard.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            matchCard.style.setProperty('--mouse-x', `${x}px`);
+            matchCard.style.setProperty('--mouse-y', `${y}px`);
+        });
+    </script>
+</body></html>

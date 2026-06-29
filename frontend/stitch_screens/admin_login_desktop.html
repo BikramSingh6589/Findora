@@ -1,0 +1,260 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FoundIt AI - Admin Login</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#e0e3e5",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "border-default": "#E5E7EB",
+                      "dark-card": "#1F2937",
+                      "background": "#f7f9fb",
+                      "on-primary-container": "#f9f6ff",
+                      "on-secondary-container": "#fffbff",
+                      "primary-container": "#5b5fef",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "on-tertiary-container": "#fff7ee",
+                      "info-ai": "#38BDF8",
+                      "outline-variant": "#c6c5d7",
+                      "danger": "#F43F5E",
+                      "tertiary": "#735500",
+                      "primary": "#4143d5",
+                      "on-error-container": "#93000a",
+                      "surface-container-highest": "#e0e3e5",
+                      "dark-primary": "#8B80FF",
+                      "on-surface-variant": "#464555",
+                      "inverse-primary": "#c0c1ff",
+                      "warning": "#FB923C",
+                      "inverse-on-surface": "#eff1f3",
+                      "surface-tint": "#474adb",
+                      "on-primary-fixed": "#05006c",
+                      "dark-bg": "#111827",
+                      "primary-fixed": "#e1e0ff",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "secondary-container": "#8455ef",
+                      "surface-container-high": "#e6e8ea",
+                      "surface": "#f7f9fb",
+                      "card-bg": "#FFFFFF",
+                      "text-secondary": "#6B7280",
+                      "tertiary-fixed": "#ffdf9f",
+                      "inverse-surface": "#2d3133",
+                      "surface-dim": "#d8dadc",
+                      "on-secondary-fixed": "#23005c",
+                      "on-secondary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "text-primary": "#111827",
+                      "surface-container": "#eceef0",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "outline": "#767586",
+                      "on-background": "#191c1e",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-bright": "#f7f9fb",
+                      "on-primary-fixed-variant": "#2c2cc3",
+                      "on-tertiary-fixed": "#261a00",
+                      "on-surface": "#191c1e",
+                      "secondary-fixed": "#e9ddff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f2f4f6",
+                      "success": "#22C55E",
+                      "secondary": "#6b38d4",
+                      "tertiary-container": "#916c00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "2xl": "48px",
+                      "base": "8px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "margin-desktop": "32px",
+                      "sm": "8px",
+                      "margin-mobile": "16px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "3xl": "64px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "hero-title": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "page-title-mobile": ["Plus Jakarta Sans"],
+                      "page-title": ["Plus Jakarta Sans"],
+                      "section-title": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "card-title": ["Plus Jakarta Sans"],
+                      "caption": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb; /* light gray surface from prompt/config */
+        }
+        .login-card {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08); /* Level 1 Elevation */
+            border-radius: 20px; /* From prompt requirement */
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+            transition: all 0.2s ease;
+        }
+        .btn-gradient:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 15px rgba(91, 95, 239, 0.25);
+        }
+        .btn-gradient:active {
+            transform: scale(0.97);
+        }
+        .input-focus:focus {
+            border-color: #4143d5;
+            box-shadow: 0 0 0 4px rgba(65, 67, 213, 0.1);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-margin-mobile">
+<!-- Main Content Canvas -->
+<main class="w-full max-w-md">
+<!-- Branding Header -->
+<div class="text-center mb-xl">
+<div class="inline-flex items-center justify-center bg-primary-container p-sm rounded-xl mb-md">
+<span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">
+                    verified
+                </span>
+</div>
+<h1 class="font-page-title text-page-title text-primary tracking-tight">FoundIt AI</h1>
+<p class="font-label-md text-text-secondary mt-xs">Campus Admin Portal</p>
+</div>
+<!-- Login Card -->
+<section class="login-card bg-card-bg p-xl border border-border-default">
+<div class="mb-lg">
+<h2 class="font-card-title text-card-title text-text-primary mb-xs">Welcome back</h2>
+<p class="font-body-md text-text-secondary">Please enter your details to access the system.</p>
+</div>
+<form class="space-y-lg" id="loginForm">
+<!-- Admin ID / Email -->
+<div class="space-y-sm">
+<label class="font-label-md text-text-primary block" for="admin-id">Admin ID / Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">
+                            person
+                        </span>
+<input class="w-full pl-12 pr-4 py-3 rounded-xl border border-border-default bg-surface-container-lowest font-body-md input-focus transition-all" id="admin-id" name="admin-id" placeholder="admin@university.edu" required="" type="text">
+</div>
+</div>
+<!-- Password -->
+<div class="space-y-sm">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-text-primary block" for="password">Password</label>
+<a class="font-label-md text-primary hover:underline transition-all" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary">
+                            lock
+                        </span>
+<input class="w-full pl-12 pr-12 py-3 rounded-xl border border-border-default bg-surface-container-lowest font-body-md input-focus transition-all" id="password" name="password" placeholder="••••••••" required="" type="password">
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors" id="togglePassword" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me (Optional for UX) -->
+<div class="flex items-center gap-base">
+<input class="w-5 h-5 rounded border-border-default text-primary focus:ring-primary" id="remember" type="checkbox">
+<label class="font-caption text-text-secondary cursor-pointer" for="remember">Remember this device for 30 days</label>
+</div>
+<!-- Sign In Button -->
+<button class="w-full py-4 rounded-xl text-white font-label-md btn-gradient flex items-center justify-center gap-sm" type="submit">
+                    Sign In
+                    <span class="material-symbols-outlined text-lg">login</span>
+</button>
+</form>
+<!-- Security Notice -->
+<div class="mt-xl pt-lg border-t border-border-default flex items-start gap-sm">
+<span class="material-symbols-outlined text-warning text-sm">shield</span>
+<p class="font-caption text-text-secondary">
+                    This is a secure campus resource. All access is logged and monitored in compliance with university IT policies.
+                </p>
+</div>
+</section>
+<!-- Footer Links -->
+<footer class="mt-xl text-center space-y-md">
+<div class="flex justify-center items-center gap-lg">
+<a class="font-caption text-text-secondary hover:text-primary transition-colors" href="#">Help Center</a>
+<span class="w-1 h-1 bg-border-default rounded-full"></span>
+<a class="font-caption text-text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<span class="w-1 h-1 bg-border-default rounded-full"></span>
+<a class="font-caption text-text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+<p class="font-caption text-text-secondary opacity-60">© 2024 FoundIt AI. Powered by Campus Community Tech.</p>
+</footer>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        // Toggle Password Visibility
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        
+        toggleBtn.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            toggleBtn.querySelector('span').innerText = isPassword ? 'visibility_off' : 'visibility';
+        });
+
+        // Form Submit Simulation
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = loginForm.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            
+            // UI Feedback
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin">progress_activity</span> Authenticating...`;
+            btn.classList.add('opacity-80');
+
+            setTimeout(() => {
+                // Simulate success
+                btn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Redirecting...`;
+                btn.classList.replace('btn-gradient', 'bg-success');
+                console.log('Login attempt recorded for:', document.getElementById('admin-id').value);
+            }, 1500);
+        });
+    </script>
+</body></html>

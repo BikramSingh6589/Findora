@@ -1,0 +1,519 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>User Management | FoundIt AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .reputation-gradient {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E5E7EB;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e0e3e5",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "border-default": "#E5E7EB",
+                        "dark-card": "#1F2937",
+                        "background": "#f7f9fb",
+                        "on-primary-container": "#f9f6ff",
+                        "on-secondary-container": "#fffbff",
+                        "primary-container": "#5b5fef",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-tertiary-container": "#fff7ee",
+                        "info-ai": "#38BDF8",
+                        "outline-variant": "#c6c5d7",
+                        "danger": "#F43F5E",
+                        "tertiary": "#735500",
+                        "primary": "#4143d5",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e0e3e5",
+                        "dark-primary": "#8B80FF",
+                        "on-surface-variant": "#464555",
+                        "inverse-primary": "#c0c1ff",
+                        "warning": "#FB923C",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-tint": "#474adb",
+                        "on-primary-fixed": "#05006c",
+                        "dark-bg": "#111827",
+                        "primary-fixed": "#e1e0ff",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "secondary-container": "#8455ef",
+                        "surface-container-high": "#e6e8ea",
+                        "surface": "#f7f9fb",
+                        "card-bg": "#FFFFFF",
+                        "text-secondary": "#6B7280",
+                        "tertiary-fixed": "#ffdf9f",
+                        "inverse-surface": "#2d3133",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary-fixed": "#23005c",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "text-primary": "#111827",
+                        "surface-container": "#eceef0",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "outline": "#767586",
+                        "on-background": "#191c1e",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-surface": "#191c1e",
+                        "secondary-fixed": "#e9ddff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "success": "#22C55E",
+                        "secondary": "#6b38d4",
+                        "tertiary-container": "#916c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "2xl": "48px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "margin-desktop": "32px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "3xl": "64px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background font-body-md text-text-primary custom-scrollbar">
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar Component -->
+<aside class="hidden md:flex flex-col h-full p-lg bg-card-bg dark:bg-dark-card h-screen w-64 border-r border-border-default dark:border-outline-variant shadow-sm shrink-0">
+<div class="mb-xl">
+<h1 class="font-page-title text-page-title text-primary dark:text-dark-primary mb-xs">FoundIt AI</h1>
+<p class="font-label-md text-text-secondary">Campus Admin Portal</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-label-md">Claim Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+<span class="font-label-md">Item Moderation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md">User Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md">Analytics</span>
+</a>
+</nav>
+<div class="pt-lg border-t border-border-default">
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md">Support</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 flex flex-col h-full overflow-hidden">
+<!-- TopAppBar Component -->
+<header class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-base bg-surface/80 backdrop-blur-md shadow-sm z-30">
+<div class="flex items-center gap-4 flex-1">
+<div class="md:hidden">
+<span class="font-page-title-mobile text-page-title-mobile text-primary">FoundIt AI</span>
+</div>
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Search users by name or ID..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-text-secondary hover:bg-surface-container transition-colors rounded-full relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full border-2 border-white"></span>
+</button>
+<button class="p-2 text-text-secondary hover:bg-surface-container transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a university administrator with a friendly expression. They are wearing professional attire, set against a blurred academic office background. The lighting is bright and clean, consistent with a high-end campus management interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGAI8HHpB8nOONvejsaJfrPZVF47fv85uktRTWVs5B0fxakrMKm2scvDmhudYDB-nrs3oCGjG-jR2ftrd4jc-4yp6GNZ40DPilbE2GQoh1R8P-3K6TN-Jt4-TDvXi4FvR7ZR_NXgYpqCczP5eiAKETMAeJ-JAvvLNMjN2kYXGaAzsqkZ1EF20x_KOyugtxuYAY5fCI7uVeOHO_r-GdXcx0bzjnszAEcaMZB7iIWSOlrmyRyPq6quXvOLoXivVREEhAGLZbo30Hm08">
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-margin-mobile md:p-margin-desktop">
+<!-- Stats Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
+<div class="bg-card-bg p-lg rounded-2xl shadow-sm border border-border-default hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-base">
+<div class="p-2 bg-primary/10 rounded-xl">
+<span class="material-symbols-outlined text-primary" data-icon="group">group</span>
+</div>
+<span class="text-success text-caption font-bold">+12%</span>
+</div>
+<h3 class="text-text-secondary font-label-md">Total Users</h3>
+<p class="text-page-title font-page-title text-text-primary">4,892</p>
+</div>
+<div class="bg-card-bg p-lg rounded-2xl shadow-sm border border-border-default hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-base">
+<div class="p-2 bg-success/10 rounded-xl">
+<span class="material-symbols-outlined text-success" data-icon="bolt">bolt</span>
+</div>
+<span class="text-success text-caption font-bold">+5%</span>
+</div>
+<h3 class="text-text-secondary font-label-md">Active Finders</h3>
+<p class="text-page-title font-page-title text-text-primary">1,240</p>
+</div>
+<div class="bg-card-bg p-lg rounded-2xl shadow-sm border border-border-default hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-base">
+<div class="p-2 bg-warning/10 rounded-xl">
+<span class="material-symbols-outlined text-warning" data-icon="military_tech">military_tech</span>
+</div>
+<span class="text-text-secondary text-caption font-bold">Top 5%</span>
+</div>
+<h3 class="text-text-secondary font-label-md">Elite Users</h3>
+<p class="text-page-title font-page-title text-text-primary">245</p>
+</div>
+<div class="bg-card-bg p-lg rounded-2xl shadow-sm border border-border-default hover:scale-[1.02] transition-transform">
+<div class="flex justify-between items-start mb-base">
+<div class="p-2 bg-info-ai/10 rounded-xl">
+<span class="material-symbols-outlined text-info-ai" data-icon="verified_user">verified_user</span>
+</div>
+<span class="text-text-secondary text-caption font-bold">98%</span>
+</div>
+<h3 class="text-text-secondary font-label-md">Staff Members</h3>
+<p class="text-page-title font-page-title text-text-primary">82</p>
+</div>
+</div>
+<!-- User Table Content -->
+<div class="bg-card-bg rounded-2xl shadow-sm border border-border-default overflow-hidden">
+<div class="p-lg flex flex-col md:flex-row justify-between items-center gap-md border-b border-border-default">
+<h2 class="text-card-title font-card-title">User Directory</h2>
+<div class="flex items-center gap-3 w-full md:w-auto">
+<button class="flex items-center gap-2 px-4 py-2 border border-border-default rounded-xl hover:bg-surface-container transition-colors font-label-md">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                                Filter
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.03] transition-all font-label-md">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                                Add New User
+                            </button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-text-secondary font-label-md border-b border-border-default">
+<tr>
+<th class="px-lg py-md">User Details</th>
+<th class="px-lg py-md">Student ID</th>
+<th class="px-lg py-md">Reputation</th>
+<th class="px-lg py-md">Badges</th>
+<th class="px-lg py-md">Status</th>
+<th class="px-lg py-md text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<!-- User Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male university student with glasses and a friendly smile, wearing a casual campus hoodie. The background is a soft-focus library setting with warm, welcoming lighting, capturing a studious and reliable personality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc9LwT8DR1dqrmkyTbtuqURHvAcG4U7aQJdb2tyDjiYzPJI4RGPtGzPm87fy2RMG4pdX6nmJE24CEmdpHExFxoyMepv731I9rCLQK_yFh98Q7LSJ1KTpkcfktYo9QCSeC-bFYQdtf56qUqs2GNtn3iAQpZE5SLmVJmmeXWnnuCZiAlcLOIh7DF1LNd_RuzwXUI5Y1mO2--UIAuBM97iFl-msjxdjbKhNDDPEn0uB5zw524GFlOt58dP2nfkxCpn-HGBUbvH7ESRWk">
+</div>
+<div>
+<div class="font-label-md text-text-primary">Alex Rivers</div>
+<div class="text-caption text-text-secondary">arivers@univ.edu</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md font-mono text-caption">#20248831</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 85%;"></div>
+</div>
+<span class="text-caption font-bold">850</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-warning/20 border-2 border-white flex items-center justify-center" title="Eagle Eye">
+<span class="material-symbols-outlined text-[16px] text-warning" data-icon="visibility">visibility</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-info-ai/20 border-2 border-white flex items-center justify-center" title="Fast Responder">
+<span class="material-symbols-outlined text-[16px] text-info-ai" data-icon="bolt">bolt</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-success/20 border-2 border-white flex items-center justify-center" title="Verified Finder">
+<span class="material-symbols-outlined text-[16px] text-success" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-3 py-1 bg-success/10 text-success rounded-full text-caption font-bold">Active</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="View Profile">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Manage Permissions">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a female university student with curly hair, wearing a modern denim jacket. She has a confident and energetic look. The background features a blurred modern campus cafeteria with bright daylight and pops of school colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkett2wDkInUhiFXa4sUXH_uC2WiNfXz6Z41u2FTUMlGX3Ov1CFVGClAM47cUR8kwLmjCD4MXAd4ozC2UEnv3i5dfuKeosVhcJTd-feg-x5NZWI5_ypJsLecLmejUXJdxyGUyyxp1pSpAlu6RfEOA3ika7YzasOYV51_tiX8KJXr_dstBOv7xVs8I_UMy9q6v-_0507WPUOreu10yf6StiRMhQzwtVVGY1SaafVDRhkUDOUkHyab9QODeBxYY89rISg35-Xrcqjdg">
+</div>
+<div>
+<div class="font-label-md text-text-primary">Maya Chen</div>
+<div class="text-caption text-text-secondary">mchen@univ.edu</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md font-mono text-caption">#20249215</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 92%;"></div>
+</div>
+<span class="text-caption font-bold">920</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-primary/20 border-2 border-white flex items-center justify-center" title="Super Finder">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="star">star</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-success/20 border-2 border-white flex items-center justify-center" title="Verified Finder">
+<span class="material-symbols-outlined text-[16px] text-success" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-3 py-1 bg-success/10 text-success rounded-full text-caption font-bold">Active</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 3 (Staff) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male campus security officer in a neat uniform. He has a professional and trustworthy demeanor. The background is a campus security desk with digital monitors and a bright, corporate office feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHlsZwZVp72Phh_m14RvnbQJWs-EpOfKmigB6SNEaRWO_yYC9F8RalE6vlKmuaIKtgm5lrhWNDVCyZKVvVFRrQNGkgCaPmJyOJsqi1A7i4Q_la921BZVei_sdMd2U_4lnDwHeuhHFkYVerk-Ms-zPXUX9qlIT3kzk76SnvXLLwKycVlrZIqyy0oq5c8cKmQ6PoRk_xTtVgXRWMp3Mh1nf2o5dzmbjh5_RDqshJvPUpXzjVgMxq7F-QoODQ6n3fzS1DB0OgSJxXy-Q">
+</div>
+<div>
+<div class="font-label-md text-text-primary">Officer Thompson</div>
+<div class="text-caption text-text-secondary">j.thompson@staff.univ.edu</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md font-mono text-caption">#ST-4412</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 100%;"></div>
+</div>
+<span class="text-caption font-bold">---</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 bg-secondary/10 text-secondary rounded-md text-caption font-bold">Staff</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="px-3 py-1 bg-primary-container/20 text-primary rounded-full text-caption font-bold">In Service</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 4 (Warning State) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male student with a more serious expression, wearing a dark polo shirt. The lighting is slightly cooler, and the background is a minimalist concrete campus structure, suggesting a more formal or subdued tone." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtC0MiNWUnlIqAKv-dwJdbxK0h6-jbHnJr0G8Cc0YmaqjZH5Cr5JtmQ9FQdZCGiQ9YK6pgMb1_gAG6r2bm11l57mkLRXdeXJGfP4WVyjtOZMKpGJRbXdwMJc-tc4xTtewLFtrX0IleFfudwGD232LM7K-vefOFj6HH2w54Tdfj5TLADbKuHtG2sJ2nie6NRTOPEWg4K_HRqn93Az0SkUxpQkleaYb-CKS5_KAzYEZzOLtPp9blsj5xsyC2qOthushKg6lW88jnzoo">
+</div>
+<div>
+<div class="font-label-md text-text-primary">Liam Baker</div>
+<div class="text-caption text-text-secondary">lbaker@univ.edu</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-md font-mono text-caption">#20247712</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-2">
+<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-danger" style="width: 15%;"></div>
+</div>
+<span class="text-caption font-bold">150</span>
+</div>
+</td>
+<td class="px-lg py-md">
+<span class="text-caption text-text-secondary italic">No badges</span>
+</td>
+<td class="px-lg py-md">
+<span class="px-3 py-1 bg-warning/10 text-warning rounded-full text-caption font-bold">Restricted</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-lg border-t border-border-default flex justify-between items-center bg-surface-container-low">
+<div class="text-caption text-text-secondary">
+                            Showing 1-10 of 4,892 users
+                        </div>
+<div class="flex gap-2">
+<button class="p-2 border border-border-default rounded-lg hover:bg-white transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-primary text-white rounded-lg font-bold">1</button>
+<button class="px-3 py-1 hover:bg-white rounded-lg font-bold">2</button>
+<button class="px-3 py-1 hover:bg-white rounded-lg font-bold">3</button>
+<button class="p-2 border border-border-default rounded-lg hover:bg-white transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Component for Mobile -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface-container-lowest dark:bg-dark-card shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:hidden">
+<a class="flex flex-col items-center justify-center text-text-secondary p-2" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-caption">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-text-secondary p-2" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-caption">Claims</span>
+</a>
+<a class="flex flex-col items-center justify-center text-text-secondary p-2" href="#">
+<span class="material-symbols-outlined" data-icon="rule">rule</span>
+<span class="font-caption">Moderate</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl p-2" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-caption">Users</span>
+</a>
+</nav>
+</div>
+<script>
+        // Micro-interactions for table rows and buttons
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if (!e.target.closest('button')) {
+                    // Logic for row click (e.g., navigate to profile)
+                    console.log('Row clicked');
+                }
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

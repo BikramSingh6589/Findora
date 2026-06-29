@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Matches - FoundIt!</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#05006c",
+                    "secondary-fixed": "#e9ddff",
+                    "warning": "#FB923C",
+                    "tertiary": "#735500",
+                    "outline": "#767586",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "tertiary-container": "#916c00",
+                    "surface-container": "#eceef0",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "primary-fixed": "#e1e0ff",
+                    "card-bg": "#FFFFFF",
+                    "secondary": "#6b38d4",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-error-container": "#93000a",
+                    "inverse-on-surface": "#eff1f3",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "background": "#f7f9fb",
+                    "success": "#22C55E",
+                    "dark-bg": "#111827",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "on-tertiary-fixed": "#261a00",
+                    "surface-container-low": "#f2f4f6",
+                    "primary-container": "#5b5fef",
+                    "on-primary-container": "#f9f6ff",
+                    "inverse-primary": "#c0c1ff",
+                    "error": "#ba1a1a",
+                    "info-ai": "#38BDF8",
+                    "on-secondary": "#ffffff",
+                    "dark-primary": "#8B80FF",
+                    "border-default": "#E5E7EB",
+                    "on-error": "#ffffff",
+                    "text-secondary": "#6B7280",
+                    "outline-variant": "#c6c5d7",
+                    "on-secondary-fixed": "#23005c",
+                    "surface-variant": "#e0e3e5",
+                    "surface": "#f7f9fb",
+                    "surface-tint": "#474adb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#fffbff",
+                    "secondary-container": "#8455ef",
+                    "surface-dim": "#d8dadc",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#e6e8ea",
+                    "dark-card": "#1F2937",
+                    "primary": "#4143d5",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-tertiary-container": "#fff7ee",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#2d3133",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#191c1e",
+                    "on-surface-variant": "#464555",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "text-primary": "#111827",
+                    "on-background": "#191c1e",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "danger": "#F43F5E"
+            },
+            "borderRadius": {
+                    "DEFAULT": "8px",
+                    "lg": "16px",
+                    "xl": "20px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "gutter": "16px",
+                    "2xl": "48px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "3xl": "64px",
+                    "sm": "8px",
+                    "margin-mobile": "16px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "page-title": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f7f9fb; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .ai-glow { box-shadow: 0 0 20px rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface mb-24">
+<!-- Header -->
+<header class="sticky top-0 z-40 bg-surface-container-lowest shadow-sm px-margin-mobile h-16 flex items-center justify-between">
+<h1 class="font-page-title-mobile text-page-title-mobile text-primary">AI Matches</h1>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</header>
+<main class="max-w-md mx-auto">
+<!-- Item Selector Carousel -->
+<section class="py-lg px-margin-mobile overflow-hidden">
+<div class="flex items-center justify-between mb-sm">
+<h2 class="font-label-md text-label-md text-on-surface">Your Lost Items</h2>
+<span class="font-caption text-caption text-primary">3 Items Active</span>
+</div>
+<div class="flex gap-md overflow-x-auto hide-scrollbar snap-x pb-2">
+<!-- Active Selection -->
+<button class="snap-start flex-shrink-0 flex items-center gap-sm bg-primary-container text-on-primary-container px-lg py-sm rounded-lg shadow-md border-2 border-primary transition-transform active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">laptop_mac</span>
+<span class="font-label-md text-label-md">MacBook Air</span>
+</button>
+<!-- Inactive Selection -->
+<button class="snap-start flex-shrink-0 flex items-center gap-sm bg-surface-container-lowest text-on-surface-variant px-lg py-sm rounded-lg border border-outline-variant hover:bg-surface-container transition-transform active:scale-95">
+<span class="material-symbols-outlined">key</span>
+<span class="font-label-md text-label-md">Dorm Keys</span>
+</button>
+<!-- Inactive Selection -->
+<button class="snap-start flex-shrink-0 flex items-center gap-sm bg-surface-container-lowest text-on-surface-variant px-lg py-sm rounded-lg border border-outline-variant hover:bg-surface-container transition-transform active:scale-95">
+<span class="material-symbols-outlined">headphones</span>
+<span class="font-label-md text-label-md">AirPods Pro</span>
+</button>
+</div>
+</section>
+<!-- Match Status Banner -->
+<div class="mx-margin-mobile mb-lg p-md bg-info-ai/10 rounded-xl flex items-center gap-md ai-glow">
+<div class="w-12 h-12 flex items-center justify-center bg-info-ai rounded-full text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">3 Smart Matches Found</p>
+<p class="font-caption text-caption text-on-surface-variant">Analysis complete for MacBook Air</p>
+</div>
+</div>
+<!-- Vertical Match List -->
+<section class="px-margin-mobile space-y-lg pb-10">
+<!-- Match Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:scale-[1.02]">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="A high-resolution close-up photo of a silver MacBook Air sitting on a clean wooden desk in a bright university library setting. The lighting is soft and natural, emphasizing the metallic finish of the laptop. The overall mood is academic and orderly, matching a modern university campus aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVUBkLJtABxQetW2uoswTlmx0GbUZv4LLQ-ZRppAGPXSBlve_zoHCQwqELzZRPUcePrj4La4b9DYZ-1WtuGekw-_z8qNUYUWIQDFGGlCUUWMOysrs9jpiECrWlBW9t8E-0wxUJDxefXJwDFuIlCYhgfzOmKZSMqcU7WkdmXsZrq89kCUfBAowHzpnmEzAnllhrndElmbqhuLv0qdN-SITOuaL9Soh157egNMgAWh5gBiaUMwTWzoa77WQOPrZeTpi4ubrchLl6WnA"/>
+<div class="absolute top-sm right-sm bg-white/90 backdrop-blur-md px-md py-xs rounded-full flex items-center gap-xs shadow-sm">
+<span class="material-symbols-outlined text-info-ai text-[20px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label-md text-label-md text-primary">94% Match</span>
+</div>
+</div>
+<div class="p-lg">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-card-title text-card-title">Silver Laptop</h3>
+<span class="font-caption text-caption bg-surface-container-high px-sm py-1 rounded text-on-surface-variant">Found 2h ago</span>
+</div>
+<div class="mb-lg p-md bg-surface-container-low rounded-lg border-l-4 border-info-ai">
+<div class="flex items-center gap-xs mb-xs text-info-ai">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+<span class="font-label-md text-[14px]">Match Rationale</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-[14px]">The item matches your description's custom sticker (NASA) on the lid and specific scratch near the trackpad.</p>
+</div>
+<div class="flex gap-md">
+<button class="flex-1 font-label-md text-label-md py-sm rounded-lg border border-primary text-primary transition-all active:scale-95">View Details</button>
+<button class="flex-1 font-label-md text-label-md py-sm rounded-lg bg-gradient-to-r from-primary to-secondary text-white shadow-[0_4px_15px_rgba(91,95,239,0.25)] transition-all active:scale-95">Claim Item</button>
+</div>
+</div>
+</div>
+<!-- Match Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all hover:scale-[1.02]">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="A slightly blurry but clear photo of a silver laptop partially visible inside a lost and found bin at a student center. The scene is brightly lit with overhead fluorescent lights, creating a sterile but realistic campus atmosphere. The composition focuses on the corner of the device where a small identifiable mark is visible." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfzaxSg5VYRcp_OH8Dm6lYEho1mpCJkRjroS5OCm4Cy2Gby2DXdnuUDu6ecUkRJI7pZBufyKg1WAvTfjhZQoSfIhkyxAtLdaAJKKP_YK_siMCRwRuG6s6An89vBYFks8byu7SJwkq83bbm9rikf-87f-bOqbAm8JBo65NTVfIEL8rcByuL2U-tEng1c-oIYSYgbIyAwlPEDBNfJiSEiiiEn21oanO-YO6QYZ6Bpssvcd8pU4OGA606fYpep4wwLvpk9_84zg185BU"/>
+<div class="absolute top-sm right-sm bg-white/90 backdrop-blur-md px-md py-xs rounded-full flex items-center gap-xs shadow-sm">
+<span class="material-symbols-outlined text-warning text-[20px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label-md text-label-md text-primary">82% Match</span>
+</div>
+</div>
+<div class="p-lg">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-card-title text-card-title">MacBook Device</h3>
+<span class="font-caption text-caption bg-surface-container-high px-sm py-1 rounded text-on-surface-variant">Found Yesterday</span>
+</div>
+<div class="mb-lg p-md bg-surface-container-low rounded-lg border-l-4 border-warning">
+<div class="flex items-center gap-xs mb-xs text-warning">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+<span class="font-label-md text-[14px]">Match Rationale</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-[14px]">Visual profile matches a MacBook Air 13-inch. Location (Dining Hall) overlaps with your last known active session.</p>
+</div>
+<div class="flex gap-md">
+<button class="flex-1 font-label-md text-label-md py-sm rounded-lg border border-primary text-primary transition-all active:scale-95">View Details</button>
+<button class="flex-1 font-label-md text-label-md py-sm rounded-lg bg-gradient-to-r from-primary to-secondary text-white shadow-[0_4px_15px_rgba(91,95,239,0.25)] transition-all active:scale-95">Claim Item</button>
+</div>
+</div>
+</div>
+<!-- Empty State Suggestion -->
+<div class="py-xl flex flex-col items-center text-center opacity-60">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-sm">search_check</span>
+<p class="font-body-md text-body-md">No more matches for this item.</p>
+<p class="font-caption text-caption">Our AI scans new reports every 5 minutes.</p>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface-container-lowest shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-caption text-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-caption text-caption">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-all duration-100 shadow-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-caption text-caption">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-caption text-caption">Social</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-caption text-caption">Profile</span>
+</a>
+</nav>
+<!-- Success Toast (Hidden by default) -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-lg py-md rounded-full shadow-xl flex items-center gap-sm transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4" id="toast">
+<span class="material-symbols-outlined text-success">check_circle</span>
+<span class="font-label-md text-label-md">Item claim initiated!</span>
+</div>
+<script>
+        // Micro-interaction for Claim buttons
+        document.querySelectorAll('button').forEach(btn => {
+            if(btn.innerText === "Claim Item") {
+                btn.addEventListener('click', () => {
+                    const toast = document.getElementById('toast');
+                    toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+                    setTimeout(() => {
+                        toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+                    }, 3000);
+                });
+            }
+        });
+
+        // Horizontal Scroll Behavior
+        const scrollContainer = document.querySelector('.overflow-x-auto');
+        scrollContainer.addEventListener('wheel', (evt) => {
+            evt.preventDefault();
+            scrollContainer.scrollLeft += evt.deltaY;
+        });
+    </script>
+</body></html>

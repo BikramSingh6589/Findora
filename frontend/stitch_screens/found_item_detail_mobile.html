@@ -1,0 +1,311 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Item Details - Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .custom-shadow {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#474adb",
+                        "on-primary-fixed": "#05006c",
+                        "dark-bg": "#111827",
+                        "warning": "#FB923C",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-fixed": "#e1e0ff",
+                        "tertiary": "#735500",
+                        "dark-primary": "#8B80FF",
+                        "on-surface-variant": "#464555",
+                        "inverse-primary": "#c0c1ff",
+                        "primary": "#4143d5",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#e0e3e5",
+                        "info-ai": "#38BDF8",
+                        "on-tertiary-container": "#fff7ee",
+                        "danger": "#F43F5E",
+                        "outline-variant": "#c6c5d7",
+                        "surface-variant": "#e0e3e5",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "background": "#f7f9fb",
+                        "border-default": "#E5E7EB",
+                        "dark-card": "#1F2937",
+                        "primary-container": "#5b5fef",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-primary-container": "#f9f6ff",
+                        "on-secondary-container": "#fffbff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#6b38d4",
+                        "tertiary-container": "#916c00",
+                        "success": "#22C55E",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "on-surface": "#191c1e",
+                        "secondary-fixed": "#e9ddff",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "text-primary": "#111827",
+                        "surface-container": "#eceef0",
+                        "outline": "#767586",
+                        "on-background": "#191c1e",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface-container-high": "#e6e8ea",
+                        "surface": "#f7f9fb",
+                        "card-bg": "#FFFFFF",
+                        "text-secondary": "#6B7280",
+                        "tertiary-fixed": "#ffdf9f",
+                        "secondary-container": "#8455ef",
+                        "inverse-surface": "#2d3133",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary-fixed": "#23005c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "3xl": "64px",
+                        "base": "8px",
+                        "2xl": "48px",
+                        "xl": "32px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "card-title": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden pb-32">
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 backdrop-blur-md sticky top-0 z-50 flex justify-between items-center w-full px-margin-mobile py-md border-b border-border-default/50">
+<div class="flex items-center gap-md">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors active:scale-95" onclick="history.back()">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+<span class="font-page-title text-page-title-mobile font-bold text-on-surface">Details</span>
+</div>
+<div class="flex items-center gap-sm">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors">share</button>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors">more_vert</button>
+</div>
+</header>
+<main class="max-w-md mx-auto">
+<!-- Hero Image Carousel Section -->
+<section class="relative w-full aspect-[4/3] overflow-hidden">
+<div class="flex w-full h-full">
+<img class="w-full h-full object-cover" data-alt="A professional, clean studio photograph of a silver MacBook Pro laptop sitting on a polished wooden desk in a modern campus library setting. The lighting is bright and soft, typical of a corporate modern aesthetic, highlighting the sleek aluminum finish of the laptop. The background shows blurred bookshelves and warm ambient light, conveying a safe and helpful community atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9Mv5ggC9x8kfEuNvdp6K9YEpSMJeHT9sxEO3A9HURFCIR7qVn9YoTgfC7pSAVRcHhrFLi8FE9FU7KLjwV1hAKLbvXtn2Vwklh6-qhMtZHylLP7gYKCS8FamcKQSjyCpEqXoQyxJ3aGpDM816BYXexudzu00W3U55vwwzjwrVMR6Di4431h0d6FYzlFyhTCURTfwEnfNa03tjSKVBmQv63quZaNGQe3CAq4An286Gmg8WwzXunA5FqCQYiqfowlhlo-7winy4GROk">
+</div>
+<!-- Badges Overlay -->
+<div class="absolute top-md left-md flex flex-wrap gap-sm">
+<div class="bg-success/90 backdrop-blur-sm text-on-primary px-md py-xs rounded-full flex items-center gap-xs font-label-md text-[12px] uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    Status: Found
+                </div>
+<div class="bg-primary/80 backdrop-blur-sm text-on-primary px-md py-xs rounded-full flex items-center gap-xs font-label-md text-[12px] uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px]">devices</span>
+                    Electronics
+                </div>
+</div>
+<!-- Image Indicator Dots -->
+<div class="absolute bottom-md left-1/2 -translate-x-1/2 flex gap-xs">
+<div class="w-8 h-1.5 rounded-full bg-white"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-white/50"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-white/50"></div>
+</div>
+</section>
+<!-- Content Area -->
+<div class="px-margin-mobile -mt-xl relative z-10">
+<!-- AI Confidence Card -->
+<div class="ai-glow glass-card p-md rounded-2xl mb-lg animate-slide-up">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<div class="bg-info-ai/20 p-sm rounded-lg">
+<span class="material-symbols-outlined text-info-ai" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<p class="text-info-ai font-bold text-[12px] uppercase tracking-widest">AI Match Confidence</p>
+<p class="font-card-title text-text-primary">98% Match</p>
+</div>
+</div>
+<div class="h-12 w-12 rounded-full border-4 border-info-ai/20 flex items-center justify-center relative">
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle class="text-info-ai" cx="24" cy="24" fill="transparent" r="20" stroke="currentColor" stroke-dasharray="125.6" stroke-dashoffset="2.5" stroke-width="4"></circle>
+</svg>
+<span class="text-[10px] font-bold text-info-ai">98%</span>
+</div>
+</div>
+</div>
+<!-- Main Info -->
+<div class="animate-slide-up" style="animation-delay: 0.1s;">
+<h1 class="font-page-title text-page-title-mobile text-text-primary mb-xs">Silver MacBook Pro</h1>
+<p class="text-text-secondary font-body-md mb-lg">Found yesterday at 4:15 PM</p>
+<!-- Details Grid -->
+<div class="grid grid-cols-1 gap-md mb-xl">
+<div class="flex items-start gap-md p-md bg-white rounded-2xl shadow-sm border border-border-default/50">
+<div class="bg-surface-container-high p-sm rounded-xl">
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<div>
+<p class="text-text-secondary text-caption uppercase font-bold tracking-wider mb-xs">Location Found</p>
+<p class="text-text-primary font-label-md">Main Library, 3rd Floor</p>
+<p class="text-text-secondary text-caption mt-xs">Near the quiet study cubicles, section 3B</p>
+</div>
+</div>
+<div class="flex items-start gap-md p-md bg-white rounded-2xl shadow-sm border border-border-default/50">
+<div class="bg-surface-container-high p-sm rounded-xl">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<div>
+<p class="text-text-secondary text-caption uppercase font-bold tracking-wider mb-xs">Additional Notes</p>
+<p class="text-text-primary font-body-md">Silver finish, 14-inch model. Has a small "I Love Coding" sticker on the bottom left corner. Seems to be in perfect condition.</p>
+</div>
+</div>
+</div>
+<!-- Reward/XP Section -->
+<div class="bg-tertiary-fixed/20 p-lg rounded-2xl border-2 border-dashed border-tertiary-fixed/50 mb-xl flex items-center justify-between">
+<div class="flex flex-col gap-xs">
+<p class="text-tertiary font-bold text-[14px]">Finder Reward</p>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-warning" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="font-card-title text-tertiary">500 XP</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-tertiary font-bold text-[12px] uppercase">Level Up Goal</p>
+<div class="w-24 h-2 bg-white rounded-full mt-xs overflow-hidden">
+<div class="w-3/4 h-full bg-warning"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action -->
+<div class="fixed bottom-16 left-0 w-full p-md z-40 bg-surface/80 backdrop-blur-sm">
+<div class="max-w-md mx-auto">
+<button class="w-full bg-gradient-to-r from-primary to-secondary text-on-primary py-lg rounded-2xl font-bold text-body-lg shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-md">
+<span class="material-symbols-outlined">verified_user</span>
+                    Claim Item
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface pb-safe border-t border-border-default/50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant group py-1">
+<span class="material-symbols-outlined text-[24px] mb-1 group-active:scale-90 transition-transform">home</span>
+<span class="text-[12px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant group py-1">
+<span class="material-symbols-outlined text-[24px] mb-1 group-active:scale-90 transition-transform">add_box</span>
+<span class="text-[12px] font-medium">Report</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary group py-1">
+<span class="material-symbols-outlined text-[24px] mb-1 group-active:scale-90 transition-transform" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="text-[12px] font-bold">Matches</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant group py-1">
+<span class="material-symbols-outlined text-[24px] mb-1 group-active:scale-90 transition-transform">person</span>
+<span class="text-[12px] font-medium">Profile</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for the claim button
+        const claimBtn = document.querySelector('button.bg-gradient-to-r');
+        claimBtn.addEventListener('click', () => {
+            claimBtn.innerHTML = `
+                <span class="material-symbols-outlined animate-spin">sync</span>
+                Verifying ownership...
+            `;
+            setTimeout(() => {
+                claimBtn.innerHTML = `
+                    <span class="material-symbols-outlined">check</span>
+                    Request Sent!
+                `;
+                claimBtn.classList.replace('from-primary', 'from-success');
+                claimBtn.classList.replace('to-secondary', 'to-success');
+            }, 1500);
+        });
+
+        // Simple scroll parallax effect for hero image
+        window.addEventListener('scroll', () => {
+            const scroll = window.scrollY;
+            const heroImg = document.querySelector('section img');
+            if (scroll < 400) {
+                heroImg.style.transform = `translateY(${scroll * 0.4}px)`;
+            }
+        });
+    </script>
+
+
+</body></html>

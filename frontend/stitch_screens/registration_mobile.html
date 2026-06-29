@@ -1,0 +1,269 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Register | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .input-focus-ring:focus {
+            box-shadow: 0 0 0 4px rgba(91, 95, 239, 0.15);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "on-surface": "#191c1e",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#464555",
+                        "on-secondary-fixed": "#23005c",
+                        "on-background": "#191c1e",
+                        "on-tertiary-container": "#fff7ee",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdf9f",
+                        "dark-bg": "#111827",
+                        "success": "#22C55E",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c6c5d7",
+                        "on-secondary-container": "#fffbff",
+                        "primary": "#4143d5",
+                        "surface-bright": "#f7f9fb",
+                        "surface-tint": "#474adb",
+                        "on-tertiary-fixed": "#261a00",
+                        "outline": "#767586",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "danger": "#F43F5E",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "text-primary": "#111827",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary-container": "#916c00",
+                        "primary-container": "#5b5fef",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container-highest": "#e0e3e5",
+                        "text-secondary": "#6B7280",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "error-container": "#ffdad6",
+                        "surface": "#f7f9fb",
+                        "border-default": "#E5E7EB",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface-container-low": "#f2f4f6",
+                        "surface-container-high": "#e6e8ea",
+                        "tertiary": "#735500",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "card-bg": "#FFFFFF",
+                        "dark-card": "#1F2937",
+                        "primary-fixed": "#e1e0ff",
+                        "warning": "#FB923C",
+                        "secondary": "#6b38d4",
+                        "background": "#f7f9fb",
+                        "secondary-fixed": "#e9ddff",
+                        "dark-primary": "#8B80FF",
+                        "secondary-container": "#8455ef",
+                        "inverse-primary": "#c0c1ff",
+                        "on-primary-container": "#f9f6ff",
+                        "surface-dim": "#d8dadc",
+                        "on-primary-fixed": "#05006c",
+                        "info-ai": "#38BDF8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "12px",
+                        "2xl": "20px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "margin-desktop": "32px",
+                        "sm": "8px",
+                        "3xl": "64px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "2xl": "48px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="antialiased text-on-background min-h-screen flex flex-col items-center justify-center relative px-margin-mobile py-lg overflow-y-auto">
+<!-- Decorative Animated Background -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+
+<div class="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary-container/20 rounded-full blur-3xl float-animation"></div>
+<div class="absolute bottom-[-5%] left-[-5%] w-80 h-80 bg-secondary-container/20 rounded-full blur-3xl float-animation" style="animation-delay: -2s;"></div>
+</div>
+<!-- Main Registration Container -->
+<main class="w-full max-w-md z-10">
+<!-- Logo & Header Section -->
+<div class="text-center mb-xl">
+<div class="inline-flex items-center justify-center p-sm bg-primary rounded-2xl shadow-lg shadow-primary/20 mb-md">
+<span class="material-symbols-outlined text-[32px] text-white" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<h1 class="font-page-title-mobile text-page-title-mobile text-text-primary mb-xs">Join Lost&amp;Found AI</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Your helpful senior student assistant is waiting to help you find what's yours.</p>
+</div>
+<!-- Registration Form Card -->
+<div class="glass-card p-lg rounded-2xl shadow-xl space-y-lg border border-white/40">
+<form action="#" class="space-y-md" method="POST">
+<!-- Full Name Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="full_name">Full Name</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<input class="w-full bg-white border border-border-default rounded-xl py-md pl-11 pr-md font-body-md text-body-md outline-none transition-all duration-200 focus:border-primary input-focus-ring placeholder:text-text-secondary/50" id="full_name" name="full_name" placeholder="John Doe" type="text">
+</div>
+</div>
+<!-- University Email Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="university_email">University Email</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">alternate_email</span>
+</div>
+<input class="w-full bg-white border border-border-default rounded-xl py-md pl-11 pr-md font-body-md text-body-md outline-none transition-all duration-200 focus:border-primary input-focus-ring placeholder:text-text-secondary/50" id="university_email" name="university_email" placeholder="j.doe@university.edu" type="email">
+</div>
+</div>
+<!-- Student ID Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="student_id">Student ID</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<input class="w-full bg-white border border-border-default rounded-xl py-md pl-11 pr-md font-body-md text-body-md outline-none transition-all duration-200 focus:border-primary input-focus-ring placeholder:text-text-secondary/50" id="student_id" name="student_id" placeholder="U2024001" type="text">
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="password">Password</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<input class="w-full bg-white border border-border-default rounded-xl py-md pl-11 pr-md font-body-md text-body-md outline-none transition-all duration-200 focus:border-primary input-focus-ring placeholder:text-text-secondary/50" id="password" name="password" placeholder="••••••••" type="password">
+<button class="absolute inset-y-0 right-0 pr-md flex items-center text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full mt-lg py-md px-lg bg-gradient-to-r from-primary to-secondary text-white font-label-md text-label-md rounded-xl shadow-lg shadow-primary/25 hover:scale-[1.03] active:scale-95 transition-all duration-200 flex items-center justify-center gap-sm group" type="submit">
+                    Create My Account
+                    <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+<!-- Divider -->
+
+<!-- Social Login Options -->
+
+</div>
+<!-- Footer Link -->
+<div class="mt-lg text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Already have an account? 
+                <a class="text-primary font-bold hover:underline transition-all" href="#">Login</a>
+</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-md">Staff member? <a class="text-primary font-bold hover:underline transition-all" href="#">Administrative Login</a></p></div>
+<!-- Trust Badge / Micro-copy -->
+<div class="mt-2xl flex items-center justify-center gap-sm opacity-60">
+<span class="material-symbols-outlined text-[18px] text-success" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<p class="font-caption text-caption text-on-surface">Secured by Campus Network Auth</p>
+</div>
+</main>
+<!-- Background Illustration Detail -->
+<div class="fixed bottom-margin-mobile right-margin-mobile opacity-10 pointer-events-none hidden md:block">
+
+</div>
+<script>
+        // Micro-interaction for the "Helpful Senior" vibe
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('input');
+            const submitBtn = document.querySelector('button[type="submit"]');
+
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    // Visual feedback logic if needed
+                });
+            });
+
+            // Prevent default for demo
+            document.querySelector('form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Creating...';
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Welcome!';
+                    submitBtn.classList.replace('bg-gradient-to-r', 'bg-success');
+                }, 1500);
+            });
+        });
+    </script>
+
+
+</body></html>

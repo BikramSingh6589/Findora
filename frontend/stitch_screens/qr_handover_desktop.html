@@ -1,0 +1,323 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Resolve Handover | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .qr-scanner-glow {
+            position: relative;
+        }
+        .qr-scanner-glow::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4143d5, transparent);
+            animation: scan 3s ease-in-out infinite;
+        }
+        @keyframes scan {
+            0%, 100% { top: 0%; opacity: 0; }
+            50% { top: 100%; opacity: 1; }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "text-secondary": "#6B7280",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "border-default": "#E5E7EB",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-tertiary-container": "#fff7ee",
+                        "surface-container-lowest": "#ffffff",
+                        "dark-bg": "#111827",
+                        "primary-container": "#5b5fef",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary": "#6b38d4",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-surface": "#191c1e",
+                        "on-error-container": "#93000a",
+                        "outline": "#767586",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-secondary-container": "#fffbff",
+                        "surface-tint": "#474adb",
+                        "success": "#22C55E",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#916c00",
+                        "inverse-primary": "#c0c1ff",
+                        "on-primary-container": "#f9f6ff",
+                        "on-background": "#191c1e",
+                        "info-ai": "#38BDF8",
+                        "on-secondary": "#ffffff",
+                        "dark-card": "#1F2937",
+                        "background": "#f7f9fb",
+                        "outline-variant": "#c6c5d7",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "card-bg": "#FFFFFF",
+                        "on-primary-fixed": "#05006c",
+                        "surface-dim": "#d8dadc",
+                        "on-surface-variant": "#464555",
+                        "dark-primary": "#8B80FF",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "danger": "#F43F5E",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#4143d5",
+                        "surface-container": "#eceef0",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface-container-low": "#f2f4f6",
+                        "text-primary": "#111827",
+                        "secondary-fixed": "#e9ddff",
+                        "warning": "#FB923C",
+                        "tertiary": "#735500",
+                        "secondary-container": "#8455ef",
+                        "on-secondary-fixed": "#23005c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px", "lg": "24px", "xl": "32px", "margin-mobile": "16px", "margin-desktop": "32px", "gutter": "16px", "base": "8px", "sm": "8px", "3xl": "64px", "md": "16px", "2xl": "48px"
+                    },
+                    "fontFamily": {
+                        "section-title": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Desktop Side Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-card-bg dark:bg-dark-card shadow-md z-50 p-md gap-lg">
+<div class="font-page-title text-page-title text-primary dark:text-dark-primary font-bold px-md mb-xl">
+            Lost&amp;Found AI
+        </div>
+<nav class="flex flex-col gap-sm flex-grow">
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md text-label-md">Community Board</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-md bg-primary-fixed dark:bg-primary-container text-on-primary-fixed-variant dark:text-on-primary-container rounded-xl px-md py-sm transition-all duration-200 hover:scale-[1.03]" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">My History</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-sm pt-xl border-t border-outline-variant">
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<div class="flex items-center gap-md px-md py-sm mt-md">
+<img class="w-10 h-10 rounded-full bg-primary-fixed" data-alt="A profile picture of a friendly campus AI mascot with a graduation cap and large friendly eyes, styled as a soft 3D character in a bright corporate modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUfsJhK5N_8Ntj5xHbs9JDlrHfmR9GFo12uV2EJsQuB2kyNtI_EiSSV7wM2TXGa-g3T7GF-g6mi3kPg_wk06DZxoMqJ26Agcv4X_1Upm-hDIE2xWDZlXeYcQsRZ2aFtnbxDDXzVSbGk7EOctSBx5HHzav2vD7BHAs5zX2Z_7M1pEyevpo7sbkAJ6YBCReJ1dAQvzzEa1s5wmGb4ilNdX92cwwoXeSpjKC55SsPtz12hBSjXGY7J50zOUHtlWEF08NSvqit3s3F8Qw">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Senior Student AI</span>
+<span class="text-caption font-caption text-text-secondary">Helper Level 12</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:ml-64 min-h-screen relative overflow-hidden">
+<!-- Top App Bar -->
+<header class="bg-surface/80 dark:bg-dark-bg/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md shadow-sm">
+<div class="flex items-center gap-md">
+<button class="lg:hidden p-2 hover:bg-surface-container rounded-full">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-page-title text-page-title-mobile md:text-page-title font-bold text-primary">Resolve Handover</h1>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant">auto_awesome</span>
+<span class="material-symbols-outlined text-on-surface-variant">leaderboard</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border-2 border-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a friendly-looking male college student with glasses and a warm smile, set against a blurred campus background, high quality professional digital photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvMcsxj1nG1EzmEty33IW-IhMk2CAUBE5mHhYdOgoRcNXAPievpIdnwU3a8ArWMn8gHHw45NXv8qEUPMGaPBu4rI3CrKVyC3iVh5zt6UqpDx8QGzvf5dfkBqiR5dd50VICRwadrHmhfameBdeZlL9PhvSexN8IRS3RmzTmnC15gLx6OvSnzZzjRyat9o1JvELp5WxcPHj834HlMKSTPmglRRwa38uRaFcISmu7HCX2DmN_DZmiELhulEh1vHxonpewfCKAHee4Jko">
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-margin-mobile md:p-margin-desktop max-w-5xl mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Item & Owner Details -->
+<div class="lg:col-span-5 space-y-lg">
+<div class="bg-card-bg rounded-3xl p-lg shadow-[0_8px_30px_rgba(0,0,0,0.08)] space-y-lg">
+<div class="relative group">
+<div class="aspect-square w-full rounded-2xl overflow-hidden shadow-inner bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A high-quality studio photograph of a sleek black leather wallet with silver accents, resting on a clean white marble surface with soft natural lighting, minimalist and corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeR7npTgcAhtZgJiyllkd34-FgBZavlFaW3cQ5feooFbPMxFDRmnGMQTlgmiwrHlmOHgbz-RWJLOzbo0_SxE6UP8Qn1xiE2Zn4wWFsMYgHZ1ugGqIuN3SLsIrsIwPLF_VT3pIEqoEfBjNgLyulXD5Xfzx5-4ncV_FZniuKv9qa2gYdpD5EODVilGSL14LA7j_90APPC-0omwuBMGCSLpZz_hXEXN4HyEkjF8dI8E2g1nuBtSh4-C_Y7_fsi-JoTE6m7IuJZPunbf8">
+</div>
+<div class="absolute top-4 right-4 bg-success text-on-primary px-4 py-2 rounded-full text-caption font-label-md flex items-center gap-xs shadow-lg">
+<span class="material-symbols-outlined text-sm">verified</span> Verified Match
+                            </div>
+</div>
+<div>
+<h2 class="font-card-title text-card-title mb-xs">Black Leather Wallet</h2>
+<p class="text-text-secondary font-body-md">Found at Student Union Lounge</p>
+</div>
+<div class="pt-md border-t border-outline-variant">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center">
+<img class="w-full h-full object-cover rounded-full" data-alt="Profile avatar of a young female college student named Alex Rivera, with a kind expression and modern casual clothing, professional studio lighting, bright and airy corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBh9n0o7EzjknF3A4fZLe7yZn0GrJCMSTEvZ9kFHNLhrGXcOmSeA6OPhHHRIlZAZLjQ5fY88CWvqYODXd4eBDDtcnpKoA8BXJgliyCGpZ6Dho23owUAAjcqdiyCkULzpqIXBV3N4tkH5r1BPj-nCvhnGHT2uUJ1sEGotJGuWW7aPt6vw3sINaDbIxqu0cKhUD8ly-rB_0Fsa9ujToXxFSh04WiHIQHUpNWLat79SEGUP9yadgaGEG9wD7jyX_2Cg_88Lt1NU_Fcuzo">
+</div>
+<div class="flex flex-col">
+<span class="text-caption font-caption text-text-secondary uppercase tracking-wider">Owner</span>
+<span class="font-label-md text-label-md text-on-surface">Alex Rivera</span>
+</div>
+<div class="ml-auto">
+<span class="material-symbols-outlined text-primary-container">chat_bubble</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary-fixed/30 border border-primary/10 rounded-2xl p-md flex gap-md items-start">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">info</span>
+<div class="space-y-xs">
+<h4 class="font-label-md text-label-md text-primary">Handover Tip</h4>
+<p class="text-caption font-caption text-on-surface-variant">Meet in a public, well-lit campus location. The handover is complete once Alex scans your unique QR code.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: QR Code & Actions -->
+<div class="lg:col-span-7">
+<div class="bg-card-bg rounded-3xl p-xl shadow-[0_20px_50px_rgba(91,95,239,0.12)] border border-primary/5 flex flex-col items-center text-center">
+<div class="mb-lg space-y-xs">
+<h3 class="font-section-title text-section-title">Unique Handover QR</h3>
+<p class="text-text-secondary font-body-md max-w-sm mx-auto">Show this code to the owner to complete the handover securely.</p>
+</div>
+<!-- QR Code Container -->
+<div class="relative p-xl bg-surface-container-low rounded-[32px] mb-lg qr-scanner-glow">
+<div class="w-64 h-64 bg-white p-4 rounded-2xl shadow-xl flex items-center justify-center">
+<div class="w-full h-full bg-no-repeat bg-contain bg-center opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBsekwCCgC4STBmWLjt4LIcDlOuWx-D0XuguTvP_E_2vq_vZTH3FjIyhK3HlJ9yeL_VClPNmy-ll3UcZ5Q35dRf3u2bmpmYpwMVfIfJBbnNXNsjoM2cyoXj4CXhEdozBsBa0kreOyxRIhdaVe_1nc0nw0jvWbaPwhE_ZPxNr_FliJbMIW5OxOlQ3V4-N9B3CsOwPOFsGhojY9EBKDwpu1XdxWzz7sPVSL_DeF-aYmzkWOC9OImBUeewkJQ_e5RCzEpV3wdTpAiH-08'); filter: contrast(1.2);"></div>
+</div>
+<!-- Status Indicator -->
+<div class="mt-lg flex items-center justify-center gap-sm">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-warning opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-warning"></span>
+</span>
+<span class="font-label-md text-label-md text-warning tracking-wide">Waiting for Scan</span>
+</div>
+</div>
+<div class="w-full space-y-md mt-md">
+<button class="w-full py-4 px-lg bg-gradient-to-r from-primary to-secondary text-on-primary rounded-2xl font-label-md flex items-center justify-center gap-md hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_20px_rgba(91,95,239,0.25)]">
+<span class="material-symbols-outlined">print</span>
+<span class="">Save or Print Code</span>
+</button>
+<button class="w-full py-4 px-lg bg-transparent border border-danger text-danger rounded-2xl font-label-md hover:bg-error-container/50 transition-colors flex items-center justify-center gap-md active:scale-95">
+<span class="material-symbols-outlined">cancel</span>
+<span class="">Cancel Handover</span>
+</button>
+</div>
+<div class="mt-xl flex items-center gap-sm px-md py-xs bg-surface rounded-full">
+<span class="material-symbols-outlined text-success" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="text-caption font-caption text-text-secondary">End-to-end encrypted verification</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Atmospheric Background Elements -->
+<div class="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10"></div>
+<div class="fixed bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[80px] -z-10"></div>
+</main>
+<!-- Mobile Bottom Navigation (Visible on small screens) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface dark:bg-dark-bg pb-safe lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-caption font-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary" href="#">
+<span class="material-symbols-outlined">add_box</span>
+<span class="text-caption font-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-dark-primary bg-primary-fixed/30 rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-caption font-caption">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-caption font-caption">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for the QR code status simulation
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusLabel = document.querySelector('.font-label-md.text-warning');
+            const statusDot = document.querySelector('.bg-warning');
+            const pingDot = document.querySelector('.animate-ping');
+
+            // Just a visual simulation for the demo
+            setTimeout(() => {
+                if (statusLabel) {
+                    // This could be updated via web sockets in a real app
+                    console.log('Status: Listening for scan events...');
+                }
+            }, 2000);
+        });
+    </script>
+
+
+</body></html>

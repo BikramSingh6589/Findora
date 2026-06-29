@@ -1,0 +1,411 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Community Board | Campus Connect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .active-nav-gradient {
+            background: linear-gradient(90deg, rgba(65, 67, 213, 0.1) 0%, rgba(65, 67, 213, 0) 100%);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+        }
+        .reward-gradient {
+            background: linear-gradient(135deg, #FB923C 0%, #F9BD22 100%);
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-error": "#ffffff",
+                "card-bg": "#FFFFFF",
+                "surface-container-highest": "#e0e3e5",
+                "tertiary": "#735500",
+                "on-primary-fixed-variant": "#2c2cc3",
+                "dark-bg": "#111827",
+                "on-surface-variant": "#464555",
+                "outline": "#767586",
+                "on-primary-container": "#f9f6ff",
+                "surface-container-high": "#e6e8ea",
+                "error": "#ba1a1a",
+                "primary-fixed-dim": "#c0c1ff",
+                "surface-container": "#eceef0",
+                "error-container": "#ffdad6",
+                "tertiary-container": "#916c00",
+                "dark-card": "#1F2937",
+                "secondary-fixed-dim": "#d0bcff",
+                "on-tertiary-fixed": "#261a00",
+                "secondary": "#6b38d4",
+                "on-tertiary": "#ffffff",
+                "text-secondary": "#6B7280",
+                "primary-fixed": "#e1e0ff",
+                "inverse-on-surface": "#eff1f3",
+                "inverse-surface": "#2d3133",
+                "tertiary-fixed-dim": "#f9bd22",
+                "background": "#f7f9fb",
+                "secondary-fixed": "#e9ddff",
+                "on-background": "#191c1e",
+                "dark-primary": "#8B80FF",
+                "primary": "#4143d5",
+                "on-secondary-fixed-variant": "#5516be",
+                "on-error-container": "#93000a",
+                "warning": "#FB923C",
+                "outline-variant": "#c6c5d7",
+                "surface-variant": "#e0e3e5",
+                "on-secondary-fixed": "#23005c",
+                "secondary-container": "#8455ef",
+                "on-primary-fixed": "#05006c",
+                "on-primary": "#ffffff",
+                "danger": "#F43F5E",
+                "surface-dim": "#d8dadc",
+                "tertiary-fixed": "#ffdf9f",
+                "on-tertiary-fixed-variant": "#5c4300",
+                "primary-container": "#5b5fef",
+                "surface-container-low": "#f2f4f6",
+                "info-ai": "#38BDF8",
+                "surface": "#f7f9fb",
+                "inverse-primary": "#c0c1ff",
+                "surface-tint": "#474adb",
+                "success": "#22C55E",
+                "surface-container-lowest": "#ffffff",
+                "text-primary": "#111827",
+                "on-tertiary-container": "#fff7ee",
+                "on-secondary-container": "#fffbff",
+                "on-surface": "#191c1e"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "xl": "32px",
+                "lg": "24px",
+                "md": "16px",
+                "margin-desktop": "32px",
+                "xs": "4px",
+                "base": "8px",
+                "margin-mobile": "16px",
+                "sm": "8px",
+                "3xl": "64px",
+                "2xl": "48px",
+                "gutter": "16px"
+              },
+              "fontFamily": {
+                "label-md": ["Plus Jakarta Sans"],
+                "hero-title": ["Plus Jakarta Sans"],
+                "section-title": ["Plus Jakarta Sans"],
+                "page-title": ["Plus Jakarta Sans"],
+                "caption": ["Plus Jakarta Sans"],
+                "body-lg": ["Plus Jakarta Sans"],
+                "body-md": ["Plus Jakarta Sans"],
+                "card-title": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface overflow-x-hidden">
+<!-- Shell: Desktop Layout -->
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar Anchor -->
+<aside class="hidden md:flex flex-col h-full w-64 bg-surface-container dark:bg-dark-card p-lg z-30 flex-shrink-0">
+<div class="flex items-center gap-3 mb-xl">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<div>
+<h1 class="font-section-title text-section-title font-extrabold text-primary">Campus Connect</h1>
+<p class="font-caption text-caption text-on-surface-variant -mt-1">Lost &amp; Found Portal</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary transition-all hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary transition-all hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary font-bold border-r-4 border-primary bg-primary-fixed-dim/20 transition-all scale-105 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">forum</span>
+<span class="font-label-md text-label-md">Community Board</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary transition-all hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-label-md text-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary transition-all hover:bg-surface-container-high group" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">My History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary transition-all hover:bg-surface-container-high group" href="#">
+    <span class="material-symbols-outlined">leaderboard</span>
+    <span class="font-label-md text-label-md">Leaderboard</span>
+</a></nav>
+<div class="mt-auto pt-lg border-t border-outline-variant space-y-2">
+<button class="w-full py-4 px-6 rounded-2xl primary-gradient text-white font-bold shadow-lg hover:scale-[1.03] transition-transform flex items-center justify-center gap-2 mb-lg">
+<span class="material-symbols-outlined">add</span>
+                    Report New Item
+                </button>
+<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:text-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">help</span> Help
+                </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+<!-- TopNavBar Anchor -->
+<header class="sticky top-0 z-20 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 shadow-sm bg-surface">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md hidden md:block">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant material-symbols-outlined">search</span>
+<input class="w-full pl-12 pr-4 py-2 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-body-md font-body-md" placeholder="Search for items, locations..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="flex items-center gap-3 ml-2 border-l border-outline-variant pl-4">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="text-xs text-on-surface-variant">Sophomore Student</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden">
+<img alt="Student Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMEMAxKYCvwlnw4OlXFqeIU33oVnAIQam9jznS6lzIiKQMXU9jI6BMENAxpQ0CLB8eD50reO7hVybhGHR1ofziABZtfbFfoKHIxgtYdnrB2AH18-4NYHV2G9Ar_sVL7PxB7ZX41g71B__8uhACSS_ucOUOb6WOM6voCfGnmmNxBp7dv0FmrCQxw5mhiruMyyY0rUHanlfPWbRk12n2NDqwtQkIwIhQkb3NxiaPp2LBE8mLSmUnlYxGERde5o9aXnRyJDKcOudLVSM">
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<div class="p-lg md:p-xl space-y-lg max-w-[1400px] mx-auto w-full">
+<!-- Hero Heading Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h2 class="font-page-title text-page-title text-primary tracking-tight">Community Board <span class="text-secondary">(24h)</span></h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-2">
+                            A live feed of items found across campus within the last 24 hours. Let's help our neighbors reconnect with their lost belongings through the power of community!
+                        </p>
+</div>
+<div class="flex items-center gap-2 bg-primary-container/10 px-4 py-2 rounded-full border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label-md text-label-md text-primary">24 Active Matches Found</span>
+</div><a href="#" class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high text-primary hover:bg-primary/5 transition-all font-label-md text-label-md border border-primary/20">
+    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 0;">leaderboard</span>
+    <span class="">View Leaderboard</span>
+</a>
+</section>
+<!-- Filter & Search Section -->
+<section class="glass-card p-md rounded-2xl flex flex-wrap items-center gap-md">
+<div class="flex flex-wrap items-center gap-2">
+<button class="px-5 py-2 rounded-full primary-gradient text-white font-label-md text-label-md shadow-md">All Items</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Electronics</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Books</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Accessories</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Clothing</button>
+</div>
+<div class="flex-1 min-w-[200px] md:max-w-xs ml-auto">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant material-symbols-outlined">filter_list</span>
+<select class="w-full pl-10 pr-4 py-2 bg-surface-container border-none rounded-xl text-label-md font-label-md focus:ring-2 focus:ring-primary appearance-none">
+<option>Recently Found</option>
+<option>Ending Soon</option>
+<option>Near Me</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Items Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-lg pb-xl">
+<!-- Card 1: Laptop -->
+<div class="bg-card-bg rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group flex flex-col border border-outline-variant/30">
+<div class="relative h-48 overflow-hidden">
+<img alt="Found MacBook" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AP1WRLuZvCgyHr43N0iFlOKyk6UiEoE0zimYrO69w8_AHQ8wkOimQ_lDiQavSvRYS9r-JEJoj726-4HVicEqIuvmsDoTUaIfckvI4Q2Hdhbwou3_7ZRBWuEz0RATnEwV0bpv8GEJ44d-8g-mNEt96uyyu-Udm3-tCEI0NRQXXlICHkTozaHjHmAH5nAYF0uq2UAbrJxMfUFfQzyRlW2kWXmLjMwab74EQcE2ZKBpxgrOAlXt5sYCxyy3JqV5HA">
+<div class="absolute top-3 right-3 bg-danger/90 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 backdrop-blur-sm">
+<span class="material-symbols-outlined text-sm">timer</span>
+                                14h 22m left
+                            </div>
+<div class="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+                                Found @ Library Level 4
+                            </div>
+</div>
+<div class="p-md flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-card-title text-card-title text-on-surface line-clamp-1">Silver MacBook Air</h3>
+<span class="text-xs bg-primary-container/20 text-primary px-2 py-1 rounded font-bold">Electronics</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant mb-4">Left near the window study carrels. Has a "Computer Science" sticker on the lid.</p>
+<div class="mt-auto space-y-2">
+<button class="w-full py-2.5 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-colors">Suggest Owner</button>
+<button class="w-full py-2.5 rounded-xl primary-gradient text-white font-bold shadow-md active:scale-95 transition-all">Claim Item</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Doodles (Representing miscellaneous items) -->
+<div class="bg-card-bg rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group flex flex-col border border-outline-variant/30">
+<div class="relative h-48 overflow-hidden bg-surface-container-low">
+<img alt="Lost doodles" class="w-full h-full object-contain p-8 group-hover:rotate-3 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AP1WRLsr4JL9xFyttjBMcn_GVYXAmGxl9Md6v7gAlzmVmhaYF1q7VhncS30v3Mzkrtd1YKtbLqO7Gb0vqG35ke9eqsTvQCwztTzVNkO02peOHCjC9UxOWqlH5S5JoTODGuYFDlagBvcgJAKFuxWx9W9twMjtcOOtKDdYDAbHQPuzWqx2_utyIysyhHWx2sDuf62gbVtLIZqA4VAyfCMlP8YGUrey3UzBMj4Oz1EVCQWdW2crDQA6wQQ0xgA_Tw">
+<div class="absolute top-3 right-3 bg-danger/90 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 backdrop-blur-sm">
+<span class="material-symbols-outlined text-sm">timer</span>
+                                08h 15m left
+                            </div>
+<div class="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+                                Found @ Gym Lockers
+                            </div>
+</div>
+<div class="p-md flex-1 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-card-title text-card-title text-on-surface line-clamp-1">Keyring with Airtag</h3>
+<span class="text-xs bg-warning/10 text-warning px-2 py-1 rounded font-bold">Accessories</span>
+</div>
+<p class="font-caption text-caption text-on-surface-variant mb-4">Blue silicon case Airtag with 3 keys and a small LEGO astronaut keychain.</p>
+<div class="mt-auto space-y-2">
+<button class="w-full py-2.5 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-colors">Suggest Owner</button>
+<button class="w-full py-2.5 rounded-xl primary-gradient text-white font-bold shadow-md active:scale-95 transition-all">Claim Item</button>
+</div>
+</div>
+</div>
+<!-- Repeating logic for 6 more skeleton-like cards for full grid -->
+<!-- Card 3 -->
+<div class="bg-card-bg rounded-[20px] overflow-hidden shadow-sm border border-outline-variant/30 flex flex-col">
+<div class="relative h-48 bg-surface-container animate-pulse flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant/30">image</span>
+<div class="absolute top-3 right-3 bg-danger/90 text-white text-xs font-bold px-3 py-1.5 rounded-full">21h 05m left</div>
+</div>
+<div class="p-md space-y-3">
+<div class="h-6 w-3/4 bg-surface-container rounded"></div>
+<div class="h-4 w-full bg-surface-container rounded"></div>
+<div class="pt-4 space-y-2">
+<div class="h-10 w-full bg-surface-container rounded-xl"></div>
+<div class="h-10 w-full bg-surface-container rounded-xl"></div>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-card-bg rounded-[20px] overflow-hidden shadow-sm border border-outline-variant/30 flex flex-col">
+<div class="relative h-48 bg-surface-container-high animate-pulse flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant/30">image</span>
+<div class="absolute top-3 right-3 bg-danger/90 text-white text-xs font-bold px-3 py-1.5 rounded-full">02h 44m left</div>
+</div>
+<div class="p-md space-y-3">
+<div class="h-6 w-3/4 bg-surface-container rounded"></div>
+<div class="h-4 w-full bg-surface-container rounded"></div>
+<div class="pt-4 space-y-2">
+<div class="h-10 w-full bg-surface-container rounded-xl"></div>
+<div class="h-10 w-full bg-surface-container rounded-xl"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Banner -->
+<section class="mt-xl">
+<div class="reward-gradient rounded-[32px] p-xl flex flex-col md:flex-row items-center justify-between gap-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+<span class="material-symbols-outlined text-9xl">search_check</span>
+</div>
+<div class="relative z-10 text-center md:text-left">
+<h3 class="font-section-title text-section-title text-white font-extrabold">Can't find your item?</h3>
+<p class="font-body-lg text-body-lg text-white/90">Our AI matches found items with lost reports every hour. Post your missing item now!</p>
+</div>
+<button class="relative z-10 bg-white text-warning font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all text-label-md font-label-md">
+                            Report Now
+                        </button>
+</div>
+</section>
+</div>
+<footer class="mt-auto py-8 text-center text-on-surface-variant font-caption text-caption border-t border-outline-variant/20 mx-margin-desktop">
+                © 2024 Campus Connect — Supporting Student Communities.
+            </footer>
+</main>
+</div>
+<!-- BottomNavBar Anchor (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 md:hidden bg-surface dark:bg-dark-bg shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-caption text-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-caption text-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 px-4 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-caption text-caption">Board</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-caption text-caption">AI</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-caption text-caption">History</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for claiming items
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.innerText === 'Claim Item') {
+                btn.addEventListener('click', () => {
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> Processing...';
+                    btn.disabled = true;
+                    setTimeout(() => {
+                        btn.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> Request Sent!';
+                        btn.classList.remove('primary-gradient');
+                        btn.classList.add('bg-success');
+                    }, 1200);
+                });
+            }
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        if(searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.classList.add('scale-[1.02]');
+                searchInput.parentElement.classList.add('shadow-md');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.classList.remove('scale-[1.02]');
+                searchInput.parentElement.classList.remove('shadow-md');
+            });
+        }
+    </script>
+
+
+</body></html>

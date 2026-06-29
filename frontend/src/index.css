@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    /* Primary */
+    --color-primary: #4143d5;
+    --color-primary-container: #5b5fef;
+    --color-on-primary: #ffffff;
+    --color-on-primary-container: #f9f6ff;
+    --color-inverse-primary: #c0c1ff;
+
+    /* Secondary */
+    --color-secondary: #6b38d4;
+    --color-secondary-container: #8455ef;
+    --color-on-secondary: #ffffff;
+    --color-on-secondary-container: #fffbff;
+
+    /* Tertiary (Reward) */
+    --color-tertiary: #735500;
+    --color-tertiary-container: #916c00;
+    --color-tertiary-fixed: #ffdf9f;
+    --color-tertiary-fixed-dim: #f9bd22;
+
+    /* Surface */
+    --color-surface: #f7f9fb;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f2f4f6;
+    --color-surface-container: #eceef0;
+    --color-surface-container-high: #e6e8ea;
+    --color-surface-container-highest: #e0e3e5;
+    --color-on-surface: #191c1e;
+    --color-on-surface-variant: #464555;
+    --color-outline: #767586;
+    --color-outline-variant: #c6c5d7;
+
+    /* Semantic */
+    --color-success: #22C55E;
+    --color-warning: #FB923C;
+    --color-danger: #F43F5E;
+    --color-info-ai: #38BDF8;
+
+    /* Text */
+    --color-text-primary: #111827;
+    --color-text-secondary: #6B7280;
+    --color-card-bg: #ffffff;
+    --color-border-default: #E5E7EB;
+    --color-background: #f7f9fb;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-br from-primary to-secondary text-white rounded-2xl font-sans text-base font-semibold shadow-glow-primary transition-all duration-150;
+  }
+  .btn-primary:hover {
+    @apply scale-[1.03] shadow-[0_8px_24px_rgba(91,95,239,0.35)];
+  }
+
+  .card {
+    @apply bg-white rounded-[20px] p-6 shadow-card transition-all duration-200;
+  }
+  .card:hover {
+    @apply scale-[1.03] shadow-card-hover;
+  }
+}

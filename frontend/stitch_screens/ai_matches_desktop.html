@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Matches | FoundIt!</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #5b5fef 0%, #8455ef 100%);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#05006c",
+                        "secondary-fixed": "#e9ddff",
+                        "warning": "#FB923C",
+                        "tertiary": "#735500",
+                        "outline": "#767586",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "tertiary-container": "#916c00",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "primary-fixed": "#e1e0ff",
+                        "card-bg": "#FFFFFF",
+                        "secondary": "#6b38d4",
+                        "surface-bright": "#f7f9fb",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "background": "#f7f9fb",
+                        "success": "#22C55E",
+                        "dark-bg": "#111827",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "on-tertiary-fixed": "#261a00",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-container": "#5b5fef",
+                        "on-primary-container": "#f9f6ff",
+                        "inverse-primary": "#c0c1ff",
+                        "error": "#ba1a1a",
+                        "info-ai": "#38BDF8",
+                        "on-secondary": "#ffffff",
+                        "dark-primary": "#8B80FF",
+                        "border-default": "#E5E7EB",
+                        "on-error": "#ffffff",
+                        "text-secondary": "#6B7280",
+                        "outline-variant": "#c6c5d7",
+                        "on-secondary-fixed": "#23005c",
+                        "surface-variant": "#e0e3e5",
+                        "surface": "#f7f9fb",
+                        "surface-tint": "#474adb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "secondary-container": "#8455ef",
+                        "surface-dim": "#d8dadc",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e6e8ea",
+                        "dark-card": "#1F2937",
+                        "primary": "#4143d5",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-tertiary-container": "#fff7ee",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "on-surface-variant": "#464555",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "text-primary": "#111827",
+                        "on-background": "#191c1e",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "danger": "#F43F5E"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "gutter": "16px",
+                        "2xl": "48px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "3xl": "64px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "page-title": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface">
+<!-- TopNavBar (Hidden on desktop, logic as per shared components) -->
+<header class="bg-surface-container-lowest dark:bg-dark-bg shadow-[0_8px_30px_rgba(0,0,0,0.08)] fixed top-0 w-full z-40 md:hidden h-16 flex items-center px-4 justify-between">
+<h1 class="font-page-title-mobile text-page-title-mobile font-bold text-primary">FoundIt!</h1>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">history</span>
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A friendly student avatar with glasses and a bright smile, wearing a purple university hoodie. The background is a soft campus setting in daylight, rendered in a modern 3D illustration style with vibrant colors and soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-pqBF1ve9nokmKksO-3RSpignsDmRrdWsGhRjBiPFWcfXK3ODt9cSz_Jmg0WwPd4d_OA9L0kPDhfnsO79M2ucIcPDcZxmXcTu2wuav8PVwgUyjSnGt0e94lohEpIznPFVh-sKQTopbmUjqnong14KyBgW7LdfbASPTgr8QJEWZOA9IGzjtgCVi-LAb_o2rRZ3BhLhnW-158j7tvmgotFNv3p_vnW3osQhcIATSfaHt7WVHKBCXRGWXB6RknM3CC6plOwHVUKcBMo"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Desktop Navigation Anchor) -->
+<aside class="hidden md:flex flex-col h-full w-64 fixed left-0 top-0 py-lg bg-surface-container-low dark:bg-dark-bg shadow-md border-r border-outline-variant/10 z-50">
+<div class="px-6 mb-8">
+<h1 class="font-page-title text-page-title font-bold text-primary">FoundIt!</h1>
+</div>
+<div class="px-4 mb-8">
+<div class="p-4 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-sm">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a university student's profile avatar, showcasing a friendly and professional look. The style is bright and airy with indigo accents, reflecting a helpful senior student persona in a corporate-modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWEcuD9PnimReoMdTr2kMGbzAnrhU6bpvz1uugQOAPHzqtBX3xuRU6b9DX-bvlkgtf4ipM3XJixccddN6Kd0q76DPpOeJY1DoQFixfe41D02etIp5qkk62cZTL-ChxyDL2dzhw8DMzrjL28zXc8PGxWkXGX8qYNjCQEjOvXy8KB-Efyjn6UA6_aNCq1qpIKwnIeWNggugSwgz6fZXW5R3glWGhZSlmL82kQfIU5D4vsGbrKg6ySisgz1ZfmpbkDapzLgQyoK9m-lE"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Senior Student</p>
+<p class="font-caption text-caption text-text-secondary">Level 12 • 450 XP</p>
+</div>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="h-full bg-warning w-3/4 rounded-full"></div>
+</div>
+</div>
+</div>
+<nav class="flex-grow space-y-2 px-2">
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200 rounded-lg mx-2 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200 rounded-lg mx-2 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">description</span>
+<span class="font-label-md text-label-md">My Reports</span>
+</a>
+<!-- Active Navigation State for AI Matches -->
+<a class="flex items-center gap-3 py-3 px-4 bg-primary-container text-on-primary-container shadow-md shadow-primary/20 rounded-lg mx-2 group transition-all duration-200" href="#">
+<span class="material-symbols-outlined fill-icon group-hover:scale-110 transition-transform">psychology</span>
+<span class="font-label-md text-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200 rounded-lg mx-2 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">map</span>
+<span class="font-label-md text-label-md">Campus Map</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-200 rounded-lg mx-2 group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">military_tech</span>
+<span class="font-label-md text-label-md">Rewards</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-2">
+<button class="w-full gradient-primary text-white font-label-md text-label-md py-3 rounded-xl shadow-lg shadow-primary/25 hover:scale-[1.03] active:scale-95 transition-all mb-4">
+                Report Lost Item
+            </button>
+<a class="flex items-center gap-3 py-2 px-4 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 py-2 px-4 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 pt-20 pb-24 md:pt-10 md:pb-10 px-4 md:px-margin-desktop max-w-7xl mx-auto min-h-screen">
+<!-- Header Section -->
+<header class="mb-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="font-page-title text-page-title text-primary mb-2">AI Smart Matches</h2>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-2xl">
+                        Our student-trained AI found potential matches for your lost items. Review the confidence scores and details below to reclaim your belongings.
+                    </p>
+</div>
+<div class="flex gap-2">
+<span class="px-4 py-2 bg-info-ai/10 text-info-ai rounded-full font-label-md text-label-md flex items-center gap-2 border border-info-ai/20">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                        3 New Matches
+                    </span>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Sidebar: Filter by User's Lost Items -->
+<aside class="lg:col-span-3 space-y-md">
+<h3 class="font-section-title text-label-md text-on-surface-variant uppercase tracking-wider px-2">Your Lost Items</h3>
+<div class="space-y-3">
+<!-- Lost Item Card 1 (Active Filter) -->
+<button class="w-full text-left p-4 rounded-2xl bg-white border-2 border-primary shadow-md transition-all duration-200">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A photograph of a blue Hydro Flask water bottle with several university-themed stickers. The lighting is soft and natural, emphasizing the texture of the metallic bottle and the colorful stickers against a clean, minimal background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMpqlU1VcH1ttYId6edM1XEJSzY1Vp748Xpd87J3-Gc9p3aCpDw4VWb65vztGw5Pv44MZvbS0S1CwlE5Qs5pfkaZqTJRzY7ucLJiGntUtEvy7gyXOrajMTVPhBIpqpIcC07Z1RURJ8TRSucv7BfPVVQg6TEXB0hZq1mxqVLcI2STZHVIF6IK40jvG822L4x1rI9AeZHqsot0CKoQsxgnVG3Ve53OhtodRfheKjEZBgjwWPWJcQeJ0eELUdouid9CVdzhBfqW7XqqQ"/>
+</div>
+<div class="flex-grow">
+<p class="font-label-md text-label-md text-on-surface line-clamp-1">Blue Hydro Flask</p>
+<p class="font-caption text-caption text-text-secondary">Lost Oct 12</p>
+</div>
+<span class="bg-primary text-white w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-bold">2</span>
+</div>
+</button>
+<!-- Lost Item Card 2 -->
+<button class="w-full text-left p-4 rounded-2xl bg-white/60 border border-outline-variant hover:border-primary/40 transition-all duration-200">
+<div class="flex items-center gap-3 opacity-70">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up of a pair of silver Apple AirPods Pro in their white charging case. The case has a small green LED light glowing. The image is crisp and professional, using a shallow depth of field to isolate the product on a neutral grey surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3shWSau20hw4TsrSBaCHCar-5pBB1djrKjcndp15LCi6M_QlNr73FvVGbK7QfKjLRpwrq6hI1G4MuRwo4Awc6BNgiNDHvHlt9LEHwrYfyppEEjgqIzrw3_SzPR18F_WfY0PCsiDrzJfFwn_ZTKaVd6C7FRV_ghASac7wlC5TUYl9iFl1bGgmlxp4eBQ05KCffCapjwqjdPEuJs_xVGTey4Os1BC9FGqQ3Y4n6P_2xOWleeQLvHpXHe-zdxkYz0HpRio8s1oXaBHw"/>
+</div>
+<div class="flex-grow">
+<p class="font-label-md text-label-md text-on-surface line-clamp-1">AirPods Pro</p>
+<p class="font-caption text-caption text-text-secondary">Lost Oct 10</p>
+</div>
+<span class="bg-outline-variant text-white w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-bold">1</span>
+</div>
+</button>
+</div>
+<div class="mt-8 p-6 bg-secondary-fixed rounded-3xl border border-secondary/20 relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-label-md text-label-md text-on-secondary-fixed mb-2">Need Help?</h4>
+<p class="font-caption text-caption text-on-secondary-fixed-variant mb-4">Don't see your item? Try updating your report with more photos!</p>
+<button class="text-secondary font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Update Report <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-8xl text-secondary opacity-5 rotate-12 group-hover:rotate-0 transition-transform duration-500">psychology</span>
+</div>
+</aside>
+<!-- Main Content: Match Results -->
+<section class="lg:col-span-9 space-y-lg">
+<!-- Match Card 1 (High Confidence) -->
+<div class="bg-white rounded-[32px] p-6 shadow-sm border border-outline-variant/10 hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
+<!-- AI Badge -->
+<div class="absolute top-0 right-0 p-4">
+<div class="bg-info-ai/10 text-info-ai px-4 py-2 rounded-full border border-info-ai/20 flex items-center gap-2 ai-glow">
+<span class="material-symbols-outlined text-base animate-pulse">verified</span>
+<span class="font-label-md text-label-md">98% Match</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg mt-6">
+<!-- Visual Comparison View -->
+<div class="md:col-span-5 space-y-4">
+<div class="grid grid-cols-2 gap-3 h-48">
+<div class="relative rounded-2xl overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="A photograph of a blue Hydro Flask water bottle with stickers, as reported by the user. The lighting is slightly dim, suggesting a dorm room environment. The image is labeled 'Your Report' in a small corner badge. Corporate modern UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeTcReX9h-q8H6VYiRmNKmKOgB9W6gZ753I3KHDMLzkwjKbmHfWNy6VRFbmQKjoPwfGICTClj1Qfn6tuIF9oRK3N0ystrlqh2VFfIBBPifr6cVIQioxtvT37DcEJsEjZJh1qHl8KKMg6xF_l5B8PLEOwk3RZzRadGTL-BgDYH76lwWWwoS7-ytSbCAV_3aGZujmz3ybxwR0eDutpuRbUMRm3-ndT5Zdjs8uMd1bCoaYZMGjRAzaqs3uTxivIYKr9FEVO48QuSJ7vQ"/>
+<div class="absolute bottom-2 left-2 px-2 py-1 bg-black/60 text-white text-[10px] rounded-md font-bold uppercase">Your Report</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden border-2 border-info-ai shadow-lg shadow-info-ai/20">
+<img class="w-full h-full object-cover" data-alt="High-quality photo of a found blue Hydro Flask water bottle on a university wooden table. The bottle has identical stickers to the user's report. The lighting is bright campus sunlight. Labeled 'Found Item' in the UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtojkNIMqAdK3VGO2AngeA2qyt6efBxTWJ32X1lme4mNs7iwJscjVXmDjoxNQGM9eQYo4XUYCkFGAvo5vrJLKuJ_dyopvk90CwU6870HWYR1R59jj5K78ikOYnViuKZYx-afBTYyucIOXxDlqFs0u7YU6FkXGN3NkAjX5aSerZa9-B71J1BkzjOtoFwEgkYxaNao8-broU0yn-LsNtS2VWlAaa1pk4-Yh1kWt6YVyrw8cWAB0y6UYGkrxlbC3fvbGE3Udx-uZ_HKo"/>
+<div class="absolute bottom-2 left-2 px-2 py-1 bg-info-ai text-white text-[10px] rounded-md font-bold uppercase">Found Item</div>
+</div>
+</div>
+<!-- Comparison Rationale -->
+<div class="p-4 bg-surface-container-low rounded-2xl space-y-3">
+<div class="flex justify-between items-center text-sm">
+<span class="text-text-secondary">Image Similarity</span>
+<span class="font-bold text-primary">95%</span>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[95%]"></div>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-text-secondary">Brand Match</span>
+<span class="font-bold text-success">100%</span>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="h-full bg-success w-full"></div>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-text-secondary">Location Proximity</span>
+<span class="font-bold text-warning">82%</span>
+</div>
+<div class="w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="h-full bg-warning w-[82%]"></div>
+</div>
+</div>
+</div>
+<!-- Match Details -->
+<div class="md:col-span-7 flex flex-col">
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 bg-primary-container/10 text-primary text-[11px] font-extrabold uppercase tracking-widest rounded">Top Pick</span>
+<span class="text-text-secondary text-sm">Found 2 hours ago</span>
+</div>
+<h3 class="font-card-title text-card-title text-on-surface mb-3">Hydro Flask - Cobalt Blue</h3>
+<div class="space-y-3 mb-6">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="text-body-md font-medium">Student Union, Floor 2 (Cafe Area)</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary">sell</span>
+<span class="text-body-md font-medium">Accessories • Water Bottle</span>
+</div>
+<div class="flex items-start gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<p class="text-body-md leading-relaxed">
+                                            "Found near the window seats. Blue metallic finish with 'CS Department' and 'SpaceX' stickers. Shows some wear on the bottom."
+                                        </p>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-outline-variant/20">
+<button class="flex-1 flex items-center justify-center gap-2 py-4 gradient-primary text-white font-label-md text-label-md rounded-2xl shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined fill-icon">check_circle</span>
+                                    This is mine! (Claim)
+                                </button>
+<button class="flex-1 flex items-center justify-center gap-2 py-4 border border-outline text-on-surface-variant font-label-md text-label-md rounded-2xl hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">close</span>
+                                    Not a match
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Match Card 2 (Lower Confidence) -->
+<div class="bg-white/60 rounded-[32px] p-6 border border-outline-variant/30 hover:bg-white transition-all duration-300">
+<div class="flex flex-col md:flex-row gap-lg">
+<div class="w-full md:w-48 h-48 rounded-2xl overflow-hidden bg-surface-container flex-shrink-0 relative">
+<img class="w-full h-full object-cover" data-alt="Clear overhead photograph of a dark blue insulated water bottle lying on a grey carpeted surface. It has no stickers. The lighting is flat and artificial. It resembles the user's item in color but lacks unique identifiers." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB04zAioRN76SsqlOU17wX-e48A7dKdXNflywq3rI26uNr8l3jw7uuPu8VQ11VqIWMuojBWXbG-KIwNW7KL4ecwt4ZqXVcp_BouZiFHd-45D1Gbm2kcqvGD8tviN8yb8KtQkjwOr4SwaZgiFuyv-8z4OxJoutPLXaARd9ifjd0JkA8mch9yqL2bYdoYYJyfe5BJn9ZyuAldryAMCFBldQxNobvLdFnyvjOK8zPvuwaOHyfIM_jjK85tND__UBHE3qLnfwlsRniq-Wg"/>
+<div class="absolute top-2 right-2 bg-warning/90 text-white text-[10px] px-2 py-1 rounded-lg font-bold">72% MATCH</div>
+</div>
+<div class="flex-grow flex flex-col">
+<div class="flex-grow">
+<h3 class="font-card-title text-card-title text-on-surface mb-2">Dark Blue Insulated Bottle</h3>
+<p class="text-text-secondary text-sm mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">schedule</span> Found yesterday at Campus Library
+                                </p>
+<div class="flex gap-2 mb-6">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-semibold">Same Color</span>
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-xs font-semibold">Same Category</span>
+<span class="px-3 py-1 bg-error-container/20 text-error rounded-full text-xs font-semibold">Missing Stickers</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2 border border-primary text-primary font-label-md text-label-md rounded-xl hover:bg-primary/5 transition-all">
+                                    View Details
+                                </button>
+<button class="px-6 py-2 text-on-surface-variant font-label-md text-label-md rounded-xl hover:bg-surface-container-high transition-all">
+                                    Dismiss
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Insights Bento Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-gradient-to-br from-info-ai to-primary p-8 rounded-[32px] text-white relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="font-section-title text-section-title mb-2">How the AI Works</h3>
+<p class="opacity-90 max-w-lg mb-6">
+                                Our Computer Vision model analyzes millions of campus photos to detect visual patterns, textures, and specific branding to provide you with the most accurate matches.
+                            </p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
+<p class="text-xl font-bold">4.2M</p>
+<p class="text-[10px] uppercase font-bold opacity-75">Images Trained</p>
+</div>
+<div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
+<p class="text-xl font-bold">0.4s</p>
+<p class="text-[10px] uppercase font-bold opacity-75">Match Speed</p>
+</div>
+<div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
+<p class="text-xl font-bold">95%</p>
+<p class="text-[10px] uppercase font-bold opacity-75">Precision</p>
+</div>
+<div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
+<p class="text-xl font-bold">24/7</p>
+<p class="text-[10px] uppercase font-bold opacity-75">Monitoring</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="bg-white p-6 rounded-[32px] shadow-sm border border-outline-variant/10 flex flex-col justify-center items-center text-center">
+<div class="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-warning text-4xl animate-float">military_tech</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2">Verify &amp; Win!</h4>
+<p class="text-caption text-text-secondary px-2">
+                            Helping others find their items earns you +50 XP and exclusive campus rewards.
+                        </p>
+<button class="mt-6 text-primary font-bold text-sm hover:underline">See Rewards</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 md:hidden bg-surface-container-lowest dark:bg-dark-card shadow-[0_-4px_20px_rgba(0,0,0,0.05)] border-t border-outline-variant/10">
+<a class="flex flex-col items-center justify-center text-on-surface-variant transition-transform active:scale-110" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant transition-transform active:scale-110" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="text-[10px] font-medium mt-1">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2 shadow-lg shadow-primary/20 scale-105 transition-all" href="#">
+<span class="material-symbols-outlined fill-icon">auto_awesome</span>
+<span class="text-[10px] font-bold mt-1">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant transition-transform active:scale-110" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-[10px] font-medium mt-1">Social</span>
+</a>
+</nav>
+<!-- Floating Action Button (FAB) logic from design system - only on relevant screens -->
+<button class="fixed bottom-24 right-6 md:bottom-10 md:right-10 w-14 h-14 gradient-primary text-white rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40 group">
+<span class="material-symbols-outlined text-3xl">add</span>
+<span class="absolute right-full mr-4 bg-on-surface text-white px-3 py-1.5 rounded-lg text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">New Report</span>
+</button>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Simulating loading state for match results
+        window.addEventListener('load', () => {
+            const matches = document.querySelectorAll('section > div');
+            matches.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+    </script>
+</body></html>

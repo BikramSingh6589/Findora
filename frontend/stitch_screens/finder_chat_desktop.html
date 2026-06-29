@@ -1,0 +1,199 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Communication | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chat-bubble-received {
+            border-radius: 4px 20px 20px 20px;
+        }
+        .chat-bubble-sent {
+            border-radius: 20px 20px 4px 20px;
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "border-default": "#E5E7EB",
+                    "inverse-surface": "#2d3133",
+                    "inverse-primary": "#c0c1ff",
+                    "surface-dim": "#d8dadc",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary-container": "#8455ef",
+                    "background": "#f7f9fb",
+                    "warning": "#FB923C",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#05006c",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "on-primary-container": "#f9f6ff",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "secondary-fixed": "#e9ddff",
+                    "outline": "#767586",
+                    "outline-variant": "#c6c5d7",
+                    "dark-bg": "#111827",
+                    "surface-variant": "#e0e3e5",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "error": "#ba1a1a",
+                    "secondary": "#6b38d4",
+                    "inverse-on-surface": "#eff1f3",
+                    "tertiary-container": "#916c00",
+                    "on-error": "#ffffff",
+                    "dark-card": "#1F2937",
+                    "tertiary-fixed": "#ffdf9f",
+                    "card-bg": "#FFFFFF",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-container": "#fff7ee",
+                    "primary": "#4143d5",
+                    "on-tertiary": "#ffffff",
+                    "info-ai": "#38BDF8",
+                    "primary-container": "#5b5fef",
+                    "on-secondary-container": "#fffbff",
+                    "on-surface-variant": "#464555",
+                    "on-secondary-fixed": "#23005c",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#261a00",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "on-background": "#191c1e",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#e1e0ff",
+                    "dark-primary": "#8B80FF",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "tertiary": "#735500",
+                    "success": "#22C55E",
+                    "surface": "#f7f9fb",
+                    "text-primary": "#111827",
+                    "text-secondary": "#6B7280",
+                    "surface-container-high": "#e6e8ea",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "danger": "#F43F5E",
+                    "on-surface": "#191c1e",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#474adb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "32px",
+                    "3xl": "64px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "sm": "8px",
+                    "base": "8px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "section-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background font-body-md text-on-background min-h-screen">
+<!-- Sidebar Navigation (Desktop) -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-card-bg shadow-md p-md gap-lg z-50">
+<div class="flex flex-col gap-sm">
+<h1 class="font-page-title text-page-title text-primary">Lost&amp;Found AI</h1>
+<div class="flex items-center gap-md p-sm bg-surface-container rounded-xl">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Senior Student AI</p>
+<p class="font-caption text-caption text-on-surface-variant">Helper Level 12</p>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-sm grow">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#"><span class="material-symbols-outlined">map</span><span class="font-label-md">Community Board</span></a>
+<a class="flex items-center gap-md bg-primary-fixed text-on-primary-fixed-variant rounded-xl px-md py-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md">My History</span>
+</a>
+</nav>
+<button class="bg-primary-container text-on-primary-container py-md rounded-xl font-label-md shadow-lg hover:scale-[1.03] transition-all duration-200 active:translate-x-1">
+            Report Found Item
+        </button>
+<div class="flex flex-col gap-xs pt-lg border-t border-border-default">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md">Help Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="lg:ml-64 flex flex-col min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md shadow-sm">
+<div class="flex items-center gap-md">
+<button class="lg:hidden p-sm rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-section-title text-section-title text-primary">Secure Finder Chat</h2>
+</div>
+<div class="flex items-center gap-lg"><button class="flex items-center gap-xs bg-primary text-on-primary px-md py-sm rounded-full font-label-md hover:scale-[1.03] transition-all shadow-sm" title="This will generate a handover QR code"><span class="material-symbols-outlined text-[20px]">verified</span><span class="">Confirm Ownership &amp; Resolve</span></button><button class="hidden md:flex items-center gap-xs bg-surface-container text-primary px-md py-sm rounded-full font-label-md hover:bg-surface-container-high transition-all"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span class="">Admin Mediation</span></button>
+<div class="hidden md:flex gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+</div></div></header><div class="flex-grow p-margin-mobile md:p-margin-desktop flex flex-col gap-lg"><div class="flex justify-center"><div class="bg-primary-fixed/30 text-on-primary-fixed-variant px-lg py-sm rounded-full font-label-md flex items-center gap-sm"><span class="material-symbols-outlined">psychology</span>AI Match Confidence: 94%</div></div><div class="flex flex-col gap-md grow"><!-- Chat messages would go here --></div><div class="sticky bottom-lg flex justify-center pt-lg border-t border-border-default"><button class="flex items-center gap-md bg-error text-on-error px-xl py-md rounded-xl font-label-md shadow-lg hover:scale-[1.03] transition-all" onclick="this.parentElement.innerHTML='&lt;div class=\'bg-error-container text-on-error-container p-md rounded-xl flex items-center gap-md shadow-md\'&gt;&lt;span class=\'material-symbols-outlined\'&gt;lock&lt;/span&gt;&lt;span&gt;Chat closed. Request moved to Admin portal.&lt;/span&gt;&lt;/div&gt;'"><span class="material-symbols-outlined">gavel</span>Close Chat &amp; Escalate</button></div></div></main>
+
+
+</body></html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Register | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .brand-gradient {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#735500",
+                        "dark-card": "#1F2937",
+                        "background": "#f7f9fb",
+                        "surface-tint": "#474adb",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#767586",
+                        "tertiary-fixed": "#ffdf9f",
+                        "warning": "#FB923C",
+                        "card-bg": "#FFFFFF",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#c0c1ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "on-primary-container": "#f9f6ff",
+                        "on-background": "#191c1e",
+                        "surface-container": "#eceef0",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-container": "#fff7ee",
+                        "text-primary": "#111827",
+                        "on-secondary-fixed": "#23005c",
+                        "secondary-container": "#8455ef",
+                        "success": "#22C55E",
+                        "border-default": "#E5E7EB",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary": "#6b38d4",
+                        "tertiary-container": "#916c00",
+                        "on-primary-fixed": "#05006c",
+                        "dark-bg": "#111827",
+                        "outline-variant": "#c6c5d7",
+                        "text-secondary": "#6B7280",
+                        "surface-dim": "#d8dadc",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "primary-container": "#5b5fef",
+                        "error-container": "#ffdad6",
+                        "surface": "#f7f9fb",
+                        "on-surface-variant": "#464555",
+                        "info-ai": "#38BDF8",
+                        "danger": "#F43F5E",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary": "#ffffff",
+                        "dark-primary": "#8B80FF",
+                        "primary-fixed": "#e1e0ff",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-fixed": "#e9ddff",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-tertiary-fixed": "#261a00",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "primary": "#4143d5",
+                        "on-surface": "#191c1e",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#f9bd22"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "20px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "2xl": "48px",
+                        "sm": "8px",
+                        "3xl": "64px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "margin-desktop": "32px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin-mobile": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface selection:bg-primary-fixed-dim min-h-screen flex items-center justify-center p-0 md:p-md lg:p-xl">
+<!-- Registration Container -->
+<main class="w-full max-w-[1440px] min-h-[921px] bg-card-bg rounded-none md:rounded-xl shadow-lg flex overflow-hidden">
+<!-- Left Panel: Vibrant Brand Side -->
+<section class="hidden lg:flex lg:w-1/2 brand-gradient relative p-2xl flex-col justify-between overflow-hidden">
+<!-- Animated Background Shader (Embedded via WebGL custom tag) -->
+
+<div class="relative z-10">
+<div class="flex items-center gap-sm mb-3xl">
+<div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary font-bold">search_spark</span>
+</div>
+<span class="font-page-title text-white text-card-title tracking-tight">Lost&amp;Found AI</span>
+</div>
+<div class="space-y-lg max-w-lg">
+<h1 class="font-hero-title text-hero-title text-white leading-tight">
+                        Your Helpful <br>Senior Student Assistant.
+                    </h1>
+<p class="text-white/80 font-body-lg text-body-lg">
+                        We use advanced AI to match lost items across campus in seconds. Join 15,000+ students reclaiming their peace of mind.
+                    </p>
+</div>
+</div>
+<!-- Illustration Area -->
+<div class="relative z-10 flex justify-center items-center">
+<div class="floating relative">
+<div class="glass-card p-xl rounded-xl w-72 transform -rotate-3 absolute -left-24 -top-12 z-0">
+<div class="flex items-center gap-md mb-sm">
+<div class="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-success text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="h-2 w-24 bg-white/30 rounded-full"></div>
+</div>
+<div class="space-y-xs">
+<div class="h-2 w-full bg-white/20 rounded-full"></div>
+<div class="h-2 w-4/5 bg-white/20 rounded-full"></div>
+</div>
+</div>
+<div class="w-80 h-96 rounded-xl bg-cover bg-center shadow-2xl relative z-10 border-4 border-white/10" data-alt="A friendly, tech-savvy university senior student smiling and holding a modern smartphone. The lighting is warm and optimistic with purple and indigo neon accents in the background. The style is professional digital photography with a shallow depth of field, showcasing a clean, modern campus environment that feels safe and supportive." style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuAXqnK4zuxplTqHjxkhkLLa3iZmUtCO47SlKFJ5nYNRGhPswZIRFxrXbWIqeKdCKYngBUabSG7713V9Tmjz4HpzE25ahD9-pQuzUYP85IHFHaX8JkQoXH9RlH6yDyVoMnTwcGn4wqFj0iCRBbWkP9W0EBVmvCuz-Kt_jQBJCYDna7Jj6xOb_5xrfGoIluchYbzmZpcSmuy7BvFufCZlPi-aNeXFABLSpwzErKEj6jaU2OgXvyvbEzkuz4ZIlsuOG8mIe2-Z1DY3O7E&quot;);">
+</div>
+<div class="glass-card p-md rounded-xl flex items-center gap-md absolute -right-16 -bottom-8 z-20 shadow-xl">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a helpful university student mentor looking directly at the camera with a reassuring smile. Soft focus campus library in the background with indigo color grading consistent with the brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7gPcU2sBHG1UAq05dOzNn6yA92QjlnWDdNvFJdTlnSj3ZV6OaXmsb7pBUGVwfZbv5lkt-VqiI6Z6-fVwvJM4IrQry1jBSua-J5vuIXESt2JxjmftC_kU-BcUxH13Eysi7WYEM6dE47etlRdyGEKkCG-gJiBvP0Qeef1zSpEMe4xdMD0c13PQjKuVNeuOhmf6QocH12Q6ch3kDGVz5tesjsxikf76QDs4bKfHQfjiLNXAZe1Go6GVd9gc0WqpKPANTPv06DGUlyVs">
+</div>
+<div>
+<p class="text-white font-bold text-caption">AI Assistant</p>
+<p class="text-white/60 text-caption">"I found your keys!"</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative z-10">
+<p class="text-white/60 text-caption font-medium tracking-wide">TRUSTED BY 24+ UNIVERSITIES WORLDWIDE</p>
+</div>
+</section>
+<!-- Right Panel: Registration Form -->
+<section class="w-full lg:w-1/2 p-lg md:p-2xl flex flex-col justify-center">
+<div class="max-w-md mx-auto w-full"><div class="flex justify-center mb-md"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4sTZYVsAPwAlpu6wXWxo35_y56xNWEOugm68fUsAun4TSPQp6U4TANUm6u3sQBo2iwXxDj7--XivxRWvwOMRxUIqhKjGW6hhtostVKOPdLZ6LWpdbqJMXB5e2Zx_VTRILKOr6aaQGOKRBpDnvQiQXu1d_-ONnQq4ZVPmW5bSU_q0hL1eEQjYchTpbubMT7BnBtluDGth_3nCt4a1man34y2gEL6bxneyozHrR3EGemLGRiNbeJx_Mofy5zjWBb74pF9tH3AgEdjA" alt="Lost items doodles" class="w-24 h-24 object-contain opacity-80"></div>
+<div class="mb-xl">
+<h2 class="font-section-title text-section-title text-text-primary mb-sm">Create an account 🎉</h2>
+<p class="text-text-secondary">Never lose your keys again! 🔑 Join the community today.</p>
+</div>
+<form class="space-y-lg" onsubmit="event.preventDefault();">
+<!-- Full Name -->
+<div class="space-y-sm">
+<label class="font-label-md text-label-md text-on-surface-variant block" for="full_name">Full Name</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
+<input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200" id="full_name" placeholder="Alex Johnson" type="text">
+</div>
+</div>
+<!-- Email -->
+<div class="space-y-sm">
+<label class="font-label-md text-label-md text-on-surface-variant block" for="email">University Email</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">alternate_email</span>
+<input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200" id="email" placeholder="alex@university.edu" type="email">
+</div>
+<p class="text-caption text-text-secondary">Must be a valid @university.edu address</p>
+</div>
+<!-- Student ID & Password Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="space-y-sm">
+<label class="font-label-md text-label-md text-on-surface-variant block" for="student_id">Student ID</label>
+<input class="w-full px-md py-md bg-surface-container-low border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200" id="student_id" placeholder="12345678" type="text">
+</div>
+<div class="space-y-sm">
+<label class="font-label-md text-label-md text-on-surface-variant block" for="password">Password</label>
+<div class="relative group">
+<input class="w-full px-md py-md bg-surface-container-low border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200" id="password" placeholder="••••••••" type="password">
+<button class="absolute right-md top-1/2 -translate-y-1/2 text-outline hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full brand-gradient text-white font-label-md py-md rounded-xl shadow-[0_8px_20px_rgba(65,67,213,0.25)] hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-sm" type="submit">
+                        Create My Account
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<!-- Divider -->
+
+<!-- Social Buttons -->
+
+<p class="text-center text-caption text-text-secondary pt-md">
+                        Already have an account? 
+                        <a class="text-primary font-bold hover:underline" href="#">Sign In</a>
+<br><span class="block mt-md">Registering as Admin? <a href="#" class="text-primary font-bold hover:underline">Contact IT Support</a></span></p>
+</form>
+</div>
+</section>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        // Password Visibility Toggle
+        document.querySelector('button[type="button"] .material-symbols-outlined').addEventListener('click', function() {
+            const input = document.getElementById('password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                this.textContent = 'visibility';
+            }
+        });
+
+        // Floating elements subtle parallax
+        document.addEventListener('mousemove', (e) => {
+            const amount = 20;
+            const x = (e.clientX - window.innerWidth / 2) / amount;
+            const y = (e.clientY - window.innerHeight / 2) / amount;
+            
+            const floatingContainer = document.querySelector('.floating');
+            if (floatingContainer) {
+                floatingContainer.style.transform = `translate(${x}px, ${y}px)`;
+            }
+        });
+    </script>
+
+
+
+
+</body></html>

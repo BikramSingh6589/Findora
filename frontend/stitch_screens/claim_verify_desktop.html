@@ -1,0 +1,382 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Claim Ownership - Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active {
+            @apply bg-primary text-on-primary ring-4 ring-primary-fixed/50;
+        }
+        .step-inactive {
+            @apply bg-surface-container-highest text-on-surface-variant;
+        }
+        .bento-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bento-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#e9ddff",
+                      "inverse-surface": "#2d3133",
+                      "text-secondary": "#6B7280",
+                      "tertiary-container": "#916c00",
+                      "surface": "#f7f9fb",
+                      "primary-container": "#5b5fef",
+                      "success": "#22C55E",
+                      "dark-bg": "#111827",
+                      "card-bg": "#FFFFFF",
+                      "surface-container-highest": "#e0e3e5",
+                      "surface-tint": "#474adb",
+                      "on-surface": "#191c1e",
+                      "on-secondary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "dark-primary": "#8B80FF",
+                      "border-default": "#E5E7EB",
+                      "on-secondary-container": "#fffbff",
+                      "on-secondary-fixed": "#23005c",
+                      "inverse-primary": "#c0c1ff",
+                      "surface-dim": "#d8dadc",
+                      "error-container": "#ffdad6",
+                      "on-background": "#191c1e",
+                      "on-primary-fixed": "#05006c",
+                      "surface-container": "#eceef0",
+                      "surface-bright": "#f7f9fb",
+                      "on-tertiary-fixed-variant": "#5c4300",
+                      "tertiary-fixed": "#ffdf9f",
+                      "on-primary-fixed-variant": "#2c2cc3",
+                      "secondary-container": "#8455ef",
+                      "on-tertiary-fixed": "#261a00",
+                      "warning": "#FB923C",
+                      "surface-container-lowest": "#ffffff",
+                      "dark-card": "#1F2937",
+                      "background": "#f7f9fb",
+                      "info-ai": "#38BDF8",
+                      "on-surface-variant": "#464555",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "outline-variant": "#c6c5d7",
+                      "on-primary-container": "#f9f6ff",
+                      "on-tertiary": "#ffffff",
+                      "danger": "#F43F5E",
+                      "outline": "#767586",
+                      "tertiary": "#735500",
+                      "on-error-container": "#93000a",
+                      "surface-container-high": "#e6e8ea",
+                      "surface-container-low": "#f2f4f6",
+                      "on-tertiary-container": "#fff7ee",
+                      "surface-variant": "#e0e3e5",
+                      "primary": "#4143d5",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "text-primary": "#111827",
+                      "primary-fixed": "#e1e0ff",
+                      "secondary": "#6b38d4",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "inverse-on-surface": "#eff1f3",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "on-primary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "md": "16px",
+                      "lg": "24px",
+                      "base": "8px",
+                      "sm": "8px",
+                      "3xl": "64px",
+                      "2xl": "48px",
+                      "xl": "32px",
+                      "gutter": "16px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "page-title": ["Plus Jakarta Sans"],
+                      "caption": ["Plus Jakarta Sans"],
+                      "section-title": ["Plus Jakarta Sans"],
+                      "card-title": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "page-title-mobile": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "hero-title": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 backdrop-blur-md font-body-md text-body-md text-primary docked full-width top-0 sticky shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md z-50">
+<div class="flex items-center gap-lg">
+<span class="font-page-title text-page-title-mobile font-bold text-primary">Lost&amp;Found AI</span>
+<div class="hidden md:flex items-center bg-surface-container-low px-md py-sm rounded-full border border-outline-variant w-96">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md w-full" placeholder="Search for items..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-sm hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A professional and friendly portrait of a senior university student, clean-cut, wearing a modern tech-casual outfit. Soft, natural light illuminates the person against a blurred university campus library background. The overall aesthetic is approachable and knowledgeable, consistent with a high-end educational brand profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNbjJq7P6OaX21J0vYwBvfLzbFuyVQ8aIam4T2xmOWib006J03IbEK0Fob9XyWjyuJsgUyOd9HZligYQcaAPQD17cXrZmPXXDAjh8h0Jih5MPp081A-_miL8h0OYR39Ma4wowcGARwbM34U3epescRl6qAOpWHzjMz1uQVJg4CJCGyWBNYkusozqzR77dsqwPrGWDyD05zBHMph5Pkr-X-DEW2COXlzXHH9mXB7u4VwVC_vB4t1O1MwALNKzryEL_aAjQ9MOsmHxk">
+</div>
+</div>
+</nav>
+<div class="flex min-h-[calc(100vh-72px)]">
+<!-- SideNavBar -->
+<aside class="bg-card-bg h-[calc(100vh-72px)] w-64 hidden lg:flex flex-col shadow-md p-md gap-lg sticky top-[72px]">
+<div class="flex flex-col items-center gap-sm p-md bg-primary-fixed/20 rounded-2xl">
+<div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-4xl" data-icon="psychology">psychology</span>
+</div>
+<div class="text-center">
+<h3 class="font-label-md text-label-md text-primary">Senior Student AI</h3>
+<p class="text-caption text-on-surface-variant">Helper Level 12</p>
+</div>
+</div>
+<nav class="flex flex-col gap-sm">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-md bg-primary-fixed text-on-primary-fixed-variant rounded-xl px-md py-sm" href="#"><span class="material-symbols-outlined" data-icon="groups">groups</span><span class="font-label-md">Community Board</span></a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-md">My History</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-sm">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-label-md">Help Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 p-margin-mobile md:p-margin-desktop bg-surface-container-low/30 overflow-y-auto">
+<div class="max-w-4xl mx-auto">
+<!-- Stepper -->
+<div class="mb-2xl">
+<div class="flex items-center justify-between relative px-xl">
+<div class="absolute top-1/2 left-0 w-full h-1 bg-surface-container-highest -translate-y-1/2 z-0"></div>
+<div class="absolute top-1/2 left-0 w-1/3 h-1 bg-primary -translate-y-1/2 z-0 transition-all duration-500" id="stepper-progress"></div>
+<div class="relative z-10 flex flex-col items-center gap-sm">
+<div class="w-12 h-12 rounded-full step-active flex items-center justify-center font-bold shadow-lg shadow-primary/25">1</div>
+<span class="font-label-md text-primary">Verification</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-sm">
+<div class="w-12 h-12 rounded-full step-inactive flex items-center justify-center font-bold border-2 border-surface-container-highest bg-surface-container-low">2</div>
+<span class="font-label-md text-on-surface-variant">Proof</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-sm">
+<div class="w-12 h-12 rounded-full step-inactive flex items-center justify-center font-bold border-2 border-surface-container-highest bg-surface-container-low">3</div>
+<span class="font-label-md text-on-surface-variant">Review</span>
+</div>
+</div>
+</div>
+<!-- Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column: Form -->
+<div class="lg:col-span-8">
+<div class="bg-card-bg rounded-[20px] p-xl shadow-sm border border-outline-variant/30">
+<div class="mb-xl">
+<h1 class="font-page-title text-page-title mb-xs">Verify Ownership</h1>
+<p class="text-body-lg text-on-surface-variant">Help us confirm you're the rightful owner by answering a few quick questions about your item.</p>
+</div>
+<form class="space-y-lg">
+<!-- Question 1 -->
+<div class="space-y-sm">
+<label class="font-label-md block text-on-surface">Where exactly did you lose it?</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="location_on">location_on</span>
+<input class="w-full pl-xl pr-md py-md rounded-xl border border-outline-variant focus:border-primary focus:ring-4 focus:ring-primary-fixed/30 bg-surface-container-lowest transition-all" placeholder="e.g. Science Building, 3rd Floor study nook" type="text">
+</div>
+<p class="text-caption text-on-surface-variant">Be as specific as possible (e.g. room number or near a specific landmark).</p>
+</div>
+<!-- Question 2 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="space-y-sm">
+<label class="font-label-md block text-on-surface">Approximate Date</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="calendar_today">calendar_today</span>
+<input class="w-full pl-xl pr-md py-md rounded-xl border border-outline-variant focus:border-primary focus:ring-4 focus:ring-primary-fixed/30 bg-surface-container-lowest transition-all" type="date">
+</div>
+</div>
+<div class="space-y-sm">
+<label class="font-label-md block text-on-surface">Approximate Time</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="schedule">schedule</span>
+<input class="w-full pl-xl pr-md py-md rounded-xl border border-outline-variant focus:border-primary focus:ring-4 focus:ring-primary-fixed/30 bg-surface-container-lowest transition-all" type="time">
+</div>
+</div>
+</div>
+<!-- Question 3 -->
+<div class="space-y-sm">
+<label class="font-label-md block text-on-surface">Unique Identifiers</label>
+<textarea class="w-full px-md py-md rounded-xl border border-outline-variant focus:border-primary focus:ring-4 focus:ring-primary-fixed/30 bg-surface-container-lowest transition-all" placeholder="Mention any scratches, specific stickers, lock screen wallpaper, or cases..." rows="4"></textarea>
+<p class="text-caption text-on-surface-variant">These details help our AI confirm a match more accurately.</p>
+</div>
+<div class="pt-lg flex items-center justify-between border-t border-outline-variant/30">
+<button class="px-xl py-md rounded-full font-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors" type="button">
+                                        Cancel
+                                    </button>
+<button class="group flex items-center gap-sm px-xl py-md rounded-full bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md shadow-lg shadow-primary/25 hover:scale-[1.03] active:scale-95 transition-all duration-200" type="submit">
+                                        Continue to Proof
+                                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Right Column: Context/AI Info -->
+<div class="lg:col-span-4 space-y-lg">
+<!-- AI Match Card -->
+<div class="bento-card bg-info-ai/10 border-2 border-info-ai rounded-[20px] p-lg overflow-hidden relative">
+<div class="absolute top-0 right-0 p-md opacity-20">
+<span class="material-symbols-outlined text-6xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-info-ai" data-icon="verified">verified</span>
+<span class="font-label-md text-info-ai">AI Matching In Progress</span>
+</div>
+<h4 class="font-card-title text-text-primary mb-sm">92% Confidence Match</h4>
+<p class="text-caption text-on-surface-variant mb-lg">Our system has flagged this item as a high-probability match for your lost report from yesterday.</p>
+<div class="w-full h-40 rounded-xl overflow-hidden mb-md shadow-inner bg-surface">
+<img class="w-full h-full object-cover" data-alt="A high-quality close-up photograph of a lost midnight blue iPhone 14 Pro with a distinctive clear MagSafe case that has a small 'NASA' logo sticker in the bottom left corner. The device is resting on a clean, light wood surface under bright, even classroom lighting. The image captures the fine details of the item's condition and unique identifiers as described in the matching process." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiwzKtPaacuGrny-t0J10XgvhTMSW2vDe-U4wKKLzq9eEXmDImbedTDebqvXovh_-l-yaTAIOjAxEWy7gwqzk6hSgPdgbi4KojnebQHln_4x_3kWcPBgarWcEwy8aQioRgPjmodmvUZSoD5PKRaPrFHukBI8DzY3zhTp2tesi7-IdYPrjPMN44L8ui0tN83QoCUQR6PUiGp9zwJt7u6vPGUSt8WQlWbahPl0YMYYQwzVstxfQCwaOncMEeaUJoWOIgN80XrbwOdpg">
+</div>
+<span class="inline-block px-sm py-xs bg-info-ai text-white rounded-lg text-caption font-bold">Found near Central Hub</span>
+</div>
+</div>
+<!-- Gamification/Help Tip -->
+<div class="bento-card bg-card-bg rounded-[20px] p-lg shadow-sm border border-outline-variant/30">
+<div class="flex items-center gap-md mb-md">
+<div class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center text-warning">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+</div>
+<div>
+<h4 class="font-label-md">Earn +50 XP</h4>
+<p class="text-caption text-on-surface-variant">For accurate verification</p>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full mb-xs overflow-hidden">
+<div class="bg-gradient-to-r from-warning to-amber-500 h-full rounded-full" style="width: 75%"></div>
+</div>
+<p class="text-[12px] text-on-surface-variant italic">"Keep being honest! Student reputation scores help the whole campus."</p>
+</div>
+<!-- Safety Tip -->
+<div class="p-lg bg-surface-container rounded-[20px] border border-outline-variant/20">
+<h5 class="font-label-md mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm" data-icon="shield">shield</span>
+                                Security Note
+                            </h5>
+<p class="text-caption text-on-surface-variant">Verifications are manually reviewed by Campus Security to ensure safe item returns.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex lg:hidden justify-around items-center px-4 py-3 bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe">
+<a class="flex flex-col items-center justify-center text-primary bg-primary-fixed/30 rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-caption text-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="add_box">add_box</span>
+<span class="font-caption text-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-caption text-caption">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-caption text-caption">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple form interaction
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // This would normally handle navigation to step 2
+            const stepperProgress = document.getElementById('stepper-progress');
+            stepperProgress.style.width = '66.66%';
+            
+            // Visual feedback for simulation
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="sync">sync</span> Processing...';
+            btn.classList.add('opacity-80', 'pointer-events-none');
+            
+            setTimeout(() => {
+                alert('Verification details saved! Proceeding to Step 2: Proof of Ownership.');
+                // In a real app, window.location would change here
+            }, 800);
+        });
+
+        // Micro-interactions for input fields
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('scale-[1.01]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+    </script>
+
+
+</body></html>

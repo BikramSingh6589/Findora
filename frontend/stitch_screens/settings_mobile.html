@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - Campus Connect</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#5b5fef",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container": "#eceef0",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "info-ai": "#38BDF8",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed": "#05006c",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "on-secondary-container": "#fffbff",
+                        "success": "#22C55E",
+                        "danger": "#F43F5E",
+                        "secondary-fixed": "#e9ddff",
+                        "on-error-container": "#93000a",
+                        "secondary": "#6b38d4",
+                        "text-secondary": "#6B7280",
+                        "outline": "#767586",
+                        "tertiary-container": "#916c00",
+                        "secondary-container": "#8455ef",
+                        "on-background": "#191c1e",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "dark-bg": "#111827",
+                        "border-default": "#E5E7EB",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#fff7ee",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary-container": "#f9f6ff",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "surface-bright": "#f7f9fb",
+                        "surface-tint": "#474adb",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-secondary-fixed": "#23005c",
+                        "primary-fixed": "#e1e0ff",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "warning": "#FB923C",
+                        "on-surface": "#191c1e",
+                        "on-tertiary-fixed": "#261a00",
+                        "inverse-surface": "#2d3133",
+                        "inverse-primary": "#c0c1ff",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary": "#735500",
+                        "outline-variant": "#c6c5d7",
+                        "on-secondary": "#ffffff",
+                        "text-primary": "#111827",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#464555",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-high": "#e6e8ea",
+                        "dark-primary": "#8B80FF",
+                        "dark-card": "#1F2937",
+                        "primary": "#4143d5",
+                        "card-bg": "#FFFFFF"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "32px",
+                        "3xl": "64px",
+                        "base": "8px",
+                        "2xl": "48px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "lg": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "card-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-shadow {
+            box-shadow: 0 8px 30px rgba(91, 95, 239, 0.08);
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            background-color: #4143d5;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #c0c1ff;
+        }
+        /* Soft tactile transitions */
+        .interactive-card {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .interactive-card:active {
+            transform: scale(0.97);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface min-h-screen pb-24">
+<!-- Top AppBar (Mobile Style) -->
+<header class="bg-surface/80 backdrop-blur-md sticky top-0 z-40 w-full px-margin-mobile py-4 flex items-center gap-4">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+<h1 class="font-page-title-mobile text-page-title-mobile text-primary tracking-tight">Settings</h1>
+</header>
+<main class="px-margin-mobile flex flex-col gap-lg">
+<!-- User Profile Card (Account Management) -->
+<section class="mt-4">
+<div class="bg-card-bg rounded-xl p-lg custom-shadow flex items-center gap-md interactive-card">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary-fixed-dim shrink-0">
+<img class="w-full h-full object-cover" data-alt="A friendly, energetic college student smiling for a profile picture. High-key natural lighting, soft focus campus background. The student has a tech-savvy vibe, wearing modern casual attire, consistent with a clean, corporate modern aesthetic using a palette of indigo and soft greys." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj0Tn9uAtf7SAbSvYwl4_kkiKtSzY7Bn1oGNDRCmJhMgm4iH2Kl_9wxxtGOGegUCkho5ILbW-SIN-7CmzWww6dhFU-DZLTARXMwmAobWveF44rXk9_7dAmXyAXoVkRQFDIJEioJLVqfMK1iQAKP9QdzW78adHwkSOcS8CMR15tCFkLFKlvfyMPpk659_zlTIeOH0LfPSWfwzNkKJs_fH52nmMOGituoS7BW7Sxk1CdizbhSTaZ2n-YnbVF9-9_ezWHHLfvDJRV97I"/>
+</div>
+<div class="flex-grow">
+<h2 class="font-card-title text-card-title text-on-surface">Alex Rivera</h2>
+<p class="font-caption text-caption text-on-surface-variant">alex.rivera@campus.edu</p>
+</div>
+<button class="p-2 rounded-full bg-surface-container text-primary">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+</section>
+<!-- Account Settings Group -->
+<section class="flex flex-col gap-sm">
+<h3 class="px-2 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-[12px]">Account &amp; Security</h3>
+<div class="bg-card-bg rounded-xl custom-shadow overflow-hidden">
+<button class="w-full px-lg py-md flex items-center justify-between border-b border-surface-container hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-primary">lock</span>
+<span class="font-body-md text-body-md">Password &amp; Authentication</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="w-full px-lg py-md flex items-center justify-between border-b border-surface-container hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-primary">person_check</span>
+<span class="font-body-md text-body-md">ID Verification</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="w-full px-lg py-md flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-primary">devices</span>
+<span class="font-body-md text-body-md">Logged-in Devices</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Notifications Group -->
+<section class="flex flex-col gap-sm">
+<h3 class="px-2 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-[12px]">Notifications</h3>
+<div class="bg-card-bg rounded-xl custom-shadow overflow-hidden">
+<div class="px-lg py-md flex items-center justify-between border-b border-surface-container">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-warning">bolt</span>
+<div>
+<p class="font-body-md text-body-md">AI Match Alerts</p>
+<p class="text-[12px] text-on-surface-variant">Instant alerts for found items</p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer right-6 transition-all duration-300" id="toggle-ai" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-container-highest cursor-pointer" for="toggle-ai"></label>
+</div>
+</div>
+<div class="px-lg py-md flex items-center justify-between border-b border-surface-container">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-secondary">forum</span>
+<div>
+<p class="font-body-md text-body-md">Community Board Updates</p>
+<p class="text-[12px] text-on-surface-variant">New posts in your active categories</p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer right-6 transition-all duration-300" id="toggle-board" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-container-highest cursor-pointer" for="toggle-board"></label>
+</div>
+</div>
+<div class="px-lg py-md flex items-center justify-between">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-info-ai">mail</span>
+<span class="font-body-md text-body-md">Email Summaries</span>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer right-6 transition-all duration-300" id="toggle-email" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-surface-container-highest cursor-pointer" for="toggle-email"></label>
+</div>
+</div>
+</div>
+</section>
+<!-- Privacy Options -->
+<section class="flex flex-col gap-sm">
+<h3 class="px-2 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-[12px]">Privacy</h3>
+<div class="bg-card-bg rounded-xl custom-shadow overflow-hidden">
+<button class="w-full px-lg py-md flex items-center justify-between border-b border-surface-container hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-primary">visibility</span>
+<span class="font-body-md text-body-md">Public Profile Visibility</span>
+</div>
+<span class="font-caption text-caption text-primary font-bold">Friends Only</span>
+</button>
+<button class="w-full px-lg py-md flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-md text-on-surface">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="font-body-md text-body-md">Location History</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Danger Zone -->
+<section class="mt-4 mb-8">
+<button class="w-full py-md px-lg rounded-xl border border-error/30 text-error font-label-md flex items-center justify-center gap-md active:bg-error/5 transition-all">
+<span class="material-symbols-outlined">logout</span>
+                Logout from Campus Connect
+            </button>
+<p class="text-center text-[12px] text-on-surface-variant mt-md">Version 2.4.1 (Indigo Build)</p>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Injected from Shared Components) -->
+<!-- Rule: Mobile hidden md:hidden, Semantic highlight: Settings is not in labels, Home fallback or No highlight. But let's assume it belongs to no tab or user specifically went here from profile. Mapping "Home" as default or no active for settings subpage usually, but I will follow the logic: Settings exists in footer_tab_labels for SideNav, but BottomNavBar only has ["Home", "Report", "Board", "AI", "History"]. So none are active. -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 md:hidden bg-surface shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-caption text-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-caption text-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-caption text-caption">Board</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-caption text-caption">AI</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-low transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-caption text-caption">History</span>
+</a>
+</nav>
+<script>
+        // Simple toggle interaction handler for visual feedback
+        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+            toggle.addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                const toggleKnob = e.target;
+                if (isChecked) {
+                    toggleKnob.classList.remove('right-6');
+                    toggleKnob.classList.add('right-0');
+                } else {
+                    toggleKnob.classList.remove('right-0');
+                    toggleKnob.classList.add('right-6');
+                }
+            });
+        });
+    </script>
+</body></html>

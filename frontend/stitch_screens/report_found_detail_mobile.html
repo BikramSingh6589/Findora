@@ -1,0 +1,305 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Report Found Item - Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active {
+            box-shadow: 0 0 15px rgba(65, 67, 213, 0.3);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        /* Custom scrollbar for better mobile feel */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e0e3e5;
+            border-radius: 10px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(91, 95, 239, 0.15);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface": "#f7f9fb",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "surface-container-low": "#f2f4f6",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "secondary-container": "#8455ef",
+                    "surface-bright": "#f7f9fb",
+                    "text-primary": "#111827",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "on-primary-container": "#f9f6ff",
+                    "outline": "#767586",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#05006c",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-surface-variant": "#464555",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "primary-fixed": "#e1e0ff",
+                    "primary": "#4143d5",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed": "#e9ddff",
+                    "background": "#f7f9fb",
+                    "tertiary": "#735500",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "dark-card": "#1F2937",
+                    "text-secondary": "#6B7280",
+                    "surface-dim": "#d8dadc",
+                    "success": "#22C55E",
+                    "on-secondary-fixed": "#23005c",
+                    "border-default": "#E5E7EB",
+                    "surface-variant": "#e0e3e5",
+                    "error": "#ba1a1a",
+                    "card-bg": "#FFFFFF",
+                    "tertiary-container": "#916c00",
+                    "surface-tint": "#474adb",
+                    "warning": "#FB923C",
+                    "danger": "#F43F5E",
+                    "secondary": "#6b38d4",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "surface-container-high": "#e6e8ea",
+                    "inverse-surface": "#2d3133",
+                    "on-error-container": "#93000a",
+                    "info-ai": "#38BDF8",
+                    "on-tertiary-container": "#fff7ee",
+                    "dark-bg": "#111827",
+                    "outline-variant": "#c6c5d7",
+                    "on-background": "#191c1e",
+                    "on-surface": "#191c1e",
+                    "on-tertiary-fixed": "#261a00",
+                    "surface-container": "#eceef0",
+                    "dark-primary": "#8B80FF",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-secondary-container": "#fffbff",
+                    "primary-container": "#5b5fef",
+                    "inverse-primary": "#c0c1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "xl": "32px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "2xl": "48px",
+                    "margin-desktop": "32px",
+                    "md": "16px",
+                    "base": "8px",
+                    "sm": "8px",
+                    "3xl": "64px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-text-primary selection:bg-primary-fixed min-h-screen pb-24">
+<!-- Top Navigation -->
+<header class="bg-surface/80 backdrop-blur-md font-body-md text-body-md docked full-width top-0 sticky shadow-sm flex justify-between items-center w-full px-margin-mobile py-md z-50">
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+</button>
+<h1 class="font-page-title text-page-title-mobile font-bold text-primary">Lost&amp;Found AI</h1>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+</header>
+<main class="px-margin-mobile pt-lg">
+<!-- Stepper -->
+<div class="flex items-center justify-between mb-xl px-2">
+<div class="flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-success text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<span class="font-caption text-caption text-text-secondary">Category</span>
+</div>
+<div class="h-0.5 flex-1 mx-2 bg-primary"></div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center step-active">
+<span class="font-label-md text-label-md">2</span>
+</div>
+<span class="font-label-md text-label-md text-primary">Details</span>
+</div>
+<div class="h-0.5 flex-1 mx-2 bg-surface-variant"></div>
+<div class="flex flex-col items-center gap-xs opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center">
+<span class="font-label-md text-label-md">3</span>
+</div>
+<span class="font-caption text-caption text-text-secondary">Review</span>
+</div>
+</div>
+<!-- Section Title -->
+<div class="mb-lg">
+<h2 class="font-section-title text-section-title mb-xs">Item Details</h2>
+<p class="font-body-md text-body-md text-text-secondary">Snap a photo and tell us where you found the item to help our AI match it.</p>
+</div>
+<!-- Image Upload Grid -->
+<section class="mb-xl">
+<label class="block font-label-md text-label-md mb-md text-text-primary">Photos of the item</label>
+<div class="grid grid-cols-3 gap-md">
+<!-- Camera Trigger -->
+<button class="aspect-square rounded-xl border-2 border-dashed border-primary/30 bg-primary-fixed/20 flex flex-col items-center justify-center gap-xs active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">add_a_photo</span>
+<span class="font-caption text-caption text-primary font-bold">Camera</span>
+</button>
+<!-- Gallery Trigger -->
+<button class="aspect-square rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center gap-xs active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl">photo_library</span>
+<span class="font-caption text-caption text-on-surface-variant">Gallery</span>
+</button>
+<!-- Placeholder for Uploaded (Preview) -->
+<div class="aspect-square rounded-xl bg-surface-container overflow-hidden relative group">
+<div class="w-full h-full bg-cover bg-center" data-alt="A close-up, high-quality photograph of a slightly worn blue leather wallet resting on a clean white surface. The lighting is soft and bright, emphasizing the tactile texture of the leather. The overall aesthetic is professional and clean, fitting a modern lost and found application interface with soft shadows and crisp focus." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHSjscMV_wT1AUzd7EHEY_acEdwpn6TwF9HkRZLKSoKFiQ4XeoDQvBNBE7pA_i39GBh9K6fYjClY_UxkKCh3KJUGbOlPVwfjB9vOGjCPnJxwyMxTptP9CSwPTxZi3O0Qx-jODp6HXYqtnGyNDYb6WIjQo1zMluFOhjrk9uK2OhklEmIqn8dT4ZiPL2YufZMQ5s6U8Ur7vVxjpgWvNZKc2fTeAScJQEuKG4wzQhUso_xe_jQxhsdBolpZHVBmefvz3OXy0d_sGBwkU')"></div>
+<button class="absolute top-1 right-1 w-6 h-6 bg-error rounded-full text-white flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+</div>
+<p class="mt-sm font-caption text-caption text-text-secondary italic flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">info</span>
+                Add up to 5 photos for better AI accuracy.
+            </p>
+</section>
+<!-- Form Details -->
+<form class="space-y-xl">
+<div class="space-y-md">
+<label class="block font-label-md text-label-md text-text-primary" for="location">Where did you find it?</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">location_on</span>
+<input class="w-full pl-12 pr-4 py-4 rounded-xl border-border-default bg-card-bg font-body-md text-body-md focus:border-primary transition-all shadow-sm" id="location" placeholder="e.g. Science Library, 2nd floor" type="text">
+</div>
+<!-- Map Interaction Trigger -->
+<button class="w-full flex items-center justify-between p-4 rounded-xl bg-primary-fixed/30 text-on-primary-fixed-variant active:scale-[0.98] transition-transform" type="button">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md">Pin on map</span>
+</div>
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="space-y-md">
+<label class="block font-label-md text-label-md text-text-primary" for="description">Describe the item</label>
+<textarea class="w-full p-4 rounded-xl border-border-default bg-card-bg font-body-md text-body-md focus:border-primary transition-all shadow-sm" id="description" placeholder="What makes this item unique? Any scratches, names, or specific details?" rows="4"></textarea>
+</div>
+<div class="space-y-md">
+<label class="block font-label-md text-label-md text-text-primary">Found on date</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">calendar_today</span>
+<input class="w-full pl-12 pr-4 py-4 rounded-xl border-border-default bg-card-bg font-body-md text-body-md focus:border-primary transition-all shadow-sm" type="date">
+</div>
+</div>
+<!-- AI Boosted Section -->
+<div class="p-lg rounded-2xl bg-gradient-to-br from-primary/10 to-info-ai/10 border border-primary/20 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2">
+<span class="material-symbols-outlined text-primary/30 text-6xl rotate-12">psychology</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-sm mb-xs">
+<span class="material-symbols-outlined text-primary" data-weight="fill">auto_awesome</span>
+<h4 class="font-label-md text-primary uppercase tracking-wider">AI Boost Ready</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Our AI is analyzing your inputs in real-time to find potential owners. Complete this step to see matches.</p>
+</div>
+</div>
+<!-- CTA -->
+<div class="pt-md pb-12">
+<button class="w-full py-5 bg-gradient-to-r from-primary to-secondary text-white rounded-2xl font-label-md text-lg shadow-[0_8px_30px_rgba(65,67,213,0.3)] hover:scale-[1.03] active:scale-95 transition-all" type="button">
+                    Next: Review Report
+                </button>
+</div>
+</form>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe lg:hidden rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-caption text-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary-fixed/30 rounded-full px-4 py-1 active:scale-90 duration-100" href="#">
+<span class="material-symbols-outlined" data-weight="fill">add_box</span>
+<span class="font-caption text-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#"><span class="material-symbols-outlined">groups</span><span class="font-caption text-caption">Community</span></a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-caption text-caption">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple haptic-like feedback on touch
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('touchstart', () => {
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(5);
+                }
+            });
+        });
+
+        // Floating shadow effect on inputs
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.closest('.space-y-md').classList.add('scale-[1.01]');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.closest('.space-y-md').classList.remove('scale-[1.01]');
+            });
+        });
+    </script>
+
+
+</body></html>

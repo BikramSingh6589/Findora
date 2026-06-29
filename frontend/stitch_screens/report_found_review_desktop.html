@@ -1,0 +1,422 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Report Found Item - Review &amp; Submit | Lost&amp;Found AI</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Design System Tokens & Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface": "#f7f9fb",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "surface-container-low": "#f2f4f6",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "secondary-container": "#8455ef",
+                    "surface-bright": "#f7f9fb",
+                    "text-primary": "#111827",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "on-primary-container": "#f9f6ff",
+                    "outline": "#767586",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#05006c",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-surface-variant": "#464555",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "primary-fixed": "#e1e0ff",
+                    "primary": "#4143d5",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed": "#e9ddff",
+                    "background": "#f7f9fb",
+                    "tertiary": "#735500",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "dark-card": "#1F2937",
+                    "text-secondary": "#6B7280",
+                    "surface-dim": "#d8dadc",
+                    "success": "#22C55E",
+                    "on-secondary-fixed": "#23005c",
+                    "border-default": "#E5E7EB",
+                    "surface-variant": "#e0e3e5",
+                    "error": "#ba1a1a",
+                    "card-bg": "#FFFFFF",
+                    "tertiary-container": "#916c00",
+                    "surface-tint": "#474adb",
+                    "warning": "#FB923C",
+                    "danger": "#F43F5E",
+                    "secondary": "#6b38d4",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "surface-container-high": "#e6e8ea",
+                    "inverse-surface": "#2d3133",
+                    "on-error-container": "#93000a",
+                    "info-ai": "#38BDF8",
+                    "on-tertiary-container": "#fff7ee",
+                    "dark-bg": "#111827",
+                    "outline-variant": "#c6c5d7",
+                    "on-background": "#191c1e",
+                    "on-surface": "#191c1e",
+                    "on-tertiary-fixed": "#261a00",
+                    "surface-container": "#eceef0",
+                    "dark-primary": "#8B80FF",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-secondary-container": "#fffbff",
+                    "primary-container": "#5b5fef",
+                    "inverse-primary": "#c0c1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "xl": "32px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "2xl": "48px",
+                    "margin-desktop": "32px",
+                    "md": "16px",
+                    "base": "8px",
+                    "sm": "8px",
+                    "3xl": "64px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active {
+            background-image: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+        }
+        .reward-gradient {
+            background-image: linear-gradient(135deg, #FB923C 0%, #f9bd22 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        @keyframes subtle-lift {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+        .hover-lift:hover {
+            animation: subtle-lift 0.3s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 12px 40px rgba(91, 95, 239, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-text-primary overflow-x-hidden min-h-screen">
+<!-- Side Navigation (Authority Source: Shared Components JSON) -->
+<nav class="bg-card-bg dark:bg-dark-card h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col shadow-md flex flex-col h-full p-md gap-lg z-40">
+<div class="flex items-center gap-sm px-md py-lg">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-on-primary-container shadow-lg">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<span class="font-page-title text-page-title text-primary dark:text-dark-primary font-bold">L&amp;F AI</span>
+</div>
+<div class="flex flex-col gap-sm flex-grow">
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Active Tab Mapping: Report Item -->
+<a class="flex items-center gap-md bg-primary-fixed dark:bg-primary-container text-on-primary-fixed-variant dark:text-on-primary-container rounded-xl px-md py-sm scale-[1.03]" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#"><span class="material-symbols-outlined">groups</span><span class="font-label-md text-label-md">Community Board</span></a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">My History</span>
+</a>
+</div>
+<div class="border-t border-surface-container pt-lg mt-auto">
+<div class="flex items-center gap-md p-md mb-lg bg-surface-container-low rounded-2xl">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+<img class="w-full h-full object-cover" data-alt="A profile portrait of a friendly college student, looking helpful and approachable. The lighting is warm and campus-inspired. They are wearing a modern university sweatshirt with subtle indigo accents, reflecting the brand's primary color. The background is a blurred academic library setting with soft light filters." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGHZSGtRtD29XIvwh5zJMQoMdHynzToiTlG0HzMsHGqybtKlzCLxHDVfhZJ1gdQgh4UCujZ5kJAO7gBx0JDVnccAWaGh2wJsancDxV7TPsf0d2LTpU59tOOaWEJdtvE5dgRLP0TEDdR8dEyYj2cmiKSu__JO8Y8y86c5TNPSmacHUbVu2Zke5Ghk799T3xdceBlM-lDVkdmORH_vEZjMuURvnCwtC_uqS_Q8k-jbePClW6Xh6AFvhZii7OnqYATCoWBPKTyIF6tY8">
+</div>
+<div>
+<p class="font-label-md text-label-md">Senior Student AI</p>
+<p class="text-caption text-text-secondary">Helper Level 12</p>
+</div>
+</div>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low rounded-xl px-md py-sm mb-xs" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low rounded-xl px-md py-sm" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md">Help Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 min-h-screen px-margin-mobile md:px-margin-desktop py-xl">
+<!-- Header & Progress -->
+<header class="max-w-5xl mx-auto mb-xl">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+<div>
+<h1 class="font-page-title text-page-title text-text-primary mb-xs">Review &amp; Submit</h1>
+<p class="font-body-md text-text-secondary">Double-check the details before we alert the campus!</p>
+</div>
+<!-- Progress Stepper -->
+<div class="flex items-center gap-sm">
+<div class="flex flex-col items-center gap-xs opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-text-primary font-bold">1</div>
+<span class="text-caption">Details</span>
+</div>
+<div class="w-12 h-0.5 bg-surface-container-highest opacity-40"></div>
+<div class="flex flex-col items-center gap-xs opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-text-primary font-bold">2</div>
+<span class="text-caption">Media</span>
+</div>
+<div class="w-12 h-0.5 bg-primary/30"></div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-12 h-12 rounded-full step-active shadow-lg flex items-center justify-center text-white font-bold animate-pulse">3</div>
+<span class="text-caption font-bold text-primary">Review</span>
+</div>
+</div>
+</div>
+</header>
+<div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Information Grid (Left Column) -->
+<div class="md:col-span-8 space-y-lg">
+<!-- Summary Card -->
+<div class="bg-card-bg rounded-[20px] shadow-sm border border-border-default overflow-hidden">
+<div class="p-lg border-b border-surface-container bg-surface-container-lowest flex justify-between items-center">
+<h2 class="font-card-title text-card-title text-text-primary flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">visibility</span>
+                            Report Summary
+                        </h2>
+<button class="text-primary font-label-md hover:underline flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">edit</span> Edit Info
+                        </button>
+</div>
+<div class="p-lg grid grid-cols-1 sm:grid-cols-2 gap-xl">
+<div class="space-y-xs">
+<p class="text-caption text-text-secondary uppercase tracking-wider font-bold">Item Name</p>
+<p class="font-body-lg text-body-lg font-semibold">Space Grey MacBook Air M2</p>
+</div>
+<div class="space-y-xs">
+<p class="text-caption text-text-secondary uppercase tracking-wider font-bold">Category</p>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">laptop_mac</span>
+<p class="font-body-lg text-body-lg">Electronics</p>
+</div>
+</div>
+<div class="space-y-xs">
+<p class="text-caption text-text-secondary uppercase tracking-wider font-bold">Found At</p>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-error text-[20px]">location_on</span>
+<p class="font-body-lg text-body-lg">Main Library, 2nd Floor Study Hall</p>
+</div>
+</div>
+<div class="space-y-xs">
+<p class="text-caption text-text-secondary uppercase tracking-wider font-bold">Date Found</p>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+<p class="font-body-lg text-body-lg">October 24, 2023</p>
+</div>
+</div>
+<div class="sm:col-span-2 space-y-xs">
+<p class="text-caption text-text-secondary uppercase tracking-wider font-bold">Description</p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed p-md bg-surface-container-low rounded-xl italic">
+                                "Found it sitting on a desk near the back windows. It has a 'GitHub' sticker on the top lid and a clear plastic case. Still had about 40% battery when I picked it up."
+                            </p>
+</div>
+</div>
+</div>
+<!-- Photos Grid -->
+<div class="bg-card-bg rounded-[20px] shadow-sm border border-border-default p-lg">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-card-title text-card-title text-text-primary flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">photo_library</span>
+                            Photo Previews
+                        </h2>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-md">
+<div class="aspect-square rounded-2xl overflow-hidden border border-border-default hover-lift cursor-zoom-in">
+<img class="w-full h-full object-cover" data-alt="A high-quality, close-up photograph of a space grey laptop on a light wooden library table. The lighting is natural and bright. The focus is on a small silver sticker in the corner. Professional corporate style with soft shadows and clean composition, fitting a modern light-mode interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0hGhVTeM1GCdzWMZCDFrcZMXvmQDEuZeNgHokby3iTu8mE0vsEJcgAhaaouJr7R4HwH1WKw9HCrz8-aLB94gfro3hJyqcgxwzipxDbuqPn7iM8volmhrtJtId_6obK4OwQ2HiWFJFcjJj8YQOpr9RDA_3SLTmv5SJyio_Av3kvY3BG8enZu4QHIiuE0I0nUa6bDcFoV2SaszKm1WhqaT3ouyBkvYx2cu17fJJlKIVCbC3GcIfQsEMrxSrsgquIWrePd6ShDABPNQ">
+</div>
+<div class="aspect-square rounded-2xl overflow-hidden border border-border-default hover-lift cursor-zoom-in relative">
+<img class="w-full h-full object-cover" data-alt="A wide-angle shot of a library study area with several empty desks. One desk in the foreground has a single laptop left behind. The environment is clean, bright, and academic. The shot captures the context of where the item was found. Minimalist and professional photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB0sSbN2SZdSsCsSsMjU5rXEh26dX3uiVucXM8Xfl2QI5utv33ISL1IfvFMstQncpd0xuDIdZ7uMhZLAh-Ha6gn2BNOUNuW-QI2PHQEK9rZc_Zo16QwGLZmSmP_wsNzQ0U-Pbb1DXq3Umnfldc7WJTGp0hlVi_U58XUIQ4W53LUOLSSZwKZuf7ZI4iGUOIilEm6cppUsyLkQ_TFlmmnH24aKI2h0cC3TrAXJr3nM7_fM8MPKRJFQNn6njbVqtLH0u2bgD54TmbBZ8">
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">zoom_in</span>
+</div>
+</div>
+<div class="aspect-square rounded-2xl border-2 border-dashed border-primary/20 bg-primary-fixed/10 flex flex-col items-center justify-center gap-sm text-primary hover:bg-primary-fixed/20 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">add_a_photo</span>
+<span class="text-caption font-bold">Add More</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Gamification & Actions (Right Column) -->
+<div class="md:col-span-4 space-y-lg">
+<!-- Reward Card -->
+<div class="reward-gradient rounded-[24px] p-[2px] shadow-lg">
+<div class="bg-card-bg dark:bg-dark-card rounded-[22px] p-lg overflow-hidden relative">
+<!-- Background glow effect -->
+<div class="absolute -top-12 -right-12 w-32 h-32 bg-tertiary-fixed/30 rounded-full blur-3xl"></div>
+<div class="flex items-center gap-sm mb-md relative">
+<div class="w-10 h-10 bg-tertiary-fixed rounded-full flex items-center justify-center text-tertiary shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<h3 class="font-label-md text-label-md text-text-primary">Reward Preview</h3>
+</div>
+<p class="text-body-md text-text-secondary mb-lg">You're doing something great! Here's what you'll earn for this report:</p>
+<div class="space-y-md">
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-2xl border border-border-default/50 hover:bg-white transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary text-[24px]">trending_up</span>
+<span class="font-bold">Reputation</span>
+</div>
+<span class="font-hero-title text-section-title text-tertiary">+10 XP</span>
+</div>
+<div class="flex items-center gap-md p-md bg-surface-container-low rounded-2xl border border-border-default/50 hover:bg-white transition-colors">
+<div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center text-success shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<div>
+<p class="font-bold text-text-primary">Honest Finder</p>
+<p class="text-caption text-text-secondary">New Badge Unlocked!</p>
+</div>
+</div>
+</div>
+<div class="mt-lg pt-lg border-t border-surface-container">
+<div class="flex justify-between items-center mb-xs">
+<span class="text-caption font-bold">Level 12 Progress</span>
+<span class="text-caption">450 / 500 XP</span>
+</div>
+<div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full reward-gradient w-[90%] rounded-full shadow-inner"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="space-y-md">
+<button class="w-full bg-primary hover:bg-primary-container text-white font-label-md text-label-md py-lg rounded-2xl shadow-[0_12px_24px_rgba(65,67,213,0.3)] flex items-center justify-center gap-md transition-all active:scale-95 group" id="submitBtn">
+                        Confirm &amp; Submit Report
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+</button>
+<button class="w-full bg-white border-2 border-primary/20 text-primary font-label-md text-label-md py-lg rounded-2xl hover:bg-primary/5 transition-all flex items-center justify-center gap-md">
+<span class="material-symbols-outlined">arrow_back</span>
+                        Back to Edit
+                    </button>
+</div>
+<!-- AI Security Note -->
+<div class="p-lg bg-info-ai/10 rounded-2xl border border-info-ai/20 flex gap-md">
+<span class="material-symbols-outlined text-info-ai">verified_user</span>
+<p class="text-caption text-on-surface-variant leading-relaxed">
+<span class="font-bold text-text-primary">AI Match Guarantee:</span> Our AI will cross-reference this report with existing "Lost" claims in real-time to find the owner within minutes.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Submission Modal (Hidden by default) -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-margin-mobile" id="successModal">
+<div class="absolute inset-0 bg-dark-bg/60 backdrop-blur-md"></div>
+<div class="glass-card w-full max-w-md rounded-[32px] p-2xl text-center relative z-10 shadow-2xl scale-90 opacity-0 transition-all duration-500 transform" id="modalContent">
+<div class="w-24 h-24 bg-success/20 text-success rounded-full flex items-center justify-center mx-auto mb-xl">
+<span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'wght' 700;">check_circle</span>
+</div>
+<h2 class="font-section-title text-section-title text-text-primary mb-md">Report Published!</h2>
+<p class="text-body-md text-text-secondary mb-xl">Awesome job, detective! The campus community has been notified, and we're looking for matches.</p>
+<div class="space-y-md">
+<div class="p-lg bg-tertiary-fixed/20 rounded-2xl border border-tertiary-fixed flex justify-between items-center">
+<span class="font-bold text-tertiary">XP Earned:</span>
+<span class="text-section-title font-bold text-tertiary">+10 XP</span>
+</div>
+<button class="w-full bg-primary text-white py-lg rounded-2xl font-bold shadow-lg" onclick="window.location.reload()">Return to Dashboard</button>
+</div>
+</div>
+</div>
+<script>
+        const submitBtn = document.getElementById('submitBtn');
+        const successModal = document.getElementById('successModal');
+        const modalContent = document.getElementById('modalContent');
+
+        submitBtn.addEventListener('click', () => {
+            // Simulate processing
+            submitBtn.innerHTML = `<span class="material-symbols-outlined animate-spin">sync</span> Processing...`;
+            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                successModal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-90', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }, 1200);
+        });
+
+        // Simple parallax effect for the "Reward" card
+        document.addEventListener('mousemove', (e) => {
+            const rewardCard = document.querySelector('.reward-gradient');
+            if (rewardCard) {
+                const rect = rewardCard.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x > 0 && x < rect.width && y > 0 && y < rect.height) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+                    
+                    rewardCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                } else {
+                    rewardCard.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+                }
+            }
+        });
+    </script>
+
+
+</body></html>

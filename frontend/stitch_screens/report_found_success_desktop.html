@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FoundIt! - Report Confirmation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#e6e8ea",
+                    "surface-container": "#eceef0",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "card-bg": "#FFFFFF",
+                    "tertiary": "#735500",
+                    "on-tertiary": "#ffffff",
+                    "dark-card": "#1F2937",
+                    "text-secondary": "#6B7280",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "error-container": "#ffdad6",
+                    "surface": "#f7f9fb",
+                    "border-default": "#E5E7EB",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "surface-container-low": "#f2f4f6",
+                    "secondary-fixed": "#e9ddff",
+                    "dark-primary": "#8B80FF",
+                    "background": "#f7f9fb",
+                    "secondary-container": "#8455ef",
+                    "on-primary-container": "#f9f6ff",
+                    "inverse-primary": "#c0c1ff",
+                    "on-primary-fixed": "#05006c",
+                    "surface-dim": "#d8dadc",
+                    "info-ai": "#38BDF8",
+                    "primary-fixed": "#e1e0ff",
+                    "warning": "#FB923C",
+                    "secondary": "#6b38d4",
+                    "on-tertiary-container": "#fff7ee",
+                    "on-error": "#ffffff",
+                    "success": "#22C55E",
+                    "tertiary-fixed": "#ffdf9f",
+                    "dark-bg": "#111827",
+                    "on-secondary-container": "#fffbff",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#c6c5d7",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "error": "#ba1a1a",
+                    "on-surface": "#191c1e",
+                    "on-surface-variant": "#464555",
+                    "on-secondary-fixed": "#23005c",
+                    "on-background": "#191c1e",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "surface-variant": "#e0e3e5",
+                    "tertiary-container": "#916c00",
+                    "primary-container": "#5b5fef",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface-bright": "#f7f9fb",
+                    "primary": "#4143d5",
+                    "surface-tint": "#474adb",
+                    "on-tertiary-fixed": "#261a00",
+                    "outline": "#767586",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "danger": "#F43F5E",
+                    "on-primary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#2d3133",
+                    "text-primary": "#111827"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "margin-desktop": "32px",
+                    "sm": "8px",
+                    "3xl": "64px",
+                    "gutter": "16px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "2xl": "48px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-surface-container-lowest fixed top-0 w-full z-40 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-7xl mx-auto h-2xl">
+<div class="flex items-center gap-md">
+<span class="font-page-title text-page-title font-bold text-primary">FoundIt!</span>
+</div>
+<nav class="hidden md:flex items-center gap-xl">
+<a class="text-text-secondary font-label-md text-label-md hover:scale-[1.03] transition-transform duration-200 hover:text-primary" href="#">Match Feed</a>
+<a class="text-text-secondary font-label-md text-label-md hover:scale-[1.03] transition-transform duration-200 hover:text-primary" href="#">Boards</a>
+<a class="text-text-secondary font-label-md text-label-md hover:scale-[1.03] transition-transform duration-200 hover:text-primary" href="#">Leaderboard</a>
+</nav>
+<div class="flex items-center gap-md">
+<button class="p-xs hover:scale-[1.03] transition-transform"><span class="material-symbols-outlined text-primary">notifications</span></button>
+<button class="p-xs hover:scale-[1.03] transition-transform"><span class="material-symbols-outlined text-primary">history</span></button>
+<img class="w-md h-md rounded-full object-cover ring-2 ring-primary-fixed" data-alt="A friendly, modern headshot of a college student with a warm smile, set against a blurred campus background with soft sunlight. The style is clean, corporate yet approachable, matching the vibrant and helpful brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1CJkvVJoXLOjwJZEec_5Dz9Rv9q2cyTYozbVQSgdpQmFXtBsV_iO_9iXVqjy0lDqbDbfcBl7NxCVLd_tBtJw_ao-xe31fkI_2I0exq2qNjmn4TxazMsEsAeJ9cjYLeZonMqFAHR18iK7MlYlVsyW9L2OVERl8tGyPzdjRr0gM7SomQot5J8wnsMzEjOj2KOO7dORs6tPNFOXNEHENtMZLB17e2VBIihFeGPJcmFXrTokkSDsf-b_9Z_jIZxx0PCn_-f3BfNRJgP0"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation Bar (Hidden for Focus, but kept in code as per Hierarchy) -->
+<aside class="hidden lg:flex flex-col h-full py-lg w-64 fixed left-0 top-0 mt-2xl bg-surface-container-low shadow-md z-30">
+<div class="px-md mb-lg">
+<p class="font-label-md text-label-md text-primary font-bold">Senior Student</p>
+<p class="text-on-surface-variant text-caption font-caption">Level 12 • 450 XP</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-md py-sm px-md mx-2 text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">home</span> Home
+            </a>
+<a class="flex items-center gap-md py-sm px-md mx-2 text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">description</span> My Reports
+            </a>
+<a class="flex items-center gap-md py-sm px-md mx-2 text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">psychology</span> AI Matches
+            </a>
+</nav>
+<div class="mt-auto px-md space-y-xs">
+<a class="flex items-center gap-md py-sm text-on-surface-variant font-label-md text-label-md" href="#"><span class="material-symbols-outlined">settings</span> Settings</a>
+<a class="flex items-center gap-md py-sm text-on-surface-variant font-label-md text-label-md" href="#"><span class="material-symbols-outlined">help</span> Help</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="pt-3xl pb-xl px-margin-mobile lg:pl-xl lg:pr-xl max-w-5xl mx-auto lg:ml-[256px]">
+<div class="space-y-lg">
+<!-- Hero Header Section -->
+<section class="text-center space-y-md pt-lg">
+<div class="inline-flex items-center justify-center bg-primary-container text-on-primary-container rounded-full px-lg py-sm mb-sm animate-float">
+<span class="material-symbols-outlined mr-xs" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-md text-label-md">Success! Item Logged</span>
+</div>
+<h1 class="font-hero-title text-hero-title text-primary leading-tight">You're a Campus Hero!</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                    Thanks for being an awesome member of our community. Your honesty just made someone's day a lot better.
+                </p>
+</section>
+<!-- Visual Hero Card -->
+<div class="relative rounded-3xl overflow-hidden shadow-lg h-[300px] md:h-[400px]">
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtOhExekaDGuOHaDdP5_GjMklfARCuGrQZ-9Pg3cinp_gHdNr29bE3DsuREaYv0aPDejwLWlMXiqbgyOxms7AdY8Fd6W5iiBDEG6QtSHS1lEqdC6pNNK6z3vwC28K9u5YdkBxxWLxJcDyd4lfzgwMTNvS2xSJMYhc0Qupb-at6JqO317jIXI4Z-1Fgol2RrSyieMeihWr-mFQY-uJ3TQtTS2PxMmwLsK7HT3XFpsFOeJlsNY7CasCj37To"/>
+<div class="absolute bottom-lg left-lg z-20 text-white">
+<div class="flex items-center gap-sm bg-white/20 backdrop-blur-md px-md py-xs rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<span class="font-label-md text-label-md">Main Courtyard</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Stats & Rewards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Reputation Points Card -->
+<div class="bg-card-bg p-lg rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200">
+<div class="flex items-center justify-between mb-md">
+<span class="material-symbols-outlined text-secondary text-3xl" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="bg-secondary/10 text-secondary px-sm py-xs rounded-full text-caption font-caption">+50 Rep</span>
+</div>
+<h3 class="font-card-title text-card-title text-primary">Reputation Boost</h3>
+<p class="text-on-surface-variant font-body-md text-body-md mt-sm">Your +50 Reputation Points have been added to your profile.</p>
+</div>
+<!-- Badge Pending Card -->
+<div class="bg-card-bg p-lg rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200">
+<div class="flex items-center justify-between mb-md">
+<span class="material-symbols-outlined text-warning text-3xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="bg-warning/10 text-warning px-sm py-xs rounded-full text-caption font-caption">In Review</span>
+</div>
+<h3 class="font-card-title text-card-title text-primary">Good Samaritan</h3>
+<p class="text-on-surface-variant font-body-md text-body-md mt-sm">Your Badge is currently pending verification from the campus office.</p>
+</div>
+<!-- Next Steps Bento Card -->
+<div class="md:col-span-2 lg:col-span-1 bg-primary text-on-primary p-lg rounded-[20px] shadow-[0_8px_30px_rgba(91,95,239,0.25)] flex flex-col gap-md">
+<h3 class="font-card-title text-card-title">Next Steps</h3>
+<ul class="space-y-md">
+<li class="flex items-start gap-sm">
+<span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold">1</span>
+<span class="font-body-md text-body-md">Item added to 24h Community Board for maximum visibility.</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold">2</span>
+<span class="font-body-md text-body-md">Our AI is actively notifying potential owners based on item descriptions.</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-md justify-center pt-lg">
+<button class="bg-gradient-to-r from-primary to-secondary text-white font-label-md text-label-md px-2xl py-md rounded-full shadow-[0_8px_30px_rgba(91,95,239,0.25)] hover:scale-[1.03] active:scale-95 transition-all duration-200 flex items-center justify-center gap-sm">
+                    View Community Board
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="border-2 border-primary text-primary font-label-md text-label-md px-2xl py-md rounded-full hover:bg-primary/5 transition-all duration-200 flex items-center justify-center">
+                    Return to Dashboard
+                </button>
+</div>
+<!-- XP Progress Bar (Gamification) -->
+<div class="bg-surface-container-low p-lg rounded-[20px] mt-xl">
+<div class="flex justify-between items-center mb-sm">
+<span class="font-label-md text-label-md text-on-surface">Level 12 Progress</span>
+<span class="font-label-md text-label-md text-primary">450 / 500 XP</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-3">
+<div class="bg-gradient-to-r from-tertiary-fixed-dim to-warning h-3 rounded-full transition-all duration-1000" style="width: 90%;"></div>
+</div>
+<p class="text-caption font-caption text-on-surface-variant mt-sm text-center">Just 50 XP more to reach 'Elite Guardian' status!</p>
+</div>
+</div>
+</main>
+<!-- Bottom Nav for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest flex justify-around items-center px-4 py-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-caption font-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="text-caption font-caption">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-caption font-caption">Matches</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-caption font-caption">Social</span>
+</a>
+</nav>
+<canvas class="confetti-canvas" id="confetti"></canvas>
+<script>
+        // Simple micro-interaction for celebratory confetti
+        const canvas = document.getElementById('confetti');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const pieces = [];
+        const numberOfPieces = 150;
+        const colors = ['#4143d5', '#6b38d4', '#FB923C', '#22C55E', '#38BDF8'];
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pieces.forEach((p, i) => {
+                p.y += p.speed;
+                p.rotation += p.rotSpeed;
+                if (p.y > canvas.height) pieces[i] = createPiece();
+                
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                ctx.restore();
+            });
+            requestAnimationFrame(update);
+        }
+
+        function createPiece() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * -canvas.height,
+                size: Math.random() * 10 + 5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speed: Math.random() * 2 + 1,
+                rotation: Math.random() * Math.PI * 2,
+                rotSpeed: Math.random() * 0.1 - 0.05
+            };
+        }
+
+        for (let i = 0; i < numberOfPieces; i++) {
+            pieces.push(createPiece());
+        }
+
+        update();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Hover effect scale cleanup
+        document.querySelectorAll('button, a, .bg-card-bg').forEach(el => {
+            el.addEventListener('mousedown', () => el.style.transform = 'scale(0.98)');
+            el.addEventListener('mouseup', () => el.style.transform = '');
+        });
+    </script>
+</body></html>

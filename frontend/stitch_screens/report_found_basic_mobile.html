@@ -1,0 +1,337 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Report Found Item - Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .step-active {
+            box-shadow: 0 0 15px rgba(65, 67, 213, 0.3);
+        }
+
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .float-anim { animation: subtle-float 3s ease-in-out infinite; }
+
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(91, 95, 239, 0.15);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "surface-container-low": "#f2f4f6",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "secondary-container": "#8455ef",
+                        "surface-bright": "#f7f9fb",
+                        "text-primary": "#111827",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-primary-container": "#f9f6ff",
+                        "outline": "#767586",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#05006c",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-surface-variant": "#464555",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "primary-fixed": "#e1e0ff",
+                        "primary": "#4143d5",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#e9ddff",
+                        "background": "#f7f9fb",
+                        "tertiary": "#735500",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "dark-card": "#1F2937",
+                        "text-secondary": "#6B7280",
+                        "surface-dim": "#d8dadc",
+                        "success": "#22C55E",
+                        "on-secondary-fixed": "#23005c",
+                        "border-default": "#E5E7EB",
+                        "surface-variant": "#e0e3e5",
+                        "error": "#ba1a1a",
+                        "card-bg": "#FFFFFF",
+                        "tertiary-container": "#916c00",
+                        "surface-tint": "#474adb",
+                        "warning": "#FB923C",
+                        "danger": "#F43F5E",
+                        "secondary": "#6b38d4",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface-container-high": "#e6e8ea",
+                        "inverse-surface": "#2d3133",
+                        "on-error-container": "#93000a",
+                        "info-ai": "#38BDF8",
+                        "on-tertiary-container": "#fff7ee",
+                        "dark-bg": "#111827",
+                        "outline-variant": "#c6c5d7",
+                        "on-background": "#191c1e",
+                        "on-surface": "#191c1e",
+                        "on-tertiary-fixed": "#261a00",
+                        "surface-container": "#eceef0",
+                        "dark-primary": "#8B80FF",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-container": "#fffbff",
+                        "primary-container": "#5b5fef",
+                        "inverse-primary": "#c0c1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "margin-mobile": "16px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "2xl": "48px",
+                        "margin-desktop": "32px",
+                        "md": "16px",
+                        "base": "8px",
+                        "sm": "8px",
+                        "3xl": "64px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-text-primary min-h-screen pb-24 overflow-x-hidden">
+<!-- Top Navigation Anchor (As specified in JSON) -->
+<nav class="bg-surface/80 dark:bg-dark-bg/80 backdrop-blur-md font-body-md text-body-md flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md z-50 shadow-sm sticky top-0">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-page-title text-page-title-mobile font-bold text-primary dark:text-dark-primary">Lost&amp;Found AI</span>
+</div>
+<div class="flex gap-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="leaderboard">leaderboard</span>
+</div>
+</nav>
+<main class="px-margin-mobile pt-lg flex flex-col gap-lg max-w-lg mx-auto">
+<!-- Progress Stepper Header -->
+<header class="flex flex-col gap-sm">
+<div class="flex justify-between items-end">
+<h1 class="font-page-title text-page-title-mobile text-text-primary">Found something?</h1>
+<span class="font-label-md text-label-md text-primary font-bold">Step 1/3</span>
+</div>
+<!-- Stepper UI -->
+<div class="flex gap-base w-full h-2">
+<div class="flex-1 bg-primary rounded-full"></div>
+<div class="flex-1 bg-surface-container-high rounded-full"></div>
+<div class="flex-1 bg-surface-container-high rounded-full"></div>
+</div>
+<p class="font-body-md text-body-md text-text-secondary mt-2">Let's get the basic details to help find its owner.</p>
+</header>
+<!-- Form Section -->
+<section class="flex flex-col gap-lg">
+<!-- Category Bento Selection -->
+<div class="flex flex-col gap-md">
+<label class="font-label-md text-label-md text-on-surface-variant px-1">What did you find?</label>
+<div class="grid grid-cols-2 gap-md">
+<button class="flex flex-col items-center justify-center p-lg bg-card-bg rounded-2xl border-2 border-primary ring-4 ring-primary/10 shadow-sm transition-all duration-200">
+<span class="material-symbols-outlined text-3xl text-primary mb-2" data-icon="devices">devices</span>
+<span class="font-label-md text-label-md text-primary">Electronics</span>
+</button>
+<button class="flex flex-col items-center justify-center p-lg bg-card-bg rounded-2xl border-2 border-transparent hover:border-outline-variant shadow-sm transition-all duration-200">
+<span class="material-symbols-outlined text-3xl text-on-surface-variant mb-2" data-icon="wallet">wallet</span>
+<span class="font-label-md text-label-md text-text-primary">Wallet/Keys</span>
+</button>
+<button class="flex flex-col items-center justify-center p-lg bg-card-bg rounded-2xl border-2 border-transparent hover:border-outline-variant shadow-sm transition-all duration-200">
+<span class="material-symbols-outlined text-3xl text-on-surface-variant mb-2" data-icon="book">book</span>
+<span class="font-label-md text-label-md text-text-primary">Stationery</span>
+</button>
+<button class="flex flex-col items-center justify-center p-lg bg-card-bg rounded-2xl border-2 border-transparent hover:border-outline-variant shadow-sm transition-all duration-200">
+<span class="material-symbols-outlined text-3xl text-on-surface-variant mb-2" data-icon="category">category</span>
+<span class="font-label-md text-label-md text-text-primary">Other</span>
+</button>
+</div>
+</div>
+<!-- Input Fields -->
+<div class="flex flex-col gap-md">
+<!-- Item Name -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="item_name">Item Name</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" data-icon="edit">edit</span>
+<input class="w-full pl-12 pr-4 py-4 bg-card-bg border-border-default rounded-xl font-body-md text-body-md focus:border-primary transition-all shadow-sm" id="item_name" placeholder="e.g. Silver iPhone 13" type="text">
+</div>
+</div>
+<!-- Date and Time Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Date Found -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="date_found">Date Found</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" data-icon="calendar_today">calendar_today</span>
+<input class="w-full pl-12 pr-4 py-4 bg-card-bg border-border-default rounded-xl font-body-md text-body-md focus:border-primary transition-all shadow-sm appearance-none" id="date_found" type="date">
+</div>
+</div>
+<!-- Time Found -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant px-1" for="time_found">Approx. Time</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" data-icon="schedule">schedule</span>
+<input class="w-full pl-12 pr-4 py-4 bg-card-bg border-border-default rounded-xl font-body-md text-body-md focus:border-primary transition-all shadow-sm appearance-none" id="time_found" type="time">
+</div>
+</div>
+</div>
+</div>
+<!-- Gamification Teaser -->
+<div class="bg-primary-fixed/30 p-md rounded-2xl flex items-center gap-md border border-primary-fixed">
+<div class="w-12 h-12 bg-card-bg rounded-xl flex items-center justify-center shadow-sm shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="military_tech">military_tech</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary-fixed-variant">Reporting Boost!</p>
+<p class="font-caption text-caption text-on-surface-variant">Complete this report to earn +25 Helpful Senior Student XP.</p>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full py-4 bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md text-label-md rounded-xl shadow-lg hover:scale-[1.03] transition-all duration-200 active:scale-95 mt-lg flex items-center justify-center gap-sm">
+<span>Continue to Location</span>
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</section>
+</main>
+<!-- Bottom Navigation Shell (As specified in JSON) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface dark:bg-dark-bg pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)] lg:hidden rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-high px-4 py-1 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-caption text-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-dark-primary bg-primary-fixed/30 rounded-full px-4 py-1 active:scale-90 duration-100" href="#">
+<span class="material-symbols-outlined" data-icon="add_box" style="font-variation-settings: 'FILL' 1;">add_box</span>
+<span class="font-caption text-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-high px-4 py-1 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-caption text-caption">Community</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-high px-4 py-1 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-caption text-caption">Profile</span>
+</a>
+</nav>
+<!-- Side Navigation Anchor (Hidden on Mobile) -->
+<aside class="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-card-bg dark:bg-dark-card shadow-md p-md gap-lg font-label-md text-label-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-page-title text-page-title text-primary dark:text-dark-primary">Lost&amp;Found AI</span>
+</div>
+<div class="flex items-center gap-md bg-surface-container-lowest p-sm rounded-xl">
+<img class="w-10 h-10 rounded-lg object-cover" data-alt="A profile avatar of a friendly tech-savvy student, close-up, brightly lit campus background, vibrant colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVlh2tC5lmcxtfcewOSP-GBkPHnEk2HbgBy59a6cTGe481AFwgd5zDBS9Au2qfndcTtJz2I6R_Xu_37TB3EjugTzROOaQCKl6Y6XtK1zi6WoeWLb5XMSp-suWdihP1-cxRaZIkfTcBcOzKRKM9gWM83oC_Cd9FZzS0yzYbIgZvygCp7FcD1mQDm1yOwSgPbaWty8hDK4TEi75ufQnTpM810FYIQHS7RUrbNnXjU1LT2SQGfo9BZDX4aYcYmpDCShJRsMKx6m-NtYo">
+<div>
+<p class="font-label-md text-primary">Senior Student AI</p>
+<p class="text-xs text-text-secondary">Helper Level 12</p>
+</div>
+</div>
+<nav class="flex flex-col gap-sm flex-1">
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</div>
+<div class="flex items-center gap-md bg-primary-fixed dark:bg-primary-container text-on-primary-fixed-variant dark:text-on-primary-container rounded-xl px-md py-sm">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span>Report Item</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span>Map View</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant dark:text-text-secondary hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span>AI Matches</span>
+</div>
+</nav>
+<div class="border-t border-border-default pt-md flex flex-col gap-sm">
+<div class="flex items-center gap-md text-on-surface-variant px-md py-sm">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</div>
+</div>
+</aside>
+<script>
+        // Micro-interactions for category selection
+        const buttons = document.querySelectorAll('.grid-cols-2 button');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => {
+                    b.classList.remove('border-primary', 'ring-4', 'ring-primary/10');
+                    b.classList.add('border-transparent');
+                    b.querySelector('span:first-child').classList.remove('text-primary');
+                    b.querySelector('span:first-child').classList.add('text-on-surface-variant');
+                    b.querySelector('span:last-child').classList.remove('text-primary');
+                    b.querySelector('span:last-child').classList.add('text-text-primary');
+                });
+                btn.classList.add('border-primary', 'ring-4', 'ring-primary/10');
+                btn.classList.remove('border-transparent');
+                btn.querySelector('span:first-child').classList.add('text-primary');
+                btn.querySelector('span:first-child').classList.remove('text-on-surface-variant');
+                btn.querySelector('span:last-child').classList.add('text-primary');
+                btn.querySelector('span:last-child').classList.remove('text-text-primary');
+            });
+        });
+    </script>
+
+
+</body></html>

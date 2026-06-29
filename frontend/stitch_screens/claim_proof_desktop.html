@@ -1,0 +1,372 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Claim Ownership - Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active { font-variation-settings: 'FILL' 1; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e0e3e5; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4143d5; }
+
+        /* Tactile Lift Effect */
+        .hover-lift { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-4px) scale(1.02); }
+
+        /* AI Suggestion Glow */
+        .ai-glow { box-shadow: 0 0 20px rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); }
+    </style>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#e9ddff",
+                    "inverse-surface": "#2d3133",
+                    "text-secondary": "#6B7280",
+                    "tertiary-container": "#916c00",
+                    "surface": "#f7f9fb",
+                    "primary-container": "#5b5fef",
+                    "success": "#22C55E",
+                    "dark-bg": "#111827",
+                    "card-bg": "#FFFFFF",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface-tint": "#474adb",
+                    "on-surface": "#191c1e",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "dark-primary": "#8B80FF",
+                    "border-default": "#E5E7EB",
+                    "on-secondary-container": "#fffbff",
+                    "on-secondary-fixed": "#23005c",
+                    "inverse-primary": "#c0c1ff",
+                    "surface-dim": "#d8dadc",
+                    "error-container": "#ffdad6",
+                    "on-background": "#191c1e",
+                    "on-primary-fixed": "#05006c",
+                    "surface-container": "#eceef0",
+                    "surface-bright": "#f7f9fb",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "secondary-container": "#8455ef",
+                    "on-tertiary-fixed": "#261a00",
+                    "warning": "#FB923C",
+                    "surface-container-lowest": "#ffffff",
+                    "dark-card": "#1F2937",
+                    "background": "#f7f9fb",
+                    "info-ai": "#38BDF8",
+                    "on-surface-variant": "#464555",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "outline-variant": "#c6c5d7",
+                    "on-primary-container": "#f9f6ff",
+                    "on-tertiary": "#ffffff",
+                    "danger": "#F43F5E",
+                    "outline": "#767586",
+                    "tertiary": "#735500",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary-container": "#fff7ee",
+                    "surface-variant": "#e0e3e5",
+                    "primary": "#4143d5",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "text-primary": "#111827",
+                    "primary-fixed": "#e1e0ff",
+                    "secondary": "#6b38d4",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "inverse-on-surface": "#eff1f3",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "base": "8px",
+                    "sm": "8px",
+                    "3xl": "64px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "gutter": "16px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "page-title": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "800"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md overflow-x-hidden min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/80 backdrop-blur-md font-body-md text-body-md docked full-width top-0 sticky shadow-sm flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md z-50">
+<div class="flex items-center gap-base">
+<span class="font-page-title text-page-title-mobile font-bold text-primary">Lost&amp;Found AI</span>
+</div>
+<div class="hidden md:flex flex-1 max-w-md mx-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="Search for items..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">auto_awesome</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed ml-sm">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a friendly university student with a warm smile, wearing a casual navy blue hoodie. The background is a brightly lit, modern university lounge with blurred architectural details. The lighting is soft and natural, emphasizing a approachable and helpful senior student persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA5yH2U9TVhVskh8bsfivsWK_6u5HpV2iZaQ6dFnbVFaHqKnUbloOG3UiO08vOAscny3jgK8rpfexvg7OxbqAcdhGGvULzlPO1ICyWCsXJnn0kc09c3H3DHV8-1LcyxWhHUbX85GFOTWvO6veLs5FyG5sOzS6JbW43ElYPKcdwxGwX3vyhvI9VD7-jI0ZiS8uy13FvpgoJobzCPJ8doZmExP6g2qcmIfZb6dPqUEC9eSlEdZMsA3P32l6y6Xxo5oG4rwVOwtK-nFE">
+</div>
+</div>
+</header>
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="bg-card-bg h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col shadow-md flex flex-col h-full p-md gap-lg pt-32">
+<div class="px-md mb-md">
+<div class="flex items-center gap-sm p-sm bg-surface-container rounded-xl">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">school</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Senior Student AI</p>
+<p class="text-[12px] text-text-secondary">Helper Level 12</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-sm">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md bg-primary-fixed text-on-primary-fixed-variant rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md text-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#"><span class="material-symbols-outlined">groups</span><span class="font-label-md text-label-md">Community Board</span></a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-md text-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm hover:scale-[1.03] transition-all duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">My History</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-sm border-t border-surface-container-highest pt-md">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-container-low rounded-xl px-md py-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md text-label-md">Help Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:ml-64 px-margin-mobile md:px-margin-desktop py-xl">
+<div class="max-w-4xl mx-auto">
+<!-- Stepper -->
+<div class="mb-2xl">
+<div class="flex items-center justify-between relative">
+<!-- Progress Bar Background -->
+<div class="absolute top-5 left-0 w-full h-[2px] bg-surface-container-highest -z-10"></div>
+<!-- Progress Bar Active -->
+<div class="absolute top-5 left-0 w-1/2 h-[2px] bg-primary -z-10"></div>
+<!-- Step 1 -->
+<div class="flex flex-col items-center gap-sm bg-surface">
+<div class="w-10 h-10 rounded-full bg-success text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<span class="font-label-md text-label-md text-success">Item Details</span>
+</div>
+<!-- Step 2 (Active) -->
+<div class="flex flex-col items-center gap-sm bg-surface">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center ring-4 ring-primary-fixed/50">
+<span class="material-symbols-outlined text-[20px] step-active">verified</span>
+</div>
+<span class="font-label-md text-label-md text-primary">Proof of Ownership</span>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center gap-sm bg-surface">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">rate_review</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Final Review</span>
+</div>
+</div>
+</div>
+<!-- Page Title -->
+<div class="mb-xl">
+<h1 class="font-page-title text-page-title text-primary mb-xs">Claim Ownership</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Upload documents to verify that this item belongs to you. This helps our campus moderators approve your claim faster!</p>
+</div>
+<!-- Content Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Left: Upload Zone (Col Span 2) -->
+<div class="md:col-span-2 space-y-lg">
+<div class="bg-card-bg p-lg rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-border-default">
+<h3 class="font-card-title text-card-title mb-md">Purchase Receipt or Proof of Ownership</h3>
+<!-- File Upload Area -->
+<div class="border-2 border-dashed border-primary/30 rounded-2xl p-xl flex flex-col items-center justify-center gap-md bg-primary-fixed/5 hover:bg-primary-fixed/10 transition-all cursor-pointer group" id="drop-zone">
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-[32px]">cloud_upload</span>
+</div>
+<div class="text-center">
+<p class="font-label-md text-label-md text-primary">Click to upload or drag and drop</p>
+<p class="text-caption font-caption text-text-secondary mt-xs">PDF, JPG, or PNG (Max 10MB)</p>
+</div>
+<input class="hidden" id="file-input" type="file">
+</div>
+<!-- Uploaded Files Preview (Hidden by default, shown for UI feel) -->
+<div class="mt-lg space-y-sm">
+<p class="font-label-md text-label-md text-on-surface-variant">Supporting Files</p>
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-xl border border-border-default hover-lift">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">description</span>
+<div>
+<p class="font-label-md text-label-md">receipt_apple_store.pdf</p>
+<p class="text-caption font-caption text-text-secondary">2.4 MB • Uploaded 2 mins ago</p>
+</div>
+</div>
+<button class="p-2 text-error hover:bg-error/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Secondary Verification Form -->
+<div class="bg-card-bg p-lg rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-border-default">
+<h3 class="font-card-title text-card-title mb-md">Additional Information</h3>
+<div class="space-y-md">
+<div>
+<label class="block font-label-md text-label-md mb-xs text-on-surface">Specific Item Identification</label>
+<textarea class="w-full rounded-2xl border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all p-md h-32" placeholder="Example: Serial number, unique scratches on the side, or stickers on the back..."></textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Pro Tip & Guidance -->
+<div class="space-y-lg">
+<!-- Pro Tip Box -->
+<div class="bg-secondary-fixed p-lg rounded-[20px] shadow-sm relative overflow-hidden">
+<div class="absolute -top-4 -right-4 w-16 h-16 bg-white/20 rounded-full"></div>
+<div class="flex items-start gap-md relative z-10">
+<span class="material-symbols-outlined text-on-secondary-fixed text-[28px]">lightbulb</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-secondary-fixed mb-xs">Pro Tip</h4>
+<p class="text-caption font-caption text-on-secondary-fixed-variant leading-relaxed">
+                                        High-value items like electronics, jewelry, or designer bags require <strong>clear proof of ownership</strong>. High-resolution photos of receipts or warranty cards significantly speed up the return process.
+                                    </p>
+</div>
+</div>
+</div>
+<!-- AI Assistant Guidance -->
+<div class="ai-glow bg-card-bg p-lg rounded-[20px] flex flex-col gap-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-info-ai" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<h4 class="font-label-md text-label-md text-on-surface">Verification Helper</h4>
+</div>
+<p class="text-caption font-caption text-on-surface-variant">
+                                "I noticed you're claiming an <strong>Apple MacBook Air</strong>. Providing the serial number located on the bottom of the device is the gold standard for ownership! Look for the tiny text starting with 'S/N'."
+                            </p>
+<div class="w-full h-[2px] bg-surface-container"></div>
+<div class="flex items-center justify-between">
+<span class="text-caption font-caption text-text-secondary italic">Trust Score: 85%</span>
+<span class="material-symbols-outlined text-success">verified_user</span>
+</div>
+</div>
+<!-- Image Context -->
+<div class="rounded-[20px] overflow-hidden shadow-md aspect-video relative group">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A high-quality, professional flat lay photograph of common student essentials on a clean white desk. Includes a sleek silver laptop, a leather wallet with a university ID card partially visible, a set of white wireless earbuds, and a clear plastic coffee cup. The scene is bright, with soft daylight coming from the side, creating a clean and optimistic mood for a lost and found application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHNh7sH1r62FWcFryrgH_hO3CJLGBxjMsdydNtZdh_kHG8Q-TZYRZvpj5zU6pXQsBD1OBHDvPvjiFuFImZ8kBOifUGJaXWS_289sELKH0e-g0Az_Vky5VAL9RoXKV0W3oxXOo3lROxQ2g0teKNavRSDvgUrTp_ndIz4MicvUM2jp-SnD0p7aazDBgRQ1IOhIXGitHQ9xy4kPUVd1MvaNUul4Zi7ygUIrCOrzMz_Cdqgura9OjwHIX5sZoxSzmtrqToea7XmtyLrq4">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-md">
+<p class="text-white font-label-md text-[12px]">Verify your items securely</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="mt-2xl flex items-center justify-between border-t border-surface-container-highest pt-xl">
+<button class="px-xl py-3 border-2 border-primary text-primary rounded-full font-label-md hover:bg-primary/5 transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-sm">
+<span class="material-symbols-outlined">arrow_back</span>
+                        Back
+                    </button>
+<button class="px-xl py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-label-md shadow-lg shadow-primary/25 hover:scale-[1.03] active:scale-95 transition-all flex items-center gap-sm">
+                        Continue to Review
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-primary-fixed/20', 'border-primary');
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('bg-primary-fixed/20', 'border-primary');
+            });
+        });
+
+        // Simple active scale for all buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('scale-95'));
+        });
+    </script>
+
+
+</body></html>

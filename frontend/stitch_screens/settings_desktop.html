@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings | Campus Connect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#5b5fef",
+                        "surface": "#f7f9fb",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-container": "#eceef0",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "info-ai": "#38BDF8",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed": "#05006c",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "on-secondary-container": "#fffbff",
+                        "success": "#22C55E",
+                        "danger": "#F43F5E",
+                        "secondary-fixed": "#e9ddff",
+                        "on-error-container": "#93000a",
+                        "secondary": "#6b38d4",
+                        "text-secondary": "#6B7280",
+                        "outline": "#767586",
+                        "tertiary-container": "#916c00",
+                        "secondary-container": "#8455ef",
+                        "on-background": "#191c1e",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "dark-bg": "#111827",
+                        "border-default": "#E5E7EB",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#fff7ee",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary-container": "#f9f6ff",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "surface-bright": "#f7f9fb",
+                        "surface-tint": "#474adb",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-secondary-fixed": "#23005c",
+                        "primary-fixed": "#e1e0ff",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "warning": "#FB923C",
+                        "on-surface": "#191c1e",
+                        "on-tertiary-fixed": "#261a00",
+                        "inverse-surface": "#2d3133",
+                        "inverse-primary": "#c0c1ff",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary": "#735500",
+                        "outline-variant": "#c6c5d7",
+                        "on-secondary": "#ffffff",
+                        "text-primary": "#111827",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#464555",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-high": "#e6e8ea",
+                        "dark-primary": "#8B80FF",
+                        "dark-card": "#1F2937",
+                        "primary": "#4143d5",
+                        "card-bg": "#FFFFFF"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "32px",
+                        "3xl": "64px",
+                        "base": "8px",
+                        "2xl": "48px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "lg": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "card-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f7f9fb;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .custom-shadow {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        }
+
+        .toggle-dot {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input:checked ~ .toggle-bg {
+            background-color: #4143d5;
+        }
+        input:checked ~ .toggle-dot {
+            transform: translateX(100%);
+        }
+
+        .gradient-btn {
+            background: linear-gradient(135deg, #5b5fef 0%, #6b38d4 100%);
+            transition: all 0.2s ease;
+        }
+        .gradient-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 15px rgba(91,95,239,0.3);
+        }
+
+        /* Dark mode overrides for manual adjustments */
+        .dark .dark-bg-adjust { background-color: #111827; color: #f9f6ff; }
+        .dark .dark-card-adjust { background-color: #1f2937; color: #f9f6ff; border-color: #374151; }
+    </style>
+</head>
+<body class="bg-surface dark:bg-dark-bg text-on-surface transition-colors duration-300">
+<div class="flex min-h-screen">
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden md:flex flex-col h-screen w-64 fixed left-0 bg-surface-container dark:bg-dark-card p-lg border-r border-outline-variant/20">
+<div class="flex items-center gap-3 mb-10">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">school</span>
+</div>
+<div>
+<h1 class="font-section-title text-[20px] font-extrabold text-primary dark:text-dark-primary leading-tight">Campus Connect</h1>
+<p class="text-[12px] text-on-surface-variant font-medium">Lost &amp; Found Portal</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-md">Report Item</span>
+</a>
+<a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-md">Community Board</span>
+</a>
+<a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-label-md">AI Matches</span>
+</a>
+<a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md">My History</span>
+</a>
+</nav>
+<div class="pt-6 mt-6 border-t border-outline-variant/30 space-y-2">
+<a class="flex items-center gap-3 p-3 rounded-xl text-primary font-bold border-r-4 border-primary bg-primary-fixed-dim/20" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md">Help</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-margin-mobile md:p-margin-desktop">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-4">
+<div>
+<h2 class="font-page-title text-page-title text-primary dark:text-dark-primary flex items-center gap-3">
+                        Settings 🛠️
+                    </h2>
+<p class="font-body-md text-on-surface-variant">Customize your experience and manage your security.</p>
+</div>
+<!-- Theme Toggle Action Card -->
+<div class="bg-card-bg dark:bg-dark-card p-md rounded-2xl custom-shadow flex items-center gap-4 border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary">contrast</span>
+<div class="flex bg-surface-container dark:bg-dark-bg p-1 rounded-full">
+<button class="px-4 py-1.5 rounded-full text-caption font-bold transition-all" id="light-btn" onclick="setTheme('light')">Light</button>
+<button class="px-4 py-1.5 rounded-full text-caption font-bold transition-all" id="dark-btn" onclick="setTheme('dark')">Dark</button>
+</div>
+</div>
+</div>
+<!-- Settings Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column: Account & Profile -->
+<div class="lg:col-span-7 space-y-lg">
+<!-- Account Card -->
+<section class="bg-card-bg dark:bg-dark-card p-xl rounded-[20px] custom-shadow border border-outline-variant/5 relative overflow-hidden group">
+<!-- Playful Doodle Placeholder -->
+<div class="absolute -top-4 -right-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px] rotate-12">person_search</span>
+</div>
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">person</span>
+<h3 class="font-card-title text-card-title">Account Details</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="space-y-1">
+<label class="font-label-md text-on-surface-variant block">Full Name</label>
+<input class="w-full bg-surface-container-low dark:bg-dark-bg border-border-default dark:border-outline-variant/30 rounded-xl p-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Enter your name" type="text" value="Alex Johnson"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-on-surface-variant block">Student ID</label>
+<input class="w-full bg-surface-container dark:bg-dark-bg/50 border-border-default dark:border-outline-variant/30 text-on-surface-variant rounded-xl p-md cursor-not-allowed" disabled="" type="text" value="SU-2024-8842"/>
+</div>
+<div class="md:col-span-2 space-y-1">
+<label class="font-label-md text-on-surface-variant block">Email Address</label>
+<input class="w-full bg-surface-container-low dark:bg-dark-bg border-border-default dark:border-outline-variant/30 rounded-xl p-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" type="email" value="alex.johnson@campus.edu"/>
+</div>
+</div>
+<div class="mt-xl pt-lg border-t border-outline-variant/20">
+<h4 class="font-label-md mb-md">Security</h4>
+<button class="flex items-center gap-2 text-primary font-bold hover:underline transition-all">
+<span class="material-symbols-outlined text-[20px]">lock_reset</span>
+                                Change Password
+                            </button>
+</div>
+</section>
+<!-- Privacy Card -->
+<section class="bg-card-bg dark:bg-dark-card p-xl rounded-[20px] custom-shadow border border-outline-variant/5">
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">shield</span>
+<h3 class="font-card-title text-card-title">Privacy</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-md rounded-xl hover:bg-surface dark:hover:bg-dark-bg/40 transition-colors">
+<div>
+<p class="font-label-md">Profile Visibility</p>
+<p class="text-caption text-on-surface-variant">Allow other students to see your lost item history.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-md rounded-xl hover:bg-surface dark:hover:bg-dark-bg/40 transition-colors">
+<div>
+<p class="font-label-md">Direct Messages</p>
+<p class="text-caption text-on-surface-variant">Let users contact you directly about found items.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Notifications & Visuals -->
+<div class="lg:col-span-5 space-y-lg">
+<!-- Notification Preferences -->
+<section class="bg-card-bg dark:bg-dark-card p-xl rounded-[20px] custom-shadow border border-outline-variant/5">
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">notifications_active</span>
+<h3 class="font-card-title text-card-title">Notifications</h3>
+</div>
+<div class="space-y-gutter">
+<div class="p-md bg-primary-fixed-dim/10 rounded-2xl border border-primary/10">
+<p class="text-caption font-bold text-primary mb-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">info</span>
+                                    Highly Recommended
+                                </p>
+<div class="flex items-center justify-between">
+<span class="font-label-md">Email Alerts</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<p class="text-caption text-on-surface-variant mt-1">Instant updates when an item matches your report.</p>
+</div>
+<div class="flex items-center justify-between p-md">
+<span class="font-label-md">Push Notifications</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-md">
+<span class="font-label-md">Weekly Summary</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Interactive Mascot Card -->
+<section class="bg-primary-container p-xl rounded-[20px] text-white relative overflow-hidden custom-shadow group">
+<div class="relative z-10">
+<h4 class="font-card-title mb-2">Need a Hand? 🤝</h4>
+<p class="text-on-primary-container font-body-md mb-xl opacity-90">Our AI assistant is always ready to help you find your lost items faster!</p>
+<button class="bg-white text-primary font-bold py-3 px-6 rounded-2xl hover:scale-105 transition-transform">
+                                Contact Support
+                            </button>
+</div>
+<!-- Abstract Blob Animation via WebGL Placeholder -->
+<div class="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none">
+
+</div>
+<div class="absolute bottom-[-20px] right-[-10px] scale-150 opacity-20 rotate-12 pointer-events-none">
+<span class="material-symbols-outlined text-[140px]" style="font-variation-settings: 'FILL' 1">psychology</span>
+</div>
+</section>
+<!-- Save Changes Floating Anchor -->
+<div class="flex gap-md">
+<button class="flex-1 gradient-btn text-white font-bold py-md px-xl rounded-2xl shadow-lg">
+                            Save Changes
+                        </button>
+<button class="px-xl border-2 border-outline-variant text-on-surface-variant font-bold rounded-2xl hover:bg-surface-container-high transition-colors">
+                            Discard
+                        </button>
+</div>
+</div>
+</div>
+<!-- Footer Message -->
+<footer class="mt-3xl mb-xl text-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full text-caption text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+                    Your account is secured with 256-bit encryption. 🔒
+                </div>
+</footer>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 md:hidden bg-surface dark:bg-dark-bg shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-caption">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-caption">Report</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-caption">Board</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-caption">AI</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 px-4" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-caption">Settings</span>
+</a>
+</nav>
+<script>
+        function setTheme(theme) {
+            const html = document.documentElement;
+            const lightBtn = document.getElementById('light-btn');
+            const darkBtn = document.getElementById('dark-btn');
+
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                darkBtn.classList.add('bg-white', 'text-primary', 'shadow-sm');
+                darkBtn.classList.remove('text-on-surface-variant');
+                lightBtn.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+                lightBtn.classList.add('text-on-surface-variant');
+            } else {
+                html.classList.remove('dark');
+                lightBtn.classList.add('bg-white', 'text-primary', 'shadow-sm');
+                lightBtn.classList.remove('text-on-surface-variant');
+                darkBtn.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+                darkBtn.classList.add('text-on-surface-variant');
+            }
+        }
+
+        // Initialize theme based on class
+        window.addEventListener('load', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            setTheme(isDark ? 'dark' : 'light');
+        });
+    </script>
+</body></html>
