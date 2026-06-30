@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Star, Sparkles, Handshake, Verified, Shield, Zap, Compass, Heart, Lock, Calendar, PlusCircle, ArrowRight, Bot } from 'lucide-react';
 
 
@@ -12,7 +12,7 @@ export const Profile: React.FC = () => {
       {/* Hero Profile Section */}
       <section className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Profile Identity Card */}
-        <div className="md:col-span-8 bg-white rounded-3xl p-8 shadow-sm relative overflow-hidden transition-all hover:scale-[1.01] hover:shadow-md border border-border-default">
+        <div className="md:col-span-8 bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-8 shadow-sm relative overflow-hidden transition-all hover:scale-[1.01] hover:shadow-md border border-border-default transition-colors duration-300">
           <div className="relative flex flex-col md:flex-row gap-8 items-center">
             <div className="relative">
               <div className="w-32 h-32 rounded-3xl overflow-hidden shadow-xl rotate-3">
@@ -30,7 +30,7 @@ export const Profile: React.FC = () => {
             
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-4xl font-bold text-primary">Alex Rivers</h1>
-              <p className="text-text-secondary text-lg mt-1">Senior Student AI · Helper Level 12</p>
+              <p className="text-text-secondary text-lg mt-1">Senior Student AI Â· Helper Level 12</p>
               <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-2">
                 <span className="px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold">Class of 2026</span>
                 <span className="px-4 py-1 bg-[#ffdf9f] text-[#5c4300] rounded-full text-sm font-bold">Design Major</span>
@@ -41,7 +41,7 @@ export const Profile: React.FC = () => {
             <div className="flex flex-col items-center gap-2 mt-4 md:mt-0">
               <div className="text-center">
                 <div className="text-5xl font-bold text-primary flex items-center">
-                  982<span className="ml-2 text-3xl">🏆</span>
+                  982<span className="ml-2 text-3xl">ðŸ†</span>
                 </div>
                 <div className="text-sm font-bold text-text-secondary uppercase tracking-widest mt-1">Reputation</div>
               </div>
@@ -69,7 +69,7 @@ export const Profile: React.FC = () => {
               <span>PROGRESS TO LVL 13</span>
               <span>2,450 / 3,000 XP</span>
             </div>
-            <div className="w-full h-4 bg-white/20 rounded-full overflow-hidden">
+            <div className="w-full h-4 bg-surface-container-lowest dark:bg-surface-container/20 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-warning to-[#f9bd22] rounded-full" style={{ width: '82%' }}></div>
             </div>
             <p className="text-sm opacity-80 italic">"Return 1 more high-value item to reach level 13!"</p>
@@ -81,12 +81,12 @@ export const Profile: React.FC = () => {
       <section className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Quick Stats */}
         <div className="md:col-span-3 grid grid-rows-2 gap-6">
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-border-default flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02]">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02]">
             <Handshake className="text-primary w-8 h-8 mb-2" />
             <div className="text-3xl font-bold text-text-primary">14</div>
             <div className="text-sm text-text-secondary mt-1">Items Returned</div>
           </div>
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-border-default flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02]">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02]">
             <Verified className="text-[#6b38d4] w-8 h-8 mb-2" />
             <div className="text-3xl font-bold text-text-primary">100%</div>
             <div className="text-sm text-text-secondary mt-1">Honesty Score</div>
@@ -94,7 +94,7 @@ export const Profile: React.FC = () => {
         </div>
 
         {/* Badge Gallery */}
-        <div className="md:col-span-9 bg-white rounded-3xl p-8 shadow-sm border border-border-default">
+        <div className="md:col-span-9 bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-8 shadow-sm border border-border-default">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold text-text-primary">Earned Badges</h2>
             <button onClick={() => handleAction('View All Badges')} className="text-primary font-bold hover:underline">View All Badges</button>
@@ -146,11 +146,11 @@ export const Profile: React.FC = () => {
       </section>
 
       {/* Activity History Section */}
-      <section className="bg-white rounded-3xl shadow-sm overflow-hidden border border-border-default">
+      <section className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl shadow-sm overflow-hidden border border-border-default">
         <div className="p-8 border-b border-border-default flex flex-col md:flex-row justify-between items-center gap-4">
           <h2 className="text-2xl font-bold">Item History</h2>
           <div className="flex bg-surface rounded-xl p-1 w-full md:w-auto overflow-x-auto">
-            <button className="px-4 py-1 bg-white shadow-sm rounded-lg text-sm font-bold text-primary whitespace-nowrap">All Activity</button>
+            <button className="px-4 py-1 bg-surface-container-lowest dark:bg-surface-container shadow-sm rounded-lg text-sm font-bold text-primary whitespace-nowrap">All Activity</button>
             <button onClick={() => handleAction('Filter: Found')} className="px-4 py-1 text-sm font-medium text-text-secondary hover:text-primary whitespace-nowrap">Found</button>
             <button onClick={() => handleAction('Filter: Lost')} className="px-4 py-1 text-sm font-medium text-text-secondary hover:text-primary whitespace-nowrap">Lost</button>
           </div>

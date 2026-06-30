@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
   ArrowLeft, Share2, Maximize2, Tag, 
@@ -22,7 +22,7 @@ export const ItemDetail: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-surface -mt-6 -mx-6 md:m-0 pb-24 md:pb-0">
       
       {/* Mobile Header (Hidden on Desktop since AppLayout handles it) */}
-      <header className="md:hidden bg-white/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 py-3 shadow-sm border-b border-border-default">
+      <header className="md:hidden bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 py-3 shadow-sm border-b border-border-default">
         <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-surface-container transition-colors">
           <ArrowLeft className="w-5 h-5 text-text-secondary" />
         </button>
@@ -86,7 +86,7 @@ export const ItemDetail: React.FC = () => {
             </div>
 
             {/* Description Card */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-border-default mx-4 md:mx-0">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default mx-4 md:mx-0">
               <h2 className="text-xl font-bold text-text-primary mb-4">Description</h2>
               <p className="text-text-secondary text-sm md:text-base leading-relaxed mb-6">
                 "Found this MacBook Pro on the 3rd floor of the Main Library, near the quiet study pods. It was left on a desk around 4:30 PM. It has a distinctive 'Computer Science Society' sticker on the bottom left corner and some minor scratches near the charging port. No charger was present."
@@ -109,7 +109,7 @@ export const ItemDetail: React.FC = () => {
           <div className="lg:col-span-5 flex flex-col gap-6 px-4 md:px-0">
             
             {/* Quick Info Card */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-border-default">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default">
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Item Name</span>
@@ -136,7 +136,7 @@ export const ItemDetail: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs text-text-secondary font-semibold">Date Reported</p>
-                    <p className="text-sm font-bold text-text-primary">October 24, 2023 • 4:45 PM</p>
+                    <p className="text-sm font-bold text-text-primary">October 24, 2023 â€¢ 4:45 PM</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -185,7 +185,7 @@ export const ItemDetail: React.FC = () => {
             </div>
 
             {/* Map Card */}
-            <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-border-default hidden md:block">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl overflow-hidden shadow-sm border border-border-default hidden md:block">
               <div className="p-4 border-b border-border-default flex items-center justify-between">
                 <span className="font-bold text-sm">Precise Location</span>
                 <span className="text-xs font-bold text-primary cursor-pointer hover:underline">Get Directions</span>
@@ -209,7 +209,7 @@ export const ItemDetail: React.FC = () => {
       </main>
 
       {/* Mobile Map (Bottom of content) */}
-      <div className="md:hidden mx-4 mb-6 mt-6 bg-white rounded-3xl overflow-hidden shadow-sm border border-border-default">
+      <div className="md:hidden mx-4 mb-6 mt-6 bg-surface-container-lowest dark:bg-surface-container rounded-3xl overflow-hidden shadow-sm border border-border-default">
         <div className="p-4 border-b border-border-default flex items-center justify-between">
           <span className="font-bold text-sm">Precise Location</span>
           <span className="text-xs font-bold text-primary cursor-pointer hover:underline">Get Directions</span>

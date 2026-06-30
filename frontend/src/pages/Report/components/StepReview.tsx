@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Eye, Edit3, Laptop, MapPin, Calendar, Image as ImageIcon, ZoomIn, Camera, Star, Medal, ArrowLeft, Send, Check } from 'lucide-react';
 import type { ReportFormData } from '../types';
 
@@ -47,7 +47,7 @@ export const StepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
         {/* Information Grid (Left Column) */}
         <div className="md:col-span-8 space-y-8">
           {/* Summary Card */}
-          <div className="bg-white rounded-[20px] shadow-sm border border-border-default overflow-hidden">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] shadow-sm border border-border-default overflow-hidden">
             <div className="p-6 border-b border-border-default bg-surface flex justify-between items-center">
               <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
                 <Eye className="text-primary w-6 h-6" />
@@ -94,7 +94,7 @@ export const StepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
           </div>
 
           {/* Photos Grid */}
-          <div className="bg-white rounded-[20px] shadow-sm border border-border-default p-6">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] shadow-sm border border-border-default p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
                 <ImageIcon className="text-primary w-6 h-6" />

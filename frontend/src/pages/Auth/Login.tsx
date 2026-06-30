@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, BrainCircuit, Users, AtSign, Lock, Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
@@ -23,7 +23,7 @@ export const Login: React.FC = () => {
       <section className="hidden md:flex relative md:w-1/2 bg-gradient-to-br from-[#5B5FEF] to-[#8B5CF6] overflow-hidden flex-col justify-between p-12">
         <div className="relative z-10 flex flex-col h-full justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+            <div className="bg-surface-container-lowest dark:bg-surface-container/20 p-2 rounded-xl backdrop-blur-md">
               <Sparkles className="text-white w-8 h-8" />
             </div>
             <span className="text-4xl font-bold text-white tracking-tight">Lost&Found AI</span>
@@ -36,12 +36,12 @@ export const Login: React.FC = () => {
             </h1>
             
             <div className="grid grid-cols-2 gap-4 mt-8">
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 flex flex-col gap-2">
+              <div className="bg-surface-container-lowest dark:bg-surface-container/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 flex flex-col gap-2">
                 <BrainCircuit className="text-[#c0c1ff] w-8 h-8" />
                 <p className="text-white font-bold text-lg">AI Matching</p>
                 <p className="text-white/70 text-sm">Our neural network finds your keys in seconds.</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 flex flex-col gap-2 translate-y-8">
+              <div className="bg-surface-container-lowest dark:bg-surface-container/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 flex flex-col gap-2 translate-y-8">
                 <Users className="text-warning w-8 h-8" />
                 <p className="text-white font-bold text-lg">Active Community</p>
                 <p className="text-white/70 text-sm">Join 5,000+ students helping each other daily.</p>
@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
           </div>
           
           <div className="flex items-center justify-between text-white/60 text-sm">
-            <p>© 2026 Campus Connect AI Network</p>
+            <p>Â© 2026 Campus Connect AI Network</p>
             <div className="flex gap-4">
               <span className="cursor-pointer hover:text-white">Privacy</span>
               <span className="cursor-pointer hover:text-white">Terms</span>
@@ -60,7 +60,7 @@ export const Login: React.FC = () => {
       </section>
 
       {/* Right Side: Login Form */}
-      <section className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-4 md:p-12 bg-white">
+      <section className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-4 md:p-12 bg-surface-container-lowest dark:bg-surface-container">
         <div className="w-full max-w-[480px] flex flex-col">
           {/* Mobile Branding */}
           <div className="md:hidden flex flex-col items-center gap-2 mb-8">
@@ -81,7 +81,7 @@ export const Login: React.FC = () => {
               <div className="relative">
                 <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />
                 <input 
-                  className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none" 
+                  className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="email" 
                   placeholder="student@university.edu" 
                   required 
@@ -98,9 +98,9 @@ export const Login: React.FC = () => {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />
                 <input 
-                  className="w-full pl-12 pr-12 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none" 
+                  className="w-full pl-12 pr-12 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="password" 
-                  placeholder="••••••••" 
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
                   required 
                   type={showPassword ? 'text' : 'password'} 
                 />

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Laptop, Camera, QrCode, Flashlight, 
@@ -11,7 +11,7 @@ export const QRScan: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-surface -mt-6 -mx-6 md:m-0">
       {/* Top Navigation */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 shadow-sm border-b border-border-default">
+      <header className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 shadow-sm border-b border-border-default">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="md:hidden p-2 rounded-full hover:bg-surface-container transition-colors">
             <ArrowLeft className="w-5 h-5 text-text-secondary" />
@@ -43,7 +43,7 @@ export const QRScan: React.FC = () => {
         
         {/* Summary Header Card */}
         <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border-l-4 border-primary flex items-center gap-4">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-4 md:p-6 rounded-2xl shadow-sm border-l-4 border-primary flex items-center gap-4">
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-surface-container flex items-center justify-center shrink-0">
               <Laptop className="text-primary w-6 h-6 md:w-8 md:h-8" />
             </div>
@@ -53,7 +53,7 @@ export const QRScan: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border-l-4 border-[#6b38d4] flex items-center gap-4">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-4 md:p-6 rounded-2xl shadow-sm border-l-4 border-[#6b38d4] flex items-center gap-4">
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden shrink-0 border-2 border-[#6b38d4]/20">
               <img 
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtTabE8eGivJvfIQxao_keeJyXf9UqpQaUwWLrzd2YjsedzJmAyLStwD_xKG7xh3bIllzZURMkl61q_dK_5yDteJ2GneCDU2p0FaZz02WiQtoZAlW3OiaJ5VTZRInU3ov7swEEGalv3m4eyzaPbaAYqd-TxPXvY4TEmn2v5HjlURZ3sHbKthwegle9l5yGedz9B4ROsc-ohEljgcdbDvZ3Ni3MgxRPyuBKkxB6ETGc8vw4XTDix1uQPr8EBR2mUm6RzBBvEf_NEhU" 
@@ -95,7 +95,7 @@ export const QRScan: React.FC = () => {
           </div>
 
           {/* Scanning Overlay UI */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full flex items-center gap-2 md:gap-3 shadow-lg border border-white/30 w-max">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 bg-surface-container-lowest dark:bg-surface-container/20 backdrop-blur-md px-5 py-2.5 rounded-full flex items-center gap-2 md:gap-3 shadow-lg border border-white/30 w-max">
             <div className="flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary text-white animate-pulse">
               <Camera className="w-3 h-3 md:w-4 md:h-4" />
             </div>

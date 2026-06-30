@@ -128,8 +128,8 @@ export const AIMatches: React.FC = () => {
                 onClick={() => setSelectedItem(item.id)}
                 className={`w-full text-left p-4 rounded-2xl border transition-all duration-200 ${
                   selectedItem === item.id
-                    ? 'bg-white border-2 border-primary shadow-md'
-                    : 'bg-white/60 border-border-default hover:border-primary/40'
+                    ? 'bg-surface-container-lowest dark:bg-surface-container border-2 border-primary shadow-md'
+                    : 'bg-surface-container-lowest/60 dark:bg-surface-container/60 border-border-default hover:border-primary/40'
                 }`}
               >
                 <div className={`flex items-center gap-3 ${selectedItem !== item.id ? 'opacity-70' : ''}`}>
@@ -166,7 +166,7 @@ export const AIMatches: React.FC = () => {
 
           {/* Match Card 1 – High Confidence */}
           {!dismissed.includes('match-1') && (
-            <div className="bg-white rounded-[32px] p-6 shadow-sm border border-border-default hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[32px] p-6 shadow-sm border border-border-default hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
               {/* AI Badge */}
               <div className="absolute top-0 right-0 p-4">
                 <div className={`px-4 py-2 rounded-full border flex items-center gap-2 text-sm font-bold ${confidenceColor(matchCards[0].confidence)}`}>
@@ -254,7 +254,7 @@ export const AIMatches: React.FC = () => {
 
           {/* Match Card 2 – Lower Confidence */}
           {!dismissed.includes('match-2') && (
-            <div className="bg-white/70 rounded-[32px] p-6 border border-border-default hover:bg-white transition-all duration-300">
+            <div className="bg-surface-container-lowest/70 dark:bg-surface-container/70 rounded-[32px] p-6 border border-border-default hover:bg-surface-container-lowest dark:hover:bg-surface-container transition-all duration-300">
               <div className="flex flex-col md:flex-row gap-5">
                 <div className="w-full md:w-48 h-48 rounded-2xl overflow-hidden bg-surface-container flex-shrink-0 relative">
                   <img src={matchCards[1].foundImg} alt={matchCards[1].title} className="w-full h-full object-cover" />
@@ -316,7 +316,7 @@ export const AIMatches: React.FC = () => {
                     { value: '95%', label: 'Precision' },
                     { value: '24/7', label: 'Monitoring' },
                   ].map(stat => (
-                    <div key={stat.label} className="bg-white/10 backdrop-blur-md p-3 rounded-2xl text-center">
+                    <div key={stat.label} className="bg-surface-container-lowest/10 dark:bg-surface-container/10 backdrop-blur-md p-3 rounded-2xl text-center">
                       <p className="text-xl font-bold">{stat.value}</p>
                       <p className="text-[9px] uppercase font-bold opacity-75 mt-0.5">{stat.label}</p>
                     </div>
@@ -328,7 +328,7 @@ export const AIMatches: React.FC = () => {
             {/* Rewards Card */}
             <div 
               onClick={() => navigate('/leaderboard')}
-              className="bg-white p-6 rounded-[32px] shadow-sm border border-border-default flex flex-col justify-center items-center text-center cursor-pointer hover:shadow-md transition-shadow"
+              className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[32px] shadow-sm border border-border-default flex flex-col justify-center items-center text-center cursor-pointer hover:shadow-md transition-shadow"
             >
               <div className="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mb-4">
                 <Trophy className="text-warning w-8 h-8" />

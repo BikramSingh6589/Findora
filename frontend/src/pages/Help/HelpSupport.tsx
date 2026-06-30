@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { PlusSquare, Search, Verified, Handshake, Shield, Medal, Mail, MapPin, Send, ChevronDown } from 'lucide-react';
 
 export const HelpSupport: React.FC = () => {
@@ -35,7 +35,7 @@ export const HelpSupport: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           
           {/* Reporting */}
-          <div className="md:col-span-2 p-8 rounded-3xl bg-white shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col justify-between min-h-[200px]">
+          <div className="md:col-span-2 p-8 rounded-3xl bg-surface-container-lowest dark:bg-surface-container shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col justify-between min-h-[200px]">
             <div>
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-4">
                 <PlusSquare className="w-6 h-6" />
@@ -49,7 +49,7 @@ export const HelpSupport: React.FC = () => {
           </div>
 
           {/* AI Matching */}
-          <div className="p-8 rounded-3xl bg-white shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
+          <div className="p-8 rounded-3xl bg-surface-container-lowest dark:bg-surface-container shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
             <div className="w-12 h-12 rounded-xl bg-info-ai/10 flex items-center justify-center text-info-ai mb-4">
               <Search className="w-6 h-6" />
             </div>
@@ -61,7 +61,7 @@ export const HelpSupport: React.FC = () => {
           </div>
 
           {/* Claims */}
-          <div className="p-8 rounded-3xl bg-white shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
+          <div className="p-8 rounded-3xl bg-surface-container-lowest dark:bg-surface-container shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
             <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center text-success mb-4">
               <Verified className="w-6 h-6" />
             </div>
@@ -73,7 +73,7 @@ export const HelpSupport: React.FC = () => {
           </div>
 
           {/* Handover */}
-          <div className="p-8 rounded-3xl bg-white shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
+          <div className="p-8 rounded-3xl bg-surface-container-lowest dark:bg-surface-container shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
             <div className="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center text-warning mb-4">
               <Handshake className="w-6 h-6" />
             </div>
@@ -85,7 +85,7 @@ export const HelpSupport: React.FC = () => {
           </div>
 
           {/* Security */}
-          <div className="md:col-span-2 p-8 rounded-3xl bg-white shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col justify-between min-h-[200px]">
+          <div className="md:col-span-2 p-8 rounded-3xl bg-surface-container-lowest dark:bg-surface-container shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col justify-between min-h-[200px]">
             <div>
               <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary mb-4">
                 <Shield className="w-6 h-6" />
@@ -99,7 +99,7 @@ export const HelpSupport: React.FC = () => {
           </div>
 
           {/* Gamification */}
-          <div className="p-8 rounded-3xl bg-white shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
+          <div className="p-8 rounded-3xl bg-surface-container-lowest dark:bg-surface-container shadow-sm border border-border-default hover:-translate-y-1 transition-transform cursor-pointer flex flex-col min-h-[200px]">
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-4">
               <Medal className="w-6 h-6" />
             </div>
@@ -117,7 +117,7 @@ export const HelpSupport: React.FC = () => {
       <section className="flex flex-col lg:flex-row gap-8">
         
         {/* Form Side */}
-        <div className="flex-[1.5] bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-border-default">
+        <div className="flex-[1.5] bg-surface-container-lowest dark:bg-surface-container p-8 md:p-10 rounded-3xl shadow-sm border border-border-default">
           <div className="mb-8">
             <h3 className="text-2xl font-extrabold text-text-primary">Still Stuck? Message Us</h3>
             <p className="text-sm text-text-secondary mt-2">Our student support team typically replies within 24 hours.</p>
@@ -169,7 +169,7 @@ export const HelpSupport: React.FC = () => {
             <h4 className="font-bold text-xl text-primary mb-6">Direct Contact</h4>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm shrink-0">
+                <div className="w-10 h-10 rounded-full bg-surface-container-lowest dark:bg-surface-container flex items-center justify-center text-primary shadow-sm shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
@@ -178,7 +178,7 @@ export const HelpSupport: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm shrink-0">
+                <div className="w-10 h-10 rounded-full bg-surface-container-lowest dark:bg-surface-container flex items-center justify-center text-primary shadow-sm shrink-0">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
@@ -190,7 +190,7 @@ export const HelpSupport: React.FC = () => {
           </div>
 
           {/* FAQ Quick Hits */}
-          <div className="p-8 rounded-3xl bg-white border border-border-default shadow-sm">
+          <div className="p-8 rounded-3xl bg-surface-container-lowest dark:bg-surface-container border border-border-default shadow-sm">
             <h4 className="font-bold text-xl mb-6 text-text-primary">Quick FAQs</h4>
             <div className="space-y-4">
               <details className="group bg-surface rounded-xl border border-border-default transition-all overflow-hidden cursor-pointer">

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CheckCircle2, ArrowRight as ArrowRightIcon, FileText, Medal, Radar as RadarIcon, Mail as MailIcon, LayoutGrid, Sparkles, BrainCircuit, BellRing } from 'lucide-react';
@@ -42,7 +42,7 @@ export const ReportLostSuccess: React.FC = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Step 1 */}
-          <div className="bg-white p-8 rounded-[20px] shadow-sm border border-border-default hover:scale-[1.03] transition-transform duration-200 group relative overflow-hidden">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default hover:scale-[1.03] transition-transform duration-200 group relative overflow-hidden">
             <div className="absolute top-0 right-0 p-6 opacity-5 text-primary group-hover:opacity-10 transition-opacity">
               <BrainCircuit className="w-16 h-16" />
             </div>
@@ -59,7 +59,7 @@ export const ReportLostSuccess: React.FC = () => {
           </div>
 
           {/* Step 2 */}
-          <div className="bg-white p-8 rounded-[20px] shadow-sm border border-border-default hover:scale-[1.03] transition-transform duration-200 group relative overflow-hidden">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default hover:scale-[1.03] transition-transform duration-200 group relative overflow-hidden">
             <div className="absolute top-0 right-0 p-6 opacity-5 text-secondary group-hover:opacity-10 transition-opacity">
               <BellRing className="w-16 h-16" />
             </div>
@@ -77,7 +77,7 @@ export const ReportLostSuccess: React.FC = () => {
           </div>
 
           {/* Step 3 */}
-          <div className="bg-white p-8 rounded-[20px] shadow-sm border border-border-default hover:scale-[1.03] transition-transform duration-200 group relative overflow-hidden">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default hover:scale-[1.03] transition-transform duration-200 group relative overflow-hidden">
             <div className="absolute top-0 right-0 p-6 opacity-5 text-warning group-hover:opacity-10 transition-opacity">
               <LayoutGrid className="w-16 h-16" />
             </div>
@@ -108,7 +108,7 @@ export const ReportLostSuccess: React.FC = () => {
         </button>
         <button 
           onClick={() => navigate('/profile')}
-          className="flex-1 bg-white border-2 border-primary text-primary py-4 px-8 rounded-full font-bold hover:bg-primary/5 hover:scale-[1.03] transition-transform active:scale-95 duration-200 flex items-center justify-center gap-4"
+          className="flex-1 bg-surface-container-lowest dark:bg-surface-container border-2 border-primary text-primary py-4 px-8 rounded-full font-bold hover:bg-primary/5 hover:scale-[1.03] transition-transform active:scale-95 duration-200 flex items-center justify-center gap-4"
         >
           View My Reports
           <FileText className="w-5 h-5" />
@@ -117,7 +117,7 @@ export const ReportLostSuccess: React.FC = () => {
 
       {/* Gamification Bonus */}
       <div className="mt-12 bg-[#fff7ed] border border-[#ffedd5] p-6 rounded-2xl w-full max-w-xl mx-auto flex items-center gap-6">
-        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm shrink-0">
+        <div className="w-16 h-16 bg-surface-container-lowest dark:bg-surface-container rounded-full flex items-center justify-center shadow-sm shrink-0">
           <Medal className="text-warning w-8 h-8" />
         </div>
         <div className="text-left">

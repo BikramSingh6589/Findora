@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { CheckCircle2, XCircle, Clock, Eye, Search } from 'lucide-react';
 
 const allClaims = [
@@ -53,11 +53,11 @@ export const AdminClaimManagement: React.FC = () => {
           <p className="text-text-secondary mt-1">Review ownership claims and submitted evidence.</p>
         </div>
         <div className="flex gap-4">
-          <div className="bg-white border border-border-default rounded-xl px-4 py-2 text-center">
+          <div className="bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl px-4 py-2 text-center">
             <p className="text-2xl font-extrabold text-warning">{counts.pending}</p>
             <p className="text-xs text-text-secondary">Pending</p>
           </div>
-          <div className="bg-white border border-border-default rounded-xl px-4 py-2 text-center">
+          <div className="bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl px-4 py-2 text-center">
             <p className="text-2xl font-extrabold text-info-ai">{counts.reviewing}</p>
             <p className="text-xs text-text-secondary">Reviewing</p>
           </div>
@@ -72,7 +72,7 @@ export const AdminClaimManagement: React.FC = () => {
           { label: 'Rejected', value: '41', icon: <XCircle className="w-5 h-5 text-danger" />, color: 'bg-danger/10', border: 'border-danger' },
           { label: 'Avg. Resolution', value: '4.2h', icon: <Eye className="w-5 h-5 text-info-ai" />, color: 'bg-info-ai/10', border: 'border-info-ai' },
         ].map((s, i) => (
-          <div key={i} className={`bg-white rounded-2xl p-4 shadow-sm border-l-4 ${s.border} flex items-center gap-3`}>
+          <div key={i} className={`bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-4 shadow-sm border-l-4 ${s.border} flex items-center gap-3`}>
             <div className={`w-10 h-10 rounded-xl ${s.color} flex items-center justify-center`}>{s.icon}</div>
             <div>
               <p className="text-xs text-text-secondary uppercase tracking-wider font-bold">{s.label}</p>
@@ -90,10 +90,10 @@ export const AdminClaimManagement: React.FC = () => {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search claims, items, or users..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm"
+            className="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm"
           />
         </div>
-        <div className="flex bg-white border border-border-default rounded-xl p-1">
+        <div className="flex bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl p-1">
           {tabs.map(tab => (
             <button
               key={tab}
@@ -107,7 +107,7 @@ export const AdminClaimManagement: React.FC = () => {
       </div>
 
       {/* Claims Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-border-default overflow-hidden">
+      <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm border border-border-default overflow-hidden">
         {/* Desktop */}
         <table className="hidden md:table w-full">
           <thead className="bg-surface-container-low border-b border-border-default">
@@ -173,7 +173,7 @@ export const AdminClaimManagement: React.FC = () => {
                 <img src={claim.img} alt={claim.item} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1">
                   <h4 className="font-bold text-sm text-text-primary">{claim.item}</h4>
-                  <p className="text-xs text-text-secondary">Claimed by {claim.claimant} · {claim.studentId}</p>
+                  <p className="text-xs text-text-secondary">Claimed by {claim.claimant} Â· {claim.studentId}</p>
                   <p className="text-xs text-text-secondary">{claim.time}</p>
                   <div className="mt-1 flex items-center gap-2">
                     <StatusBadge status={statuses[claim.id]} />

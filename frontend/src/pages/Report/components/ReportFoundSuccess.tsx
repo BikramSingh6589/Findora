@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Sparkles, MapPin as MapPinIcon, Medal, ShieldCheck, ArrowRight as ArrowRightIcon } from 'lucide-react';
@@ -33,7 +33,7 @@ export const ReportFoundSuccess: React.FC = () => {
             alt="Hero Illustration"
           />
           <div className="absolute bottom-8 left-8 z-20 text-white">
-            <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full">
+            <div className="flex items-center gap-2 bg-surface-container-lowest dark:bg-surface-container/20 backdrop-blur-md px-4 py-1.5 rounded-full">
               <MapPinIcon className="w-5 h-5" />
               <span className="font-bold text-sm">Main Courtyard</span>
             </div>
@@ -43,7 +43,7 @@ export const ReportFoundSuccess: React.FC = () => {
         {/* Bento Grid Stats & Rewards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Reputation Points Card */}
-          <div className="bg-white p-6 rounded-[20px] shadow-sm border border-border-default flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200">
             <div className="flex items-center justify-between mb-4">
               <Medal className="text-secondary w-8 h-8" />
               <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-bold">+50 Rep</span>
@@ -55,7 +55,7 @@ export const ReportFoundSuccess: React.FC = () => {
           </div>
 
           {/* Badge Pending Card */}
-          <div className="bg-white p-6 rounded-[20px] shadow-sm border border-border-default flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default flex flex-col justify-between hover:scale-[1.03] transition-transform duration-200">
             <div className="flex items-center justify-between mb-4">
               <ShieldCheck className="text-warning w-8 h-8" />
               <span className="bg-warning/10 text-warning px-3 py-1 rounded-full text-xs font-bold">In Review</span>
@@ -71,11 +71,11 @@ export const ReportFoundSuccess: React.FC = () => {
             <h3 className="font-bold text-xl">Next Steps</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <span className="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-sm">1</span>
+                <span className="bg-surface-container-lowest dark:bg-surface-container/20 rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-sm">1</span>
                 <span className="text-sm text-white/90">Item added to 24h Community Board for maximum visibility.</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="bg-white/20 rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-sm">2</span>
+                <span className="bg-surface-container-lowest dark:bg-surface-container/20 rounded-full w-6 h-6 flex items-center justify-center shrink-0 font-bold text-sm">2</span>
                 <span className="text-sm text-white/90">Our AI is actively notifying potential owners based on item descriptions.</span>
               </li>
             </ul>

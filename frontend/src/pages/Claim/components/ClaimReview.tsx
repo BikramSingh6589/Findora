@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Check, Image, FileText, Edit3, MapPin, Clock, Lock, ShieldCheck, Send, ArrowLeft } from 'lucide-react';
 import type { ClaimFormData } from '../types';
 
@@ -37,7 +37,7 @@ export const ClaimReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Proof Thumbnail */}
         <div className="md:col-span-1">
-          <div className="bg-white rounded-[20px] p-5 shadow-sm border border-border-default h-full">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm border border-border-default h-full">
             <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
               <Image className="text-primary w-5 h-5" />
               Proof Provided
@@ -49,8 +49,8 @@ export const ClaimReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
                 alt="Proof of ownership"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <button className="bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
-                  🔍
+                <button className="bg-surface-container-lowest dark:bg-surface-container/20 backdrop-blur-md p-2 rounded-full text-white">
+                  ðŸ”
                 </button>
               </div>
             </div>
@@ -60,7 +60,7 @@ export const ClaimReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
 
         {/* Summary Card */}
         <div className="md:col-span-2">
-          <div className="bg-white rounded-[20px] p-6 shadow-sm border border-border-default h-full">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-6 shadow-sm border border-border-default h-full">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
                 <FileText className="text-primary w-5 h-5" />

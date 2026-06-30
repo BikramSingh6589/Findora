@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Medal, ChevronLeft, ChevronRight, Award, Users } from 'lucide-react';
 
 const topUsers = [
@@ -36,7 +36,7 @@ export const Leaderboard: React.FC = () => {
           
           return (
             <div key={user.rank} className={`flex flex-col justify-end h-full ${isFirst ? 'order-1 md:order-2 z-10 scale-105' : isSecond ? 'order-2 md:order-1' : 'order-3 md:order-3'}`}>
-              <div className={`bg-white p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center text-center transform hover:-translate-y-2 transition-transform duration-300 relative ${
+              <div className={`bg-surface-container-lowest dark:bg-surface-container p-6 md:p-8 rounded-3xl shadow-xl flex flex-col items-center text-center transform hover:-translate-y-2 transition-transform duration-300 relative ${
                 isFirst ? 'border-b-4 border-[#F9BD22] bg-gradient-to-b from-white to-[#F9BD22]/10' : 
                 isSecond ? 'border-b-4 border-[#94A3B8]' : 'border-b-4 border-[#FB923C]'
               }`}>
@@ -67,7 +67,7 @@ export const Leaderboard: React.FC = () => {
                 <h3 className={`font-bold text-text-primary ${isFirst ? 'text-2xl mb-1' : 'text-lg mb-1'}`}>{user.name}</h3>
                 <p className="text-xs md:text-sm text-text-secondary mb-4">{user.role}</p>
                 
-                <div className={`px-4 py-2 rounded-full mb-6 ${isFirst ? 'bg-[#F9BD22] text-white shadow-inner px-6 py-3' : 'bg-surface-container-high'}`}>
+                <div className={`px-4 py-2 rounded-full mb-6 ${isFirst ? 'bg-[#F9BD22] text-white shadow-inner px-6 py-3' : 'bg-surface-container-high dark:bg-surface-container'}`}>
                   <span className={`font-bold ${isFirst ? 'text-lg' : 'text-primary'}`}>{user.xp}</span>
                 </div>
                 
@@ -88,7 +88,7 @@ export const Leaderboard: React.FC = () => {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white rounded-3xl shadow-sm overflow-hidden border border-border-default">
+      <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl shadow-sm overflow-hidden border border-border-default">
         <div className="p-4 md:p-6 border-b border-border-default flex flex-col md:flex-row md:items-center justify-between gap-4">
           <h3 className="text-xl font-bold text-text-primary">All-Time Rankings</h3>
           <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
@@ -169,17 +169,17 @@ export const Leaderboard: React.FC = () => {
       {/* Gamification Teasers */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
         <div className="bg-primary text-white p-6 md:p-8 rounded-3xl shadow-lg flex items-center gap-6">
-          <div className="p-4 bg-white/20 rounded-2xl shrink-0 hidden sm:block">
+          <div className="p-4 bg-surface-container-lowest dark:bg-surface-container/20 rounded-2xl shrink-0 hidden sm:block">
             <Award className="w-10 h-10 md:w-12 md:h-12 text-white fill-current" />
           </div>
           <div>
             <h4 className="font-bold text-lg md:text-xl mb-2">Join the Elite</h4>
             <p className="text-white/80 text-sm mb-4 leading-relaxed">Reporting items earns you XP, badges, and campus dining vouchers. Start your streak today!</p>
-            <button className="bg-white text-primary px-5 py-2.5 rounded-full font-bold hover:scale-105 active:scale-95 transition-all text-sm shadow-md">How it works</button>
+            <button className="bg-surface-container-lowest dark:bg-surface-container text-primary px-5 py-2.5 rounded-full font-bold hover:scale-105 active:scale-95 transition-all text-sm shadow-md">How it works</button>
           </div>
         </div>
         
-        <div className="bg-white p-6 md:p-8 rounded-3xl shadow-lg border border-border-default flex items-center gap-6">
+        <div className="bg-surface-container-lowest dark:bg-surface-container p-6 md:p-8 rounded-3xl shadow-lg border border-border-default flex items-center gap-6">
           <div className="p-4 bg-[#f9f6ff] rounded-2xl shrink-0 hidden sm:block">
             <Users className="w-10 h-10 md:w-12 md:h-12 text-[#5516be] fill-current" />
           </div>

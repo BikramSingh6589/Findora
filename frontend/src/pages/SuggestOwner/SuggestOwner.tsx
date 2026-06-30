@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, EyeOff, Send, CheckCircle, Rocket, BellRing, ArrowRight, UserSearch, Stars } from 'lucide-react';
 
@@ -23,7 +23,7 @@ export const SuggestOwner: React.FC = () => {
           <div className="absolute -bottom-10 -left-10 w-80 h-80 rounded-full bg-[#8455ef]/5 blur-3xl"></div>
         </div>
         
-        <div className="max-w-5xl w-full z-10 bg-white rounded-[40px] shadow-xl p-8 md:p-12 border border-border-default overflow-hidden">
+        <div className="max-w-5xl w-full z-10 bg-surface-container-lowest dark:bg-surface-container rounded-[40px] shadow-xl p-8 md:p-12 border border-border-default overflow-hidden">
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             
             {/* Left Column: Visual & Stats */}
@@ -109,7 +109,7 @@ export const SuggestOwner: React.FC = () => {
                 </button>
               </div>
               <p className="text-center md:text-left text-xs text-text-secondary">
-                Helping a fellow student reduces campus stress by 25%. You're a hero! 🎓
+                Helping a fellow student reduces campus stress by 25%. You're a hero! ðŸŽ“
               </p>
             </div>
           </div>
@@ -128,7 +128,7 @@ export const SuggestOwner: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Panel: Item Context */}
         <section className="lg:col-span-5 space-y-6">
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-default relative overflow-hidden">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-6 shadow-sm border border-border-default relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none"></div>
             <h3 className="font-bold text-text-primary mb-4 text-lg">Item Details</h3>
             <div className="flex gap-4">
@@ -160,7 +160,7 @@ export const SuggestOwner: React.FC = () => {
 
         {/* Right Panel: Form */}
         <section className="lg:col-span-7">
-          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-md border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-6 md:p-8 shadow-md border border-border-default">
             <form onSubmit={handleSubmit} className="space-y-6">
               
               {/* Student ID Input */}
@@ -185,7 +185,7 @@ export const SuggestOwner: React.FC = () => {
                   
                   {/* Mock Auto-suggest dropdown */}
                   {showAutoSuggest && (
-                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white rounded-xl shadow-xl border border-border-default overflow-hidden z-20">
+                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-xl border border-border-default overflow-hidden z-20">
                       <div 
                         className="px-4 py-3 hover:bg-surface-container-low cursor-pointer flex items-center gap-3"
                         onClick={() => { setQuery('John Doe'); setShowAutoSuggest(false); setSelectedUser('JD'); }}
@@ -193,7 +193,7 @@ export const SuggestOwner: React.FC = () => {
                         <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">JD</div>
                         <div>
                           <p className="text-sm font-bold text-text-primary">John Doe</p>
-                          <p className="text-[10px] text-text-secondary">Computer Science · @johndoe24</p>
+                          <p className="text-[10px] text-text-secondary">Computer Science Â· @johndoe24</p>
                         </div>
                       </div>
                       <div 
@@ -203,7 +203,7 @@ export const SuggestOwner: React.FC = () => {
                         <div className="w-8 h-8 rounded-full bg-warning/20 flex items-center justify-center text-warning text-xs font-bold">JS</div>
                         <div>
                           <p className="text-sm font-bold text-text-primary">Jane Smith</p>
-                          <p className="text-[10px] text-text-secondary">Digital Arts · @jsmith_art</p>
+                          <p className="text-[10px] text-text-secondary">Digital Arts Â· @jsmith_art</p>
                         </div>
                       </div>
                     </div>
@@ -224,7 +224,7 @@ export const SuggestOwner: React.FC = () => {
               {/* Visibility Toggle */}
               <div className="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-surface-container-lowest dark:bg-surface-container flex items-center justify-center text-primary shadow-sm shrink-0">
                     <EyeOff className="w-5 h-5" />
                   </div>
                   <div>
@@ -234,7 +234,7 @@ export const SuggestOwner: React.FC = () => {
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
                   <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-11 h-6 bg-border-default peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-border-default peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest dark:bg-surface-container after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
 

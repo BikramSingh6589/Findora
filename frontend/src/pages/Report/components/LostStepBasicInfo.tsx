@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ArrowRight, Package, BookOpen, Wallet, Key, MoreHorizontal, MapPin, Calendar, AlignLeft, Sparkles, ChevronDown } from 'lucide-react';
 import type { LostFormData } from '../types';
 
@@ -46,7 +46,7 @@ export const LostStepBasicInfo: React.FC<Props> = ({ data, updateData, onNext })
             <span className="font-semibold text-sm text-primary">Item Details</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-white border-2 border-border-default flex items-center justify-center text-text-secondary font-bold">2</div>
+            <div className="w-10 h-10 rounded-full bg-surface-container-lowest dark:bg-surface-container border-2 border-border-default flex items-center justify-center text-text-secondary font-bold">2</div>
             <span className="font-semibold text-sm text-text-secondary">Detail & Image</span>
           </div>
           <div className="flex flex-col items-center gap-2">
@@ -58,14 +58,14 @@ export const LostStepBasicInfo: React.FC<Props> = ({ data, updateData, onNext })
 
       {/* Hero Header */}
       <div className="mb-8 text-center md:text-left">
-        <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">Let's find your item 🎒</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">Let's find your item ðŸŽ’</h2>
         <p className="text-base text-text-secondary max-w-xl">Don't worry, the campus community and our AI are here to help. Just give us a few details to start the search.</p>
       </div>
 
       {/* Main Form Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Primary Form Card */}
-        <div className="md:col-span-8 bg-white rounded-[20px] p-8 shadow-sm border border-border-default">
+        <div className="md:col-span-8 bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-8 shadow-sm border border-border-default">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Item Name */}
             <div className="space-y-2">
@@ -180,14 +180,14 @@ export const LostStepBasicInfo: React.FC<Props> = ({ data, updateData, onNext })
               <p className="text-sm opacity-90 leading-relaxed mb-4">
                 Students often find lost items near the <strong>Charging Stations</strong> in the Main Library. Have you checked the Lost & Found box there?
               </p>
-              <button className="w-full py-2.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm font-semibold text-sm transition-all active:scale-95">
+              <button className="w-full py-2.5 rounded-full bg-surface-container-lowest dark:bg-surface-container/20 hover:bg-surface-container-lowest dark:bg-surface-container/30 backdrop-blur-sm font-semibold text-sm transition-all active:scale-95">
                 Check Library Box
               </button>
             </div>
           </div>
 
           {/* XP Card */}
-          <div className="bg-white p-6 rounded-[20px] shadow-sm border-t-4 border-warning">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border-t-4 border-warning">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-base text-text-primary">Reward XP</h3>
               <span className="text-warning font-bold">+50 XP</span>

@@ -8,7 +8,7 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="flex flex-col gap-8">
       {/* Greeting & Level Section */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white md:p-8 p-6 rounded-[20px] shadow-sm relative overflow-hidden border border-border-default">
+      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-surface-container-lowest dark:bg-surface-container md:p-8 p-6 rounded-[20px] shadow-sm relative overflow-hidden border border-border-default transition-colors duration-300">
         <div className="absolute inset-0 opacity-10 pointer-events-none hidden md:block">
           <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1000&q=80" className="w-full h-full object-cover" alt="background pattern" />
         </div>
@@ -23,7 +23,7 @@ export const Dashboard: React.FC = () => {
         </div>
         
         {/* XP Progress Card */}
-        <div className="w-full md:w-80 z-10 bg-white/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none rounded-2xl md:p-0 p-4 shadow-lg md:shadow-none border md:border-none border-white/20">
+        <div className="w-full md:w-80 z-10 bg-surface-container-lowest/70 dark:bg-surface-container/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none rounded-2xl md:p-0 p-4 shadow-lg md:shadow-none border md:border-none border-white/20 dark:border-white/10">
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-1">
               <Medal className="w-5 h-5 text-[#f9bd22]" />
@@ -60,7 +60,7 @@ export const Dashboard: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
           <div 
             onClick={() => navigate('/report/lost')}
-            className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-6 p-4 md:p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
+            className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-6 p-4 md:p-6 bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
           >
             <div className="w-12 h-12 md:w-16 md:h-16 rounded-full md:rounded-2xl bg-danger/10 text-danger flex items-center justify-center group-hover:bg-danger group-hover:text-white transition-colors">
               <FileSearch className="w-6 h-6 md:w-8 md:h-8" />
@@ -73,7 +73,7 @@ export const Dashboard: React.FC = () => {
           
           <div 
             onClick={() => navigate('/report/found')}
-            className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-6 p-4 md:p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
+            className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-6 p-4 md:p-6 bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
           >
             <div className="w-12 h-12 md:w-16 md:h-16 rounded-full md:rounded-2xl bg-success/10 text-success flex items-center justify-center group-hover:bg-success group-hover:text-white transition-colors">
               <Package className="w-6 h-6 md:w-8 md:h-8" />
@@ -86,7 +86,7 @@ export const Dashboard: React.FC = () => {
 
           <div 
             onClick={() => navigate('/community')}
-            className="col-span-2 md:col-span-1 flex flex-row items-center justify-center md:justify-start gap-4 md:gap-6 p-4 md:p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
+            className="col-span-2 md:col-span-1 flex flex-row items-center justify-center md:justify-start gap-4 md:gap-6 p-4 md:p-6 bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
           >
             <div className="w-12 h-12 md:w-16 md:h-16 rounded-full md:rounded-2xl bg-info-ai/10 text-info-ai flex items-center justify-center group-hover:bg-info-ai group-hover:text-white transition-colors">
               <Users className="w-6 h-6 md:w-8 md:h-8" />
@@ -115,7 +115,7 @@ export const Dashboard: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Match Card 1 */}
-            <div className="bg-white p-6 rounded-[20px] shadow-sm border border-border-default border-l-4 border-l-info-ai flex flex-col gap-4 relative overflow-hidden group hover:shadow-md transition-all">
+            <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default border-l-4 border-l-info-ai flex flex-col gap-4 relative overflow-hidden group hover:shadow-md transition-all">
               <div className="absolute top-4 right-4 bg-info-ai/10 text-info-ai font-bold px-2 py-1 rounded-full text-xs">
                 98% Match
               </div>
@@ -135,7 +135,7 @@ export const Dashboard: React.FC = () => {
             </div>
 
             {/* Match Card 2 */}
-            <div className="bg-white p-6 rounded-[20px] shadow-sm border border-border-default border-l-4 border-l-info-ai flex flex-col gap-4 relative overflow-hidden group hover:shadow-md transition-all">
+            <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default border-l-4 border-l-info-ai flex flex-col gap-4 relative overflow-hidden group hover:shadow-md transition-all">
               <div className="absolute top-4 right-4 bg-info-ai/10 text-info-ai font-bold px-2 py-1 rounded-full text-xs">
                 85% Match
               </div>
@@ -181,7 +181,7 @@ export const Dashboard: React.FC = () => {
           
           <div className="flex flex-col gap-3">
             {/* Activity Item 1 */}
-            <div className="bg-white p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer">
+            <div className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer">
               <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary">
                 <Headphones className="w-6 h-6" />
               </div>
@@ -195,7 +195,7 @@ export const Dashboard: React.FC = () => {
             </div>
 
             {/* Activity Item 2 */}
-            <div className="bg-white p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-[#6b38d4]/50 transition-all cursor-pointer">
+            <div className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-[#6b38d4]/50 transition-all cursor-pointer">
               <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-[#6b38d4]">
                 <Droplet className="w-6 h-6" />
               </div>
@@ -209,7 +209,7 @@ export const Dashboard: React.FC = () => {
             </div>
 
             {/* Activity Item 3 */}
-            <div className="bg-white p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer">
+            <div className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer">
               <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary">
                 <Wallet className="w-6 h-6" />
               </div>

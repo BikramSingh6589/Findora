@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Eye, Edit3, MapPin, Calendar, Image as ImageIcon, ZoomIn, ArrowLeft, Send, Check, Search } from 'lucide-react';
 import type { LostFormData } from '../types';
 
@@ -38,7 +38,7 @@ export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
         {/* Main Review Card */}
         <div className="md:col-span-2 flex flex-col gap-6">
           {/* Item Information */}
-          <div className="bg-white rounded-[20px] p-6 shadow-sm border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-6 shadow-sm border border-border-default">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
                 <Eye className="text-primary w-6 h-6" />
@@ -80,7 +80,7 @@ export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
           </div>
 
           {/* Location Card */}
-          <div className="bg-white rounded-[20px] p-6 shadow-sm border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-6 shadow-sm border border-border-default">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-text-primary">Last Seen Location</h2>
               <button onClick={onEdit} className="text-primary flex items-center gap-1 hover:underline text-sm font-semibold">
@@ -88,7 +88,7 @@ export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
               </button>
             </div>
             <div className="flex items-center gap-4 p-4 bg-surface rounded-xl">
-              <div className="w-12 h-12 rounded-lg bg-white shadow-sm flex items-center justify-center">
+              <div className="w-12 h-12 rounded-lg bg-surface-container-lowest dark:bg-surface-container shadow-sm flex items-center justify-center">
                 <MapPin className="text-primary w-6 h-6" />
               </div>
               <div>
@@ -102,7 +102,7 @@ export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
         {/* Sidebar */}
         <div className="flex flex-col gap-6">
           {/* Photo Preview */}
-          <div className="bg-white rounded-[20px] p-6 shadow-sm border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-6 shadow-sm border border-border-default">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
                 <ImageIcon className="text-primary w-5 h-5" />

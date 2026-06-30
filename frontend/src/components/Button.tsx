@@ -11,13 +11,13 @@ export const Button: React.FC<ButtonProps> = ({ variant = 'primary', className =
       variantClasses = 'btn-primary';
       break;
     case 'secondary':
-      variantClasses = 'bg-transparent text-primary border border-primary hover:bg-primary/5 rounded-[16px] px-6 py-3 font-semibold transition-all duration-150';
+      variantClasses = 'bg-transparent text-primary dark:text-primary border border-primary hover:bg-primary/5 dark:hover:bg-primary/10 rounded-[16px] px-6 py-3 font-semibold transition-all duration-150';
       break;
     case 'danger':
-      variantClasses = 'bg-danger text-white rounded-[16px] px-6 py-3 font-semibold hover:brightness-90 transition-all duration-150';
+      variantClasses = 'bg-danger text-white rounded-[16px] px-6 py-3 font-semibold hover:brightness-90 dark:hover:brightness-110 transition-all duration-150';
       break;
     case 'ghost':
-      variantClasses = 'bg-transparent text-text-secondary hover:text-primary hover:bg-surface-container rounded-[16px] px-4 py-2 font-medium transition-all duration-150';
+      variantClasses = 'bg-transparent text-text-secondary dark:text-text-secondary hover:text-primary dark:hover:text-primary hover:bg-surface-container dark:hover:bg-surface-container-high rounded-[16px] px-4 py-2 font-medium transition-all duration-150';
       break;
   }
 

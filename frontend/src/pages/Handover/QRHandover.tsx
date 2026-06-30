@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Verified, MessageCircle, Info, Printer, XCircle, Shield } from 'lucide-react';
 
@@ -8,7 +8,7 @@ export const QRHandover: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-surface -mt-6 -mx-6 md:m-0">
       {/* Top App Bar */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 shadow-sm border-b border-border-default">
+      <header className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 shadow-sm border-b border-border-default">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="md:hidden p-2 rounded-full hover:bg-surface-container transition-colors">
             <ArrowLeft className="w-5 h-5 text-text-secondary" />
@@ -23,7 +23,7 @@ export const QRHandover: React.FC = () => {
           
           {/* Left Column: Item & Owner Details */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-border-default space-y-6">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default space-y-6">
               
               <div className="relative group">
                 <div className="aspect-square w-full rounded-2xl overflow-hidden shadow-inner bg-surface-container">
@@ -74,7 +74,7 @@ export const QRHandover: React.FC = () => {
 
           {/* Right Column: QR Code & Actions */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-border-default flex flex-col items-center text-center">
+            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-8 shadow-sm border border-border-default flex flex-col items-center text-center">
               
               <div className="mb-6 space-y-2">
                 <h3 className="text-2xl font-bold text-text-primary">Unique Handover QR</h3>
@@ -83,7 +83,7 @@ export const QRHandover: React.FC = () => {
 
               {/* QR Code Container */}
               <div className="relative p-8 bg-surface-container-low rounded-[32px] mb-8">
-                <div className="w-64 h-64 bg-white p-4 rounded-2xl shadow-xl flex items-center justify-center overflow-hidden">
+                <div className="w-64 h-64 bg-surface-container-lowest dark:bg-surface-container p-4 rounded-2xl shadow-xl flex items-center justify-center overflow-hidden">
                   <div 
                     className="w-full h-full bg-no-repeat bg-contain bg-center opacity-90" 
                     style={{

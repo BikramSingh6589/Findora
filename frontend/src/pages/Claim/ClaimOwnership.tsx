@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
 import { ClaimVerification } from './components/ClaimVerification';
 import { ClaimProof } from './components/ClaimProof';
@@ -38,7 +38,7 @@ export const ClaimOwnership: React.FC = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-[24px] shadow-sm border border-border-default overflow-hidden">
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[24px] shadow-sm border border-border-default overflow-hidden">
           {currentStep === 1 && (
             <ClaimVerification data={formData} updateData={updateData} onNext={nextStep} />
           )}

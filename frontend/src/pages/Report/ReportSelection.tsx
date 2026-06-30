@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Search, PlusSquare, ArrowRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ export const ReportSelection: React.FC = () => {
           {/* Report Lost Item Card */}
           <button 
             onClick={() => navigate('/report/lost')}
-            className="group text-left bg-white p-8 lg:p-10 rounded-[24px] shadow-sm border border-border-default hover:border-primary/50 hover:-translate-y-2 hover:shadow-md transition-all duration-300 flex flex-col items-start relative overflow-hidden"
+            className="group text-left bg-surface-container-lowest dark:bg-surface-container p-8 lg:p-10 rounded-[24px] shadow-sm border border-border-default hover:border-primary/50 hover:-translate-y-2 hover:shadow-md transition-all duration-300 flex flex-col items-start relative overflow-hidden"
           >
             <div className="absolute -right-8 -top-8 w-32 h-32 bg-primary/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
             
@@ -45,7 +45,7 @@ export const ReportSelection: React.FC = () => {
           {/* Report Found Item Card */}
           <button 
             onClick={() => navigate('/report/found')}
-            className="group text-left bg-white p-8 lg:p-10 rounded-[24px] shadow-sm border border-border-default hover:border-[#6b38d4]/50 hover:-translate-y-2 hover:shadow-md transition-all duration-300 flex flex-col items-start relative overflow-hidden"
+            className="group text-left bg-surface-container-lowest dark:bg-surface-container p-8 lg:p-10 rounded-[24px] shadow-sm border border-border-default hover:border-[#6b38d4]/50 hover:-translate-y-2 hover:shadow-md transition-all duration-300 flex flex-col items-start relative overflow-hidden"
           >
             <div className="absolute -right-8 -top-8 w-32 h-32 bg-[#6b38d4]/5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
             

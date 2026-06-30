@@ -3,7 +3,7 @@ import { CheckCircle2, XCircle, Clock, AlertTriangle, Users, Package, Star } fro
 import { Link } from 'react-router-dom';
 
 const StatCard: React.FC<{ label: string; value: string; sub: string; icon: React.ReactNode; color: string; border: string }> = ({ label, value, sub, icon, color, border }) => (
-  <div className={`bg-white rounded-2xl p-5 shadow-sm border-l-4 ${border} flex flex-col justify-between`}>
+  <div className={`bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-5 shadow-sm border-l-4 ${border} flex flex-col justify-between transition-colors duration-300`}>
     <div className="flex justify-between items-start">
       <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</p>
       <div className={`w-9 h-9 rounded-xl ${color} flex items-center justify-center`}>{icon}</div>
@@ -55,7 +55,7 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* XP Progress */}
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-border-default">
+      <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-5 shadow-sm border border-border-default transition-colors duration-300">
         <div className="flex justify-between items-center mb-3">
           <p className="font-bold text-sm text-text-primary">Campus XP Goal</p>
           <span className="text-sm font-extrabold text-primary">84%</span>
@@ -69,7 +69,7 @@ export const AdminDashboard: React.FC = () => {
       {/* Two Column */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* AI Match Alerts */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-info-ai/20 relative overflow-hidden">
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-6 shadow-sm border border-info-ai/20 relative overflow-hidden transition-colors duration-300">
           <div className="flex items-center gap-3 mb-5">
             <div className="bg-info-ai/10 p-2 rounded-xl">
               <Star className="w-5 h-5 text-info-ai" />
@@ -98,7 +98,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-default">
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-6 shadow-sm border border-border-default transition-colors duration-300">
           <h3 className="font-bold text-lg text-text-primary mb-5">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             <Link to="/admin/claims" className="p-4 bg-warning/5 border border-warning/20 rounded-xl hover:bg-warning/10 transition-colors cursor-pointer text-center">
@@ -131,7 +131,7 @@ export const AdminDashboard: React.FC = () => {
           <h3 className="text-xl font-extrabold text-text-primary">Pending Claims</h3>
           <Link to="/admin/claims" className="text-sm font-bold text-primary hover:underline">See all</Link>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-border-default overflow-hidden">
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm border border-border-default overflow-hidden transition-colors duration-300">
           {/* Desktop Table */}
           <table className="hidden md:table w-full">
             <thead className="bg-surface-container-low border-b border-border-default">

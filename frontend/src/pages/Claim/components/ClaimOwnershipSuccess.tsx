@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, ArrowRight, Home, Timer, ShieldCheck, Medal } from 'lucide-react';
 
@@ -10,7 +10,7 @@ export const ClaimOwnershipSuccess: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-4">
         
         {/* Illustration & Header Section */}
-        <div className="md:col-span-12 bg-white rounded-[20px] p-8 md:p-12 shadow-sm border border-border-default overflow-hidden relative">
+        <div className="md:col-span-12 bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-8 md:p-12 shadow-sm border border-border-default overflow-hidden relative">
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="w-full md:w-1/2 flex justify-center">
               <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
@@ -54,7 +54,7 @@ export const ClaimOwnershipSuccess: React.FC = () => {
         </div>
 
         {/* Stepper / Progress Section */}
-        <div className="md:col-span-12 bg-white rounded-[20px] p-8 shadow-sm border border-border-default">
+        <div className="md:col-span-12 bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-8 shadow-sm border border-border-default">
           <div className="max-w-3xl mx-auto">
             <div className="relative flex items-center justify-between">
               {/* Connecting Line */}

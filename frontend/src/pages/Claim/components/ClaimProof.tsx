@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Check, UploadCloud, FileText, Trash2, Lightbulb, Bot, ChevronRight, ArrowLeft } from 'lucide-react';
 import type { ClaimFormData } from '../types';
 
@@ -24,21 +24,21 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
           <div className="absolute top-5 left-0 w-1/2 h-0.5 bg-primary -z-10"></div>
 
           {/* Step 1 - Done */}
-          <div className="relative z-10 flex flex-col items-center gap-2 bg-white pr-4">
+          <div className="relative z-10 flex flex-col items-center gap-2 bg-surface-container-lowest dark:bg-surface-container pr-4">
             <div className="w-10 h-10 rounded-full bg-success text-white flex items-center justify-center">
               <Check className="w-5 h-5" />
             </div>
             <span className="font-semibold text-sm text-success">Item Details</span>
           </div>
           {/* Step 2 - Active */}
-          <div className="relative z-10 flex flex-col items-center gap-2 bg-white px-2">
+          <div className="relative z-10 flex flex-col items-center gap-2 bg-surface-container-lowest dark:bg-surface-container px-2">
             <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center ring-4 ring-primary/20">
               <Check className="w-5 h-5" />
             </div>
             <span className="font-semibold text-sm text-primary">Proof of Ownership</span>
           </div>
           {/* Step 3 - Pending */}
-          <div className="relative z-10 flex flex-col items-center gap-2 bg-white pl-4">
+          <div className="relative z-10 flex flex-col items-center gap-2 bg-surface-container-lowest dark:bg-surface-container pl-4">
             <div className="w-10 h-10 rounded-full bg-surface-variant text-text-secondary flex items-center justify-center">
               <span className="font-bold">3</span>
             </div>
@@ -58,7 +58,7 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
         {/* Left: Upload Zone */}
         <div className="md:col-span-2 space-y-6">
           {/* Upload Card */}
-          <div className="bg-white p-6 rounded-[20px] shadow-sm border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default">
             <h3 className="text-xl font-bold text-text-primary mb-4">Purchase Receipt or Proof of Ownership</h3>
 
             {/* Drop Zone */}
@@ -81,7 +81,7 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
                   <FileText className="text-primary w-5 h-5" />
                   <div>
                     <p className="font-semibold text-sm text-text-primary">receipt_apple_store.pdf</p>
-                    <p className="text-xs text-text-secondary">2.4 MB · Uploaded 2 mins ago</p>
+                    <p className="text-xs text-text-secondary">2.4 MB Â· Uploaded 2 mins ago</p>
                   </div>
                 </div>
                 <button type="button" className="p-2 text-danger hover:bg-danger/10 rounded-full transition-colors">
@@ -92,7 +92,7 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
           </div>
 
           {/* Additional Info */}
-          <div className="bg-white p-6 rounded-[20px] shadow-sm border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default">
             <h3 className="text-xl font-bold text-text-primary mb-4">Additional Information</h3>
             <div>
               <label className="block font-semibold text-sm mb-2 text-text-primary">Specific Item Identification</label>
@@ -120,7 +120,7 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
         <div className="space-y-6">
           {/* Pro Tip */}
           <div className="bg-[#ffdf9f] p-6 rounded-[20px] shadow-sm relative overflow-hidden">
-            <div className="absolute -top-4 -right-4 w-16 h-16 bg-white/20 rounded-full"></div>
+            <div className="absolute -top-4 -right-4 w-16 h-16 bg-surface-container-lowest dark:bg-surface-container/20 rounded-full"></div>
             <div className="flex items-start gap-4 relative z-10">
               <Lightbulb className="text-[#5c4300] w-7 h-7 flex-shrink-0 mt-1" />
               <div>
@@ -133,7 +133,7 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
           </div>
 
           {/* AI Verification Helper */}
-          <div className="bg-white p-6 rounded-[20px] shadow-sm border border-info-ai/20 flex flex-col gap-4">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-info-ai/20 flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <Bot className="text-info-ai w-5 h-5" />
               <h4 className="font-semibold text-sm text-text-primary">Verification Helper</h4>
@@ -144,7 +144,7 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
             <div className="w-full h-px bg-border-default"></div>
             <div className="flex items-center justify-between">
               <span className="text-xs text-text-secondary italic">Trust Score: 85%</span>
-              <span className="text-xs font-bold text-success">✓ Verified</span>
+              <span className="text-xs font-bold text-success">âœ“ Verified</span>
             </div>
           </div>
         </div>

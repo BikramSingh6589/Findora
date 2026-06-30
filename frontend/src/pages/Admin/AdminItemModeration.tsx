@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { CheckCircle2, XCircle, Search, AlertTriangle, Package } from 'lucide-react';
 
 const allItems = [
@@ -48,7 +48,7 @@ export const AdminItemModeration: React.FC = () => {
           <h2 className="text-3xl font-extrabold text-text-primary">Item Moderation</h2>
           <p className="text-text-secondary mt-1">Review and validate reported lost and found items from the campus community.</p>
         </div>
-        <div className="flex items-center bg-white border border-border-default rounded-xl p-1">
+        <div className="flex items-center bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl p-1">
           {['All Items', 'Lost', 'Found'].map(tab => (
             <button key={tab} onClick={() => setTypeFilter(tab)} className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${typeFilter === tab ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'}`}>{tab}</button>
           ))}
@@ -63,7 +63,7 @@ export const AdminItemModeration: React.FC = () => {
           { label: 'Flagged Items', value: '3', icon: <XCircle className="w-5 h-5 text-danger" />, c: 'bg-danger/10', b: 'border-danger' },
           { label: 'Total Active', value: '1,284', icon: <Package className="w-5 h-5 text-primary" />, c: 'bg-primary/10', b: 'border-primary' },
         ].map((s, i) => (
-          <div key={i} className={`bg-white rounded-2xl p-4 shadow-sm border-l-4 ${s.b} flex items-center gap-3`}>
+          <div key={i} className={`bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-4 shadow-sm border-l-4 ${s.b} flex items-center gap-3`}>
             <div className={`w-10 h-10 rounded-xl ${s.c} flex items-center justify-center`}>{s.icon}</div>
             <div>
               <p className="text-xs text-text-secondary uppercase tracking-wider font-bold">{s.label}</p>
@@ -76,11 +76,11 @@ export const AdminItemModeration: React.FC = () => {
       {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by item name, reporter or ID..." className="w-full pl-10 pr-4 py-2.5 bg-white border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by item name, reporter or ID..." className="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" />
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-border-default overflow-hidden">
+      <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm border border-border-default overflow-hidden">
         {/* Desktop */}
         <table className="hidden md:table w-full">
           <thead className="bg-surface-container-low border-b border-border-default">
@@ -101,7 +101,7 @@ export const AdminItemModeration: React.FC = () => {
                     <img src={item.img} alt={item.name} className="w-10 h-10 rounded-lg object-cover" />
                     <div>
                       <p className="font-bold text-sm text-text-primary">{item.name}</p>
-                      <p className="text-xs text-text-secondary">{item.id} · {item.date}</p>
+                      <p className="text-xs text-text-secondary">{item.id} Â· {item.date}</p>
                     </div>
                   </div>
                 </td>
@@ -132,7 +132,7 @@ export const AdminItemModeration: React.FC = () => {
                 <img src={item.img} alt={item.name} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1">
                   <h4 className="font-bold text-sm text-text-primary">{item.name}</h4>
-                  <p className="text-xs text-text-secondary">{item.reporter} · {item.location}</p>
+                  <p className="text-xs text-text-secondary">{item.reporter} Â· {item.location}</p>
                   <p className="text-xs text-text-secondary">{item.date}</p>
                   <div className="mt-1 flex gap-2">
                     <TypeBadge type={item.type} />

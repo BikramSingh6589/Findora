@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Search, Ban, ShieldCheck, Star, Users, TrendingUp } from 'lucide-react';
 
 const allUsers = [
@@ -50,7 +50,7 @@ export const AdminUserManagement: React.FC = () => {
           { label: 'Warned', value: '12', icon: <ShieldCheck className="w-5 h-5 text-warning" />, c: 'bg-warning/10', b: 'border-warning' },
           { label: 'Banned', value: '3', icon: <Ban className="w-5 h-5 text-danger" />, c: 'bg-danger/10', b: 'border-danger' },
         ].map((s, i) => (
-          <div key={i} className={`bg-white rounded-2xl p-4 shadow-sm border-l-4 ${s.b} flex items-center gap-3`}>
+          <div key={i} className={`bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-4 shadow-sm border-l-4 ${s.b} flex items-center gap-3`}>
             <div className={`w-10 h-10 rounded-xl ${s.c} flex items-center justify-center`}>{s.icon}</div>
             <div>
               <p className="text-xs text-text-secondary uppercase tracking-wider font-bold">{s.label}</p>
@@ -63,11 +63,11 @@ export const AdminUserManagement: React.FC = () => {
       {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, student ID, or email..." className="w-full pl-10 pr-4 py-2.5 bg-white border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, student ID, or email..." className="w-full pl-10 pr-4 py-2.5 bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm" />
       </div>
 
       {/* Desktop Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-border-default overflow-hidden">
+      <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm border border-border-default overflow-hidden">
         <table className="hidden md:table w-full">
           <thead className="bg-surface-container-low border-b border-border-default">
             <tr>
@@ -134,7 +134,7 @@ export const AdminUserManagement: React.FC = () => {
                   <p className="text-xs text-text-secondary">{user.studentId}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <Star className="w-3 h-3 text-[#f9bd22]" />
-                    <span className="text-xs font-bold text-text-primary">{user.xp.toLocaleString()} XP · Lv.{user.level}</span>
+                    <span className="text-xs font-bold text-text-primary">{user.xp.toLocaleString()} XP Â· Lv.{user.level}</span>
                   </div>
                   <div className="mt-1"><StatusBadge status={statuses[user.id]} /></div>
                 </div>

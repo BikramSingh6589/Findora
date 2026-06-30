@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+﻿import React, { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
   ArrowLeft, MoreVertical, Shield, Gavel, Verified, 
@@ -20,7 +20,7 @@ export const FinderChat: React.FC = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] md:h-[calc(100vh-100px)] -mt-6 -mx-6 md:m-0 bg-surface">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 shadow-sm border-b border-border-default">
+      <header className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 md:px-8 py-3 md:py-4 shadow-sm border-b border-border-default">
         <div className="flex items-center gap-3 md:gap-4">
           <button onClick={() => navigate(-1)} className="md:hidden p-2 rounded-full hover:bg-surface-container transition-colors">
             <ArrowLeft className="w-5 h-5 text-text-secondary" />
@@ -94,8 +94,8 @@ export const FinderChat: React.FC = () => {
             className="w-8 h-8 rounded-full self-end mb-1 object-cover"
           />
           <div className="flex flex-col gap-1">
-            <div className="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm border border-border-default text-sm text-text-primary">
-              <p>Hey! I found your AirPods near the South Quad library. 🎧</p>
+            <div className="bg-surface-container-lowest dark:bg-surface-container p-3 rounded-2xl rounded-bl-none shadow-sm border border-border-default text-sm text-text-primary">
+              <p>Hey! I found your AirPods near the South Quad library. ðŸŽ§</p>
             </div>
             <span className="text-[10px] text-text-secondary px-1">09:41 AM</span>
           </div>
@@ -140,7 +140,7 @@ export const FinderChat: React.FC = () => {
             className="w-8 h-8 rounded-full self-end mb-1 object-cover"
           />
           <div className="flex flex-col gap-1">
-            <div className="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm border border-border-default text-sm text-text-primary">
+            <div className="bg-surface-container-lowest dark:bg-surface-container p-3 rounded-2xl rounded-bl-none shadow-sm border border-border-default text-sm text-text-primary">
               <p>Yeah! I'm at the Student Union cafe for the next hour. You can swing by and pick them up whenever you're free.</p>
             </div>
             <span className="text-[10px] text-text-secondary px-1">09:44 AM</span>
@@ -161,7 +161,7 @@ export const FinderChat: React.FC = () => {
       </div>
 
       {/* Message Input Area */}
-      <div className="bg-white p-3 md:p-4 border-t border-border-default z-30">
+      <div className="bg-surface-container-lowest dark:bg-surface-container p-3 md:p-4 border-t border-border-default z-30">
         <div className="max-w-4xl mx-auto flex items-center gap-3 bg-surface-container p-1 md:p-1.5 rounded-full border border-border-default focus-within:ring-2 focus-within:ring-primary/20 transition-all">
           <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-primary transition-colors flex-shrink-0">
             <PlusCircle className="w-6 h-6" />

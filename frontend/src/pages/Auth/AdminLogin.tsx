@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, User as UserIcon, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import { Button } from '../../components/Button';
@@ -30,7 +30,7 @@ export const AdminLogin: React.FC = () => {
         </div>
 
         {/* Login Card */}
-        <section className="bg-white rounded-2xl p-8 border border-border-default shadow-card">
+        <section className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-8 border border-border-default shadow-card">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-text-primary mb-1">Welcome back</h2>
             <p className="text-text-secondary">Please enter your details to access the system.</p>
@@ -63,7 +63,7 @@ export const AdminLogin: React.FC = () => {
                 <input 
                   className="w-full pl-12 pr-12 py-3 rounded-xl border border-border-default bg-surface-container-lowest focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none" 
                   id="password" 
-                  placeholder="••••••••" 
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
                   required 
                   type={showPassword ? 'text' : 'password'} 
                 />
@@ -108,7 +108,7 @@ export const AdminLogin: React.FC = () => {
             <span className="w-1 h-1 bg-border-default rounded-full"></span>
             <a className="text-sm text-text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
           </div>
-          <p className="text-sm text-text-secondary opacity-60">© 2026 FoundIt AI. Powered by Campus Connect.</p>
+          <p className="text-sm text-text-secondary opacity-60">Â© 2026 FoundIt AI. Powered by Campus Connect.</p>
         </footer>
       </div>
     </main>

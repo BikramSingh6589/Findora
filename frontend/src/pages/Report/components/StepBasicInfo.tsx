@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { ArrowRight, Calendar, Clock, Info, ChevronDown } from 'lucide-react';
 import type { ReportFormData } from '../types';
 
@@ -43,7 +43,7 @@ export const StepBasicInfo: React.FC<Props> = ({ data, updateData, onNext }) => 
       </div>
 
       {/* Content Card */}
-      <div className="bg-white rounded-[20px] shadow-sm p-8 border border-border-default overflow-hidden relative">
+      <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] shadow-sm p-8 border border-border-default overflow-hidden relative">
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
         
         <header className="mb-8 relative z-10">

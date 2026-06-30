@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User as UserIcon, AtSign, Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
@@ -22,7 +22,7 @@ export const Register: React.FC = () => {
       {/* Left Side: Illustration Area */}
       <section className="hidden md:flex relative md:w-1/2 bg-gradient-to-br from-[#5B5FEF] to-[#8B5CF6] overflow-hidden flex-col p-12 justify-center">
         <div className="absolute top-12 left-12 flex items-center gap-2">
-          <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+          <div className="bg-surface-container-lowest dark:bg-surface-container/20 p-2 rounded-xl backdrop-blur-md">
             <Sparkles className="text-white w-6 h-6" />
           </div>
           <span className="text-3xl font-bold text-white tracking-tight">Lost&Found AI</span>
@@ -44,8 +44,8 @@ export const Register: React.FC = () => {
               alt="Students" 
               className="w-80 h-96 object-cover rounded-2xl shadow-2xl border-4 border-white/20 z-10 relative"
             />
-            <div className="absolute -bottom-8 -right-16 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl flex items-center gap-4 z-20 shadow-xl">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-white">
+            <div className="absolute -bottom-8 -right-16 bg-surface-container-lowest dark:bg-surface-container/10 backdrop-blur-md border border-white/20 p-4 rounded-xl flex items-center gap-4 z-20 shadow-xl">
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-surface-container-lowest dark:bg-surface-container">
                 <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&q=80" alt="Avatar" className="w-full h-full object-cover" />
               </div>
               <div>
@@ -62,7 +62,7 @@ export const Register: React.FC = () => {
       </section>
 
       {/* Right Side: Registration Form */}
-      <section className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-4 md:p-12 bg-white">
+      <section className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-4 md:p-12 bg-surface-container-lowest dark:bg-surface-container">
         <div className="w-full max-w-[480px] flex flex-col">
           <div className="md:hidden flex justify-center mb-6">
             <div className="bg-primary p-4 rounded-2xl shadow-lg shadow-primary/20">
@@ -71,8 +71,8 @@ export const Register: React.FC = () => {
           </div>
           
           <div className="mb-8 text-center md:text-left">
-            <h2 className="text-3xl font-bold text-text-primary mb-2">Create an account 🎉</h2>
-            <p className="text-text-secondary">Never lose your keys again! 🔑 Join the community today.</p>
+            <h2 className="text-3xl font-bold text-text-primary mb-2">Create an account ðŸŽ‰</h2>
+            <p className="text-text-secondary">Never lose your keys again! ðŸ”‘ Join the community today.</p>
           </div>
 
           <form className="flex flex-col gap-5" onSubmit={handleRegister}>
@@ -82,7 +82,7 @@ export const Register: React.FC = () => {
               <div className="relative">
                 <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />
                 <input 
-                  className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none" 
+                  className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="fullName" 
                   placeholder="Alex Johnson" 
                   required 
@@ -97,7 +97,7 @@ export const Register: React.FC = () => {
               <div className="relative">
                 <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />
                 <input 
-                  className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none" 
+                  className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="email" 
                   placeholder="alex@university.edu" 
                   required 
@@ -112,7 +112,7 @@ export const Register: React.FC = () => {
               <div className="flex flex-col gap-2">
                 <label className="font-semibold text-text-primary ml-1" htmlFor="studentId">Student ID</label>
                 <input 
-                  className="w-full px-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none" 
+                  className="w-full px-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="studentId" 
                   placeholder="12345678" 
                   required 
@@ -123,9 +123,9 @@ export const Register: React.FC = () => {
                 <label className="font-semibold text-text-primary ml-1" htmlFor="password">Password</label>
                 <div className="relative">
                   <input 
-                    className="w-full px-4 pr-12 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-white focus:ring-0 transition-all outline-none" 
+                    className="w-full px-4 pr-12 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                     id="password" 
-                    placeholder="••••••••" 
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
                     required 
                     type={showPassword ? 'text' : 'password'} 
                   />

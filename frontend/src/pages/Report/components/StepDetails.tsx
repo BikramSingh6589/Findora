@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { FileText, MapPin, Camera, UploadCloud, Image as ImageIcon, Sparkles, Brain, ChevronRight, Check } from 'lucide-react';
 import type { ReportFormData } from '../types';
 
@@ -51,7 +51,7 @@ export const StepDetails: React.FC<Props> = ({ data, updateData, onNext, onPrev 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Left Column: Primary Details */}
         <div className="md:col-span-7 flex flex-col gap-6">
-          <section className="bg-white p-8 rounded-[20px] shadow-sm border border-border-default">
+          <section className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default">
             <div className="flex items-center gap-2 mb-6">
               <div className="p-2 bg-primary/10 text-primary rounded-lg">
                 <FileText className="w-6 h-6" />
@@ -116,7 +116,7 @@ export const StepDetails: React.FC<Props> = ({ data, updateData, onNext, onPrev 
         {/* Right Column: Media & Pro Tips */}
         <div className="md:col-span-5 flex flex-col gap-6">
           {/* Image Upload Section */}
-          <section className="bg-white p-8 rounded-[20px] shadow-sm border-2 border-dashed border-primary/20">
+          <section className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border-2 border-dashed border-primary/20">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-[#6b38d4]/10 text-[#6b38d4] rounded-lg">
@@ -130,7 +130,7 @@ export const StepDetails: React.FC<Props> = ({ data, updateData, onNext, onPrev 
             <div className="grid grid-cols-2 gap-4">
               {/* Main Upload Action */}
               <button type="button" className="col-span-2 aspect-[16/9] rounded-2xl bg-surface flex flex-col items-center justify-center gap-2 group hover:bg-primary/5 hover:border-primary transition-all border border-transparent">
-                <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-surface-container-lowest dark:bg-surface-container shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                   <UploadCloud className="w-8 h-8" />
                 </div>
                 <div className="text-center">

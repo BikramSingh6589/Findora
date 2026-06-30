@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -134,7 +134,7 @@ export const CommunityBoard: React.FC = () => {
       </section>
 
       {/* Filter & Search Section */}
-      <section className="bg-white/80 backdrop-blur-xl md:p-4 rounded-2xl flex flex-col md:flex-row items-center gap-4 md:shadow-sm md:border border-border-default">
+      <section className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-xl md:p-4 rounded-2xl flex flex-col md:flex-row items-center gap-4 md:shadow-sm md:border border-border-default">
         {/* Categories (Scrollable on mobile) */}
         <div className="w-full md:w-auto -mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto hide-scrollbar flex gap-2 md:gap-3 flex-nowrap">
           {categories.map((cat) => (
@@ -165,12 +165,12 @@ export const CommunityBoard: React.FC = () => {
         </div>
       </section>
 
-      {/* ── MOBILE: Vertical list cards ── */}
+      {/* â”€â”€ MOBILE: Vertical list cards â”€â”€ */}
       <div className="md:hidden space-y-4">
         {items.map(item => (
           <div
             key={item.id}
-            className={`group bg-white rounded-[20px] p-4 shadow-sm border transition-all duration-300 transform hover:-translate-y-0.5 ${
+            className={`group bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border transition-all duration-300 transform hover:-translate-y-0.5 ${
               item.isAIMatch ? 'border-2 border-info-ai/40 relative' : 'border-border-default'
             }`}
           >
@@ -235,13 +235,13 @@ export const CommunityBoard: React.FC = () => {
         </div>
       </div>
 
-      {/* ── DESKTOP: 4-column Bento Grid ── */}
+      {/* â”€â”€ DESKTOP: 4-column Bento Grid â”€â”€ */}
       <section className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
         {/* Real item cards */}
         {items.slice(0, 2).map(item => (
           <div
             key={item.id}
-            className={`bg-white rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group flex flex-col border ${
+            className={`bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group flex flex-col border ${
               item.isAIMatch ? 'border-info-ai/30' : 'border-border-default/30'
             }`}
           >
@@ -302,7 +302,7 @@ export const CommunityBoard: React.FC = () => {
           { time: '21h 05m left', danger: false },
           { time: '02h 44m left', danger: true },
         ].map((skeleton, i) => (
-          <div key={`skeleton-${i}`} className="bg-white rounded-[20px] overflow-hidden shadow-sm border border-border-default/30 flex flex-col">
+          <div key={`skeleton-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm border border-border-default/30 flex flex-col">
             <div className="relative h-48 bg-surface-container animate-pulse flex items-center justify-center">
               <Image className="w-12 h-12 text-text-secondary opacity-20" />
               <div className={`absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full ${
@@ -333,7 +333,7 @@ export const CommunityBoard: React.FC = () => {
           <h3 className="text-3xl font-extrabold text-white mb-2">Can't find your item?</h3>
           <p className="text-lg text-white/90">Our AI matches found items with lost reports every hour. Post your missing item now!</p>
         </div>
-        <button onClick={() => navigate('/report/lost')} className="relative z-10 bg-white text-[#FB923C] font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+        <button onClick={() => navigate('/report/lost')} className="relative z-10 bg-surface-container-lowest dark:bg-surface-container text-[#FB923C] font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all">
           Report Now
         </button>
       </section>

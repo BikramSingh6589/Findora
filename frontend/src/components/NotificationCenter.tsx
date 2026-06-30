@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles, CheckCircle2, Users, Medal, ArrowRight, QrCode } from 'lucide-react';
 
 interface NotificationCenterProps {
@@ -39,10 +39,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
       />
       
       {/* Popover Container */}
-      <div ref={popoverRef} className="fixed lg:absolute top-16 right-0 lg:right-8 w-full h-[calc(100vh-4rem)] lg:h-auto lg:w-[450px] lg:max-h-[80vh] bg-surface z-50 shadow-2xl lg:rounded-3xl border border-border-default flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+      <div ref={popoverRef} className="fixed lg:absolute top-16 right-0 lg:right-8 w-full h-[calc(100vh-4rem)] lg:h-auto lg:w-[450px] lg:max-h-[80vh] bg-surface dark:bg-surface z-50 shadow-2xl dark:shadow-lg lg:rounded-3xl border border-border-default transition-colors duration-300 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
         
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-border-default bg-white">
+        <div className="p-6 pb-4 border-b border-border-default bg-surface-container-lowest dark:bg-surface-container transition-colors duration-300">
           <div className="flex justify-between items-start mb-4">
             <div>
               <h2 className="text-2xl font-bold text-text-primary">Notifications</h2>
@@ -57,14 +57,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
           </div>
           
           {/* Filters */}
-          <div className="flex bg-surface-container-low p-1 rounded-2xl w-fit">
+          <div className="flex bg-surface-container-low dark:bg-surface-container-high p-1 rounded-2xl w-fit">
             {['All', 'Unread', 'Important'].map(f => (
               <button
                 key={f}
                 onClick={() => setFilter(f as any)}
                 className={`px-4 py-1.5 rounded-xl text-sm font-bold transition-all ${
                   filter === f 
-                    ? 'bg-white shadow-sm text-primary' 
+                    ? 'bg-surface-container-lowest dark:bg-surface-container shadow-sm text-primary' 
                     : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
@@ -75,10 +75,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#fafafa]">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-container-low dark:bg-surface">
           
           {/* AI Match Card */}
-          <div className="group relative overflow-hidden bg-white rounded-[20px] p-5 shadow-sm border-l-4 border-info-ai hover:shadow-md transition-shadow cursor-pointer">
+          <div className="group relative overflow-hidden bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm dark:shadow-md border-l-4 border-info-ai hover:shadow-md dark:hover:shadow-lg transition-shadow cursor-pointer">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-info-ai/10 flex items-center justify-center text-info-ai shrink-0">
                 <Sparkles className="w-5 h-5" />
@@ -92,7 +92,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
                   <span className="text-xs text-text-secondary whitespace-nowrap ml-2">2m ago</span>
                 </div>
                 <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                  ✨ Our algorithm found a <span className="font-semibold text-text-primary">Silver MacBook</span> reported at the Engineering Library that matches your recent "Lost Item" report.
+                  âœ¨ Our algorithm found a <span className="font-semibold text-text-primary">Silver MacBook</span> reported at the Engineering Library that matches your recent "Lost Item" report.
                 </p>
                 <div className="mt-3 flex gap-2">
                   <button className="px-4 py-2 bg-info-ai text-white rounded-lg text-xs font-bold hover:bg-info-ai/90 active:scale-95 transition-all">
@@ -107,7 +107,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
           </div>
 
           {/* Claim Approved Card */}
-          <div className="group relative overflow-hidden bg-white rounded-[20px] p-5 shadow-sm border-l-4 border-success hover:shadow-md transition-shadow cursor-pointer">
+          <div className="group relative overflow-hidden bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm dark:shadow-md border-l-4 border-success hover:shadow-md dark:hover:shadow-lg transition-shadow cursor-pointer">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center text-success shrink-0">
                 <CheckCircle2 className="w-5 h-5" />
@@ -118,7 +118,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
                   <span className="text-xs text-text-secondary">1h ago</span>
                 </div>
                 <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                  ✅ Great news! Your claim for <span className="font-semibold text-text-primary">'Blue JBL Earbuds'</span> has been verified. They are ready for pickup at the Student Union Hub.
+                  âœ… Great news! Your claim for <span className="font-semibold text-text-primary">'Blue JBL Earbuds'</span> has been verified. They are ready for pickup at the Student Union Hub.
                 </p>
                 <div className="mt-3">
                   <button className="px-4 py-2 bg-success text-white rounded-lg text-xs font-bold hover:bg-success/90 active:scale-95 transition-all flex items-center gap-1.5">
@@ -131,7 +131,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
           </div>
 
           {/* Community Suggestion Card */}
-          <div className="group relative overflow-hidden bg-white rounded-[20px] p-5 shadow-sm border-l-4 border-warning hover:shadow-md transition-shadow cursor-pointer">
+          <div className="group relative overflow-hidden bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm dark:shadow-md border-l-4 border-warning hover:shadow-md dark:hover:shadow-lg transition-shadow cursor-pointer">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center text-warning shrink-0">
                 <Users className="w-5 h-5" />
@@ -142,7 +142,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
                   <span className="text-xs text-text-secondary">3h ago</span>
                 </div>
                 <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                  🙋 <span className="font-semibold text-text-primary">Alex</span> thinks your <span className="font-semibold text-text-primary">'Black Wallet'</span> might be at the <span className="text-primary underline underline-offset-4 cursor-pointer">Cafeteria</span>.
+                  ðŸ™‹ <span className="font-semibold text-text-primary">Alex</span> thinks your <span className="font-semibold text-text-primary">'Black Wallet'</span> might be at the <span className="text-primary underline underline-offset-4 cursor-pointer">Cafeteria</span>.
                 </p>
                 <div className="mt-3">
                   <button className="px-4 py-2 bg-surface-container-high text-text-primary rounded-lg text-xs font-bold hover:bg-surface-variant active:scale-95 transition-all flex items-center gap-1.5">
@@ -155,15 +155,15 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
           </div>
 
           {/* XP Reward Card */}
-          <div className="bg-gradient-to-br from-primary to-[#6b38d4] rounded-[20px] p-5 shadow-sm text-white flex items-center gap-4 cursor-pointer hover:scale-[1.01] transition-transform">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0">
+          <div className="bg-gradient-to-br from-primary to-secondary rounded-[20px] p-5 shadow-sm dark:shadow-md text-white flex items-center gap-4 cursor-pointer hover:scale-[1.01] transition-transform">
+            <div className="w-12 h-12 bg-surface-container-lowest dark:bg-surface-container/20 dark:bg-surface-container-lowest/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0">
               <Medal className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
               <p className="font-bold text-sm">You're making a difference!</p>
               <p className="text-xs text-white/80 mt-0.5">Helping others earned you +50 XP.</p>
-              <div className="mt-2 bg-white/20 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-white h-full w-[75%] rounded-full"></div>
+              <div className="mt-2 bg-surface-container-lowest dark:bg-surface-container/20 dark:bg-surface-container-lowest/20 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-surface-container-lowest dark:bg-surface-container dark:bg-surface-container-lowest h-full w-[75%] rounded-full"></div>
               </div>
             </div>
           </div>
@@ -171,8 +171,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
         </div>
         
         {/* Footer */}
-        <div className="p-3 bg-white border-t border-border-default text-center">
-          <button className="text-sm font-bold text-primary hover:underline">
+        <div className="p-3 bg-surface-container-lowest dark:bg-surface-container border-t border-border-default text-center transition-colors duration-300">
+          <button className="text-sm font-bold text-primary dark:text-primary hover:underline">
             Mark all as read
           </button>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { User, Shield, Bell, Lock, Contrast } from 'lucide-react';
 
 export const Settings: React.FC = () => {
@@ -10,24 +10,24 @@ export const Settings: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-primary flex items-center gap-3">
-            Settings 🛠️
+            Settings ðŸ› ï¸
           </h2>
           <p className="text-text-secondary mt-1">Customize your experience and manage your security.</p>
         </div>
 
         {/* Theme Toggle Action Card */}
-        <div className="bg-white p-3 rounded-2xl shadow-sm flex items-center gap-4 border border-border-default">
+        <div className="bg-surface-container-lowest dark:bg-surface-container p-3 rounded-2xl shadow-sm flex items-center gap-4 border border-border-default">
           <Contrast className="text-primary w-5 h-5" />
           <div className="flex bg-surface-container p-1 rounded-full">
             <button 
               onClick={() => setTheme('light')}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${theme === 'light' ? 'bg-white shadow-sm text-primary' : 'text-text-secondary'}`}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${theme === 'light' ? 'bg-surface-container-lowest dark:bg-surface-container shadow-sm text-primary' : 'text-text-secondary'}`}
             >
               Light
             </button>
             <button 
               onClick={() => setTheme('dark')}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${theme === 'dark' ? 'bg-white shadow-sm text-primary' : 'text-text-secondary'}`}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${theme === 'dark' ? 'bg-surface-container-lowest dark:bg-surface-container shadow-sm text-primary' : 'text-text-secondary'}`}
             >
               Dark
             </button>
@@ -42,7 +42,7 @@ export const Settings: React.FC = () => {
         <div className="lg:col-span-7 space-y-8">
           
           {/* Account Card */}
-          <section className="bg-white p-8 rounded-[20px] shadow-sm border border-border-default relative overflow-hidden group">
+          <section className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default relative overflow-hidden group">
             <div className="flex items-center gap-2 mb-6">
               <User className="text-primary w-6 h-6" />
               <h3 className="font-bold text-xl text-text-primary">Account Details</h3>
@@ -86,7 +86,7 @@ export const Settings: React.FC = () => {
           </section>
 
           {/* Privacy Card */}
-          <section className="bg-white p-8 rounded-[20px] shadow-sm border border-border-default">
+          <section className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default">
             <div className="flex items-center gap-2 mb-6">
               <Shield className="text-primary w-6 h-6" />
               <h3 className="font-bold text-xl text-text-primary">Privacy</h3>
@@ -99,7 +99,7 @@ export const Settings: React.FC = () => {
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" defaultChecked className="sr-only peer" />
-                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest dark:bg-surface-container after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
               
@@ -110,7 +110,7 @@ export const Settings: React.FC = () => {
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" defaultChecked className="sr-only peer" />
-                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest dark:bg-surface-container after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>
@@ -121,7 +121,7 @@ export const Settings: React.FC = () => {
         <div className="lg:col-span-5 space-y-8">
           
           {/* Notification Preferences */}
-          <section className="bg-white p-8 rounded-[20px] shadow-sm border border-border-default">
+          <section className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default">
             <div className="flex items-center gap-2 mb-6">
               <Bell className="text-primary w-6 h-6" />
               <h3 className="font-bold text-xl text-text-primary">Notifications</h3>
@@ -135,7 +135,7 @@ export const Settings: React.FC = () => {
                   <span className="font-bold text-sm text-text-primary">Email Alerts</span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" defaultChecked className="sr-only peer" />
-                    <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest dark:bg-surface-container after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
                 <p className="text-xs text-text-secondary mt-2">Instant updates when an item matches your report.</p>
@@ -145,7 +145,7 @@ export const Settings: React.FC = () => {
                 <span className="font-bold text-sm text-text-primary">Push Notifications</span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" />
-                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest dark:bg-surface-container after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
               
@@ -153,7 +153,7 @@ export const Settings: React.FC = () => {
                 <span className="font-bold text-sm text-text-primary">Weekly Summary</span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" defaultChecked className="sr-only peer" />
-                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest dark:bg-surface-container after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>
@@ -162,9 +162,9 @@ export const Settings: React.FC = () => {
           {/* Interactive Mascot Card */}
           <section className="bg-gradient-to-br from-primary to-[#6b38d4] p-8 rounded-[20px] text-white relative overflow-hidden shadow-lg group">
             <div className="relative z-10">
-              <h4 className="font-bold text-xl mb-2">Need a Hand? 🤝</h4>
+              <h4 className="font-bold text-xl mb-2">Need a Hand? ðŸ¤</h4>
               <p className="text-white/90 text-sm mb-6">Our AI assistant is always ready to help you find your lost items faster!</p>
-              <button className="bg-white text-primary font-bold py-3 px-6 rounded-2xl hover:scale-105 transition-transform shadow-md text-sm">
+              <button className="bg-surface-container-lowest dark:bg-surface-container text-primary font-bold py-3 px-6 rounded-2xl hover:scale-105 transition-transform shadow-md text-sm">
                 Contact Support
               </button>
             </div>

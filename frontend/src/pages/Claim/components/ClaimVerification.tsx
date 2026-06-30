@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { MapPin, Calendar, Clock, AlignLeft, ArrowRight, Sparkles, Trophy, Shield } from 'lucide-react';
 import type { ClaimFormData } from '../types';
 
@@ -41,7 +41,7 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext })
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Form */}
         <div className="lg:col-span-8">
-          <div className="bg-white rounded-[20px] p-8 shadow-sm border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-8 shadow-sm border border-border-default">
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-text-primary mb-2">Verify Ownership</h1>
               <p className="text-base text-text-secondary">Help us confirm you're the rightful owner by answering a few quick questions about your item.</p>
@@ -150,7 +150,7 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext })
           </div>
 
           {/* XP Card */}
-          <div className="bg-white rounded-[20px] p-6 shadow-sm border border-border-default">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-6 shadow-sm border border-border-default">
             <div className="flex items-center gap-4 mb-3">
               <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center text-warning">
                 <Trophy className="w-5 h-5" />
