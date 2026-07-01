@@ -1,20 +1,35 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, User as UserIcon, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import { Button } from '../../components/Button';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const AdminLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const res = await axios.post(`${API_BASE}/api/auth/admin/login`, { email, password });
+      const { token } = res.data;
+      localStorage.setItem('token', token);
+      navigate('/admin');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Admin login failed');
+    } finally {
       setIsSubmitting(false);
-      navigate('/admin/dashboard'); // Mock redirect
-    }, 1500);
+    }
   };
 
   return (
@@ -36,6 +51,12 @@ export const AdminLogin: React.FC = () => {
             <p className="text-text-secondary">Please enter your details to access the system.</p>
           </div>
 
+          {error && (
+            <div className="mb-4 p-4 rounded-2xl bg-danger/10 text-danger text-sm font-semibold">
+              {error}
+            </div>
+          )}
+
           <form className="space-y-6" onSubmit={handleLogin}>
             {/* Admin ID / Email */}
             <div className="space-y-2">
@@ -47,7 +68,9 @@ export const AdminLogin: React.FC = () => {
                   id="adminId" 
                   placeholder="admin@university.edu" 
                   required 
-                  type="text" 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -63,9 +86,11 @@ export const AdminLogin: React.FC = () => {
                 <input 
                   className="w-full pl-12 pr-12 py-3 rounded-xl border border-border-default bg-surface-container-lowest focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none" 
                   id="password" 
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
+                  placeholder="••••••••" 
                   required 
                   type={showPassword ? 'text' : 'password'} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <button 
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors" 
@@ -108,7 +133,7 @@ export const AdminLogin: React.FC = () => {
             <span className="w-1 h-1 bg-border-default rounded-full"></span>
             <a className="text-sm text-text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
           </div>
-          <p className="text-sm text-text-secondary opacity-60">Â© 2026 FoundIt AI. Powered by Campus Connect.</p>
+          <p className="text-sm text-text-secondary opacity-60">© 2026 FoundIt AI. Powered by Campus Connect.</p>
         </footer>
       </div>
     </main>

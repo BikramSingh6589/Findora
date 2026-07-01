@@ -1,12 +1,15 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, PlusSquare, Users, Sparkles, History, Search, Bell, BarChart2, Settings, HelpCircle } from 'lucide-react';
+import { Home, PlusSquare, Users, Sparkles, History, Search, Bell, BarChart2, Settings, HelpCircle, LogOut } from 'lucide-react';
 import { NotificationCenter } from '../components/NotificationCenter';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { useAuth } from '../contexts/AuthContext';
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
+  const { user, logout } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   
   const isActive = (path: string) => {
     if (path === '/' && location.pathname !== '/') return false;
@@ -21,7 +24,7 @@ export const AppLayout: React.FC = () => {
     }`;
 
   return (
-    <div className="bg-surface dark:bg-surface font-body-md text-text-primary antialiased min-h-screen flex flex-col lg:flex-row relative transition-colors duration-300">
+    <div className="bg-surface dark:bg-surface font-body-md text-text-primary antialiased min-h-screen flex flex-col lg:flex-row relative transition-colors duration-300" onClick={() => setShowDropdown(false)}>
       {/* Desktop Sidebar Navigation */}
       <aside className="h-screen w-64 fixed left-0 top-0 hidden lg:flex flex-col bg-surface-container-lowest dark:bg-surface-container dark:bg-surface-container shadow-md dark:shadow-lg p-6 gap-6 z-40 border-r border-border-default transition-colors duration-300">
         <div className="flex items-center gap-3 px-2">
@@ -63,18 +66,18 @@ export const AppLayout: React.FC = () => {
             <div className="flex items-center gap-3 mb-2">
               <img 
                 className="w-10 h-10 rounded-full object-cover border-2 border-primary/20 group-hover:border-primary transition-colors" 
-                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" 
-                alt="Alice"
+                src={user?.profilePic || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"} 
+                alt={user?.name || "User"}
               />
               <div>
-                <p className="text-sm font-semibold text-text-primary">Helper Level 12</p>
-                <p className="text-xs text-text-secondary">Alice</p>
+                <p className="text-sm font-semibold text-text-primary">Helper Level {user?.level || 1}</p>
+                <p className="text-xs text-text-secondary">{user?.name || "Student"}</p>
               </div>
             </div>
             <div className="w-full bg-border-default h-1.5 rounded-full mt-2 overflow-hidden">
-              <div className="bg-gradient-to-r from-[#f9bd22] to-[#ffdf9f] h-full w-3/4 rounded-full"></div>
+              <div className="bg-gradient-to-r from-[#f9bd22] to-[#ffdf9f] h-full rounded-full" style={{ width: `${(user?.xp % 100) || 30}%` }}></div>
             </div>
-            <p className="text-[11px] text-text-secondary mt-1 text-right">2450 / 3000 XP</p>
+            <p className="text-[11px] text-text-secondary mt-1 text-right">{user?.xp || 0} XP</p>
           </Link>
 
           <Link to="/settings" className="flex items-center gap-4 text-text-secondary hover:bg-surface-container-low rounded-xl px-4 py-2 transition-all">
@@ -97,13 +100,30 @@ export const AppLayout: React.FC = () => {
             <span className="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full border-2 border-white"></span>
           </button>
           <ThemeToggle />
-          <Link to="/profile">
+          
+          {/* Mobile Profile Dropdown Trigger */}
+          <div className="relative">
             <img 
-              className="w-8 h-8 rounded-full border-2 border-primary/20" 
-              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" 
+              onClick={(e) => { e.stopPropagation(); setShowDropdown(prev => !prev); }}
+              className="w-8 h-8 rounded-full border-2 border-primary/20 cursor-pointer" 
+              src={user?.profilePic || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"} 
               alt="Profile"
             />
-          </Link>
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-2xl shadow-xl py-2 z-50">
+                <Link to="/profile" className="flex items-center gap-2 px-4 py-3 text-sm text-text-primary hover:bg-surface-container-low">
+                  <PlusSquare className="w-4 h-4" /> My Profile
+                </Link>
+                <Link to="/settings" className="flex items-center gap-2 px-4 py-3 text-sm text-text-primary hover:bg-surface-container-low">
+                  <Settings className="w-4 h-4" /> Profile Settings
+                </Link>
+                <hr className="border-border-default my-1" />
+                <button onClick={logout} className="w-full flex items-center gap-2 px-4 py-3 text-sm text-danger hover:bg-danger/10 text-left">
+                  <LogOut className="w-4 h-4" /> Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -132,6 +152,33 @@ export const AppLayout: React.FC = () => {
             <Link to="/leaderboard" className="text-text-secondary hover:text-primary transition-colors">
               <BarChart2 className="w-6 h-6" />
             </Link>
+
+            {/* Desktop Profile Dropdown Trigger */}
+            <div className="relative">
+              <img 
+                onClick={(e) => { e.stopPropagation(); setShowDropdown(prev => !prev); }}
+                className="w-10 h-10 rounded-full object-cover border-2 border-primary/20 hover:border-primary cursor-pointer transition-colors" 
+                src={user?.profilePic || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"} 
+                alt="Profile"
+              />
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-2xl shadow-xl py-2 z-50">
+                  <div className="px-4 py-2 text-xs text-text-secondary border-b border-border-default">
+                    Signed in as <p className="font-bold text-text-primary truncate">{user?.email}</p>
+                  </div>
+                  <Link to="/profile" className="flex items-center gap-2 px-4 py-3 text-sm text-text-primary hover:bg-surface-container-low">
+                    <PlusSquare className="w-4 h-4" /> My Profile
+                  </Link>
+                  <Link to="/settings" className="flex items-center gap-2 px-4 py-3 text-sm text-text-primary hover:bg-surface-container-low">
+                    <Settings className="w-4 h-4" /> Profile Settings
+                  </Link>
+                  <hr className="border-border-default my-1" />
+                  <button onClick={logout} className="w-full flex items-center gap-2 px-4 py-3 text-sm text-danger hover:bg-danger/10 text-left">
+                    <LogOut className="w-4 h-4" /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 

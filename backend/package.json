@@ -4,10 +4,46 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "node node_modules/nodemon/bin/nodemon.js --watch src --ext ts,json --exec \"node node_modules/ts-node/dist/bin.js\" src/server.ts",
+    "start": "node dist/server.js",
+    "build": "node node_modules/typescript/bin/tsc",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.24.1",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.0.3",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.3",
+    "uuid": "^14.0.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^26.1.0",
+    "@types/nodemailer": "^8.0.1",
+    "@types/qrcode": "^1.5.6",
+    "@types/uuid": "^10.0.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
 }

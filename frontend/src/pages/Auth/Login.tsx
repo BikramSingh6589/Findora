@@ -1,24 +1,65 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, BrainCircuit, Users, AtSign, Lock, Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const Login: React.FC = () => {
+  const { login, error } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLocalError(null);
+
+    // Front-end validations
+    if (!email) {
+      setLocalError('Please enter your university email');
+      return;
+    }
+    if (!password) {
+      setLocalError('Please enter your password');
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      await login(email, password);
+      
+      setShowSuccessToast(true);
+      setTimeout(() => {
+        setShowSuccessToast(false);
+        navigate('/');
+      }, 2000);
+    } catch (err: any) {
+      setLocalError(err.message || 'Login failed');
+    } finally {
       setIsSubmitting(false);
-      navigate('/');
-    }, 1500);
+    }
   };
 
   return (
-    <main className="min-h-screen w-full flex flex-col md:flex-row bg-surface">
+    <main className="min-h-screen w-full flex flex-col md:flex-row bg-surface relative">
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-primary text-white px-6 py-4 rounded-2xl shadow-2xl animate-bounce border border-white/20">
+          <Sparkles className="w-6 h-6 animate-spin" />
+          <div>
+            <p className="font-bold text-sm">Welcome Back! 🎉</p>
+            <p className="text-xs text-white/80">Logged in successfully.</p>
+          </div>
+        </div>
+      )}
+
       {/* Left Side: Brand Panel (Visible on md+) */}
       <section className="hidden md:flex relative md:w-1/2 bg-gradient-to-br from-[#5B5FEF] to-[#8B5CF6] overflow-hidden flex-col justify-between p-12">
         <div className="relative z-10 flex flex-col h-full justify-between">
@@ -50,7 +91,7 @@ export const Login: React.FC = () => {
           </div>
           
           <div className="flex items-center justify-between text-white/60 text-sm">
-            <p>Â© 2026 Campus Connect AI Network</p>
+            <p>© 2026 Campus Connect AI Network</p>
             <div className="flex gap-4">
               <span className="cursor-pointer hover:text-white">Privacy</span>
               <span className="cursor-pointer hover:text-white">Terms</span>
@@ -75,6 +116,12 @@ export const Login: React.FC = () => {
             <p className="text-text-secondary">Enter your campus credentials to continue.</p>
           </div>
 
+          {(localError || error) && (
+            <div className="mb-4 p-4 rounded-2xl bg-danger/10 text-danger text-sm font-semibold border border-danger/20">
+              {localError || error}
+            </div>
+          )}
+
           <form className="flex flex-col gap-6" onSubmit={handleLogin}>
             <div className="flex flex-col gap-2">
               <label className="font-semibold text-text-primary ml-1" htmlFor="email">University Email</label>
@@ -83,9 +130,11 @@ export const Login: React.FC = () => {
                 <input 
                   className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="email" 
-                  placeholder="student@university.edu" 
+                  placeholder="e.g. student@university.edu" 
                   required 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -100,9 +149,11 @@ export const Login: React.FC = () => {
                 <input 
                   className="w-full pl-12 pr-12 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="password" 
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
+                  placeholder="Enter your password" 
                   required 
                   type={showPassword ? 'text' : 'password'} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <button 
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" 

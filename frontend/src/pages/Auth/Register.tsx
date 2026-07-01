@@ -1,24 +1,75 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User as UserIcon, AtSign, Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const Register: React.FC = () => {
+  const { register, error } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLocalError(null);
+
+    // Frontend validations
+    if (password.length < 8) {
+      setLocalError('Password must be at least 8 characters long');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setLocalError('Passwords do not match');
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      await register({
+        name,
+        email,
+        studentId,
+        password,
+        confirmPassword
+      });
+      
+      setShowSuccessToast(true);
+      setTimeout(() => {
+        setShowSuccessToast(false);
+        navigate('/');
+      }, 2000);
+    } catch (err: any) {
+      setLocalError(err.message || 'Registration failed');
+    } finally {
       setIsSubmitting(false);
-      navigate('/');
-    }, 1500);
+    }
   };
 
   return (
-    <main className="min-h-screen w-full flex flex-col md:flex-row bg-surface">
+    <main className="min-h-screen w-full flex flex-col md:flex-row bg-surface relative">
+      {/* Premium Alert/Toast Popup */}
+      {showSuccessToast && (
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-primary text-white px-6 py-4 rounded-2xl shadow-2xl animate-bounce border border-white/20">
+          <Sparkles className="w-6 h-6 animate-spin" />
+          <div>
+            <p className="font-bold text-sm">Account Created Successfully! 🎉</p>
+            <p className="text-xs text-white/80">Welcome to the Campus Lost & Found community.</p>
+          </div>
+        </div>
+      )}
+
       {/* Left Side: Illustration Area */}
       <section className="hidden md:flex relative md:w-1/2 bg-gradient-to-br from-[#5B5FEF] to-[#8B5CF6] overflow-hidden flex-col p-12 justify-center">
         <div className="absolute top-12 left-12 flex items-center gap-2">
@@ -71,9 +122,15 @@ export const Register: React.FC = () => {
           </div>
           
           <div className="mb-8 text-center md:text-left">
-            <h2 className="text-3xl font-bold text-text-primary mb-2">Create an account ðŸŽ‰</h2>
-            <p className="text-text-secondary">Never lose your keys again! ðŸ”‘ Join the community today.</p>
+            <h2 className="text-3xl font-bold text-text-primary mb-2">Create an account 🎉</h2>
+            <p className="text-text-secondary">Never lose your belongings again. Join the community today.</p>
           </div>
+
+          {(localError || error) && (
+            <div className="mb-4 p-4 rounded-2xl bg-danger/10 text-danger text-sm font-semibold border border-danger/20">
+              {localError || error}
+            </div>
+          )}
 
           <form className="flex flex-col gap-5" onSubmit={handleRegister}>
             {/* Full Name */}
@@ -84,9 +141,11 @@ export const Register: React.FC = () => {
                 <input 
                   className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="fullName" 
-                  placeholder="Alex Johnson" 
+                  placeholder="e.g. Alex Johnson" 
                   required 
                   type="text" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
             </div>
@@ -99,35 +158,43 @@ export const Register: React.FC = () => {
                 <input 
                   className="w-full pl-12 pr-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                   id="email" 
-                  placeholder="alex@university.edu" 
+                  placeholder="e.g. alex.johnson@university.edu" 
                   required 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <p className="text-xs text-text-secondary ml-1">Must be a valid @university.edu address</p>
+              <p className="text-xs text-text-secondary ml-1">Must be a valid university domain address</p>
             </div>
 
-            {/* Student ID & Password */}
+            {/* Student ID */}
+            <div className="flex flex-col gap-2">
+              <label className="font-semibold text-text-primary ml-1" htmlFor="studentId">Student ID / Registration ID</label>
+              <input 
+                className="w-full px-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
+                id="studentId" 
+                placeholder="e.g. 2026CS4501" 
+                required 
+                type="text" 
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+              />
+            </div>
+
+            {/* Passwords */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold text-text-primary ml-1" htmlFor="studentId">Student ID</label>
-                <input 
-                  className="w-full px-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
-                  id="studentId" 
-                  placeholder="12345678" 
-                  required 
-                  type="text" 
-                />
-              </div>
               <div className="flex flex-col gap-2">
                 <label className="font-semibold text-text-primary ml-1" htmlFor="password">Password</label>
                 <div className="relative">
                   <input 
                     className="w-full px-4 pr-12 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
                     id="password" 
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
+                    placeholder="Min 8 characters" 
                     required 
                     type={showPassword ? 'text' : 'password'} 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button 
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" 
@@ -137,6 +204,19 @@ export const Register: React.FC = () => {
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="font-semibold text-text-primary ml-1" htmlFor="confirmPassword">Confirm Password</label>
+                <input 
+                  className="w-full px-4 py-4 bg-surface rounded-2xl border-2 border-transparent focus:border-primary focus:bg-surface-container-lowest dark:bg-surface-container focus:ring-0 transition-all outline-none" 
+                  id="confirmPassword" 
+                  placeholder="Repeat password" 
+                  required 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
               </div>
             </div>
 

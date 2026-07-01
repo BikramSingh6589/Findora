@@ -1,8 +1,14 @@
-﻿import React, { useState } from 'react';
-import { User, Shield, Bell, Lock, Contrast } from 'lucide-react';
+import React, { useState } from 'react';
+import { User as UserIcon, Shield, Bell, Lock, Contrast, LogOut } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const Settings: React.FC = () => {
+  const { user, logout } = useAuth();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <div className="max-w-6xl mx-auto w-full pb-12 animate-in fade-in duration-500">
@@ -10,7 +16,7 @@ export const Settings: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-primary flex items-center gap-3">
-            Settings ðŸ› ï¸
+            Settings 🛠️
           </h2>
           <p className="text-text-secondary mt-1">Customize your experience and manage your security.</p>
         </div>
@@ -44,7 +50,7 @@ export const Settings: React.FC = () => {
           {/* Account Card */}
           <section className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] shadow-sm border border-border-default relative overflow-hidden group">
             <div className="flex items-center gap-2 mb-6">
-              <User className="text-primary w-6 h-6" />
+              <UserIcon className="text-primary w-6 h-6" />
               <h3 className="font-bold text-xl text-text-primary">Account Details</h3>
             </div>
             
@@ -54,7 +60,7 @@ export const Settings: React.FC = () => {
                 <input 
                   className="w-full bg-surface-container-low border border-border-default rounded-xl p-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-text-primary" 
                   type="text" 
-                  defaultValue="Alex Johnson"
+                  defaultValue={user?.name || "Alex Johnson"}
                 />
               </div>
               <div className="space-y-1">
@@ -63,7 +69,7 @@ export const Settings: React.FC = () => {
                   className="w-full bg-surface-container-high border border-border-default text-text-secondary rounded-xl p-3 cursor-not-allowed" 
                   disabled 
                   type="text" 
-                  value="SU-2024-8842"
+                  value={user?.studentId || "SU-2024-8842"}
                 />
               </div>
               <div className="md:col-span-2 space-y-1">
@@ -71,16 +77,25 @@ export const Settings: React.FC = () => {
                 <input 
                   className="w-full bg-surface-container-low border border-border-default rounded-xl p-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-text-primary" 
                   type="email" 
-                  defaultValue="alex.johnson@campus.edu"
+                  defaultValue={user?.email || "alex.johnson@campus.edu"}
                 />
               </div>
             </div>
             
-            <div className="mt-8 pt-6 border-t border-border-default">
-              <h4 className="text-sm font-bold mb-4 text-text-primary">Security</h4>
-              <button className="flex items-center gap-2 text-primary font-bold hover:underline transition-all">
-                <Lock className="w-5 h-5" />
-                Change Password
+            <div className="mt-8 pt-6 border-t border-border-default flex flex-wrap gap-4 items-center justify-between">
+              <div>
+                <h4 className="text-sm font-bold mb-2 text-text-primary">Security</h4>
+                <button className="flex items-center gap-2 text-primary font-bold hover:underline transition-all">
+                  <Lock className="w-5 h-5" />
+                  Change Password
+                </button>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-2 bg-danger/10 text-danger hover:bg-danger/25 font-bold px-6 py-3 rounded-2xl transition-all shadow-sm"
+              >
+                <LogOut className="w-5 h-5" />
+                Sign Out / Logout
               </button>
             </div>
           </section>
@@ -162,7 +177,7 @@ export const Settings: React.FC = () => {
           {/* Interactive Mascot Card */}
           <section className="bg-gradient-to-br from-primary to-[#6b38d4] p-8 rounded-[20px] text-white relative overflow-hidden shadow-lg group">
             <div className="relative z-10">
-              <h4 className="font-bold text-xl mb-2">Need a Hand? ðŸ¤</h4>
+              <h4 className="font-bold text-xl mb-2">Need a Hand? 🤝</h4>
               <p className="text-white/90 text-sm mb-6">Our AI assistant is always ready to help you find your lost items faster!</p>
               <button className="bg-surface-container-lowest dark:bg-surface-container text-primary font-bold py-3 px-6 rounded-2xl hover:scale-105 transition-transform shadow-md text-sm">
                 Contact Support
