@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Sparkles, MapPin as MapPinIcon, Medal, ShieldCheck, ArrowRight as ArrowRightIcon } from 'lucide-react';
@@ -100,7 +100,7 @@ export const ReportFoundSuccess: React.FC = () => {
         </div>
 
         {/* XP Progress Bar (Gamification) */}
-        <div className="bg-[#f8f9fa] p-8 rounded-[20px] border border-border-default mt-8 max-w-2xl mx-auto">
+        <div className="bg-surface-container-lowest dark:bg-surface-container p-8 rounded-[20px] border border-border-default mt-8 max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-3">
             <span className="font-bold text-text-primary text-sm">Level 12 Progress</span>
             <span className="font-bold text-primary text-sm">450 / 500 XP</span>

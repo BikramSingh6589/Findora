@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, ArrowRight, Home, Timer, ShieldCheck, Medal } from 'lucide-react';
 
@@ -100,27 +100,27 @@ export const ClaimOwnershipSuccess: React.FC = () => {
 
         {/* Contextual Information Bento */}
         <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[#f0f9ff] p-6 rounded-xl border border-[#bae6fd] hover:border-info-ai/50 transition-colors">
+          <div className="bg-info-ai/10 dark:bg-info-ai/5 p-6 rounded-xl border border-info-ai/30 dark:border-info-ai/20 hover:border-info-ai/50 transition-colors">
             <div className="w-12 h-12 rounded-lg bg-info-ai/20 flex items-center justify-center mb-4">
               <Timer className="text-info-ai w-6 h-6" />
             </div>
-            <h3 className="font-bold text-lg text-info-ai-dark mb-1">24h Response</h3>
+            <h3 className="font-bold text-lg text-info-ai mb-1">24h Response</h3>
             <p className="text-sm text-text-secondary">Expect an update within 24 hours. Most claims are processed even faster!</p>
           </div>
           
-          <div className="bg-[#fffbeb] p-6 rounded-xl border border-[#fde68a] hover:border-warning/50 transition-colors">
+          <div className="bg-warning/10 dark:bg-warning/5 p-6 rounded-xl border border-warning/30 dark:border-warning/20 hover:border-warning/50 transition-colors">
             <div className="w-12 h-12 rounded-lg bg-warning/20 flex items-center justify-center mb-4">
-              <ShieldCheck className="text-warning-dark w-6 h-6" />
+              <ShieldCheck className="text-warning w-6 h-6" />
             </div>
-            <h3 className="font-bold text-lg text-warning-dark mb-1">Secure Return</h3>
+            <h3 className="font-bold text-lg text-warning mb-1">Secure Return</h3>
             <p className="text-sm text-text-secondary">Once approved, you'll receive a unique QR code for secure pickup at the Main Office.</p>
           </div>
           
-          <div className="bg-[#f0fdf4] p-6 rounded-xl border border-[#bbf7d0] hover:border-success/50 transition-colors">
+          <div className="bg-success/10 dark:bg-success/5 p-6 rounded-xl border border-success/30 dark:border-success/20 hover:border-success/50 transition-colors">
             <div className="w-12 h-12 rounded-lg bg-success/20 flex items-center justify-center mb-4">
-              <Medal className="text-success-dark w-6 h-6" />
+              <Medal className="text-success w-6 h-6" />
             </div>
-            <h3 className="font-bold text-lg text-success-dark mb-1">+50 XP Pending</h3>
+            <h3 className="font-bold text-lg text-success mb-1">+50 XP Pending</h3>
             <p className="text-sm text-text-secondary">Successful returns earn you campus rewards and reputation points!</p>
           </div>
         </div>

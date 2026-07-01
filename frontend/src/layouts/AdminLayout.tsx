@@ -1,9 +1,10 @@
-﻿import React from 'react';
+import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { 
   ShieldCheck, LayoutDashboard, ListChecks, Users, 
   MessageSquareWarning, Settings, LogOut 
 } from 'lucide-react';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
@@ -67,6 +68,7 @@ export const AdminLayout: React.FC = () => {
             <Settings className="w-5 h-5" />
             <span>Settings</span>
           </Link>
+          <ThemeToggle />
           <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-danger dark:text-danger hover:bg-danger/10 dark:hover:bg-danger/20 transition-colors">
             <LogOut className="w-5 h-5" />
             <span>Logout</span>

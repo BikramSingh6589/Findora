@@ -28,7 +28,7 @@ export const AppLayout: React.FC = () => {
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
             <Sparkles className="w-6 h-6 fill-current" />
           </div>
-          <h1 className="text-2xl font-bold text-primary">Lost&Found AI</h1>
+          <h1 className="text-2xl font-bold text-primary">Findora</h1>
         </div>
         
         <nav className="flex flex-col gap-2 mt-4">
@@ -90,7 +90,7 @@ export const AppLayout: React.FC = () => {
 
       {/* Mobile Top Navigation */}
       <header className="lg:hidden fixed top-0 w-full z-40 bg-surface-container-lowest dark:bg-surface-container/80 dark:bg-surface-container/80 dark:border-surface-container-high backdrop-blur-md px-4 py-4 flex justify-between items-center shadow-sm border-b border-border-default transition-colors duration-300">
-        <h1 className="text-2xl font-bold text-primary">Lost&Found AI</h1>
+        <h1 className="text-2xl font-bold text-primary">Findora</h1>
         <div className="flex items-center gap-4">
           <button onClick={(e) => { e.stopPropagation(); setShowNotifications(prev => !prev); }} className="relative text-text-secondary hover:text-primary transition-colors">
             <Bell className="w-6 h-6" />
