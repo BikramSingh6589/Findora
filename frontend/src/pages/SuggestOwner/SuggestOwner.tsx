@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, EyeOff, Send, CheckCircle, Rocket, BellRing, ArrowRight, UserSearch, Stars } from 'lucide-react';
 
@@ -33,7 +33,7 @@ export const SuggestOwner: React.FC = () => {
                 <img 
                   alt="Success Illustration" 
                   className="w-full h-auto relative z-10 drop-shadow-2xl" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEAa66kom0qlxBt5goiz6Zwzvxgcx-A5LoSns4xe_GR8In4XZ_Xc0Hzp6QWsZ_65wJr4_Vw6KZt0R3PYz54-4ikn5fYVvCLanUv3sIk0uYDxcS4n4VkFGubCyh7-qdpp1etH1nalINWZ0lYPnKdbJl6ZZQgMhdzndbzz-wA38cHRfsXlbxhaFLvm35yCwBj4bkaOD_kOGrVNI6aCdimINQCU4c6xV12hD4dX2h_1RlmlDsyqi6kOGGt2Cr3GRX-Wb1JYZb8TWnQ9I"
+                  src="/images/suggest_owner_illustration.png"
                 />
               </div>
               

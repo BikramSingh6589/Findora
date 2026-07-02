@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, BrainCircuit, Users, AtSign, Lock, Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePopup } from '../../contexts/PopupContext';
 
 export const Login: React.FC = () => {
   const { login, error } = useAuth();
+  const { showLoginSuccess, showFailure } = usePopup();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,13 +36,22 @@ export const Login: React.FC = () => {
     try {
       await login(email, password);
       
-      setShowSuccessToast(true);
-      setTimeout(() => {
-        setShowSuccessToast(false);
+      const username = email.split('@')[0];
+      const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+      
+      showLoginSuccess(displayName, () => {
         navigate('/');
-      }, 2000);
+      });
     } catch (err: any) {
-      setLocalError(err.message || 'Login failed');
+      const errMsg = err.message || 'Login failed';
+      setLocalError(errMsg);
+      if (errMsg.toLowerCase().includes('verify') || errMsg.toLowerCase().includes('otp')) {
+        setTimeout(() => {
+          navigate('/verify-otp', { state: { email, purpose: 'signup' } });
+        }, 1500);
+      } else {
+        showFailure('Oops! Something went wrong 🤷', errMsg);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -49,16 +59,6 @@ export const Login: React.FC = () => {
 
   return (
     <main className="min-h-screen w-full flex flex-col md:flex-row bg-surface relative">
-      {/* Success Toast */}
-      {showSuccessToast && (
-        <div className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-primary text-white px-6 py-4 rounded-2xl shadow-2xl animate-bounce border border-white/20">
-          <Sparkles className="w-6 h-6 animate-spin" />
-          <div>
-            <p className="font-bold text-sm">Welcome Back! 🎉</p>
-            <p className="text-xs text-white/80">Logged in successfully.</p>
-          </div>
-        </div>
-      )}
 
       {/* Left Side: Brand Panel (Visible on md+) */}
       <section className="hidden md:flex relative md:w-1/2 bg-gradient-to-br from-[#5B5FEF] to-[#8B5CF6] overflow-hidden flex-col justify-between p-12">
@@ -142,7 +142,7 @@ export const Login: React.FC = () => {
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center px-1">
                 <label className="font-semibold text-text-primary" htmlFor="password">Password</label>
-                <a className="text-sm text-primary hover:underline font-semibold" href="#">Forgot Password?</a>
+                <Link className="text-sm text-primary hover:underline font-semibold" to="/forgot-password">Forgot Password?</Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-outline w-5 h-5" />

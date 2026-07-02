@@ -4,6 +4,9 @@ import { AdminLayout } from './layouts/AdminLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
+import { ForgotPassword } from './pages/Auth/ForgotPassword';
+import { OtpVerification } from './pages/Auth/OtpVerification';
+import { ResetPassword } from './pages/Auth/ResetPassword';
 import { AdminLogin } from './pages/Auth/AdminLogin';
 import { Profile } from './pages/Profile';
 import { ReportSelection } from './pages/Report/ReportSelection';
@@ -33,6 +36,9 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<OtpVerification />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* Admin Routes */}

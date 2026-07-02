@@ -7,7 +7,9 @@ import {
   getMe,
   forgotPassword,
   resetPassword,
-  logout
+  logout,
+  verifyOtp,
+  verifyForgotPasswordOtp
 } from '../controllers/auth.controller';
 import { protect } from '../middleware/auth.middleware';
 import { validateRequest } from '../middleware/validate.middleware';
@@ -36,6 +38,11 @@ const forgotPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),
 });
 
+const verifyOtpSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  otp: z.string().length(6, 'OTP must be 6 digits'),
+});
+
 const resetPasswordSchema = z.object({
   token: z.string().min(1, 'Reset token is required'),
   newPassword: z.string().min(8, 'Password must be at least 8 characters long'),
@@ -44,8 +51,10 @@ const resetPasswordSchema = z.object({
 // Authentication routes
 router.post('/register', validateRequest(registerSchema), register);
 router.post('/login', validateRequest(loginSchema), login);
+router.post('/verify-otp', validateRequest(verifyOtpSchema), verifyOtp);
 router.post('/admin/login', validateRequest(loginSchema), adminLogin);
 router.post('/forgot-password', validateRequest(forgotPasswordSchema), forgotPassword);
+router.post('/verify-reset-otp', validateRequest(verifyOtpSchema), verifyForgotPasswordOtp);
 router.post('/reset-password', validateRequest(resetPasswordSchema), resetPassword);
 router.get('/me', protect, getMe);
 router.post('/logout', protect, logout);

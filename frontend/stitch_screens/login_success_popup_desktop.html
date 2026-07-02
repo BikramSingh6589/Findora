@@ -1,0 +1,269 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Login Success - FoundIt!</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "tertiary": "#735500",
+                  "on-primary": "#ffffff",
+                  "surface-container-low": "#f2f4f6",
+                  "on-primary-fixed": "#05006c",
+                  "error": "#ba1a1a",
+                  "dark-card": "#1F2937",
+                  "card-bg": "#FFFFFF",
+                  "tertiary-fixed": "#ffdf9f",
+                  "surface-container-highest": "#e0e3e5",
+                  "tertiary-fixed-dim": "#f9bd22",
+                  "danger": "#F43F5E",
+                  "tertiary-container": "#916c00",
+                  "border-default": "#E5E7EB",
+                  "secondary-container": "#8455ef",
+                  "on-background": "#191c1e",
+                  "secondary": "#6b38d4",
+                  "dark-primary": "#8B80FF",
+                  "surface-tint": "#474adb",
+                  "primary": "#4143d5",
+                  "on-error": "#ffffff",
+                  "on-surface-variant": "#464555",
+                  "text-primary": "#111827",
+                  "success": "#22C55E",
+                  "text-secondary": "#6B7280",
+                  "surface": "#f7f9fb",
+                  "on-tertiary-fixed-variant": "#5c4300",
+                  "primary-fixed-dim": "#c0c1ff",
+                  "info-ai": "#38BDF8",
+                  "surface-bright": "#f7f9fb",
+                  "on-error-container": "#93000a",
+                  "on-surface": "#191c1e",
+                  "inverse-on-surface": "#eff1f3",
+                  "dark-bg": "#111827",
+                  "outline": "#767586",
+                  "on-tertiary-container": "#fff7ee",
+                  "primary-fixed": "#e1e0ff",
+                  "on-secondary-fixed-variant": "#5516be",
+                  "on-primary-container": "#f9f6ff",
+                  "on-tertiary": "#ffffff",
+                  "outline-variant": "#c6c5d7",
+                  "on-secondary-container": "#fffbff",
+                  "secondary-fixed-dim": "#d0bcff",
+                  "surface-variant": "#e0e3e5",
+                  "secondary-fixed": "#e9ddff",
+                  "on-secondary": "#ffffff",
+                  "warning": "#FB923C",
+                  "error-container": "#ffdad6",
+                  "surface-container-high": "#e6e8ea",
+                  "background": "#f7f9fb",
+                  "primary-container": "#5b5fef",
+                  "inverse-surface": "#2d3133",
+                  "surface-container-lowest": "#ffffff",
+                  "surface-dim": "#d8dadc",
+                  "surface-container": "#eceef0",
+                  "on-secondary-fixed": "#23005c",
+                  "on-primary-fixed-variant": "#2c2cc3",
+                  "on-tertiary-fixed": "#261a00",
+                  "inverse-primary": "#c0c1ff"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "xl": "32px",
+                  "xs": "4px",
+                  "base": "8px",
+                  "2xl": "48px",
+                  "3xl": "64px",
+                  "margin-desktop": "32px",
+                  "lg": "24px",
+                  "gutter": "16px",
+                  "margin-mobile": "16px",
+                  "sm": "8px",
+                  "md": "16px"
+          },
+          "fontFamily": {
+                  "label-md": ["Plus Jakarta Sans"],
+                  "page-title-mobile": ["Plus Jakarta Sans"],
+                  "card-title": ["Plus Jakarta Sans"],
+                  "caption": ["Plus Jakarta Sans"],
+                  "page-title": ["Plus Jakarta Sans"],
+                  "hero-title": ["Plus Jakarta Sans"],
+                  "body-lg": ["Plus Jakarta Sans"],
+                  "body-md": ["Plus Jakarta Sans"],
+                  "section-title": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+                  "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                  "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                  "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                  "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                  "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                  "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                  "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .modal-overlay {
+      background: rgba(25, 28, 30, 0.6);
+      backdrop-filter: blur(8px);
+      transition: opacity 0.3s ease-out;
+    }
+
+    .modal-content {
+      animation: modalScaleUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalScaleUp {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #4143d5;
+      border-radius: 2px;
+    }
+
+    .primary-gradient {
+      background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+    }
+
+    .hover-lift {
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .hover-lift:hover {
+      transform: scale(1.03) translateY(-2px);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface h-screen w-screen relative flex items-center justify-center">
+<!-- Background Content (Simulated Dashboard Preview) -->
+<div class="absolute inset-0 w-full h-full opacity-30 select-none pointer-events-none p-margin-desktop grid grid-cols-12 gap-gutter">
+<div class="col-span-3 h-full bg-surface-container rounded-2xl"></div>
+<div class="col-span-9 flex flex-col gap-lg">
+<div class="h-16 bg-surface-container rounded-xl w-full"></div>
+<div class="grid grid-cols-3 gap-lg">
+<div class="h-40 bg-surface-container-high rounded-2xl"></div>
+<div class="h-40 bg-surface-container-high rounded-2xl"></div>
+<div class="h-40 bg-surface-container-high rounded-2xl"></div>
+</div>
+<div class="h-full bg-surface-container rounded-2xl"></div>
+</div>
+</div>
+<!-- Modal Overlay -->
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-margin-mobile">
+<!-- Modal Container -->
+<div class="modal-content relative bg-surface-container-lowest w-full max-w-lg rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex flex-col items-center">
+<!-- Illustration Section -->
+<div class="w-full relative h-64 bg-[#F0F4FF] flex items-center justify-center overflow-hidden">
+<!-- Floating Doodles (Background of Illustration) -->
+<div class="absolute inset-0 opacity-40">
+<span class="material-symbols-outlined absolute top-8 left-12 text-primary/30" style="font-size: 32px;">school</span>
+<span class="material-symbols-outlined absolute bottom-12 right-12 text-secondary/30" style="font-size: 40px;">auto_awesome</span>
+<span class="material-symbols-outlined absolute top-12 right-20 text-tertiary-container/30" style="font-size: 24px;">music_note</span>
+<span class="material-symbols-outlined absolute bottom-20 left-16 text-info-ai/30" style="font-size: 28px;">favorite</span>
+</div>
+<!-- Primary Illustration -->
+<div class="relative z-10 w-full h-full flex items-center justify-center">
+<img class="h-full w-full object-contain p-8" data-alt="A modern, whimsical flat illustration in soft pastel tones of blue, lavender, and mint green. A friendly student character with a backpack is cheerfully walking through an ornate, welcoming campus gateway decorated with floating graduation caps and musical notes. The lighting is soft and optimistic, evoking a sense of belonging and achievement within a vibrant university environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqST5S7h0w2iZh4zHwEQLutgCjexaK5zAzbr91v3FDc7kGE1DI_am3zwbaYm5esBxGjiyvDUipndNnVMiUEe09f7qAe7wmntfxfnzamW7m29saiIOKF8Yt2lQ_kyPT7ekUAUYFdatYSwCjZpwhZx7eBE0ENg6X8b8Pi_HKbbZSN7MQJpSm0rRwR_t3bcNrSLXpUf0j2Y7KJ9aQ629sOGPyu-axkhF3lp_PwxJ6Jq9_I_6Q3ri5Serf">
+</div>
+</div>
+<!-- Text Content -->
+<div class="px-xl py-xl text-center flex flex-col gap-sm items-center">
+<h1 class="font-page-title text-page-title text-on-surface">Welcome Back, Alex! 👋</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm">
+          You've successfully signed in. Ready to help the campus today?
+        </p>
+</div>
+<!-- Action Footer -->
+<div class="w-full px-xl pb-xl flex flex-col gap-md">
+<button class="primary-gradient w-full py-4 px-lg rounded-2xl text-on-primary font-label-md text-label-md hover-lift shadow-[0_8px_20px_rgba(65,67,213,0.3)] active:scale-95 transition-all">Go to Home</button>
+<button class="w-full py-2 text-on-surface-variant font-label-md text-label-md hover:text-primary transition-colors active:scale-95">View Dashboard</button>
+</div>
+<!-- Visual Flairs (Confetti Burst Points) -->
+<div class="absolute inset-0 pointer-events-none" id="confetti-container"><div class="confetti" style="left: 97.8995%; background-color: rgb(56, 189, 248); width: 5.2067px; height: 5.2067px; opacity: 0.0985005;"></div><div class="confetti" style="left: 91.2175%; background-color: rgb(65, 67, 213); width: 11.3844px; height: 11.3844px; opacity: 0.0937728;"></div><div class="confetti" style="left: 25.054%; background-color: rgb(56, 189, 248); width: 6.35248px; height: 6.35248px; opacity: 0.179423;"></div><div class="confetti" style="left: 21.0217%; background-color: rgb(65, 67, 213); width: 10.1053px; height: 10.1053px; opacity: 0.482375;"></div><div class="confetti" style="left: 71.7066%; background-color: rgb(107, 56, 212); width: 9.63823px; height: 9.63823px; opacity: 0.950929;"></div><div class="confetti" style="left: 23.1265%; background-color: rgb(132, 85, 239); width: 10.7388px; height: 10.7388px; opacity: 0.506651;"></div><div class="confetti" style="left: 74.0908%; background-color: rgb(65, 67, 213); width: 10.5391px; height: 10.5391px; opacity: 0.968998;"></div><div class="confetti" style="left: 28.7772%; background-color: rgb(132, 85, 239); width: 11.9596px; height: 11.9596px; opacity: 0.862185;"></div><div class="confetti" style="left: 68.4613%; background-color: rgb(107, 56, 212); width: 10.5009px; height: 10.5009px; opacity: 0.0211949;"></div><div class="confetti" style="left: 8.73797%; background-color: rgb(107, 56, 212); width: 8.70889px; height: 8.70889px; opacity: 0.856342;"></div><div class="confetti" style="left: 52.3103%; background-color: rgb(65, 67, 213); width: 7.85949px; height: 7.85949px; opacity: 0.0637759;"></div><div class="confetti" style="left: 32.9962%; background-color: rgb(132, 85, 239); width: 4.37547px; height: 4.37547px; opacity: 0.93245;"></div><div class="confetti" style="left: 89.7135%; background-color: rgb(56, 189, 248); width: 11.0477px; height: 11.0477px; opacity: 0.643383;"></div><div class="confetti" style="left: 92.256%; background-color: rgb(107, 56, 212); width: 9.3785px; height: 9.3785px; opacity: 0.0662592;"></div><div class="confetti" style="left: 83.4321%; background-color: rgb(56, 189, 248); width: 11.6632px; height: 11.6632px; opacity: 0.0991329;"></div><div class="confetti" style="left: 46.9188%; background-color: rgb(107, 56, 212); width: 10.3123px; height: 10.3123px; opacity: 0.313723;"></div><div class="confetti" style="left: 74.3491%; background-color: rgb(56, 189, 248); width: 5.32757px; height: 5.32757px; opacity: 0.780954;"></div><div class="confetti" style="left: 69.6506%; background-color: rgb(56, 189, 248); width: 6.204px; height: 6.204px; opacity: 0.596622;"></div><div class="confetti" style="left: 78.4222%; background-color: rgb(65, 67, 213); width: 7.09276px; height: 7.09276px; opacity: 0.254123;"></div><div class="confetti" style="left: 27.0879%; background-color: rgb(56, 189, 248); width: 9.89743px; height: 9.89743px; opacity: 0.818495;"></div><div class="confetti" style="left: 13.9979%; background-color: rgb(132, 85, 239); width: 10.7829px; height: 10.7829px; opacity: 0.654001;"></div><div class="confetti" style="left: 73.4291%; background-color: rgb(65, 67, 213); width: 10.4396px; height: 10.4396px; opacity: 0.539554;"></div><div class="confetti" style="left: 97.9225%; background-color: rgb(251, 146, 60); width: 9.45333px; height: 9.45333px; opacity: 0.942384;"></div><div class="confetti" style="left: 74.114%; background-color: rgb(65, 67, 213); width: 7.83328px; height: 7.83328px; opacity: 0.878948;"></div><div class="confetti" style="left: 14.1436%; background-color: rgb(107, 56, 212); width: 8.44593px; height: 8.44593px; opacity: 0.0759913;"></div><div class="confetti" style="left: 94.2877%; background-color: rgb(251, 146, 60); width: 6.75561px; height: 6.75561px; opacity: 0.510503;"></div><div class="confetti" style="left: 60.0515%; background-color: rgb(251, 146, 60); width: 9.49481px; height: 9.49481px; opacity: 0.817698;"></div><div class="confetti" style="left: 81.6809%; background-color: rgb(251, 146, 60); width: 5.71188px; height: 5.71188px; opacity: 0.175078;"></div><div class="confetti" style="left: 17.8396%; background-color: rgb(65, 67, 213); width: 6.31361px; height: 6.31361px; opacity: 0.987469;"></div><div class="confetti" style="left: 48.9086%; background-color: rgb(65, 67, 213); width: 11.5616px; height: 11.5616px; opacity: 0.759801;"></div><div class="confetti" style="left: 87.4103%; background-color: rgb(251, 146, 60); width: 8.98343px; height: 8.98343px; opacity: 0.313871;"></div><div class="confetti" style="left: 33.7502%; background-color: rgb(56, 189, 248); width: 4.7663px; height: 4.7663px; opacity: 0.00580636;"></div><div class="confetti" style="left: 15.9167%; background-color: rgb(251, 146, 60); width: 7.00488px; height: 7.00488px; opacity: 0.263594;"></div><div class="confetti" style="left: 32.1456%; background-color: rgb(107, 56, 212); width: 9.61039px; height: 9.61039px; opacity: 0.930513;"></div><div class="confetti" style="left: 53.3486%; background-color: rgb(56, 189, 248); width: 7.10661px; height: 7.10661px; opacity: 0.696385;"></div><div class="confetti" style="left: 92.911%; background-color: rgb(132, 85, 239); width: 11.045px; height: 11.045px; opacity: 0.920822;"></div><div class="confetti" style="left: 15.2449%; background-color: rgb(132, 85, 239); width: 5.01805px; height: 5.01805px; opacity: 0.539074;"></div><div class="confetti" style="left: 63.2651%; background-color: rgb(132, 85, 239); width: 10.1768px; height: 10.1768px; opacity: 0.334216;"></div><div class="confetti" style="left: 45.6156%; background-color: rgb(132, 85, 239); width: 10.3787px; height: 10.3787px; opacity: 0.428313;"></div><div class="confetti" style="left: 23.4961%; background-color: rgb(107, 56, 212); width: 4.31855px; height: 4.31855px; opacity: 0.0719259;"></div></div>
+</div>
+</div>
+<script>
+    // Micro-interaction: Confetti Burst on Load
+    function createConfetti() {
+      const container = document.getElementById('confetti-container');
+      const colors = ['#4143d5', '#6b38d4', '#8455ef', '#38BDF8', '#FB923C'];
+      
+      for (let i = 0; i < 40; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        // Random properties
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const left = Math.random() * 100 + '%';
+        const top = '-10%';
+        const size = (Math.random() * 8 + 4) + 'px';
+        const delay = Math.random() * 2;
+        const duration = Math.random() * 2 + 3;
+        
+        confetti.style.left = left;
+        confetti.style.backgroundColor = color;
+        confetti.style.width = size;
+        confetti.style.height = size;
+        confetti.style.opacity = Math.random();
+        
+        container.appendChild(confetti);
+
+        // Animate
+        confetti.animate([
+          { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+          { transform: `translateY(500px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+        ], {
+          duration: duration * 1000,
+          delay: delay * 1000,
+          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          fill: 'forwards'
+        });
+      }
+    }
+
+    // Trigger animation slightly after modal scale up
+    setTimeout(createConfetti, 400);
+
+    // Subtle parallax effect on illustration for "Tactile" feel
+    document.addEventListener('mousemove', (e) => {
+      const illustration = document.querySelector('.modal-content img');
+      const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+      const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+      if(illustration) {
+        illustration.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
+      }
+    });
+  </script>
+
+
+</body></html>

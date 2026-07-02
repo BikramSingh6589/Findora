@@ -6,7 +6,8 @@ interface AuthContextType {
   user: any | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: any) => Promise<void>;
+  register: (data: any) => Promise<any>;
+  verifyOtp: (email: string, otp: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
   error: string | null;
@@ -67,12 +68,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     try {
       const res = await axios.post(`${API_BASE}/api/auth/register`, data);
+      return res.data;
+    } catch (err: any) {
+      const msg = err.response?.data?.error || 'Registration failed';
+      setError(msg);
+      throw new Error(msg);
+    }
+  };
+
+  const verifyOtp = async (email: string, otp: string) => {
+    setError(null);
+    try {
+      const res = await axios.post(`${API_BASE}/api/auth/verify-otp`, { email, otp });
       const { token: receivedToken, user: receivedUser } = res.data;
       localStorage.setItem('token', receivedToken);
       setToken(receivedToken);
       setUser(receivedUser);
     } catch (err: any) {
-      const msg = err.response?.data?.error || 'Registration failed';
+      const msg = err.response?.data?.error || 'Verification failed';
       setError(msg);
       throw new Error(msg);
     }
@@ -91,6 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isAuthenticated: !!token,
       login,
       register,
+      verifyOtp,
       logout,
       loading,
       error

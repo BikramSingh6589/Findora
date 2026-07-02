@@ -1,0 +1,260 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Login Success - FoundIt!</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#735500",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f2f4f6",
+                    "on-primary-fixed": "#05006c",
+                    "error": "#ba1a1a",
+                    "dark-card": "#1F2937",
+                    "card-bg": "#FFFFFF",
+                    "tertiary-fixed": "#ffdf9f",
+                    "surface-container-highest": "#e0e3e5",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "danger": "#F43F5E",
+                    "tertiary-container": "#916c00",
+                    "border-default": "#E5E7EB",
+                    "secondary-container": "#8455ef",
+                    "on-background": "#191c1e",
+                    "secondary": "#6b38d4",
+                    "dark-primary": "#8B80FF",
+                    "surface-tint": "#474adb",
+                    "primary": "#4143d5",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#464555",
+                    "text-primary": "#111827",
+                    "success": "#22C55E",
+                    "text-secondary": "#6B7280",
+                    "surface": "#f7f9fb",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "info-ai": "#38BDF8",
+                    "surface-bright": "#f7f9fb",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#191c1e",
+                    "inverse-on-surface": "#eff1f3",
+                    "dark-bg": "#111827",
+                    "outline": "#767586",
+                    "on-tertiary-container": "#fff7ee",
+                    "primary-fixed": "#e1e0ff",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "on-primary-container": "#f9f6ff",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#c6c5d7",
+                    "on-secondary-container": "#fffbff",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "surface-variant": "#e0e3e5",
+                    "secondary-fixed": "#e9ddff",
+                    "on-secondary": "#ffffff",
+                    "warning": "#FB923C",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#e6e8ea",
+                    "background": "#f7f9fb",
+                    "primary-container": "#5b5fef",
+                    "inverse-surface": "#2d3133",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-dim": "#d8dadc",
+                    "surface-container": "#eceef0",
+                    "on-secondary-fixed": "#23005c",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "on-tertiary-fixed": "#261a00",
+                    "inverse-primary": "#c0c1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "xs": "4px",
+                    "base": "8px",
+                    "2xl": "48px",
+                    "3xl": "64px",
+                    "margin-desktop": "32px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "margin-mobile": "16px",
+                    "sm": "8px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-md": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "card-title": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .success-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f9bd22;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center p-0 m-0 overflow-hidden">
+<!-- Mock Background Content (Dimmed) -->
+<div class="absolute inset-0 z-0 opacity-40 select-none pointer-events-none p-margin-mobile">
+<div class="max-w-[390px] mx-auto h-full flex flex-col gap-lg">
+<div class="h-16 w-full bg-surface-container rounded-xl"></div>
+<div class="h-48 w-full bg-surface-container rounded-2xl"></div>
+<div class="grid grid-cols-2 gap-md">
+<div class="h-32 bg-surface-container rounded-2xl"></div>
+<div class="h-32 bg-surface-container rounded-2xl"></div>
+</div>
+<div class="h-64 w-full bg-surface-container rounded-2xl"></div>
+</div>
+</div>
+<!-- Backdrop Overlay -->
+<div class="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-10 transition-opacity duration-500"></div>
+<!-- Success Popup (390px Frame Center) -->
+<main class="relative z-20 w-[358px] md:w-[390px] mx-auto overflow-hidden">
+<div class="glass-morphism rounded-[32px] p-lg shadow-[0_20px_50px_rgba(65,67,213,0.15)] flex flex-col items-center text-center animate-in fade-in zoom-in duration-300">
+<!-- Gamified XP Badge / Success Indicator -->
+<div class="mb-lg relative">
+<div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full"></div>
+<div class="relative w-48 h-48 flex items-center justify-center success-float">
+<img alt="Success Illustration" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLvTcuHIE8I4wsj7a9G_Yvx_B48qohIFDWyK3DlADywXS0PAw0rGQ14n1HeEp3V8IJnKWqDVKSIcAjgAFGGEgqTLF0_-z6BPhQylu783jIFPSORkIMYV0Jk2upMMMX210sq0dIyJKDC0N-Xoam03MT8JBw9Ip7VniLCKKpLBT7aSJWVTsG0P7Q9MyHoG-UEoSdgaDPyyjUiqqQrU3yu_ipMdRb0CDSStQ7-7OVXfY2dGIvJ1dVievYGaNFY">
+</div>
+<!-- Sparkle Icons -->
+<span class="material-symbols-outlined absolute -top-2 -right-2 text-warning text-3xl animate-pulse">auto_awesome</span>
+<span class="material-symbols-outlined absolute top-1/2 -left-6 text-primary text-2xl animate-bounce">celebration</span>
+</div>
+<!-- Content -->
+<div class="space-y-sm mb-xl">
+<h1 class="font-page-title-mobile text-page-title-mobile text-primary tracking-tight">
+                    Welcome Back! 🎉
+                </h1>
+<p class="font-body-md text-body-md text-on-surface-variant px-md">
+                    Successfully signed in as <span class="font-bold text-on-surface">Alex Johnson</span>.
+                </p>
+</div>
+<!-- Dashboard Stats Preview (Bento-style snippet) -->
+<div class="w-full grid grid-cols-2 gap-sm mb-xl">
+<div class="bg-surface-container-low p-md rounded-2xl border border-outline-variant/30 flex flex-col items-start gap-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">military_tech</span>
+<span class="font-caption text-caption text-on-surface-variant">Level</span>
+<span class="font-label-md text-label-md">Senior Finder</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-2xl border border-outline-variant/30 flex flex-col items-start gap-xs">
+<span class="material-symbols-outlined text-tertiary-container text-[20px]">stars</span>
+<span class="font-caption text-caption text-on-surface-variant">Total XP</span>
+<span class="font-label-md text-label-md">1,240 XP</span>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="gradient-primary w-full py-4 px-lg rounded-2xl text-on-primary font-label-md shadow-lg shadow-primary/25 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 group" onclick="window.location.href='#'">Go to Home
+                <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span></button>
+<!-- Gamification Tip -->
+<div class="mt-lg flex items-center gap-2 bg-secondary-container/10 px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">info</span>
+<span class="font-caption text-caption text-secondary">View Dashboard</span>
+</div>
+</div>
+</main>
+<!-- Confetti Particles Container -->
+<div class="fixed inset-0 pointer-events-none z-30" id="confetti-container"></div>
+<script>
+        // Simple confetti effect for success state
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#4143d5', '#6b38d4', '#f9bd22', '#22C55E', '#38BDF8'];
+            
+            for (let i = 0; i < 40; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.opacity = Math.random();
+                container.appendChild(confetti);
+
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+
+        // Trigger on load
+        window.addEventListener('load', () => {
+            createConfetti();
+        });
+
+        // Re-trigger micro-confetti on button hover for delight
+        const mainBtn = document.querySelector('button');
+        mainBtn.addEventListener('mouseenter', () => {
+            // Subtle feedback if needed
+        });
+    </script>
+
+
+</body></html>

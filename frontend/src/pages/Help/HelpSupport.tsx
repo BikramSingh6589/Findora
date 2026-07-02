@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { PlusSquare, Search, Verified, Handshake, Shield, Medal, Mail, MapPin, Send, ChevronDown } from 'lucide-react';
 
 export const HelpSupport: React.FC = () => {
@@ -23,7 +23,7 @@ export const HelpSupport: React.FC = () => {
           <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl"></div>
           <img 
             className="w-full h-full object-contain relative z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-500" 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5MMnl8eoP7RYUu-aSzuJoTeCUkPt8i4wWl-pI4vhU5_HvtTS36jgBeaAedfKpw0YF7UH6rRWFSpwOMj7Hv47Utet3h7Pp3HST3MtWNehxCvLzCArdAG4gx-q98tNhbxr_3SdEQrFMl8UqEo-Mkiqi-hiGHJmalpao6niYQWKOHYjgeV6PRHlZCXTfM5m3uZTKpfnGJKbNykMCQzy14TSLNInVg24WKgF8nnkD8Lfx-2UD2Qkx9rmSj-6GlzGC6p2uUQkc6MZlyOA" 
+            src="/images/help_support_illustration.png" 
             alt="AI Mascot"
           />
         </div>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campus Connect | Error</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "success": "#22C55E",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-container": "#fff7ee",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "border-default": "#E5E7EB",
+                    "warning": "#FB923C",
+                    "on-tertiary-fixed": "#261a00",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#f9f6ff",
+                    "text-primary": "#111827",
+                    "surface-dim": "#d8dadc",
+                    "on-primary-fixed": "#05006c",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#ffdf9f",
+                    "dark-card": "#1F2937",
+                    "primary-fixed": "#e1e0ff",
+                    "dark-primary": "#8B80FF",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "on-surface": "#191c1e",
+                    "dark-bg": "#111827",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "text-secondary": "#6B7280",
+                    "inverse-primary": "#c0c1ff",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "card-bg": "#FFFFFF",
+                    "on-surface-variant": "#464555",
+                    "on-background": "#191c1e",
+                    "secondary-container": "#8455ef",
+                    "surface-container-high": "#e6e8ea",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c6c5d7",
+                    "primary": "#4143d5",
+                    "danger": "#F43F5E",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "background": "#f7f9fb",
+                    "surface-variant": "#e0e3e5",
+                    "surface-tint": "#474adb",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "outline": "#767586",
+                    "info-ai": "#38BDF8",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#e9ddff",
+                    "error": "#ba1a1a",
+                    "primary-container": "#5b5fef",
+                    "tertiary-container": "#916c00",
+                    "tertiary": "#735500",
+                    "secondary": "#6b38d4",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-secondary-fixed": "#23005c",
+                    "on-secondary-container": "#fffbff",
+                    "inverse-surface": "#2d3133"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "xs": "4px",
+                    "margin-desktop": "32px",
+                    "margin-mobile": "16px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "base": "8px",
+                    "gutter": "16px",
+                    "3xl": "64px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .error-glow {
+            box-shadow: 0 10px 40px -10px rgba(186, 26, 26, 0.2);
+        }
+        .modal-blur {
+            backdrop-filter: blur(8px);
+        }
+        .transition-lift {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .transition-lift:hover {
+            transform: scale(1.03);
+        }
+        .transition-lift:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-surface min-h-screen">
+<!-- Mock Background Content to provide context for the Modal -->
+<header class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-md bg-background dark:bg-dark-bg">
+<div class="font-page-title-mobile text-page-title-mobile font-bold text-primary dark:text-dark-primary">Campus Connect</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant">help_outline</span>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a friendly university student smiling warmly, wearing a modern indigo hoodie, with a blurred college campus courtyard in the background. The lighting is bright and optimistic, reflecting a corporate modern aesthetic with clean lines and soft colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1pcqemefAHgiwOw91YgnnZgmBzGAWyR8NJkQA97b7WmqY2ioj2fjKjTnEEifCO9yMTQSp6mGtNIhUlQs5W5ZPJXCjSmwEUGn0i7TRJ2OkOsrPlkHZsrjW38ojAotPvRfRgE8SO9pAkgBHe2npspHbLmQNzoGAJUGghcwOzPhYMRQTM4M8x7Ujim8J4JMQh_65YCvBgRgi1pdeCylztVJz5KGu6xLaFrA4wy9G81JskpXqnBNDGpVd"/>
+</div>
+</div>
+</header>
+<main class="px-margin-mobile md:px-margin-desktop pt-xl">
+<section class="max-w-4xl mx-auto">
+<div class="mb-xl">
+<h1 class="font-page-title text-page-title mb-sm">Matches</h1>
+<p class="text-on-surface-variant font-body-lg">Check your recent connections for lost items.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Mock Cards -->
+<div class="bg-card-bg rounded-2xl p-md shadow-md opacity-40">
+<div class="w-full h-40 bg-surface-container rounded-xl mb-md"></div>
+<div class="h-6 w-3/4 bg-surface-container rounded mb-sm"></div>
+<div class="h-4 w-1/2 bg-surface-container rounded"></div>
+</div>
+<div class="bg-card-bg rounded-2xl p-md shadow-md opacity-40">
+<div class="w-full h-40 bg-surface-container rounded-xl mb-md"></div>
+<div class="h-6 w-3/4 bg-surface-container rounded mb-sm"></div>
+<div class="h-4 w-1/2 bg-surface-container rounded"></div>
+</div>
+<div class="bg-card-bg rounded-2xl p-md shadow-md opacity-40">
+<div class="w-full h-40 bg-surface-container rounded-xl mb-md"></div>
+<div class="h-6 w-3/4 bg-surface-container rounded mb-sm"></div>
+<div class="h-4 w-1/2 bg-surface-container rounded"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- FAILURE MODAL OVERLAY -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-margin-mobile modal-blur bg-on-surface/20" id="modalOverlay">
+<!-- Modal Container -->
+<div class="bg-card-bg w-full max-w-[520px] rounded-2xl error-glow overflow-hidden transform transition-all duration-300 scale-100 shadow-2xl flex flex-col items-center text-center p-xl relative" style="border-radius: 24px;">
+<!-- Close Button (Subtle) -->
+<button class="absolute top-md right-md text-outline hover:text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+<!-- Warning Icon / Gamification Illustration Container -->
+<div class="mb-xl relative">
+<!-- Soft Glow Backdrop -->
+<div class="absolute inset-0 bg-error/10 blur-3xl rounded-full scale-150"></div>
+<div class="relative bg-error-container w-24 h-24 rounded-full flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-error text-[48px]" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+</div>
+<!-- Content -->
+<div class="space-y-md mb-2xl">
+<h2 class="font-section-title text-section-title text-text-primary tracking-tight">Oops! Something went wrong 🤷</h2>
+<p class="font-body-md text-on-surface-variant max-w-[360px] mx-auto leading-relaxed">
+                    We couldn't process your request at this time. Please check your connection and try again.
+                </p>
+</div>
+<!-- Action Cluster -->
+<div class="w-full flex flex-col md:flex-row gap-md items-center justify-center">
+<button class="w-full md:w-auto order-1 md:order-2 px-xl py-md bg-danger text-on-primary font-label-md rounded-full shadow-lg transition-lift flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-white text-[20px]">refresh</span>
+                    Retry
+                </button>
+<button class="w-full md:w-auto order-2 md:order-1 px-xl py-md border-2 border-outline/20 text-on-surface-variant font-label-md rounded-full hover:bg-surface-container-low transition-all duration-200">
+                    Cancel
+                </button>
+</div>
+<!-- Helpful Tip (Senior Student Persona) -->
+<div class="mt-xl pt-lg border-t border-border-default w-full">
+<div class="flex items-center justify-center gap-xs text-caption text-text-secondary">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span>Pro-tip: Check if your campus Wi-Fi login hasn't expired!</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation (Shared Component) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-sm py-xs pb-safe bg-surface-container-lowest dark:bg-dark-card shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:hidden rounded-t-xl">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-md text-label-md">Lost &amp; Found</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1">
+<span class="material-symbols-outlined">travel_explore</span>
+<span class="font-label-md text-label-md">Matches</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction: Close modal on overlay click
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('opacity-0');
+                this.classList.add('pointer-events-none');
+            }
+        });
+
+        // Micro-interaction: Cancel button dismiss
+        document.querySelectorAll('button').forEach(btn => {
+            if(btn.innerText.trim() === 'Cancel' || btn.querySelector('span')?.innerText === 'close') {
+                btn.addEventListener('click', () => {
+                    const overlay = document.getElementById('modalOverlay');
+                    overlay.classList.add('opacity-0');
+                    overlay.classList.add('pointer-events-none');
+                });
+            }
+        });
+    </script>
+</body></html>

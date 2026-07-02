@@ -29,7 +29,7 @@ export const ReportFoundSuccess: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
           <img 
             className="w-full h-full object-cover" 
-            src="https://lh3.googleusercontent.com/aida/AP1WRLtOhExekaDGuOHaDdP5_GjMklfARCuGrQZ-9Pg3cinp_gHdNr29bE3DsuREaYv0aPDejwLWlMXiqbgyOxms7AdY8Fd6W5iiBDEG6QtSHS1lEqdC6pNNK6z3vwC28K9u5YdkBxxWLxJcDyd4lfzgwMTNvS2xSJMYhc0Qupb-at6JqO317jIXI4Z-1Fgol2RrSyieMeihWr-mFQY-uJ3TQtTS2PxMmwLsK7HT3XFpsFOeJlsNY7CasCj37To"
+            src="/images/report_found_success.png"
             alt="Hero Illustration"
           />
           <div className="absolute bottom-8 left-8 z-20 text-white">

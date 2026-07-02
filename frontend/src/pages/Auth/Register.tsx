@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User as UserIcon, AtSign, Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/Button';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePopup } from '../../contexts/PopupContext';
 
 export const Register: React.FC = () => {
   const { register, error } = useAuth();
+  const { showSuccess, showFailure } = usePopup();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -45,13 +46,13 @@ export const Register: React.FC = () => {
         confirmPassword
       });
       
-      setShowSuccessToast(true);
-      setTimeout(() => {
-        setShowSuccessToast(false);
-        navigate('/');
-      }, 2000);
+      showSuccess('Success! 🎉', 'Your account has been registered successfully. A verification OTP code has been sent to your email.', () => {
+        navigate('/verify-otp', { state: { email, purpose: 'signup' } });
+      });
     } catch (err: any) {
-      setLocalError(err.message || 'Registration failed');
+      const errMsg = err.message || 'Registration failed';
+      setLocalError(errMsg);
+      showFailure('Oops! Something went wrong 🤷', errMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -59,16 +60,6 @@ export const Register: React.FC = () => {
 
   return (
     <main className="min-h-screen w-full flex flex-col md:flex-row bg-surface relative">
-      {/* Premium Alert/Toast Popup */}
-      {showSuccessToast && (
-        <div className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-primary text-white px-6 py-4 rounded-2xl shadow-2xl animate-bounce border border-white/20">
-          <Sparkles className="w-6 h-6 animate-spin" />
-          <div>
-            <p className="font-bold text-sm">Account Created Successfully! 🎉</p>
-            <p className="text-xs text-white/80">Welcome to the Campus Lost & Found community.</p>
-          </div>
-        </div>
-      )}
 
       {/* Left Side: Illustration Area */}
       <section className="hidden md:flex relative md:w-1/2 bg-gradient-to-br from-[#5B5FEF] to-[#8B5CF6] overflow-hidden flex-col p-12 justify-center">

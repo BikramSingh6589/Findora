@@ -16,6 +16,9 @@ const UserSchema = new Schema({
   reputation:      { type: Number, default: 0 },
   itemsReturned:   { type: Number, default: 0 },
   itemsReported:   { type: Number, default: 0 },
+  isVerified:      { type: Boolean, default: false },
+  otp:             { type: String, default: null },
+  otpExpiry:       { type: Date, default: null },
   resetToken:      { type: String, default: null },
   resetTokenExpiry:{ type: Date, default: null },
 }, { timestamps: true });

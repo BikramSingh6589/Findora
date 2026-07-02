@@ -1,0 +1,360 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Dashboard | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "secondary": "#6b38d4",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-container": "#fff7ee",
+                        "surface-container-high": "#e6e8ea",
+                        "text-primary": "#111827",
+                        "primary-fixed": "#e1e0ff",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "primary": "#4143d5",
+                        "on-tertiary": "#ffffff",
+                        "danger": "#F43F5E",
+                        "outline-variant": "#c6c5d7",
+                        "on-primary-container": "#f9f6ff",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "on-surface-variant": "#464555",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#735500",
+                        "outline": "#767586",
+                        "surface-container-lowest": "#ffffff",
+                        "dark-card": "#1F2937",
+                        "warning": "#FB923C",
+                        "on-tertiary-fixed": "#261a00",
+                        "secondary-container": "#8455ef",
+                        "info-ai": "#38BDF8",
+                        "background": "#f7f9fb",
+                        "surface-container": "#eceef0",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed": "#05006c",
+                        "on-background": "#191c1e",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-error": "#ffffff",
+                        "dark-primary": "#8B80FF",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "inverse-primary": "#c0c1ff",
+                        "on-secondary-fixed": "#23005c",
+                        "on-secondary-container": "#fffbff",
+                        "border-default": "#E5E7EB",
+                        "success": "#22C55E",
+                        "dark-bg": "#111827",
+                        "card-bg": "#FFFFFF",
+                        "primary-container": "#5b5fef",
+                        "on-surface": "#191c1e",
+                        "surface-tint": "#474adb",
+                        "surface-container-highest": "#e0e3e5",
+                        "text-secondary": "#6B7280",
+                        "inverse-surface": "#2d3133",
+                        "secondary-fixed": "#e9ddff",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "tertiary-container": "#916c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "sm": "8px",
+                        "3xl": "64px",
+                        "2xl": "48px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .reward-gradient {
+            background: linear-gradient(135deg, #f9bd22 0%, #FB923C 100%);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+        }
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-text-primary font-body-md antialiased min-h-screen pb-24">
+<!-- Top Navigation Anchor -->
+<header class="bg-surface/80 backdrop-blur-md sticky top-0 z-50 flex justify-between items-center w-full px-margin-mobile py-md shadow-sm">
+<div class="flex items-center gap-2">
+<span class="font-page-title text-page-title-mobile font-bold text-primary">Lost&amp;Found AI</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A close-up high-quality portrait of a friendly student named Alice, wearing a stylish denim jacket and a warm, inviting smile. She is standing in a brightly lit campus environment with soft, blurred greenery in the background. The aesthetic is clean, modern, and youthful, reflecting a high-end educational brand vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYqskszM5EPswNP2YgyRkkta8mPIhHhSOeJ6RolT3bZYfY93DIyaR1s3Qqun0SgeYUQpsM-kA0iePAOHPt1JA-BnVK0kYE38V6Y3didL3l7I37FzKfFeZhKEK20OJECP1uCKs_E9ZXCm-RBniA1I7SFBJ59hLRF6dMcZAYAMflGAxfkJ_OHBsthVpZbG-dCKanbX1UDMnAu260IbCamfNdWw_FdBW7efpSEdkNOZe2XMBxmw1BV9uTOWNbr44jvYmk45724dKCtic">
+</div>
+</div>
+</header>
+<main class="px-margin-mobile py-lg space-y-xl">
+<!-- Welcome Header & XP Section -->
+<section class="space-y-md animate-in fade-in slide-in-from-bottom-4 duration-700"><div class="absolute right-0 top-0 -z-10 opacity-20 w-32 h-32 overflow-hidden">https://lh3.googleusercontent.com/aida-public/AB6AXuDDCPtlr77vXZhmRpzBbrHXmcwc2OqBILJk5AfcZgC7rW40q9qJa7l-fkvn6WaSOALMCZSB06gFSWgcsuavBLkKDp7S1ubHdVc4hs5hv2a3kueCgwHabaD7vYwYJSw3cHJp1BFhUBp_So_mlSd3NIO5GTN4QzND_LoE3WhVMTtDO7fczl2rkFkSukqMEyeOhdBEtOvvtNkGVCN-u3OkTUrcKDLOOufsmaM_XsmvcGKgd4LElSrzhRiijeUIOXNgjRMNKmCssuQ45sI</div>
+<div>
+<h1 class="font-page-title-mobile text-page-title-mobile text-text-primary">Welcome, Alice 👋</h1>
+<p class="text-text-secondary font-body-md mt-1">Campus helper since Sep 2023</p>
+</div>
+<!-- XP Progress Card -->
+<div class="glass-card rounded-2xl p-md shadow-lg flex flex-col gap-sm">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary-fixed-dim fill-icon">military_tech</span>
+<span class="font-label-md text-label-md">Level 12 Explorer</span>
+</div>
+<span class="font-label-md text-label-md text-primary">1,240 / 1,500 XP</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full reward-gradient rounded-full w-[82%] shadow-[0_0_8px_rgba(249,189,34,0.5)] transition-all duration-1000 ease-out"></div>
+</div>
+<p class="font-caption text-caption text-text-secondary italic">260 XP until your next badge!</p>
+</div>
+</section>
+<!-- Quick Actions Bento Grid -->
+<section class="space-y-md">
+<h2 class="font-section-title text-section-title text-text-primary">Quick Actions</h2>
+<div class="bento-grid">
+<!-- Report Lost Card -->
+<button class="flex flex-col items-center justify-center gap-sm p-lg bg-card-bg rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 group border border-surface-container"><div class="w-12 h-12 rounded-full bg-danger/10 text-danger flex items-center justify-center group-hover:bg-danger group-hover:text-white transition-colors"><span class="material-symbols-outlined">search_check</span></div><span class="font-label-md text-label-md">Report Lost</span></button>
+<!-- Report Found Card -->
+<button class="flex flex-col items-center justify-center gap-sm p-lg bg-card-bg rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 group border border-surface-container"><div class="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center group-hover:bg-success group-hover:text-white transition-colors"><span class="material-symbols-outlined">add_notes</span></div><span class="font-label-md text-label-md">Report Found</span></button>
+<div class="flex flex-col gap-sm p-md bg-secondary/10 rounded-2xl border border-surface-container shadow-sm hover:shadow-md transition-all duration-300 col-span-2">
+  <div class="flex items-center gap-sm">
+    <div class="w-10 h-10 rounded-full bg-secondary/10 text-secondary flex items-center justify-center">
+      <span class="material-symbols-outlined">groups</span>
+    </div>
+    <span class="font-label-md text-label-md text-text-primary">Community Buzz</span>
+  </div>
+  <p class="font-body-md text-body-md text-text-secondary">3 students are currently looking for items in the Engineering Quad.</p>
+  <div class="flex justify-end mt-1">
+    <button class="text-primary font-label-md text-label-md hover:underline">View Board</button>
+  </div>
+</div></div>
+</section>
+<!-- AI Matches Section -->
+<section class="space-y-md">
+<div class="flex justify-between items-end">
+<h2 class="font-section-title text-section-title text-text-primary">AI Matches</h2>
+<span class="text-primary font-label-md text-label-md">View all</span>
+</div>
+<div class="space-y-md">
+<!-- Match Card 1 -->
+<div class="bg-card-bg rounded-2xl p-md border-l-4 border-info-ai shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+<!-- Glow effect -->
+<div class="absolute inset-0 bg-info-ai/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex gap-md relative">
+<div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional, crisp photograph of a space-grey iPhone with a clear protective case resting on a polished wooden library desk. Sunlight streams in from a window, creating soft shadows and highlights. The image is clean and minimalist, focusing on the texture of the device and the grain of the wood, in a bright, modern light-mode setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDmK1p1AiJCsYW49Kl1sI8CjKlzIHeMLys2_v5omGgURqi2AaMBUzumK-f7W_4mx1OgukhHGXJz2pCmSmZ01SUpxa8qVnmwUtDtJdP5DWwp31t7zfxUpcv48157eWpEfAB6K2RGJRirwmWJjhAoVvYIROngzMc1hYrfEkjkWCWbFpDFJjZta0LIwpF9N-P8QixF_FpRSSpXlkWSBeePpF0exRoM3zNGcBwH75vWmnUSNJmUZAmZrMlB0JXaahjQ_ZUw5N01URXoe4">
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-body-md font-bold text-text-primary">iPhone 14 Pro</h3>
+<span class="bg-info-ai/10 text-info-ai font-label-md text-[12px] px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] fill-icon">auto_awesome</span>
+                                    98% Match
+                                </span>
+</div>
+<p class="font-caption text-caption text-text-secondary line-clamp-1">Found in Central Library Floor 2</p>
+<div class="flex justify-between items-center mt-2">
+<span class="font-caption text-caption text-text-secondary">2 hours ago</span>
+<button class="text-primary font-label-md text-label-md group-hover:underline">Claim Now</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Match Card 2 -->
+<div class="bg-card-bg rounded-2xl p-md border-l-4 border-info-ai shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+<div class="absolute inset-0 bg-info-ai/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex gap-md relative">
+<div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up studio shot of a set of silver keys on a distinctive blue fabric lanyard with white university branding. The lighting is soft and neutral, highlighting the metallic glint of the keys and the weave of the fabric. The background is a clean, out-of-focus grey, ensuring all attention is on the item. The aesthetic is professional and realistic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSzh73sj6z26JUkYM39X87tUG8PW4wiBvtziMV7en6CoN6QzbY8DSIwWBweCFKRXZOoexPsEHbEWNR6VtYMyvFDjU1qRkcR5nQMl4LPca-cpR0couYTc6rc0PwbUJSq0ppF96BOMWY-zQdXh9U7OAS5i15r5-Co4-nN3lt7ACElqWk_H8fGo6fID1ZdWKVGVVEfbfx0n6a28RwNAwGg137MbaqsiTv3pfn17JdJkGScgG4g5z0Ezza16eCAjPFjBcKo_4fBS7p7Do">
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div class="flex justify-between items-start">
+<h3 class="font-card-title text-body-md font-bold text-text-primary">Keys with Blue Lanyard</h3>
+<span class="bg-info-ai/10 text-info-ai font-label-md text-[12px] px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] fill-icon">auto_awesome</span>
+                                    85% Match
+                                </span>
+</div>
+<p class="font-caption text-caption text-text-secondary line-clamp-1">Found near Student Union Café</p>
+<div class="flex justify-between items-center mt-2">
+<span class="font-caption text-caption text-text-secondary">Yesterday</span>
+<button class="text-primary font-label-md text-label-md group-hover:underline">Claim Now</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- My History / Recent Reports -->
+<section class="space-y-md">
+<h2 class="font-section-title text-section-title text-text-primary">Recent History</h2>
+<div class="space-y-sm">
+<div class="flex items-center justify-between p-md bg-card-bg rounded-2xl border border-surface-container">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">headphones</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-text-primary">AirPods Case</p>
+<p class="font-caption text-caption text-text-secondary">Reported 3d ago</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-warning/10 text-warning font-label-md text-[12px]">Pending</span>
+</div>
+<div class="flex items-center justify-between p-md bg-card-bg rounded-2xl border border-surface-container">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-text-primary">HydroFlask (Blue)</p>
+<p class="font-caption text-caption text-text-secondary">Returned Oct 12</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-success/10 text-success font-label-md text-[12px]">Returned</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center text-primary bg-primary-fixed/30 rounded-full px-4 py-1 scale-95 duration-100 hover:scale-110" href="#">
+<span class="material-symbols-outlined fill-icon">home</span>
+<span class="font-caption text-caption">Home</span>
+</a>
+<!-- Report -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1 hover:scale-110 hover:text-primary" href="#"><span class="material-symbols-outlined">groups</span><span class="font-caption text-caption">Community</span></a>
+<!-- Matches -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1 hover:scale-110 hover:text-primary" href="#">
+<div class="relative">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-danger rounded-full"></span>
+</div>
+<span class="font-caption text-caption">Matches</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors px-4 py-1 hover:scale-110 hover:text-primary" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-caption text-caption">Profile</span>
+</a>
+</nav>
+<!-- FAB for quick report -->
+<button class="fixed bottom-24 right-6 w-14 h-14 primary-gradient text-on-primary rounded-2xl shadow-[0_4px_14px_rgba(65,67,213,0.35)] flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+<script>
+        // Simple scroll observer for subtle header reveal
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.add('shadow-sm');
+                header.classList.remove('shadow-md');
+            }
+        });
+
+        // Click interaction for cards
+        document.querySelectorAll('.bg-card-bg').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.classList.add('scale-[0.98]');
+            });
+            card.addEventListener('mouseup', () => {
+                card.classList.remove('scale-[0.98]');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('scale-[0.98]');
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campus Connect - Error</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "success": "#22C55E",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface-container-highest": "#e0e3e5",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-container": "#fff7ee",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "border-default": "#E5E7EB",
+                    "warning": "#FB923C",
+                    "on-tertiary-fixed": "#261a00",
+                    "error-container": "#ffdad6",
+                    "on-primary-container": "#f9f6ff",
+                    "text-primary": "#111827",
+                    "surface-dim": "#d8dadc",
+                    "on-primary-fixed": "#05006c",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#ffdf9f",
+                    "dark-card": "#1F2937",
+                    "primary-fixed": "#e1e0ff",
+                    "dark-primary": "#8B80FF",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "on-surface": "#191c1e",
+                    "dark-bg": "#111827",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "text-secondary": "#6B7280",
+                    "inverse-primary": "#c0c1ff",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "card-bg": "#FFFFFF",
+                    "on-surface-variant": "#464555",
+                    "on-background": "#191c1e",
+                    "secondary-container": "#8455ef",
+                    "surface-container-high": "#e6e8ea",
+                    "surface": "#f7f9fb",
+                    "outline-variant": "#c6c5d7",
+                    "primary": "#4143d5",
+                    "danger": "#F43F5E",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container": "#eceef0",
+                    "background": "#f7f9fb",
+                    "surface-variant": "#e0e3e5",
+                    "surface-tint": "#474adb",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "outline": "#767586",
+                    "info-ai": "#38BDF8",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#e9ddff",
+                    "error": "#ba1a1a",
+                    "primary-container": "#5b5fef",
+                    "tertiary-container": "#916c00",
+                    "tertiary": "#735500",
+                    "secondary": "#6b38d4",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-secondary-fixed": "#23005c",
+                    "on-secondary-container": "#fffbff",
+                    "inverse-surface": "#2d3133"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "xs": "4px",
+                    "margin-desktop": "32px",
+                    "margin-mobile": "16px",
+                    "2xl": "48px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "base": "8px",
+                    "gutter": "16px",
+                    "3xl": "64px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "card-title": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "page-title": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "hero-title": ["Plus Jakarta Sans"],
+                    "page-title-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "section-title": ["Plus Jakarta Sans"],
+                    "caption": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "page-title": ["36px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "page-title-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "section-title": ["28px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .modal-overlay {
+            background-color: rgba(25, 28, 30, 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        .failure-gradient-bg {
+            background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+        }
+
+        .btn-hover-effect:active {
+            transform: scale(0.95);
+        }
+        
+        .shake-animation {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex items-center justify-center p-margin-mobile">
+<!-- Modal Container (390px targeted layout) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-md modal-overlay">
+<!-- Modal Card -->
+<div class="failure-gradient-bg w-full max-w-[390px] rounded-[32px] shadow-[0_20px_50px_rgba(186,26,26,0.15)] overflow-hidden flex flex-col items-center p-xl shake-animation border border-error-container">
+<!-- Icon/Visual Header -->
+<div class="mb-lg relative">
+<div class="w-20 h-20 bg-error-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[48px] text-error" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<!-- Decorative pulse rings -->
+<div class="absolute inset-0 w-20 h-20 bg-error rounded-full animate-ping opacity-10"></div>
+</div>
+<!-- Content Area -->
+<div class="text-center mb-xl">
+<h1 class="font-page-title-mobile text-page-title-mobile text-text-primary mb-sm">
+                    Failed ⚠️
+                </h1>
+<p class="font-body-md text-body-md text-on-surface-variant px-md">
+                    Something went wrong. Let's try that again.
+                </p>
+</div>
+<!-- Action Cluster -->
+<div class="w-full flex flex-col gap-md">
+<!-- Primary Button: Retry -->
+<button class="w-full py-md bg-gradient-to-r from-danger to-[#D00000] text-white rounded-2xl font-label-md text-label-md shadow-[0_8px_20px_rgba(244,63,94,0.3)] btn-hover-effect transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+                    Retry
+                </button>
+<!-- Secondary Link: Cancel -->
+<button class="w-full py-sm text-on-surface-variant font-label-md text-label-md hover:text-text-primary transition-colors btn-hover-effect">
+                    Cancel
+                </button>
+</div>
+<!-- Micro-interaction Background Detail -->
+<div class="absolute -bottom-10 -right-10 w-40 h-40 bg-error opacity-[0.03] rounded-full blur-3xl"></div>
+</div>
+</div>
+<!-- Background Content Mockup (to show modal context) -->
+<div class="w-full max-w-[390px] h-[844px] bg-surface rounded-[40px] shadow-2xl overflow-hidden pointer-events-none opacity-40">
+<!-- Top App Bar Mock -->
+<div class="bg-background w-full px-margin-mobile py-md flex justify-between items-center">
+<span class="font-page-title-mobile text-page-title-mobile font-bold text-primary">Campus Connect</span>
+<span class="material-symbols-outlined">help_outline</span>
+</div>
+<!-- Content Mock -->
+<div class="p-md space-y-md">
+<div class="h-48 w-full bg-surface-container rounded-3xl" data-alt="A clean and modern UI dashboard for a campus mobile application, featuring soft blue and white colors, rounded cards, and minimalist data visualizations for student services." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuASEygDtuqeJxa1XcQ1kX7tGkbY8vPG1nBwYTqxX4uH1-C0Vh42Nl_uElIOa1d0ElSjco9ardZ5TSKdGeCx0kww0JbZMo1iW-KagYHnfpcCXDH7NnImd10s3WinrUF0XudWKAmUVsC39purSWSXyTIAuz1nMW6kzOXnNDZpxMjm9xjETAZtGzQQCVh2G4LX3UBXXvBA6mBoHGoBh1S4Ph83L7gkvQd3iqsDtrgtGAAhRF_nKabU93Y4')"></div>
+<div class="h-12 w-3/4 bg-surface-container rounded-xl"></div>
+<div class="h-4 w-full bg-surface-container-low rounded-full"></div>
+<div class="h-4 w-5/6 bg-surface-container-low rounded-full"></div>
+<div class="grid grid-cols-2 gap-md pt-md">
+<div class="h-32 bg-surface-container rounded-3xl"></div>
+<div class="h-32 bg-surface-container rounded-3xl"></div>
+</div>
+</div>
+<!-- Bottom Nav Mock -->
+<div class="fixed bottom-0 w-full flex justify-around items-center px-sm py-xs bg-surface-container-lowest">
+<div class="flex flex-col items-center p-2"><span class="material-symbols-outlined">home</span></div>
+<div class="flex flex-col items-center p-2"><span class="material-symbols-outlined">search</span></div>
+<div class="flex flex-col items-center p-2"><span class="material-symbols-outlined">person</span></div>
+</div>
+</div>
+<script>
+        // Simple micro-interaction for the Retry button
+        document.querySelector('button.bg-gradient-to-r').addEventListener('click', function() {
+            const icon = this.querySelector('.material-symbols-outlined');
+            icon.classList.add('animate-spin');
+            
+            // Simulation of retry logic
+            setTimeout(() => {
+                icon.classList.remove('animate-spin');
+                // You could add a success state here
+            }, 1000);
+        });
+    </script>
+</body></html>

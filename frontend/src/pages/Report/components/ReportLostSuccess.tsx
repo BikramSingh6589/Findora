@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CheckCircle2, ArrowRight as ArrowRightIcon, FileText, Medal, Radar as RadarIcon, Mail as MailIcon, LayoutGrid, Sparkles, BrainCircuit, BellRing } from 'lucide-react';
@@ -28,7 +28,7 @@ export const ReportLostSuccess: React.FC = () => {
           <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full scale-125 -z-10 transition-transform group-hover:scale-150 duration-700"></div>
           <img 
             className="w-full h-auto drop-shadow-2xl transition-transform duration-500 hover:scale-[1.02]" 
-            src="https://lh3.googleusercontent.com/aida/AP1WRLv2X8SV2AnEMlKyNDJBdVm2Z-EJbvRjdUQ6HO1hQCp2Es9wWTo9to4YiMfG-js9QA4sl0U8nSQInuMxvMv8smg8aIZ0Z2KjHHIq8TA8WzKgyC-kDLcGcwhMK8hwpwUZ85oI2tSPQXzzz5og034zl5rqovVZJ4qCt0Thvi0uSCSKuAoVOrcvk9oUccn8KysDZXXktPi6U3cpYdtekLwa3RiNe2r8uq9c4JnEkRmDwYE8QsJe8bSzb_5lxcw"
+            src="/images/report_lost_success.png"
             alt="Searcher Illustration"
           />
         </div>
