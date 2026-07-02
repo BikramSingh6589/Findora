@@ -85,3 +85,104 @@ export const sendResetEmail = async (to: string, token: string): Promise<void> =
     console.error('Email Service Error sending mail:', error);
   }
 };
+
+/**
+ * Sends an email to the claimant when their claim has been approved.
+ */
+export const sendClaimApprovedEmail = async (
+  to: string,
+  claimantName: string,
+  itemName: string,
+  qrCodeUrl: string
+): Promise<void> => {
+  const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const port = parseInt(process.env.EMAIL_PORT || '587');
+  const user = process.env.EMAIL_USER || 'placeholder@gmail.com';
+  const pass = process.env.EMAIL_PASS || 'placeholder_pass';
+
+  console.log(`Email Service: Preparing to send claim approved email to ${to} for item: ${itemName}`);
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: {
+      user,
+      pass,
+    },
+  });
+
+  const mailOptions = {
+    from: `"Campus Lost & Found" <${user}>`,
+    to,
+    subject: 'Your Claim Has Been Approved! 🎉',
+    text: `Hi ${claimantName},\n\nGreat news! Your claim for "${itemName}" has been approved. Please present the QR code link below at the Lost & Found office to collect your item:\n\nQR Code URL: ${qrCodeUrl}\n\nHappy finding!\nThe Campus Lost & Found Team`,
+    html: `<div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px;">
+      <h2 style="color: #4F46E5;">Great news, ${claimantName}! 🎉</h2>
+      <p>Your claim for the item <strong>"${itemName}"</strong> has been approved.</p>
+      <p>Please present the QR code below at the Lost & Found office to collect your item:</p>
+      <div style="text-align: center; margin: 20px 0;">
+        <img src="${qrCodeUrl}" alt="Pickup QR Code" style="width: 200px; height: 200px; border: 1px solid #ddd; padding: 5px; border-radius: 5px;" />
+      </div>
+      <p style="font-size: 14px; color: #6B7280;">If the QR code image is not loading, you can use <a href="${qrCodeUrl}">this link</a> instead.</p>
+      <p style="margin-top: 20px; font-size: 14px; color: #6B7280;">See you soon!<br/>The Campus Lost & Found Team</p>
+    </div>`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Email Service: Claim approved email successfully sent to ${to}`);
+  } catch (error) {
+    console.error('Email Service Error sending claim approved email:', error);
+  }
+};
+
+/**
+ * Sends an email to the claimant when their claim has been rejected.
+ */
+export const sendClaimRejectedEmail = async (
+  to: string,
+  claimantName: string,
+  itemName: string,
+  reason: string
+): Promise<void> => {
+  const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+  const port = parseInt(process.env.EMAIL_PORT || '587');
+  const user = process.env.EMAIL_USER || 'placeholder@gmail.com';
+  const pass = process.env.EMAIL_PASS || 'placeholder_pass';
+
+  console.log(`Email Service: Preparing to send claim rejected email to ${to} for item: ${itemName}`);
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: {
+      user,
+      pass,
+    },
+  });
+
+  const mailOptions = {
+    from: `"Campus Lost & Found" <${user}>`,
+    to,
+    subject: 'Claim Update: More information needed ⚠️',
+    text: `Hi ${claimantName},\n\nWe reviewed your claim for "${itemName}" but could not verify ownership.\n\nReason: ${reason || 'No specific reason provided.'}\n\nPlease try again or contact the administrator for assistance.\n\nBest regards,\nThe Campus Lost & Found Team`,
+    html: `<div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px;">
+      <h2 style="color: #EF4444;">Claim Update: More information needed ⚠️</h2>
+      <p>Hi ${claimantName},</p>
+      <p>We reviewed your claim for the item <strong>"${itemName}"</strong> but could not verify ownership at this time.</p>
+      <p><strong>Reason provided:</strong> ${reason || 'No specific reason provided.'}</p>
+      <p>You can submit a new claim with additional proof or contact the administrator for support.</p>
+      <p style="margin-top: 20px; font-size: 14px; color: #6B7280;">Best regards,<br/>The Campus Lost & Found Team</p>
+    </div>`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Email Service: Claim rejected email successfully sent to ${to}`);
+  } catch (error) {
+    console.error('Email Service Error sending claim rejected email:', error);
+  }
+};
+

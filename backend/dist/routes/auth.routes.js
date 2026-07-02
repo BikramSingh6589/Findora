@@ -25,6 +25,10 @@ const loginSchema = zod_1.z.object({
 const forgotPasswordSchema = zod_1.z.object({
     email: zod_1.z.string().email('Invalid email address'),
 });
+const verifyOtpSchema = zod_1.z.object({
+    email: zod_1.z.string().email('Invalid email address'),
+    otp: zod_1.z.string().length(6, 'OTP must be 6 digits'),
+});
 const resetPasswordSchema = zod_1.z.object({
     token: zod_1.z.string().min(1, 'Reset token is required'),
     newPassword: zod_1.z.string().min(8, 'Password must be at least 8 characters long'),
@@ -32,8 +36,10 @@ const resetPasswordSchema = zod_1.z.object({
 // Authentication routes
 router.post('/register', (0, validate_middleware_1.validateRequest)(registerSchema), auth_controller_1.register);
 router.post('/login', (0, validate_middleware_1.validateRequest)(loginSchema), auth_controller_1.login);
+router.post('/verify-otp', (0, validate_middleware_1.validateRequest)(verifyOtpSchema), auth_controller_1.verifyOtp);
 router.post('/admin/login', (0, validate_middleware_1.validateRequest)(loginSchema), auth_controller_1.adminLogin);
 router.post('/forgot-password', (0, validate_middleware_1.validateRequest)(forgotPasswordSchema), auth_controller_1.forgotPassword);
+router.post('/verify-reset-otp', (0, validate_middleware_1.validateRequest)(verifyOtpSchema), auth_controller_1.verifyForgotPasswordOtp);
 router.post('/reset-password', (0, validate_middleware_1.validateRequest)(resetPasswordSchema), auth_controller_1.resetPassword);
 router.get('/me', auth_middleware_1.protect, auth_controller_1.getMe);
 router.post('/logout', auth_middleware_1.protect, auth_controller_1.logout);

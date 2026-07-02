@@ -9,6 +9,14 @@ import authRoutes from './routes/auth.routes';
 import categoryRoutes from './routes/category.routes';
 import lostItemRoutes from './routes/lostItem.routes';
 import foundItemRoutes from './routes/foundItem.routes';
+import claimRoutes from './routes/claim.routes';
+import adminRoutes from './routes/admin.routes';
+import communityRoutes from './routes/community.routes';
+import userRoutes from './routes/user.routes';
+import notificationRoutes from './routes/notification.routes';
+import aiRoutes from './routes/ai.routes';
+import handoverRoutes from './routes/handover.routes';
+import chatRoutes from './routes/chat.routes';
 
 const app = express();
 
@@ -27,15 +35,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/lost-items', lostItemRoutes);
 app.use('/api/found-items', foundItemRoutes);
-app.use('/api/users', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/claims', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/notifications', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/community', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/ai', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/handover', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/chat', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/admin', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
-app.use('/api/categories', (req, res, next) => { res.status(404).json({ error: 'Endpoint not implemented yet' }); });
+app.use('/api/claims', claimRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/community', communityRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/handover', handoverRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

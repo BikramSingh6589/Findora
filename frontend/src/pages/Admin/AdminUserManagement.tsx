@@ -1,15 +1,8 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Ban, ShieldCheck, Star, Users, TrendingUp } from 'lucide-react';
+import axios from 'axios';
 
-const allUsers = [
-  { id: 'USR-001', name: 'Kevin Sanders', studentId: 'SU-2024-0012', email: 'k.sanders@campus.edu', xp: 2450, level: 12, status: 'active', reports: 14, img: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60&q=70' },
-  { id: 'USR-002', name: 'Maya Rodriguez', studentId: 'SU-2024-0289', email: 'm.rodriguez@campus.edu', xp: 1870, level: 9, status: 'active', reports: 8, img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&q=70' },
-  { id: 'USR-003', name: 'Daniel Ford', studentId: 'SU-2023-4411', email: 'd.ford@campus.edu', xp: 3200, level: 15, status: 'active', reports: 22, img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&q=70' },
-  { id: 'USR-004', name: 'Sarah Thompson', studentId: 'SU-2024-1102', email: 's.thompson@campus.edu', xp: 980, level: 5, status: 'warned', reports: 3, img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&q=70' },
-  { id: 'USR-005', name: 'Alex Williams', studentId: 'SU-2024-0778', email: 'a.williams@campus.edu', xp: 450, level: 2, status: 'suspended', reports: 1, img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&q=70' },
-  { id: 'USR-006', name: 'Priya Mehta', studentId: 'SU-2024-0443', email: 'p.mehta@campus.edu', xp: 5100, level: 22, status: 'active', reports: 41, img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=60&q=70' },
-  { id: 'USR-007', name: 'Chris Lin', studentId: 'SU-2022-9901', email: 'c.lin@campus.edu', xp: 720, level: 4, status: 'banned', reports: 2, img: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=60&q=70' },
-];
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   const map: Record<string, string> = {
@@ -22,18 +15,72 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
 };
 
 export const AdminUserManagement: React.FC = () => {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [statuses, setStatuses] = useState<Record<string, string>>(Object.fromEntries(allUsers.map(u => [u.id, u.status])));
 
-  const warn = (id: string) => setStatuses(s => ({ ...s, [id]: 'warned' }));
-  const ban = (id: string) => setStatuses(s => ({ ...s, [id]: 'banned' }));
-  const restore = (id: string) => setStatuses(s => ({ ...s, [id]: 'active' }));
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.get(`${API_BASE}/api/admin/users`);
+      if (res.data && res.data.success) {
+        setUsers(res.data.users || []);
+      }
+    } catch (err: any) {
+      console.error('Failed to load users', err);
+      setError(err.response?.data?.error || 'Failed to fetch users from server.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const filtered = allUsers.filter(u =>
-    u.name.toLowerCase().includes(search.toLowerCase()) ||
-    u.studentId.toLowerCase().includes(search.toLowerCase()) ||
-    u.email.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleUpdateStatus = async (id: string, status: string) => {
+    try {
+      await axios.put(`${API_BASE}/api/admin/users/${id}/status`, { status });
+      fetchUsers();
+    } catch (err: any) {
+      alert(err.response?.data?.error || `Failed to update status to ${status}`);
+    }
+  };
+
+  const handleUpdateRole = async (id: string, currentRole: string) => {
+    const nextRole = currentRole === 'admin' ? 'user' : 'admin';
+    if (!confirm(`Are you sure you want to change this user's role to ${nextRole}?`)) return;
+    try {
+      await axios.put(`${API_BASE}/api/admin/users/${id}/role`, { role: nextRole });
+      fetchUsers();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to change role');
+    }
+  };
+
+  const filtered = users.filter(u =>
+    u.name?.toLowerCase().includes(search.toLowerCase()) ||
+    u.studentId?.toLowerCase().includes(search.toLowerCase()) ||
+    u.email?.toLowerCase().includes(search.toLowerCase())
   );
+
+  const stats = {
+    total: users.length,
+    active: users.filter(u => u.status === 'active').length,
+    warned: users.filter(u => u.status === 'warned').length,
+    banned: users.filter(u => u.status === 'banned').length,
+  };
+
+  if (loading) {
+    return (
+      <div className="p-8 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+        <p className="text-text-secondary mt-4">Loading users...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-6">
@@ -42,13 +89,19 @@ export const AdminUserManagement: React.FC = () => {
         <p className="text-text-secondary mt-1">Monitor and manage user accounts and campus community members.</p>
       </div>
 
+      {error && (
+        <div className="p-4 rounded-xl bg-danger/10 text-danger text-sm font-semibold">
+          {error}
+        </div>
+      )}
+
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total Users', value: '3,841', icon: <Users className="w-5 h-5 text-primary" />, c: 'bg-primary/10', b: 'border-primary' },
-          { label: 'Active Today', value: '1,204', icon: <TrendingUp className="w-5 h-5 text-success" />, c: 'bg-success/10', b: 'border-success' },
-          { label: 'Warned', value: '12', icon: <ShieldCheck className="w-5 h-5 text-warning" />, c: 'bg-warning/10', b: 'border-warning' },
-          { label: 'Banned', value: '3', icon: <Ban className="w-5 h-5 text-danger" />, c: 'bg-danger/10', b: 'border-danger' },
+          { label: 'Total Users', value: String(stats.total), icon: <Users className="w-5 h-5 text-primary" />, c: 'bg-primary/10', b: 'border-primary' },
+          { label: 'Active Status', value: String(stats.active), icon: <TrendingUp className="w-5 h-5 text-success" />, c: 'bg-success/10', b: 'border-success' },
+          { label: 'Warned', value: String(stats.warned), icon: <ShieldCheck className="w-5 h-5 text-warning" />, c: 'bg-warning/10', b: 'border-warning' },
+          { label: 'Banned', value: String(stats.banned), icon: <Ban className="w-5 h-5 text-danger" />, c: 'bg-danger/10', b: 'border-danger' },
         ].map((s, i) => (
           <div key={i} className={`bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-4 shadow-sm border-l-4 ${s.b} flex items-center gap-3`}>
             <div className={`w-10 h-10 rounded-xl ${s.c} flex items-center justify-center`}>{s.icon}</div>
@@ -75,47 +128,50 @@ export const AdminUserManagement: React.FC = () => {
               <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Student ID</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">XP / Level</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Reports</th>
+              <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Role</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Status</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border-default">
-            {filtered.map(user => (
-              <tr key={user.id} className="hover:bg-surface-container-low/50 transition-colors">
+            {filtered.map((user: any) => (
+              <tr key={user._id} className="hover:bg-surface-container-low/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <img src={user.img} alt={user.name} className="w-9 h-9 rounded-full object-cover border-2 border-border-default" />
+                    <img src={user.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60&q=70'} alt={user.name} className="w-9 h-9 rounded-full object-cover border-2 border-border-default" />
                     <div>
                       <p className="font-bold text-sm text-text-primary">{user.name}</p>
                       <p className="text-xs text-text-secondary">{user.email}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-text-secondary font-mono">{user.studentId}</td>
+                <td className="px-6 py-4 text-sm text-text-secondary font-mono">{user.studentId || 'N/A'}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <Star className="w-4 h-4 text-[#f9bd22]" />
-                    <span className="font-bold text-sm text-text-primary">{user.xp.toLocaleString()} XP</span>
-                    <span className="text-xs text-text-secondary">Lv.{user.level}</span>
+                    <span className="font-bold text-sm text-text-primary">{(user.xp || 0).toLocaleString()} XP</span>
+                    <span className="text-xs text-text-secondary">Lv.{user.level || 1}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm font-bold text-text-primary">{user.reports}</td>
-                <td className="px-6 py-4"><StatusBadge status={statuses[user.id]} /></td>
+                <td className="px-6 py-4 text-sm font-bold text-text-primary">{user.reportsCount || 0}</td>
+                <td className="px-6 py-4 text-sm text-text-secondary uppercase font-bold">{user.role}</td>
+                <td className="px-6 py-4"><StatusBadge status={user.status} /></td>
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
-                    {(statuses[user.id] === 'warned' || statuses[user.id] === 'banned' || statuses[user.id] === 'suspended') && (
-                      <button onClick={() => restore(user.id)} className="px-2 py-1 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors text-xs font-bold flex items-center gap-1">
+                    {user.status !== 'active' && (
+                      <button onClick={() => handleUpdateStatus(user._id, 'active')} className="px-2 py-1 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors text-xs font-bold flex items-center gap-1">
                         <ShieldCheck className="w-3 h-3" /> Restore
                       </button>
                     )}
-                    {statuses[user.id] === 'active' && (
-                      <button onClick={() => warn(user.id)} className="px-2 py-1 bg-warning/10 text-warning rounded-lg hover:bg-warning/20 transition-colors text-xs font-bold">Warn</button>
+                    {user.status === 'active' && (
+                      <button onClick={() => handleUpdateStatus(user._id, 'warned')} className="px-2 py-1 bg-warning/10 text-warning rounded-lg hover:bg-warning/20 transition-colors text-xs font-bold">Warn</button>
                     )}
-                    {statuses[user.id] !== 'banned' && (
-                      <button onClick={() => ban(user.id)} className="px-2 py-1 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors text-xs font-bold flex items-center gap-1">
+                    {user.status !== 'banned' && (
+                      <button onClick={() => handleUpdateStatus(user._id, 'banned')} className="px-2 py-1 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors text-xs font-bold flex items-center gap-1">
                         <Ban className="w-3 h-3" /> Ban
                       </button>
                     )}
+                    <button onClick={() => handleUpdateRole(user._id, user.role)} className="px-2 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-xs font-bold">Toggle Admin</button>
                   </div>
                 </td>
               </tr>
@@ -125,30 +181,31 @@ export const AdminUserManagement: React.FC = () => {
 
         {/* Mobile */}
         <div className="md:hidden divide-y divide-border-default">
-          {filtered.map(user => (
-            <div key={user.id} className="p-4">
+          {filtered.map((user: any) => (
+            <div key={user._id} className="p-4">
               <div className="flex gap-3 mb-3">
-                <img src={user.img} alt={user.name} className="w-12 h-12 rounded-full object-cover border-2 border-border-default flex-shrink-0" />
+                <img src={user.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60&q=70'} alt={user.name} className="w-12 h-12 rounded-full object-cover border-2 border-border-default flex-shrink-0" />
                 <div className="flex-1">
                   <h4 className="font-bold text-sm text-text-primary">{user.name}</h4>
-                  <p className="text-xs text-text-secondary">{user.studentId}</p>
+                  <p className="text-xs text-text-secondary">{user.studentId || 'N/A'} (Role: {user.role})</p>
                   <div className="flex items-center gap-2 mt-1">
                     <Star className="w-3 h-3 text-[#f9bd22]" />
-                    <span className="text-xs font-bold text-text-primary">{user.xp.toLocaleString()} XP Â· Lv.{user.level}</span>
+                    <span className="text-xs font-bold text-text-primary">{(user.xp || 0).toLocaleString()} XP Â· Lv.{user.level || 1}</span>
                   </div>
-                  <div className="mt-1"><StatusBadge status={statuses[user.id]} /></div>
+                  <div className="mt-1"><StatusBadge status={user.status} /></div>
                 </div>
               </div>
               <div className="flex gap-2">
-                {statuses[user.id] !== 'banned' && statuses[user.id] !== 'active' && (
-                  <button onClick={() => restore(user.id)} className="flex-1 py-2 bg-success/10 text-success rounded-xl text-xs font-bold">Restore</button>
+                {user.status !== 'active' && (
+                  <button onClick={() => handleUpdateStatus(user._id, 'active')} className="flex-1 py-2 bg-success/10 text-success rounded-xl text-xs font-bold">Restore</button>
                 )}
-                {statuses[user.id] === 'active' && (
-                  <button onClick={() => warn(user.id)} className="flex-1 py-2 bg-warning/10 text-warning rounded-xl text-xs font-bold">Warn</button>
+                {user.status === 'active' && (
+                  <button onClick={() => handleUpdateStatus(user._id, 'warned')} className="flex-1 py-2 bg-warning/10 text-warning rounded-xl text-xs font-bold">Warn</button>
                 )}
-                {statuses[user.id] !== 'banned' && (
-                  <button onClick={() => ban(user.id)} className="flex-1 py-2 bg-danger/10 text-danger rounded-xl text-xs font-bold">Ban</button>
+                {user.status !== 'banned' && (
+                  <button onClick={() => handleUpdateStatus(user._id, 'banned')} className="flex-1 py-2 bg-danger/10 text-danger rounded-xl text-xs font-bold">Ban</button>
                 )}
+                <button onClick={() => handleUpdateRole(user._id, user.role)} className="flex-1 py-2 bg-primary/10 text-primary rounded-xl text-xs font-bold">Toggle Admin</button>
               </div>
             </div>
           ))}

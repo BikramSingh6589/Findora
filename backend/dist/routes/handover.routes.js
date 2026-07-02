@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const handover_controller_1 = require("../controllers/handover.controller");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const admin_middleware_1 = require("../middleware/admin.middleware");
+const router = (0, express_1.Router)();
+router.get('/:itemId/qr', auth_middleware_1.protect, handover_controller_1.getHandoverQR);
+router.post('/:itemId/scan', auth_middleware_1.protect, admin_middleware_1.adminOnly, handover_controller_1.scanHandoverQR);
+router.post('/:itemId/confirm', auth_middleware_1.protect, admin_middleware_1.adminOnly, handover_controller_1.confirmHandover);
+exports.default = router;

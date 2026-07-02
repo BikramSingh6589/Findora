@@ -6,6 +6,7 @@ interface AuthContextType {
   user: any | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  adminLogin: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<any>;
   verifyOtp: (email: string, otp: string) => Promise<void>;
   logout: () => void;
@@ -23,6 +24,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Set default authorization header when token changes
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common['Authorization'];
+    }
+  }, [token]);
+
   useEffect(() => {
     const fetchUser = async () => {
       if (!token) {
@@ -30,13 +40,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       try {
-        const res = await axios.get(`${API_BASE}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await axios.get(`${API_BASE}/api/auth/me`);
         if (res.data && res.data.user) {
           setUser(res.data.user);
         } else {
-          // Token is invalid
           logout();
         }
       } catch (err) {
@@ -59,6 +66,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(receivedUser);
     } catch (err: any) {
       const msg = err.response?.data?.error || 'Login failed';
+      setError(msg);
+      throw new Error(msg);
+    }
+  };
+
+  const adminLogin = async (email: string, password: string) => {
+    setError(null);
+    try {
+      const res = await axios.post(`${API_BASE}/api/auth/admin/login`, { email, password });
+      const { token: receivedToken, user: receivedUser } = res.data;
+      localStorage.setItem('token', receivedToken);
+      setToken(receivedToken);
+      setUser(receivedUser);
+    } catch (err: any) {
+      const msg = err.response?.data?.error || 'Admin login failed';
       setError(msg);
       throw new Error(msg);
     }
@@ -103,6 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       isAuthenticated: !!token,
       login,
+      adminLogin,
       register,
       verifyOtp,
       logout,

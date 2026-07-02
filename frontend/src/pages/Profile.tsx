@@ -1,78 +1,130 @@
-﻿import React from 'react';
-import { Star, Sparkles, Handshake, Verified, Shield, Zap, Compass, Heart, Lock, Calendar, PlusCircle, ArrowRight, Bot } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Star, Sparkles, Handshake, Verified, Shield, Zap, Compass, Heart, Lock, Calendar, ArrowRight, Package } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const Profile: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProfileData = async () => {
+      if (!user) return;
+      try {
+        setLoading(true);
+        const userId = user._id || (user as any).id;
+        const res = await axios.get(`${API_BASE}/api/users/${userId}/reports`);
+        if (res.data && res.data.success) {
+          const losts = (res.data.lostItems || []).map((item: any) => ({
+            ...item,
+            historyType: 'lost',
+            title: item.itemName,
+            dateLabel: new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            statusLabel: item.status === 'active' ? 'Reported Lost' : item.status,
+          }));
+          const founds = (res.data.foundItems || []).map((item: any) => ({
+            ...item,
+            historyType: 'found',
+            title: item.itemName,
+            dateLabel: new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            statusLabel: item.status,
+          }));
+          const combined = [...losts, ...founds].sort((a: any, b: any) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setHistory(combined);
+        }
+      } catch (err) {
+        console.error('Failed to load profile reports', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProfileData();
+  }, [user]);
+
   const handleAction = (actionName: string) => {
     alert(`Action triggered: ${actionName}`);
   };
 
+  const name = user?.name || 'Alex Rivers';
+  const role = user?.role === 'admin' ? 'Campus Admin' : 'Student Helper';
+  const level = user?.level || 1;
+  const xp = user?.xp || 0;
+  const badges = user?.badges || ['Newcomer'];
+  const itemsReturned = user?.itemsReturned || 0;
+  const profilePic = user?.profilePic || "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=300&q=80";
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Hero Profile Section */}
       <section className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Profile Identity Card */}
         <div className="md:col-span-8 bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-8 shadow-sm relative overflow-hidden transition-all hover:scale-[1.01] hover:shadow-md border border-border-default transition-colors duration-300">
           <div className="relative flex flex-col md:flex-row gap-8 items-center">
             <div className="relative">
               <div className="w-32 h-32 rounded-3xl overflow-hidden shadow-xl rotate-3">
                 <img 
                   className="w-full h-full object-cover" 
-                  alt="Alex Rivers Profile"
-                  src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=300&q=80" 
+                  alt={`${name} Profile`}
+                  src={profilePic} 
                 />
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-warning text-white p-2 rounded-xl shadow-lg flex items-center gap-1">
-                <Star className="w-4 h-4 fill-current text-white" />
-                <span className="text-xs font-bold">TOP FINDER</span>
-              </div>
+              {level >= 5 && (
+                <div className="absolute -bottom-2 -right-2 bg-warning text-white p-2 rounded-xl shadow-lg flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-current text-white" />
+                  <span className="text-xs font-bold">TOP FINDER</span>
+                </div>
+              )}
             </div>
             
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl font-bold text-primary">Alex Rivers</h1>
-              <p className="text-text-secondary text-lg mt-1">Senior Student AI Â· Helper Level 12</p>
+              <h1 className="text-4xl font-bold text-primary">{name}</h1>
+              <p className="text-text-secondary text-lg mt-1">{role} · Helper Level {level}</p>
               <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-2">
-                <span className="px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold">Class of 2026</span>
-                <span className="px-4 py-1 bg-[#ffdf9f] text-[#5c4300] rounded-full text-sm font-bold">Design Major</span>
-                <span className="px-4 py-1 bg-surface-variant text-on-surface-variant rounded-full text-sm">Student Ambassador</span>
+                {badges.map((badge: string, idx: number) => (
+                  <span key={idx} className="px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold">
+                    {badge}
+                  </span>
+                ))}
               </div>
             </div>
             
             <div className="flex flex-col items-center gap-2 mt-4 md:mt-0">
               <div className="text-center">
-                <div className="text-5xl font-bold text-primary flex items-center">
-                  982<span className="ml-2 text-3xl">ðŸ†</span>
+                <div className="text-5xl font-bold text-primary flex items-center justify-center">
+                  {xp}<span className="ml-2 text-3xl">🏆</span>
                 </div>
                 <div className="text-sm font-bold text-text-secondary uppercase tracking-widest mt-1">Reputation</div>
               </div>
               <button 
                 onClick={() => handleAction('Share Profile')}
-                className="mt-2 bg-[#5b5fef] text-white px-6 py-2 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-md"
+                className="mt-2 bg-[#5b5fef] text-white px-6 py-2 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-md text-sm"
               >
                 Share Profile
               </button>
             </div>
           </div>
-        </div>
-
-        {/* XP / Explorer Level Card */}
-        <div className="md:col-span-4 bg-gradient-to-br from-[#4143d5] to-[#6b38d4] rounded-3xl p-8 shadow-xl text-white flex flex-col justify-between relative overflow-hidden transition-all hover:scale-[1.02]">
+        </div>        <div className="md:col-span-4 bg-gradient-to-br from-[#4143d5] to-[#6b38d4] rounded-3xl p-8 shadow-xl text-white flex flex-col justify-between relative overflow-hidden transition-all hover:scale-[1.02]">
           <div className="absolute top-0 right-0 p-4 opacity-20">
             <Sparkles className="w-24 h-24" />
           </div>
           <div>
             <h3 className="text-xl opacity-90 font-semibold">Explorer Level</h3>
-            <div className="text-5xl font-black mt-1">LVL 12</div>
+            <div className="text-5xl font-black mt-1">LVL {level}</div>
           </div>
           <div className="space-y-2 mt-8 z-10">
             <div className="flex justify-between text-sm font-bold">
-              <span>PROGRESS TO LVL 13</span>
-              <span>2,450 / 3,000 XP</span>
+              <span>PROGRESS TO LVL {level + 1}</span>
+              <span>{xp % 100} / 100 XP</span>
             </div>
             <div className="w-full h-4 bg-surface-container-lowest dark:bg-surface-container/20 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-warning to-[#f9bd22] rounded-full" style={{ width: '82%' }}></div>
+              <div className="h-full bg-gradient-to-r from-warning to-[#f9bd22] rounded-full" style={{ width: `${xp % 100}%` }}></div>
             </div>
-            <p className="text-sm opacity-80 italic">"Return 1 more high-value item to reach level 13!"</p>
+            <p className="text-sm opacity-80 italic">"Earn {100 - (xp % 100)} more XP to reach level {level + 1}!"</p>
           </div>
         </div>
       </section>
@@ -83,7 +135,7 @@ export const Profile: React.FC = () => {
         <div className="md:col-span-3 grid grid-rows-2 gap-6">
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02]">
             <Handshake className="text-primary w-8 h-8 mb-2" />
-            <div className="text-3xl font-bold text-text-primary">14</div>
+            <div className="text-3xl font-bold text-text-primary">{itemsReturned}</div>
             <div className="text-sm text-text-secondary mt-1">Items Returned</div>
           </div>
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02]">
@@ -151,73 +203,58 @@ export const Profile: React.FC = () => {
           <h2 className="text-2xl font-bold">Item History</h2>
           <div className="flex bg-surface rounded-xl p-1 w-full md:w-auto overflow-x-auto">
             <button className="px-4 py-1 bg-surface-container-lowest dark:bg-surface-container shadow-sm rounded-lg text-sm font-bold text-primary whitespace-nowrap">All Activity</button>
-            <button onClick={() => handleAction('Filter: Found')} className="px-4 py-1 text-sm font-medium text-text-secondary hover:text-primary whitespace-nowrap">Found</button>
-            <button onClick={() => handleAction('Filter: Lost')} className="px-4 py-1 text-sm font-medium text-text-secondary hover:text-primary whitespace-nowrap">Lost</button>
           </div>
         </div>
 
         <div className="divide-y divide-border-default">
-          {/* History Item 1 */}
-          <div className="p-6 flex flex-col md:flex-row gap-6 hover:bg-surface transition-colors">
-            <div className="w-full md:w-48 h-32 rounded-2xl overflow-hidden shadow-inner flex-shrink-0">
-              <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1582139329536-e7284fece509?auto=format&fit=crop&w=400&q=80" alt="Keys" />
+          {loading ? (
+            <p className="p-8 text-center text-text-secondary">Loading history...</p>
+          ) : history.length === 0 ? (
+            <div className="p-12 text-center">
+              <Package className="w-12 h-12 text-text-secondary mx-auto mb-2" />
+              <p className="font-semibold text-text-secondary">No items reported yet</p>
+              <p className="text-sm text-text-secondary mt-1">Start by reporting lost or found items.</p>
             </div>
-            <div className="flex-1 flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-bold text-text-primary">Keys with Blue Lanyard</h3>
-                  <span className="px-3 py-1 bg-success/10 text-success rounded-full text-[10px] font-bold uppercase">Returned</span>
-                </div>
-                <p className="text-text-secondary text-base mt-2">Found near the Main Library Cafeteria. Handed over to the front desk after owner verification.</p>
-              </div>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1 text-sm text-text-secondary">
-                    <Calendar className="w-4 h-4 text-primary" /> Oct 12, 2026
+          ) : (
+            history.map((item: any) => {
+              const isLost = item.historyType === 'lost';
+              const detailUrl = `/item/${item._id}`;
+              return (
+                <div key={item._id} className="p-6 flex flex-col md:flex-row gap-6 hover:bg-surface transition-colors">
+                  <div className="w-full md:w-48 h-32 rounded-2xl overflow-hidden shadow-inner flex-shrink-0 bg-surface-container-low flex items-center justify-center">
+                    {item.images && item.images[0] ? (
+                      <img className="w-full h-full object-cover" src={item.images[0]} alt={item.title} />
+                    ) : (
+                      <Package className="w-12 h-12 text-text-secondary" />
+                    )}
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-primary font-bold">
-                    <PlusCircle className="w-4 h-4 fill-current" /> +50 Reputation
-                  </div>
-                </div>
-                <button onClick={() => handleAction('View Case Details: Keys')} className="text-primary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all group">
-                  View Case Details <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* History Item 2 */}
-          <div className="p-6 flex flex-col md:flex-row gap-6 hover:bg-surface transition-colors">
-            <div className="w-full md:w-48 h-32 rounded-2xl overflow-hidden shadow-inner flex-shrink-0">
-              <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Headphones" />
-            </div>
-            <div className="flex-1 flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-bold text-text-primary">Bose Headphones</h3>
-                  <span className="px-3 py-1 bg-[#e1e0ff]/50 text-[#2c2cc3] rounded-full text-[10px] font-bold uppercase">Reported Lost</span>
-                </div>
-                <p className="text-text-secondary text-base mt-2">Left behind in the Engineering Lab. Still waiting for a verified finder to match.</p>
-              </div>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1 text-sm text-text-secondary">
-                    <Calendar className="w-4 h-4 text-primary" /> Oct 05, 2026
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-info-ai font-bold">
-                    <Bot className="w-4 h-4 text-primary" /> 2 AI Matches
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <h3 className="text-xl font-bold text-text-primary">{item.title}</h3>
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
+                          isLost ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'
+                        }`}>
+                          {item.statusLabel}
+                        </span>
+                      </div>
+                      <p className="text-text-secondary text-base mt-2">{item.description || 'No description provided.'}</p>
+                    </div>
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1 text-sm text-text-secondary">
+                          <Calendar className="w-4 h-4 text-primary" /> {item.dateLabel}
+                        </div>
+                      </div>
+                      <button onClick={() => navigate(detailUrl)} className="text-primary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all group">
+                        View Details <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <button onClick={() => handleAction('Check Matches: Headphones')} className="text-primary font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all group">
-                  Check Matches <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="p-6 bg-surface text-center border-t border-border-default">
-          <button onClick={() => handleAction('Load More History')} className="text-primary font-bold hover:scale-105 transition-all">Load More History</button>
+              );
+            })
+          )}
         </div>
       </section>
     </div>

@@ -1,21 +1,75 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Medal, ChevronLeft, ChevronRight, Award, Users } from 'lucide-react';
+import axios from 'axios';
 
-const topUsers = [
-  { rank: 2, name: 'Alex Chen', level: '18', role: 'Architecture Junior', xp: '12,450 XP', returned: '24', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBn6QvDSXrpyeEv0thwPPqf5nYJRF3AylJmVn5TJWPhXgimaBfXoia-vC1VQJ97OqD7OKgXHwbQD0IYFPyb4FSvq6omuA3sewHa2JI9O9_iWWnrrZOKJMwtswREIR9ReS3njb92_jr7R2MDAN5EpVk7Axaq4acvZ0-vR4LWB7N1yXOXspZ4B1GTPBkQuKwjsozKu6q0gPG6MJtu_HT44ukf3XvAat0jT0QfJE45nI_M7xeQshlIhL7m_ye4DTqz69IvshtUY8CBj1g' },
-  { rank: 1, name: 'Maya Rodriguez', level: '25', role: 'Psychology Senior', xp: '18,200 XP', returned: '42', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuADI6taO_kqaS1iB-caFtzyrzUdNH_c3LzpwFInmjPzRwZfjJO6hN82RMpNu-K43LKvePweFytZ_mhTAB14b8XDUDoLkall9GuzX7G8brWybEb0Vrdja-PJ40RaLdkzYQkHCwFUQ8VTcSLFGJTdfjnDyRciNk1ra3AchwJNfXGw04-OtriGD2ariTUw0DsW6Son9NuIoEZex4D6okW1m21bF_sLc-VsO5uZt30JGWUf4z62YJO5GWJn5o-05GDJe2c6Ez2762I4duo' },
-  { rank: 3, name: 'Jordan Smith', level: '14', role: 'CS Sophomore', xp: '9,820 XP', returned: '19', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAT8hmRT2NQE460dqL0G-DbdDTSThrsQcVKDY8x25ynowwx0su2wDcXrslwUz9enYYStA8iL0fMngQKrcwBAzGsdtgWCZYxY3y_w1LbeOIkjDxmwqed9w2T4JQmzWPgN9bZXZImnLVWl6_9EFjLzSo8alq1r_gZjkGKuMykwoywa7HXFgQ0HlIoSds_Ry45b4HQNBEMstRb8Q0AZLMQ6qhcv8yqtTGrbS7EZX_8N3hS5U25yRm3Qw_J_p-sQp60xY7qc1DgGWKNkmA' },
-];
-
-const rankingTable = [
-  { rank: 4, name: 'Liam Wilson', level: '12', role: 'Bio-Med Senior', xp: '8,450 XP', returned: '15', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBRhZCkGUq87b721znc1p9gdXIG0UJuFe9NtHuXf5Ef9a3IPu4TfKQRPj1dzIgOhkY19KFqTl1OYZgjyDFJzi7KlSaTp3dZgTly5ltzskJagj14FdT6tux6FgPxtHCgPx5RqUUogWQtghE-2KokcIOmRbF49QF8Kaz26uD5G6WMRrRBebrOSTwGi3OGn6MPhnilZzLMfng9MCtF65zAJfNqjcLqDtFD_XtOMulvNmH5f-xkXLbHdu-ZJ7XlIrt6caPurMIR4X2iY-Q' },
-  { rank: 5, name: 'Sarah Parker', level: '11', role: 'Law Freshman', xp: '7,900 XP', returned: '12', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBosQYRv2b1UFSXZmG3tceU0oKEq4ns_FTr-OaBDP_XzbEfRTKqcC60N6NrHJr2DNm3WkHbt65Ulosz-RnQ1lzFPmop3xU1rVi90beniszbQ2iJG6LxsdDa38JKwMniZFPbgL0OY17KkF8wg7ICIBISz7VP3hLww4KaU93tyy5eKh8VDEnGMx3ebFh5KSLXvurBeqZf64cgvao5zzJfkJvron2atLYtsJdoq-TJTKJjHri2afhglT9mBkaxtcZZa02JgOtyL7IZtLw' },
-  { rank: 6, name: 'James Miller', level: '9', role: 'Art History Junior', xp: '6,320 XP', returned: '11', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDQHYAsQmoqoaT_mcfPv-S_M-9T5o6KhIJl5dHDyt2lwrrtLVEeI13LFWoCnNehVzp-U0WGCruuBSawGe7jKj9THxv2cS-khLbKrChF4wtkrJ9_cDjMI5Veieyf3gh-wCW6zU-EqictHja4sbey06qPlbgrve43BJa3ZmISpEM4EEdQvdO9fM_cKmQTDF_SJ0BYgNTvJl8SFAgjj0pK-nN8RFcgQN0_QTHNB-qMDNyrLsfT-6N87ajIMRNb4nI_cDZui2ueUxmOo9w' },
-  { rank: 7, name: 'Elena Petrova', level: '8', role: 'Engineering Ph.D.', xp: '5,980 XP', returned: '10', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDXSrLBVPaIfQ59y6SMtgRjxDnqM3OvIWGt49_mxddorgneUz60ikGH8QsjXGrhPkfTfod_6HhVi08BJU8oAjvbOXSlLTg1P5Zi3FwI-srkYytu0ZmFv8uO8MUM5M4GjD8D3dMYbrzzInY_e-jIEsyMB7KqxGr_WcwdSxV0JhQ3Kc20wiJ_NvYGQuh1mdQgKtnxLsJ5JGHDr3rXtxhJ4Bq-K7_aN6ogN8IablBk1CD1X3EUjr-kDeZ5J0pa8ptMZZ31BslDvclwxZo' }
-];
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const Leaderboard: React.FC = () => {
   const [filter, setFilter] = useState('This Month');
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${API_BASE}/api/users/leaderboard`);
+        if (res.data && res.data.success) {
+          setUsers(res.data.users || []);
+        }
+      } catch (err) {
+        console.error('Failed to load leaderboard', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeaderboard();
+  }, []);
+
+  const podiumUsers: any[] = [];
+  if (users.length > 1) {
+    podiumUsers.push({
+      rank: 2,
+      name: users[1].name,
+      role: users[1].role === 'admin' ? 'Campus Admin' : 'Student Helper',
+      xp: `${users[1].xp} XP`,
+      returned: users[1].itemsReturned || 0,
+      level: users[1].level || 1,
+      img: users[1].profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+    });
+  }
+  if (users.length > 0) {
+    podiumUsers.push({
+      rank: 1,
+      name: users[0].name,
+      role: users[0].role === 'admin' ? 'Campus Admin' : 'Student Helper',
+      xp: `${users[0].xp} XP`,
+      returned: users[0].itemsReturned || 0,
+      level: users[0].level || 1,
+      img: users[0].profilePic || 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
+    });
+  }
+  if (users.length > 2) {
+    podiumUsers.push({
+      rank: 3,
+      name: users[2].name,
+      role: users[2].role === 'admin' ? 'Campus Admin' : 'Student Helper',
+      xp: `${users[2].xp} XP`,
+      returned: users[2].itemsReturned || 0,
+      level: users[2].level || 1,
+      img: users[2].profilePic || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+    });
+  }
+
+  const rankingTable = users.slice(3).map((u, i) => ({
+    rank: i + 4,
+    name: u.name,
+    role: u.role === 'admin' ? 'Campus Admin' : 'Student Helper',
+    xp: `${u.xp} XP`,
+    returned: u.itemsReturned || 0,
+    level: u.level || 1,
+    img: u.profilePic || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
+  }));
 
   return (
     <div className="flex flex-col gap-8 pb-10">
@@ -30,7 +84,11 @@ export const Leaderboard: React.FC = () => {
 
       {/* Podium Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-end mt-4 mb-8">
-        {topUsers.map((user) => {
+        {loading ? (
+          <p className="col-span-3 text-center text-text-secondary">Loading podium rankings...</p>
+        ) : podiumUsers.length === 0 ? (
+          <p className="col-span-3 text-center text-text-secondary">No champions reported yet.</p>
+        ) : podiumUsers.map((user) => {
           const isFirst = user.rank === 1;
           const isSecond = user.rank === 2;
           

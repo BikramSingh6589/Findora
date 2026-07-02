@@ -1,9 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileSearch, Package, Sparkles, Filter, Headphones, Droplet, Wallet, Medal, Users } from 'lucide-react';
+import { FileSearch, Package, Sparkles, Filter, Medal, Users, Clock, AlertCircle } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [matches, setMatches] = useState<any[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      if (!user) return;
+      try {
+        // Load AI Matches
+        const matchesRes = await axios.get(`${API_BASE}/api/ai/matches`);
+        if (matchesRes.data && matchesRes.data.success) {
+          setMatches(matchesRes.data.matches || []);
+        }
+
+        // Load User Reports history
+        const userId = user._id || (user as any).id;
+        const reportsRes = await axios.get(`${API_BASE}/api/users/${userId}/reports`);
+        if (reportsRes.data && reportsRes.data.success) {
+          const losts = (reportsRes.data.lostItems || []).map((item: any) => ({
+            ...item,
+            historyType: 'lost',
+            title: item.itemName,
+            dateLabel: `Reported ${new Date(item.createdAt).toLocaleDateString()}`,
+            statusLabel: item.status,
+          }));
+          const founds = (reportsRes.data.foundItems || []).map((item: any) => ({
+            ...item,
+            historyType: 'found',
+            title: item.itemName,
+            dateLabel: `Found ${new Date(item.createdAt).toLocaleDateString()}`,
+            statusLabel: item.status,
+          }));
+          const combined = [...losts, ...founds].sort((a: any, b: any) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setHistory(combined);
+        }
+      } catch (err) {
+        console.error('Error loading dashboard details', err);
+      }
+    };
+    loadDashboardData();
+  }, [user]);
+
+  const userName = user?.name || 'Explorer';
+  const userXP = user?.xp || 0;
+  const userLevel = user?.level || 1;
+  const xpNeeded = userLevel * 100; // e.g. level up milestones
+  const xpPercent = Math.min(Math.round((userXP / xpNeeded) * 100), 100);
 
   return (
     <div className="flex flex-col gap-8">
@@ -18,8 +71,8 @@ export const Dashboard: React.FC = () => {
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl hidden md:block"></div>
         
         <div className="z-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-text-primary">Welcome, Alice 👋</h1>
-          <p className="text-sm md:text-lg text-text-secondary mt-1 md:mt-2">Campus helper since Sep 2023</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary">Welcome, {userName} 👋</h1>
+          <p className="text-sm md:text-lg text-text-secondary mt-1 md:mt-2">Campus helper</p>
         </div>
         
         {/* XP Progress Card */}
@@ -27,14 +80,14 @@ export const Dashboard: React.FC = () => {
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-1">
               <Medal className="w-5 h-5 text-[#f9bd22]" />
-              <span className="font-semibold text-text-primary md:text-primary text-sm md:text-base">Level 12 Explorer</span>
+              <span className="font-semibold text-text-primary md:text-primary text-sm md:text-base">Level {userLevel} Explorer</span>
             </div>
-            <span className="text-sm font-semibold text-primary">1,240 / 1,500 XP</span>
+            <span className="text-sm font-semibold text-primary">{userXP} / {xpNeeded} XP</span>
           </div>
           <div className="w-full h-3 bg-surface-container-low rounded-full overflow-hidden mb-1">
-            <div className="h-full bg-gradient-to-r from-[#F9BD22] to-[#FB923C] w-[82%] rounded-full shadow-[0_0_10px_rgba(249,189,34,0.4)]"></div>
+            <div className="h-full bg-gradient-to-r from-[#F9BD22] to-[#FB923C] rounded-full shadow-[0_0_10px_rgba(249,189,34,0.4)]" style={{ width: `${xpPercent}%` }}></div>
           </div>
-          <p className="text-xs text-text-secondary italic md:hidden">260 XP until your next badge!</p>
+          <p className="text-xs text-text-secondary italic md:hidden">{xpNeeded - userXP} XP until your next badge!</p>
         </div>
       </section>
 
@@ -114,45 +167,50 @@ export const Dashboard: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Match Card 1 */}
-            <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default border-l-4 border-l-info-ai flex flex-col gap-4 relative overflow-hidden group hover:shadow-md transition-all">
-              <div className="absolute top-4 right-4 bg-info-ai/10 text-info-ai font-bold px-2 py-1 rounded-full text-xs">
-                98% Match
+            {matches.length === 0 ? (
+              <div className="md:col-span-2 p-8 bg-surface-container-lowest dark:bg-surface-container rounded-[20px] text-center border border-border-default">
+                <AlertCircle className="w-8 h-8 text-text-secondary mx-auto mb-2" />
+                <p className="font-semibold text-text-secondary">No AI matches found yet</p>
+                <p className="text-xs text-text-secondary mt-1">Report a lost or found item to see matches instantly.</p>
               </div>
-              <div className="flex gap-4">
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface">
-                  <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=150&q=80" alt="iPhone" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h4 className="text-lg font-bold text-text-primary">iPhone 14 Pro</h4>
-                  <p className="text-sm text-text-secondary">Found near Main Library</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <button className="flex-1 py-2 bg-info-ai text-white rounded-xl font-semibold hover:brightness-105 transition-all" onClick={() => navigate('/claim')}>This is mine</button>
-                <button className="px-4 py-2 border border-border-default rounded-xl text-text-secondary hover:bg-surface transition-all">Not mine</button>
-              </div>
-            </div>
-
-            {/* Match Card 2 */}
-            <div className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default border-l-4 border-l-info-ai flex flex-col gap-4 relative overflow-hidden group hover:shadow-md transition-all">
-              <div className="absolute top-4 right-4 bg-info-ai/10 text-info-ai font-bold px-2 py-1 rounded-full text-xs">
-                85% Match
-              </div>
-              <div className="flex gap-4">
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface">
-                  <img src="https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=150&q=80" alt="Airpods" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h4 className="text-lg font-bold text-text-primary">AirPods Case</h4>
-                  <p className="text-sm text-text-secondary">Found at Gym Lockers</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <button className="flex-1 py-2 bg-info-ai text-white rounded-xl font-semibold hover:brightness-105 transition-all" onClick={() => navigate('/claim')}>This is mine</button>
-                <button className="px-4 py-2 border border-border-default rounded-xl text-text-secondary hover:bg-surface transition-all">Not mine</button>
-              </div>
-            </div>
+            ) : (
+              matches.slice(0, 4).map((match: any) => {
+                const isLostSource = match.lostItem?.owner === (user?._id || (user as any)?.id);
+                const matchItem = isLostSource ? match.foundItem : match.lostItem;
+                if (!matchItem) return null;
+                const matchPercent = match.score;
+                return (
+                  <div key={match._id} className="bg-surface-container-lowest dark:bg-surface-container p-6 rounded-[20px] shadow-sm border border-border-default border-l-4 border-l-info-ai flex flex-col gap-4 relative overflow-hidden group hover:shadow-md transition-all">
+                    <div className="absolute top-4 right-4 bg-info-ai/10 text-info-ai font-bold px-2 py-1 rounded-full text-xs">
+                      {matchPercent}% Match
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-low flex items-center justify-center shrink-0">
+                        {matchItem.images && matchItem.images[0] ? (
+                          <img src={matchItem.images[0]} alt={matchItem.itemName} className="w-full h-full object-cover" />
+                        ) : (
+                          <Package className="w-8 h-8 text-text-secondary" />
+                        )}
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <h4 className="text-lg font-bold text-text-primary truncate max-w-[150px]">{matchItem.itemName}</h4>
+                        <p className="text-sm text-text-secondary truncate max-w-[150px]">
+                          {matchItem.locationLost || matchItem.locationFound || 'Campus'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button 
+                        className="flex-1 py-2 bg-info-ai text-white rounded-xl font-semibold hover:brightness-105 transition-all text-xs" 
+                        onClick={() => navigate(`/item/${matchItem._id || matchItem.id}`)}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
 
           {/* Live Map View */}
@@ -180,47 +238,38 @@ export const Dashboard: React.FC = () => {
           </div>
           
           <div className="flex flex-col gap-3">
-            {/* Activity Item 1 */}
-            <div className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary">
-                <Headphones className="w-6 h-6" />
+            {history.length === 0 ? (
+              <div className="p-6 bg-surface-container-lowest dark:bg-surface-container rounded-xl text-center border border-border-default">
+                <Clock className="w-6 h-6 text-text-secondary mx-auto mb-2" />
+                <p className="text-sm font-semibold text-text-secondary">No history found</p>
+                <p className="text-xs text-text-secondary mt-1">Items you report will appear here.</p>
               </div>
-              <div className="grow">
-                <h4 className="font-semibold text-text-primary">AirPods Case</h4>
-                <p className="text-xs text-text-secondary">Reported 2h ago</p>
-              </div>
-              <div className="px-3 py-1 rounded-full bg-warning/10 text-warning font-bold text-[10px] uppercase tracking-wider">
-                Pending
-              </div>
-            </div>
-
-            {/* Activity Item 2 */}
-            <div className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-[#6b38d4]/50 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-[#6b38d4]">
-                <Droplet className="w-6 h-6" />
-              </div>
-              <div className="grow">
-                <h4 className="font-semibold text-text-primary">HydroFlask</h4>
-                <p className="text-xs text-text-secondary">Returned yesterday</p>
-              </div>
-              <div className="px-3 py-1 rounded-full bg-success/10 text-success font-bold text-[10px] uppercase tracking-wider">
-                Returned
-              </div>
-            </div>
-
-            {/* Activity Item 3 */}
-            <div className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-lg bg-surface flex items-center justify-center text-primary">
-                <Wallet className="w-6 h-6" />
-              </div>
-              <div className="grow">
-                <h4 className="font-semibold text-text-primary">Leather Wallet</h4>
-                <p className="text-xs text-text-secondary">Found 3 days ago</p>
-              </div>
-              <div className="px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-[10px] uppercase tracking-wider">
-                Claimed
-              </div>
-            </div>
+            ) : (
+              history.slice(0, 3).map((item: any) => {
+                const isLost = item.historyType === 'lost';
+                return (
+                  <div 
+                    key={item._id} 
+                    onClick={() => navigate(`/item/${item._id}`)}
+                    className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer"
+                  >
+                    <div className={`w-12 h-12 rounded-lg bg-surface flex items-center justify-center ${isLost ? 'text-danger' : 'text-success'}`}>
+                      {isLost ? <FileSearch className="w-6 h-6" /> : <Package className="w-6 h-6" />}
+                    </div>
+                    <div className="grow truncate">
+                      <h4 className="font-semibold text-text-primary truncate">{item.title}</h4>
+                      <p className="text-xs text-text-secondary">{item.dateLabel}</p>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider ${
+                      item.statusLabel === 'active' ? 'bg-primary/10 text-primary' :
+                      item.statusLabel === 'claimed' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                    }`}>
+                      {item.statusLabel}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
 
           {/* Achievement Card */}

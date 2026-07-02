@@ -5,9 +5,11 @@ import {
   MessageSquareWarning, Settings, LogOut 
 } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { useAuth } from '../contexts/AuthContext';
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
+  const { logout } = useAuth();
 
   const isActive = (path: string) => {
     return location.pathname.startsWith(path) && (path !== '/admin' || location.pathname === '/admin');
@@ -69,7 +71,7 @@ export const AdminLayout: React.FC = () => {
             <span>Settings</span>
           </Link>
           <ThemeToggle />
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-danger dark:text-danger hover:bg-danger/10 dark:hover:bg-danger/20 transition-colors">
+          <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-danger dark:text-danger hover:bg-danger/10 dark:hover:bg-danger/20 transition-colors">
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>

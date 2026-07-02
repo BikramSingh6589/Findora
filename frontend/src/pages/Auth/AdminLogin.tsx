@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, User as UserIcon, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import { Button } from '../../components/Button';
-import axios from 'axios';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const AdminLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +12,7 @@ export const AdminLogin: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const { adminLogin } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,12 +20,10 @@ export const AdminLogin: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await axios.post(`${API_BASE}/api/auth/admin/login`, { email, password });
-      const { token } = res.data;
-      localStorage.setItem('token', token);
+      await adminLogin(email, password);
       navigate('/admin');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Admin login failed');
+      setError(err.message || 'Admin login failed');
     } finally {
       setIsSubmitting(false);
     }

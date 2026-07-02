@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const ai_controller_1 = require("../controllers/ai.controller");
+const auth_middleware_1 = require("../middleware/auth.middleware");
+const router = (0, express_1.Router)();
+router.get('/matches', auth_middleware_1.protect, ai_controller_1.getMatches);
+router.get('/matches/:itemId', auth_middleware_1.protect, ai_controller_1.getItemMatches);
+router.post('/trigger', auth_middleware_1.protect, ai_controller_1.triggerManualMatching);
+exports.default = router;

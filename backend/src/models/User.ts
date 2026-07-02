@@ -9,7 +9,7 @@ const UserSchema = new Schema({
   phone:           { type: String, default: '' },
   profilePic:      { type: String, default: '' },
   role:            { type: String, enum: ['user', 'admin'], default: 'user' },
-  status:          { type: String, enum: ['active', 'banned'], default: 'active' },
+  status:          { type: String, enum: ['active', 'warned', 'suspended', 'banned'], default: 'active' },
   xp:              { type: Number, default: 0 },
   level:           { type: Number, default: 1 },
   badges:          { type: [String], default: ['Newcomer'] },

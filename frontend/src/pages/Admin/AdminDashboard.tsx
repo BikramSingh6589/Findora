@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, Clock, AlertTriangle, Users, Package, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 const StatCard: React.FC<{ label: string; value: string; sub: string; icon: React.ReactNode; color: string; border: string }> = ({ label, value, sub, icon, color, border }) => (
   <div className={`bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-5 shadow-sm border-l-4 ${border} flex flex-col justify-between transition-colors duration-300`}>
@@ -15,14 +18,6 @@ const StatCard: React.FC<{ label: string; value: string; sub: string; icon: Reac
   </div>
 );
 
-const pendingClaims = [
-  { id: 'CLM-001', item: 'Sony XM5 Headphones', claimant: 'Kevin S.', time: '10 mins ago', status: 'pending', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&q=70' },
-  { id: 'CLM-002', item: 'Leather Wallet', claimant: 'Maya R.', time: '25 mins ago', status: 'pending', img: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=80&q=70' },
-  { id: 'CLM-003', item: 'MacBook Air M2', claimant: 'Daniel F.', time: '1h ago', status: 'reviewing', img: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=80&q=70' },
-  { id: 'CLM-004', item: 'Blue JBL Earbuds', claimant: 'Sarah T.', time: '2h ago', status: 'pending', img: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=80&q=70' },
-  { id: 'CLM-005', item: 'Student ID Card', claimant: 'Alex W.', time: '3h ago', status: 'reviewing', img: 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=80&q=70' },
-];
-
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   if (status === 'pending') return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-warning/10 text-warning uppercase">Pending</span>;
   if (status === 'reviewing') return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-info-ai/10 text-info-ai uppercase">Reviewing</span>;
@@ -31,12 +26,70 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
 };
 
 export const AdminDashboard: React.FC = () => {
-  const [claimStatuses, setClaimStatuses] = useState<Record<string, string>>(
-    Object.fromEntries(pendingClaims.map(c => [c.id, c.status]))
-  );
+  const [stats, setStats] = useState({
+    totalLost: 0,
+    totalFound: 0,
+    pendingClaims: 0,
+    resolvedToday: 0,
+    totalUsers: 0
+  });
+  const [claims, setClaims] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const approve = (id: string) => setClaimStatuses(s => ({ ...s, [id]: 'approved' }));
-  const reject = (id: string) => setClaimStatuses(s => ({ ...s, [id]: 'rejected' }));
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const [statsRes, claimsRes] = await Promise.all([
+        axios.get(`${API_BASE}/api/admin/dashboard`),
+        axios.get(`${API_BASE}/api/claims?status=pending`)
+      ]);
+      if (statsRes.data && statsRes.data.success) {
+        setStats(statsRes.data);
+      }
+      if (claimsRes.data && claimsRes.data.success) {
+        setClaims(claimsRes.data.claims || claimsRes.data.data?.claims || []);
+      }
+    } catch (err: any) {
+      console.error('Failed to load dashboard data', err);
+      setError(err.response?.data?.error || 'Failed to load dashboard statistics.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const handleApprove = async (id: string) => {
+    try {
+      await axios.post(`${API_BASE}/api/claims/${id}/approve`, { remarks: 'Approved from dashboard quick action' });
+      // Refresh statistics and list
+      fetchDashboardData();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to approve claim');
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await axios.post(`${API_BASE}/api/claims/${id}/reject`, { reason: 'Rejected from dashboard quick action' });
+      // Refresh statistics and list
+      fetchDashboardData();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to reject claim');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-8 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+        <p className="text-text-secondary mt-4">Loading dashboard statistics...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto w-full space-y-8">
@@ -46,12 +99,18 @@ export const AdminDashboard: React.FC = () => {
         <p className="text-text-secondary mt-1">Welcome back, Senior Admin.</p>
       </div>
 
+      {error && (
+        <div className="p-4 rounded-xl bg-danger/10 text-danger text-sm font-semibold">
+          {error}
+        </div>
+      )}
+
       {/* KPI Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard label="System Health" value="24ms" sub="Global Latency · Active" icon={<CheckCircle2 className="w-5 h-5 text-success" />} color="bg-success/10" border="border-success" />
-        <StatCard label="Active Items" value="1,284" sub="+12 today" icon={<Package className="w-5 h-5 text-primary" />} color="bg-primary/10" border="border-primary" />
-        <StatCard label="Pending Claims" value="18" sub="Needs review" icon={<Clock className="w-5 h-5 text-warning" />} color="bg-warning/10" border="border-warning" />
-        <StatCard label="Active Users" value="3,841" sub="This month" icon={<Users className="w-5 h-5 text-info-ai" />} color="bg-info-ai/10" border="border-info-ai" />
+        <StatCard label="Active Items" value={String(stats.totalLost + stats.totalFound)} sub="Total Reported" icon={<Package className="w-5 h-5 text-primary" />} color="bg-primary/10" border="border-primary" />
+        <StatCard label="Pending Claims" value={String(stats.pendingClaims)} sub="Needs review" icon={<Clock className="w-5 h-5 text-warning" />} color="bg-warning/10" border="border-warning" />
+        <StatCard label="Active Users" value={String(stats.totalUsers)} sub="Total Registered" icon={<Users className="w-5 h-5 text-info-ai" />} color="bg-info-ai/10" border="border-info-ai" />
       </div>
 
       {/* XP Progress */}
@@ -75,7 +134,7 @@ export const AdminDashboard: React.FC = () => {
               <Star className="w-5 h-5 text-info-ai" />
             </div>
             <h3 className="font-bold text-lg text-text-primary">AI Match Alerts</h3>
-            <span className="ml-auto bg-info-ai text-white text-[10px] px-2 py-0.5 rounded-full font-bold">4 NEW</span>
+            <span className="ml-auto bg-info-ai text-white text-[10px] px-2 py-0.5 rounded-full font-bold">2 NEW</span>
           </div>
           <div className="space-y-3">
             {[
@@ -97,29 +156,29 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick Actions */}
         <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-6 shadow-sm border border-border-default transition-colors duration-300">
           <h3 className="font-bold text-lg text-text-primary mb-5">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             <Link to="/admin/claims" className="p-4 bg-warning/5 border border-warning/20 rounded-xl hover:bg-warning/10 transition-colors cursor-pointer text-center">
               <Clock className="w-7 h-7 text-warning mx-auto mb-2" />
-              <p className="font-bold text-sm text-text-primary">18 Pending</p>
+              <p className="font-bold text-sm text-text-primary">{stats.pendingClaims} Pending</p>
               <p className="text-xs text-text-secondary">Claims</p>
             </Link>
             <Link to="/admin/items" className="p-4 bg-primary/5 border border-primary/20 rounded-xl hover:bg-primary/10 transition-colors cursor-pointer text-center">
               <Package className="w-7 h-7 text-primary mx-auto mb-2" />
-              <p className="font-bold text-sm text-text-primary">24 Pending</p>
+              <p className="font-bold text-sm text-text-primary">Manage</p>
               <p className="text-xs text-text-secondary">Items</p>
             </Link>
             <Link to="/admin/users" className="p-4 bg-success/5 border border-success/20 rounded-xl hover:bg-success/10 transition-colors cursor-pointer text-center">
               <Users className="w-7 h-7 text-success mx-auto mb-2" />
-              <p className="font-bold text-sm text-text-primary">3,841</p>
+              <p className="font-bold text-sm text-text-primary">{stats.totalUsers}</p>
               <p className="text-xs text-text-secondary">Users</p>
             </Link>
             <Link to="/admin/community" className="p-4 bg-danger/5 border border-danger/20 rounded-xl hover:bg-danger/10 transition-colors cursor-pointer text-center">
               <AlertTriangle className="w-7 h-7 text-danger mx-auto mb-2" />
-              <p className="font-bold text-sm text-text-primary">7 Flagged</p>
-              <p className="text-xs text-text-secondary">Posts</p>
+              <p className="font-bold text-sm text-text-primary">Moderate</p>
+              <p className="text-xs text-text-secondary">Community</p>
             </Link>
           </div>
         </div>
@@ -132,77 +191,79 @@ export const AdminDashboard: React.FC = () => {
           <Link to="/admin/claims" className="text-sm font-bold text-primary hover:underline">See all</Link>
         </div>
         <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm border border-border-default overflow-hidden transition-colors duration-300">
-          {/* Desktop Table */}
-          <table className="hidden md:table w-full">
-            <thead className="bg-surface-container-low border-b border-border-default">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Item</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Claimant</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Time</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border-default">
-              {pendingClaims.map(claim => (
-                <tr key={claim.id} className="hover:bg-surface-container-low/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <img src={claim.img} alt={claim.item} className="w-10 h-10 rounded-lg object-cover" />
-                      <div>
-                        <p className="font-bold text-sm text-text-primary">{claim.item}</p>
-                        <p className="text-xs text-text-secondary">{claim.id}</p>
+          {claims.length === 0 ? (
+            <div className="p-8 text-center text-text-secondary">
+              No pending claims requiring approval at the moment. Good job!
+            </div>
+          ) : (
+            <>
+              {/* Desktop Table */}
+              <table className="hidden md:table w-full">
+                <thead className="bg-surface-container-low border-b border-border-default">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Item</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Claimant</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Confidence</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-text-secondary uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-default">
+                  {claims.slice(0, 5).map((claim: any) => (
+                    <tr key={claim._id} className="hover:bg-surface-container-low/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <img src={claim.foundItemId?.images?.[0] || 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=80&q=70'} alt={claim.foundItemId?.itemName} className="w-10 h-10 rounded-lg object-cover" />
+                          <div>
+                            <p className="font-bold text-sm text-text-primary">{claim.foundItemId?.itemName}</p>
+                            <p className="text-xs text-text-secondary">{claim.claimId}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-text-secondary">{(claim.claimant as any)?.name || 'Unknown'}</td>
+                      <td className="px-6 py-4 text-sm text-text-secondary font-bold">{claim.confidence}%</td>
+                      <td className="px-6 py-4"><StatusBadge status={claim.status} /></td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2">
+                          <button onClick={() => handleApprove(claim._id)} className="p-1.5 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors">
+                            <CheckCircle2 className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleReject(claim._id)} className="p-1.5 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors">
+                            <XCircle className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Mobile Cards */}
+              <div className="md:hidden divide-y divide-border-default">
+                {claims.slice(0, 5).map((claim: any) => (
+                  <div key={claim._id} className="p-4">
+                    <div className="flex gap-3 mb-3">
+                      <img src={claim.foundItemId?.images?.[0] || 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=80&q=70'} alt={claim.foundItemId?.itemName} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                      <div className="flex-1">
+                        <h4 className="font-bold text-sm text-text-primary">{claim.foundItemId?.itemName}</h4>
+                        <p className="text-xs text-text-secondary">Claimed by {(claim.claimant as any)?.name || 'Unknown'}</p>
+                        <p className="text-xs text-text-secondary">Confidence: {claim.confidence}%</p>
+                        <div className="mt-1"><StatusBadge status={claim.status} /></div>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-text-secondary">{claim.claimant}</td>
-                  <td className="px-6 py-4 text-xs text-text-secondary">{claim.time}</td>
-                  <td className="px-6 py-4"><StatusBadge status={claimStatuses[claim.id]} /></td>
-                  <td className="px-6 py-4">
-                    {claimStatuses[claim.id] === 'approved' || claimStatuses[claim.id] === 'rejected' ? (
-                      <span className="text-xs text-text-secondary italic">Decision made</span>
-                    ) : (
-                      <div className="flex gap-2">
-                        <button onClick={() => approve(claim.id)} className="p-1.5 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors">
-                          <CheckCircle2 className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => reject(claim.id)} className="p-1.5 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors">
-                          <XCircle className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Mobile Cards */}
-          <div className="md:hidden divide-y divide-border-default">
-            {pendingClaims.map(claim => (
-              <div key={claim.id} className="p-4">
-                <div className="flex gap-3 mb-3">
-                  <img src={claim.img} alt={claim.item} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
-                  <div className="flex-1">
-                    <h4 className="font-bold text-sm text-text-primary">{claim.item}</h4>
-                    <p className="text-xs text-text-secondary">Claimed by {claim.claimant}</p>
-                    <p className="text-xs text-text-secondary">{claim.time}</p>
-                    <div className="mt-1"><StatusBadge status={claimStatuses[claim.id]} /></div>
+                    <div className="flex gap-2">
+                      <button onClick={() => handleApprove(claim._id)} className="flex-1 py-2 bg-primary text-white rounded-xl font-bold text-sm flex items-center justify-center gap-1">
+                        <CheckCircle2 className="w-4 h-4" /> Approve
+                      </button>
+                      <button onClick={() => handleReject(claim._id)} className="flex-1 py-2 border border-danger text-danger rounded-xl font-bold text-sm flex items-center justify-center gap-1">
+                        <XCircle className="w-4 h-4" /> Reject
+                      </button>
+                    </div>
                   </div>
-                </div>
-                {claimStatuses[claim.id] !== 'approved' && claimStatuses[claim.id] !== 'rejected' && (
-                  <div className="flex gap-2">
-                    <button onClick={() => approve(claim.id)} className="flex-1 py-2 bg-primary text-white rounded-xl font-bold text-sm flex items-center justify-center gap-1">
-                      <CheckCircle2 className="w-4 h-4" /> Approve
-                    </button>
-                    <button onClick={() => reject(claim.id)} className="flex-1 py-2 border border-danger text-danger rounded-xl font-bold text-sm flex items-center justify-center gap-1">
-                      <XCircle className="w-4 h-4" /> Reject
-                    </button>
-                  </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
