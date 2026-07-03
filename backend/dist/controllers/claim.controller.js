@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rejectClaim = exports.approveClaim = exports.cancelClaim = exports.getClaimById = exports.getClaims = exports.submitClaim = void 0;
+exports.mediationResolve = exports.mediateClaim = exports.resolveClaim = exports.rejectClaim = exports.approveClaim = exports.cancelClaim = exports.getClaimById = exports.getClaims = exports.submitClaim = void 0;
 const uuid_1 = require("uuid");
 const Claim_1 = __importDefault(require("../models/Claim"));
 const FoundItem_1 = __importDefault(require("../models/FoundItem"));
@@ -97,7 +97,7 @@ const calculateConfidence = async (foundItemId, lostItemId, answers) => {
  */
 const submitClaim = async (req, res, next) => {
     try {
-        const { foundItemId, lostItemId, answers, proofUrls: incomingProofUrls } = req.body;
+        let { foundItemId, lostItemId, answers, proofUrls: incomingProofUrls } = req.body;
         if (!foundItemId) {
             (0, response_1.sendError)(res, 'Found item ID is required', 400);
             return;
@@ -117,14 +117,13 @@ const submitClaim = async (req, res, next) => {
             (0, response_1.sendError)(res, 'You cannot claim an item that you reported as found', 400);
             return;
         }
-        // Business Rule: Prevent duplicate pending claims for the same user & found item
+        // Business Rule: Retrieve existing claim if it already exists
         const existingClaim = await Claim_1.default.findOne({
             foundItemId,
             claimant: req.user._id,
-            status: 'pending',
         });
         if (existingClaim) {
-            (0, response_1.sendError)(res, 'You already have a pending claim for this item', 409);
+            (0, response_1.sendSuccess)(res, { claim: existingClaim }, 'Retrieved existing claim.', 200);
             return;
         }
         // Handle upload files if sent via multer
@@ -135,6 +134,17 @@ const submitClaim = async (req, res, next) => {
             ...(Array.isArray(incomingProofUrls) ? incomingProofUrls : []),
             ...uploadedProofUrls,
         ];
+        // Auto-link a LostItem if not explicitly provided
+        if (!lostItemId) {
+            const potentialLostItem = await LostItem_1.default.findOne({
+                owner: req.user._id,
+                category: foundItem.category,
+                status: 'active'
+            });
+            if (potentialLostItem) {
+                lostItemId = potentialLostItem._id;
+            }
+        }
         // Calculate confidence match score
         const confidence = await calculateConfidence(foundItemId, lostItemId, answers);
         // Create the Claim
@@ -149,6 +159,10 @@ const submitClaim = async (req, res, next) => {
         });
         // Reserve the FoundItem
         await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'claimed' });
+        // Also update LostItem status if provided
+        if (lostItemId) {
+            await LostItem_1.default.findByIdAndUpdate(lostItemId, { status: 'claimed' });
+        }
         (0, response_1.sendSuccess)(res, { claim }, 'Claim submitted successfully. Item reserved.', 201);
     }
     catch (error) {
@@ -171,7 +185,12 @@ const getClaims = async (req, res, next) => {
                 query.status = status;
         }
         else {
-            query.claimant = req.user._id;
+            const userFoundItems = await FoundItem_1.default.find({ finder: req.user._id }).select('_id');
+            const foundItemIds = userFoundItems.map(item => item._id);
+            query.$or = [
+                { claimant: req.user._id },
+                { foundItemId: { $in: foundItemIds } }
+            ];
         }
         const [claims, total] = await Promise.all([
             Claim_1.default.find(query)
@@ -242,6 +261,10 @@ const cancelClaim = async (req, res, next) => {
         }
         // Release the FoundItem back to active status
         await FoundItem_1.default.findByIdAndUpdate(claim.foundItemId, { status: 'active' });
+        // Release linked LostItem back to active status
+        if (claim.lostItemId) {
+            await LostItem_1.default.findByIdAndUpdate(claim.lostItemId, { status: 'active' });
+        }
         // Delete or update the claim to cancelled/rejected (we delete it to allow re-claiming)
         await Claim_1.default.findByIdAndDelete(req.params.id);
         (0, response_1.sendSuccess)(res, {}, 'Claim cancelled successfully. Item is available again.');
@@ -273,12 +296,31 @@ const approveClaim = async (req, res, next) => {
         // Update claim status
         const remarks = req.body.remarks || 'Approved by admin';
         claim.status = 'approved';
+        claim.mediationStatus = 'approved'; // clear pending mediation flag
         claim.qrToken = qrToken;
         claim.qrCodeUrl = qrCodeUrl;
         claim.remarks = remarks;
         await claim.save();
         // Re-verify FoundItem is marked claimed
         await FoundItem_1.default.findByIdAndUpdate(claim.foundItemId._id, { status: 'claimed' });
+        // Mark linked LostItem as resolved so it disappears from community feed
+        if (claim.lostItemId) {
+            await LostItem_1.default.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' });
+        }
+        // Notify room via socket
+        try {
+            const { getIO } = require('../services/socket.service');
+            const io = getIO();
+            io.to(`claim:${claim._id}`).emit('claim_resolved', {
+                claimId: claim._id,
+                qrCodeUrl,
+                status: 'approved',
+                remarks
+            });
+        }
+        catch (e) {
+            console.warn('Socket emit failed:', e);
+        }
         // Send email notification to claimant
         const claimant = claim.claimant;
         const foundItem = claim.foundItemId;
@@ -308,11 +350,29 @@ const rejectClaim = async (req, res, next) => {
         }
         const reason = req.body.reason || req.body.remarks || 'Insufficient proof of ownership';
         claim.status = 'rejected';
+        claim.mediationStatus = 'rejected'; // clear pending mediation flag
         claim.reason = reason;
         claim.remarks = reason;
         await claim.save();
         // Release the FoundItem back to active
         await FoundItem_1.default.findByIdAndUpdate(claim.foundItemId._id, { status: 'active' });
+        // Release linked LostItem back to active status
+        if (claim.lostItemId) {
+            await LostItem_1.default.findByIdAndUpdate(claim.lostItemId, { status: 'active' });
+        }
+        // Notify room via socket
+        try {
+            const { getIO } = require('../services/socket.service');
+            const io = getIO();
+            io.to(`claim:${claim._id}`).emit('claim_rejected', {
+                claimId: claim._id,
+                status: 'rejected',
+                reason
+            });
+        }
+        catch (e) {
+            console.warn('Socket emit failed:', e);
+        }
         // Send email notification to claimant
         const claimant = claim.claimant;
         const foundItem = claim.foundItemId;
@@ -324,3 +384,180 @@ const rejectClaim = async (req, res, next) => {
     }
 };
 exports.rejectClaim = rejectClaim;
+/**
+ * Resolve a claim by confirming ownership (Finder only).
+ */
+const resolveClaim = async (req, res, next) => {
+    try {
+        const claim = await Claim_1.default.findById(req.params.id)
+            .populate('claimant')
+            .populate('foundItemId');
+        if (!claim) {
+            (0, response_1.sendError)(res, 'Claim not found', 404);
+            return;
+        }
+        const foundItem = claim.foundItemId;
+        if (!foundItem) {
+            (0, response_1.sendError)(res, 'Found item not associated with this claim', 400);
+            return;
+        }
+        // Only the finder of the item can resolve and confirm ownership
+        if (foundItem.finder.toString() !== req.user._id.toString()) {
+            (0, response_1.sendError)(res, 'Only the finder of this item can confirm ownership and resolve the claim', 403);
+            return;
+        }
+        // Generate secure QR token & upload QR code image to Cloudinary
+        const qrToken = (0, uuid_1.v4)();
+        const qrCodeUrl = await (0, qr_service_1.generateQR)(qrToken);
+        // Calculate expiration time (default 24h, max 48h)
+        let hours = Number(req.body.qrExpiresHours) || 24;
+        if (hours > 48)
+            hours = 48;
+        if (hours < 1)
+            hours = 1;
+        const qrExpiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
+        claim.status = 'resolved';
+        claim.qrToken = qrToken;
+        claim.qrCodeUrl = qrCodeUrl;
+        claim.qrExpiresAt = qrExpiresAt;
+        claim.remarks = 'Ownership confirmed by Finder';
+        await claim.save();
+        await FoundItem_1.default.findByIdAndUpdate(foundItem._id, { status: 'claimed' });
+        // Mark linked lost item as resolved so it leaves the community board
+        if (claim.lostItemId) {
+            await LostItem_1.default.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' });
+        }
+        // Send real-time notification to the room via Socket.IO
+        try {
+            const { getIO } = require('../services/socket.service');
+            const io = getIO();
+            io.to(`claim:${claim._id}`).emit('claim_resolved', {
+                claimId: claim._id,
+                qrCodeUrl,
+                qrExpiresAt
+            });
+        }
+        catch (e) {
+            console.warn('Socket emit failed (running without active listeners?):', e);
+        }
+        (0, response_1.sendSuccess)(res, { claim }, 'Claim resolved and ownership confirmed successfully.');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.resolveClaim = resolveClaim;
+/**
+ * Request admin mediation for a claim (Finder or Claimant).
+ */
+const mediateClaim = async (req, res, next) => {
+    try {
+        const claim = await Claim_1.default.findById(req.params.id).populate('foundItemId');
+        if (!claim) {
+            (0, response_1.sendError)(res, 'Claim not found', 404);
+            return;
+        }
+        const foundItem = claim.foundItemId;
+        const isFinder = foundItem?.finder?.toString() === req.user._id.toString();
+        const isClaimant = claim.claimant.toString() === req.user._id.toString();
+        if (!isFinder && !isClaimant) {
+            (0, response_1.sendError)(res, 'Only the finder or claimant can request admin mediation', 403);
+            return;
+        }
+        claim.mediationRequested = true;
+        claim.mediationStatus = 'pending';
+        await claim.save();
+        // Notify room via socket
+        try {
+            const { getIO } = require('../services/socket.service');
+            const io = getIO();
+            io.to(`claim:${claim._id}`).emit('mediation_status', {
+                claimId: claim._id,
+                mediationRequested: true,
+                mediationStatus: 'pending'
+            });
+        }
+        catch (e) {
+            console.warn(e);
+        }
+        (0, response_1.sendSuccess)(res, { claim }, 'Mediation requested successfully.');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.mediateClaim = mediateClaim;
+/**
+ * Admin resolves mediation request.
+ */
+const mediationResolve = async (req, res, next) => {
+    try {
+        const { action } = req.body; // 'approve' or 'reject'
+        if (action !== 'approve' && action !== 'reject') {
+            (0, response_1.sendError)(res, 'Invalid mediation resolution action. Must be approve or reject', 400);
+            return;
+        }
+        const claim = await Claim_1.default.findById(req.params.id).populate('foundItemId');
+        if (!claim) {
+            (0, response_1.sendError)(res, 'Claim not found', 404);
+            return;
+        }
+        if (action === 'approve') {
+            // Approve mediation: Close chat, confirm ownership, generate QR
+            const qrToken = (0, uuid_1.v4)();
+            const qrCodeUrl = await (0, qr_service_1.generateQR)(qrToken);
+            let hours = Number(req.body.qrExpiresHours) || 24;
+            if (hours > 48)
+                hours = 48;
+            const qrExpiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
+            claim.status = 'resolved';
+            claim.mediationStatus = 'approved';
+            claim.qrToken = qrToken;
+            claim.qrCodeUrl = qrCodeUrl;
+            claim.qrExpiresAt = qrExpiresAt;
+            claim.remarks = 'Ownership confirmed by Admin Mediation';
+            await claim.save();
+            await FoundItem_1.default.findByIdAndUpdate(claim.foundItemId._id, { status: 'claimed' });
+            // Mark linked lost item as resolved so it leaves the community board
+            if (claim.lostItemId) {
+                await LostItem_1.default.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' });
+            }
+            try {
+                const { getIO } = require('../services/socket.service');
+                const io = getIO();
+                io.to(`claim:${claim._id}`).emit('claim_resolved', {
+                    claimId: claim._id,
+                    qrCodeUrl,
+                    qrExpiresAt,
+                    mediationStatus: 'approved'
+                });
+            }
+            catch (e) {
+                console.warn(e);
+            }
+        }
+        else {
+            // Reject mediation request: Resume chat
+            claim.mediationStatus = 'rejected';
+            claim.mediationRequested = false;
+            await claim.save();
+            try {
+                const { getIO } = require('../services/socket.service');
+                const io = getIO();
+                io.to(`claim:${claim._id}`).emit('mediation_status', {
+                    claimId: claim._id,
+                    mediationRequested: false,
+                    mediationStatus: 'rejected'
+                });
+            }
+            catch (e) {
+                console.warn(e);
+            }
+        }
+        (0, response_1.sendSuccess)(res, { claim }, `Mediation request successfully resolved with action: ${action}`);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.mediationResolve = mediationResolve;

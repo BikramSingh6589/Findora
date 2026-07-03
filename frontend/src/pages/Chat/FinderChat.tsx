@@ -563,46 +563,55 @@ export const FinderChat: React.FC = () => {
             
             <div className="space-y-2">
               <h3 className="font-bold text-text-primary text-xl md:text-2xl">
-                {claim.mediationStatus === 'approved' ? '✅ Admin Approved!' : 'Ownership Confirmed! 🎉'}
+                {claim.mediationStatus === 'approved' 
+                  ? '✅ Admin Approved!' 
+                  : (!claim.qrToken && claim.status === 'resolved' 
+                    ? 'Handover Complete! 🎊' 
+                    : 'Ownership Confirmed! 🎉')}
               </h3>
               <p className="text-xs md:text-sm text-text-secondary leading-relaxed">
                 {claim.mediationStatus === 'approved'
                   ? isFinder
-                    ? 'The admin has reviewed this dispute and approved the claim. Please proceed to scan the claimant\'s QR code to finalize the handover.'
-                    : 'The admin has reviewed this dispute and approved your claim. A QR code has been issued — show it to the finder to complete the handover.'
-                  : isFinder 
-                    ? 'You have successfully confirmed ownership. Please navigate to the scanner tool to verify and finalize the return handover.'
-                    : 'Great news! The finder has verified your answers and confirmed your ownership. Show your secure QR code to finalize the return.'}
+                    ? 'Admin has approved! Please come and deposit the item to the Lost and Found desk.'
+                    : 'Admin has approved! Please come to the Lost and Found desk to collect your product.'
+                  : (!claim.qrToken && claim.status === 'resolved'
+                    ? 'Thank you for being an amazing part of our community! The item has been successfully returned to its rightful owner. We appreciate your integrity and help.'
+                    : isFinder 
+                      ? 'You have successfully confirmed ownership. Please navigate to the scanner tool to verify and finalize the return handover.'
+                      : 'Great news! The finder has verified your answers and confirmed your ownership. Show your secure QR code to finalize the return.')}
               </p>
             </div>
 
             <div className="flex flex-col gap-2.5">
-              {isFinder ? (
-                <button 
-                  onClick={() => {
-                    setShowSuccessPopup(false);
-                    navigate(`/handover/scan/${claim._id}`);
-                  }}
-                  className="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm hover:brightness-110 active:scale-95 transition-all shadow-md"
-                >
-                  Open Scanner Tool
-                </button>
-              ) : (
-                <button 
-                  onClick={() => {
-                    setShowSuccessPopup(false);
-                    if (chatContainerRef.current) {
-                      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-                    }
-                  }}
-                  className="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm hover:brightness-110 active:scale-95 transition-all shadow-md"
-                >
-                  View Handover QR Code
-                </button>
+              {/* Only show the action button if the handover is not fully complete */}
+              {(!(!claim.qrToken && claim.status === 'resolved') && claim.mediationStatus !== 'approved') && (
+                isFinder ? (
+                  <button 
+                    onClick={() => {
+                      setShowSuccessPopup(false);
+                      navigate(`/handover/scan/${claim._id}`);
+                    }}
+                    className="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm hover:brightness-110 active:scale-95 transition-all shadow-md"
+                  >
+                    Open Scanner Tool
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      setShowSuccessPopup(false);
+                      if (chatContainerRef.current) {
+                        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                      }
+                    }}
+                    className="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm hover:brightness-110 active:scale-95 transition-all shadow-md"
+                  >
+                    View Handover QR Code
+                  </button>
+                )
               )}
               <button 
                 onClick={() => setShowSuccessPopup(false)}
-                className="w-full py-2.5 rounded-xl border border-border-default font-bold text-text-secondary text-sm hover:bg-surface transition-colors"
+                className="w-full py-3 bg-transparent text-text-secondary hover:bg-surface-container rounded-xl font-bold text-sm transition-colors"
               >
                 Dismiss
               </button>

@@ -112,6 +112,9 @@ export const ChatHistory: React.FC = () => {
             } else if (claim.status === 'rejected') {
               statusLabel = 'Closed';
               badgeStyle = 'bg-danger/10 text-danger';
+            } else if (claim.status === 'approved') {
+              statusLabel = 'Admin Approved';
+              badgeStyle = 'bg-info-ai/10 text-info-ai';
             }
 
             return (

@@ -89,4 +89,6 @@
 - Cloudinary service automatically handles mock links if cloud configuration variables match placeholder defaults.
 - QR Generation Service automatically falls back to Unsplash mock links if Cloudinary default credentials are detected.
 - Claims logic implements strict business rules: finders cannot claim their own items, duplicate claims are prevented, and items are reserved/released atomically on claim lifecycle events.
-
+- **Community Board Visibility**: Improved claim filtering on the Community Board. Claimed (but not yet resolved) Lost and Found items now display on the feed but feature disabled "Claimed" buttons alongside a red "Conflict this claim" button. Items only fully disappear from the board once closed/archived.
+- **Claim Process Dropdown**: Enhanced the Claim Verification form with an optional dropdown that queries `api/users/:id/reports` and allows users to explicitly link an active Lost Item they previously reported to the Found Item they are claiming. This `lostItemId` is automatically sent to the backend and integrated into the claim lifecycle.
+- **Success Popups & QR Codes**: Adjusted the Chat/Handover Success Popup logic. Fully closed claims (where `qrToken` is empty and status is `resolved`) now show a "Handover Complete! 🎊" celebration message without prompting users to scan the QR code again.

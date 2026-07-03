@@ -6,6 +6,7 @@ const auth_middleware_1 = require("../middleware/auth.middleware");
 const admin_middleware_1 = require("../middleware/admin.middleware");
 const validate_middleware_1 = require("../middleware/validate.middleware");
 const admin_controller_1 = require("../controllers/admin.controller");
+const migration_controller_1 = require("../controllers/migration.controller");
 const router = (0, express_1.Router)();
 const userStatusSchema = zod_1.z.object({
     status: zod_1.z.enum(['active', 'warned', 'suspended', 'banned']),
@@ -26,4 +27,6 @@ router.delete('/items/:id', admin_controller_1.deleteItem);
 router.get('/community', admin_controller_1.getCommunityPosts);
 router.put('/community/:id/approve', admin_controller_1.approveCommunityPost);
 router.delete('/community/:id', admin_controller_1.deleteCommunityPost);
+// One-time migration routes
+router.post('/migrate/fix-lost-item-statuses', migration_controller_1.fixLostItemStatuses);
 exports.default = router;

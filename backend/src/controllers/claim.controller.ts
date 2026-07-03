@@ -104,7 +104,7 @@ const calculateConfidence = async (
  */
 export const submitClaim = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { foundItemId, lostItemId, answers, proofUrls: incomingProofUrls } = req.body;
+    let { foundItemId, lostItemId, answers, proofUrls: incomingProofUrls } = req.body;
 
     if (!foundItemId) {
       sendError(res, 'Found item ID is required', 400);
@@ -147,6 +147,18 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
       ...uploadedProofUrls,
     ];
 
+    // Auto-link a LostItem if not explicitly provided
+    if (!lostItemId) {
+      const potentialLostItem = await LostItem.findOne({
+        owner: req.user._id,
+        category: foundItem.category,
+        status: 'active'
+      });
+      if (potentialLostItem) {
+        lostItemId = potentialLostItem._id;
+      }
+    }
+
     // Calculate confidence match score
     const confidence = await calculateConfidence(foundItemId, lostItemId, answers);
 
@@ -163,6 +175,11 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
 
     // Reserve the FoundItem
     await FoundItem.findByIdAndUpdate(foundItemId, { status: 'claimed' });
+
+    // Also update LostItem status if provided
+    if (lostItemId) {
+      await LostItem.findByIdAndUpdate(lostItemId, { status: 'claimed' });
+    }
 
     sendSuccess(res, { claim }, 'Claim submitted successfully. Item reserved.', 201);
   } catch (error) {
@@ -266,6 +283,11 @@ export const cancelClaim = async (req: AuthenticatedRequest, res: Response, next
     // Release the FoundItem back to active status
     await FoundItem.findByIdAndUpdate(claim.foundItemId, { status: 'active' });
 
+    // Release linked LostItem back to active status
+    if ((claim as any).lostItemId) {
+      await LostItem.findByIdAndUpdate((claim as any).lostItemId, { status: 'active' });
+    }
+
     // Delete or update the claim to cancelled/rejected (we delete it to allow re-claiming)
     await Claim.findByIdAndDelete(req.params.id);
 
@@ -294,25 +316,25 @@ export const approveClaim = async (req: AuthenticatedRequest, res: Response, nex
       return;
     }
 
-    // Generate secure QR token & upload QR code image to Cloudinary
-    const qrToken = uuidv4();
-    const qrCodeUrl = await generateQR(qrToken);
-
     // Update claim status
-    const remarks = req.body.remarks || 'Approved by admin';
+    const remarks = req.body.remarks || 'Approved by admin - Submit to Lost and Found Desk';
     claim.status = 'approved';
     claim.mediationStatus = 'approved'; // clear pending mediation flag
-    claim.qrToken = qrToken;
-    claim.qrCodeUrl = qrCodeUrl;
     claim.remarks = remarks;
     await claim.save();
 
     // Re-verify FoundItem is marked claimed
     await FoundItem.findByIdAndUpdate(claim.foundItemId._id, { status: 'claimed' });
 
-    // Mark linked LostItem as resolved so it disappears from community feed
-    if ((claim as any).lostItemId) {
-      await LostItem.findByIdAndUpdate((claim as any).lostItemId, { status: 'resolved' });
+    // Mark linked LostItem as claimed, or find one if not explicitly linked
+    let targetLostItemId = (claim as any).lostItemId;
+    if (!targetLostItemId && claim.claimant) {
+      const fallbackLostItem = await LostItem.findOne({ owner: claim.claimant._id, status: 'active' });
+      if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
+    }
+    
+    if (targetLostItemId) {
+      await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'claimed' });
     }
 
     // Notify room via socket
@@ -321,7 +343,6 @@ export const approveClaim = async (req: AuthenticatedRequest, res: Response, nex
       const io = getIO();
       io.to(`claim:${claim._id}`).emit('claim_resolved', {
         claimId: claim._id,
-        qrCodeUrl,
         status: 'approved',
         remarks
       });
@@ -335,8 +356,7 @@ export const approveClaim = async (req: AuthenticatedRequest, res: Response, nex
     await sendClaimApprovedEmail(
       claimant.email,
       claimant.name,
-      foundItem.itemName,
-      qrCodeUrl
+      foundItem.itemName
     );
 
     sendSuccess(res, { claim }, 'Claim approved successfully. Notification sent.');
@@ -373,6 +393,11 @@ export const rejectClaim = async (req: AuthenticatedRequest, res: Response, next
 
     // Release the FoundItem back to active
     await FoundItem.findByIdAndUpdate(claim.foundItemId._id, { status: 'active' });
+
+    // Release linked LostItem back to active status
+    if ((claim as any).lostItemId) {
+      await LostItem.findByIdAndUpdate((claim as any).lostItemId, { status: 'active' });
+    }
 
     // Notify room via socket
     try {
@@ -532,35 +557,27 @@ export const mediationResolve = async (req: AuthenticatedRequest, res: Response,
     }
 
     if (action === 'approve') {
-      // Approve mediation: Close chat, confirm ownership, generate QR
-      const qrToken = uuidv4();
-      const qrCodeUrl = await generateQR(qrToken);
-
-      let hours = Number(req.body.qrExpiresHours) || 24;
-      if (hours > 48) hours = 48;
-      const qrExpiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
-
-      claim.status = 'resolved';
+      claim.status = 'approved';
       claim.mediationStatus = 'approved';
-      claim.qrToken = qrToken;
-      claim.qrCodeUrl = qrCodeUrl;
-      claim.qrExpiresAt = qrExpiresAt;
-      claim.remarks = 'Ownership confirmed by Admin Mediation';
+      claim.remarks = 'Ownership confirmed by Admin Mediation - Submit to Lost and Found Desk';
       await claim.save();
 
       await FoundItem.findByIdAndUpdate(claim.foundItemId._id, { status: 'claimed' });
-      // Mark linked lost item as resolved so it leaves the community board
-      if ((claim as any).lostItemId) {
-        await LostItem.findByIdAndUpdate((claim as any).lostItemId, { status: 'resolved' });
+      // Mark linked lost item as claimed so it updates appropriately, or fallback
+      let targetLostItemId = (claim as any).lostItemId;
+      if (!targetLostItemId && claim.claimant) {
+        const fallbackLostItem = await LostItem.findOne({ owner: claim.claimant._id, status: 'active' });
+        if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
       }
-
+      
+      if (targetLostItemId) {
+        await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'claimed' });
+      }
       try {
         const { getIO } = require('../services/socket.service');
         const io = getIO();
         io.to(`claim:${claim._id}`).emit('claim_resolved', {
           claimId: claim._id,
-          qrCodeUrl,
-          qrExpiresAt,
           mediationStatus: 'approved'
         });
       } catch (e) {

@@ -14,6 +14,7 @@ const foundItemSchema = zod_1.z.object({
     color: zod_1.z.string().min(1, 'Color is required'),
     description: zod_1.z.string().min(1, 'Description is required'),
     locationFound: zod_1.z.string().min(1, 'Location found is required'),
+    lastSeen: zod_1.z.string().optional(),
     dateFound: zod_1.z.string().transform((str) => new Date(str)),
     specialAppearance: zod_1.z.string().optional(),
     additionalNotes: zod_1.z.string().optional(),

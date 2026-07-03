@@ -117,6 +117,10 @@ export const CommunityBoard: React.FC = () => {
   };
 
   const filteredItems = items.filter(item => {
+    // Only hide archived items
+    if (item.status === 'archived') {
+      return false;
+    }
     if (activeCategory === 'All Items') return true;
     return item.category.toLowerCase() === activeCategory.toLowerCase();
   });
@@ -124,8 +128,8 @@ export const CommunityBoard: React.FC = () => {
   const filteredLostItems = lostItems.filter(item => {
     // Hide the reporter's own lost item from the list
     const ownerId = item.owner?._id || item.owner;
-    if (ownerId === currentUserId) return false;
-    // Hide resolved/archived items — item has been found
+    if (String(ownerId) === String(currentUserId)) return false;
+    // Hide resolved/archived items (keep claimed ones visible)
     if (item.status === 'resolved' || item.status === 'archived') return false;
     if (activeCategory === 'All Items') return true;
     return (item.category || '').toLowerCase() === activeCategory.toLowerCase();
@@ -296,12 +300,32 @@ export const CommunityBoard: React.FC = () => {
                   />
                   <span className="text-xs text-text-secondary">Lost by <strong className="text-text-primary">{item.owner?.name || 'Someone'}</strong></span>
                 </div>
-                <button
-                  onClick={() => navigate(`/report/found`)}
-                  className="w-full h-11 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all"
-                >
-                  I Found This!
-                </button>
+                {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
+                  <div className="flex flex-col items-center w-full">
+                    <button
+                      disabled
+                      className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
+                    >
+                      Claimed
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/conflict/${item._id}`);
+                      }}
+                      className="text-danger hover:underline text-xs font-bold text-center mt-1"
+                    >
+                      Conflict this claim
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => navigate(`/report/found`)}
+                    className="w-full h-11 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all"
+                  >
+                    I Found This!
+                  </button>
+                )}
               </div>
             ))
           )
@@ -464,12 +488,32 @@ export const CommunityBoard: React.FC = () => {
                     <span className="text-xs text-text-secondary">Lost by <strong className="text-text-primary">{item.owner?.name || 'Someone'}</strong></span>
                   </div>
                   <div className="mt-auto">
-                    <button
-                      onClick={() => navigate('/report/found')}
-                      className="w-full py-2.5 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all shadow-md"
-                    >
-                      I Found This!
-                    </button>
+                    {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
+                      <div className="flex flex-col items-center w-full">
+                        <button
+                          disabled
+                          className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
+                        >
+                          Claimed
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/conflict/${item._id}`);
+                          }}
+                          className="text-danger hover:underline text-xs font-bold text-center mt-1"
+                        >
+                          Conflict this claim
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => navigate('/report/found')}
+                        className="w-full py-2.5 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all shadow-md"
+                      >
+                        I Found This!
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

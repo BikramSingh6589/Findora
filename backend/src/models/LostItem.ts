@@ -11,7 +11,7 @@ const LostItemSchema = new Schema({
   dateLost:         { type: Date, required: true },
   specialAppearance:{ type: String, default: '' },
   images:           { type: [String], default: [] },
-  status:           { type: String, enum: ['active', 'resolved', 'archived'], default: 'active' },
+  status:           { type: String, enum: ['active', 'claimed', 'resolved', 'archived'], default: 'active' },
   aiMatchScore:     { type: Number, default: 0 },
 }, { timestamps: true });
 

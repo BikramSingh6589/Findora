@@ -1,6 +1,10 @@
-﻿import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapPin, Calendar, Clock, AlignLeft, ArrowRight, Sparkles, Trophy, Shield } from 'lucide-react';
+import axios from 'axios';
+import { useAuth } from '../../../contexts/AuthContext';
 import type { ClaimFormData } from '../types';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 interface Props {
   data: ClaimFormData;
@@ -9,6 +13,26 @@ interface Props {
 }
 
 export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext }) => {
+  const { user } = useAuth();
+  const [myLostItems, setMyLostItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchMyItems = async () => {
+      try {
+        const userId = user._id || user.id;
+        const res = await axios.get(`${API_BASE}/api/users/${userId}/reports`);
+        if (res.data?.success) {
+          const activeLost = res.data.data.lostItems.filter((i: any) => i.status === 'active' || i.status === 'claimed');
+          setMyLostItems(activeLost);
+        }
+      } catch (e) {
+        console.error('Failed to fetch user reports', e);
+      }
+    };
+    fetchMyItems();
+  }, [user]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onNext();
@@ -48,6 +72,24 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext })
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Optional: Select existing Lost Item */}
+              {myLostItems.length > 0 && (
+                <div className="space-y-2 p-4 rounded-xl border border-primary/20 bg-primary/5">
+                  <label className="font-semibold text-sm text-text-primary block">Link to Your Reported Lost Item (Optional)</label>
+                  <select
+                    className="w-full px-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 bg-surface transition-all outline-none"
+                    value={data.lostItemId || ''}
+                    onChange={e => updateData({ lostItemId: e.target.value })}
+                  >
+                    <option value="">-- I haven't reported this item yet --</option>
+                    {myLostItems.map(item => (
+                      <option key={item._id} value={item._id}>{item.itemName} ({item.category})</option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-text-secondary">Linking your report speeds up verification.</p>
+                </div>
+              )}
+
               {/* Question 1: Location */}
               <div className="space-y-2">
                 <label className="font-semibold text-sm text-text-primary block">Where exactly did you lose it?</label>

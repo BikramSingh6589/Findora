@@ -47,6 +47,7 @@ export const ClaimOwnership: React.FC = () => {
 
       const res = await axios.post(`${API_BASE}/api/claims`, {
         foundItemId: finalItemId,
+        lostItemId: formData.lostItemId || undefined,
         answers: {
           location: formData.location || 'Main Library, 2nd Floor Study Lounge',
           dateDetails: formData.lostDate ? `${formData.lostDate} at ${formData.lostTime || 'N/A'}` : 'Tuesday, Oct 24th, between 2:00 PM and 4:30 PM',

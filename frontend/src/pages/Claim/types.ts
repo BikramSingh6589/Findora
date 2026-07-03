@@ -4,4 +4,5 @@ export interface ClaimFormData {
   lostTime: string;
   identifiers: string;
   additionalInfo: string;
+  lostItemId?: string;
 }

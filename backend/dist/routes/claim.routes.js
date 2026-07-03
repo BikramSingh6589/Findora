@@ -53,6 +53,10 @@ router.delete('/:id', claim_controller_1.cancelClaim);
 // Admin claim decisions
 router.post('/:id/approve', admin_middleware_1.adminOnly, (0, validate_middleware_1.validateRequest)(adminDecisionSchema), claim_controller_1.approveClaim);
 router.post('/:id/reject', admin_middleware_1.adminOnly, (0, validate_middleware_1.validateRequest)(adminDecisionSchema), claim_controller_1.rejectClaim);
+// Resolve, mediation, and handover claim actions
+router.post('/:id/resolve', claim_controller_1.resolveClaim);
+router.post('/:id/mediate', claim_controller_1.mediateClaim);
+router.post('/:id/mediation-resolve', admin_middleware_1.adminOnly, claim_controller_1.mediationResolve);
 // Support generic PUT /api/claims/:id for flexibility with frontend integration
 router.put('/:id', admin_middleware_1.adminOnly, (0, validate_middleware_1.validateRequest)(adminDecisionSchema), async (req, res, next) => {
     const { status, remarks, reason } = req.body;

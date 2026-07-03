@@ -38,6 +38,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
 const path_1 = __importDefault(require("path"));
+const http_1 = require("http");
+const socket_service_1 = require("./services/socket.service");
 // Load environment variables from .env
 dotenv.config({ path: path_1.default.join(__dirname, '../.env') });
 const app_1 = __importDefault(require("./app"));
@@ -51,7 +53,9 @@ const startServer = async () => {
     catch (error) {
         console.error('Failed to initialize database connection. Continuing to start server...');
     }
-    app_1.default.listen(PORT, () => {
+    const httpServer = (0, http_1.createServer)(app_1.default);
+    (0, socket_service_1.initSocket)(httpServer);
+    httpServer.listen(PORT, () => {
         console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
     });
 };

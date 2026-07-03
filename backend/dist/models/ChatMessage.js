@@ -35,9 +35,9 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const ChatMessageSchema = new mongoose_1.Schema({
-    itemId: { type: String, required: true },
+    claimId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Claim', required: true },
     sender: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     content: { type: String, required: true },
-    type: { type: String, enum: ['text', 'image'], default: 'text' },
 }, { timestamps: true });
+ChatMessageSchema.index({ claimId: 1, createdAt: 1 });
 exports.default = mongoose_1.default.model('ChatMessage', ChatMessageSchema);

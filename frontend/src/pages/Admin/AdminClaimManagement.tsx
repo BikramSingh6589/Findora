@@ -62,30 +62,34 @@ export const AdminClaimManagement: React.FC = () => {
     fetchClaims();
   }, []);
 
-  const approve = async (id: string) => {
-    const remarks = prompt('Enter remarks for approval (optional):') || 'Approved by admin';
+  const [actionModal, setActionModal] = useState<{ isOpen: boolean; type: 'approve' | 'reject'; claimId: string; inputText: string; }>({ 
+    isOpen: false, type: 'approve', claimId: '', inputText: '' 
+  });
+
+  const confirmAction = async () => {
+    const { type, claimId, inputText } = actionModal;
+    const value = inputText.trim() || (type === 'approve' ? 'Approved by admin' : 'Insufficient proof of ownership');
+    
     try {
-      // Optimistic state update
-      setClaims(prev => prev.map(c => c._id === id ? { ...c, status: 'approved', mediationStatus: 'approved' } : c));
-      await axios.post(`${API_BASE}/api/claims/${id}/approve`, { remarks });
+      setClaims(prev => prev.map(c => c._id === claimId ? { ...c, status: type === 'approve' ? 'approved' : 'rejected', mediationStatus: type === 'approve' ? 'approved' : 'rejected' } : c));
+      
+      await axios.post(`${API_BASE}/api/claims/${claimId}/${type}`, type === 'approve' ? { remarks: value } : { reason: value });
+      
+      setActionModal(prev => ({ ...prev, isOpen: false }));
+      setSelectedClaim(null);
       await fetchClaims();
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to approve claim');
+      alert(err.response?.data?.error || `Failed to ${type} claim`);
       fetchClaims();
     }
   };
 
-  const reject = async (id: string) => {
-    const reason = prompt('Enter reason for rejection:') || 'Insufficient proof of ownership';
-    try {
-      // Optimistic state update
-      setClaims(prev => prev.map(c => c._id === id ? { ...c, status: 'rejected', mediationStatus: 'rejected' } : c));
-      await axios.post(`${API_BASE}/api/claims/${id}/reject`, { reason });
-      await fetchClaims();
-    } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to reject claim');
-      fetchClaims();
-    }
+  const approve = (id: string) => {
+    setActionModal({ isOpen: true, type: 'approve', claimId: id, inputText: '' });
+  };
+
+  const reject = (id: string) => {
+    setActionModal({ isOpen: true, type: 'reject', claimId: id, inputText: '' });
   };
 
   const tabs = ['All', 'Pending', 'Approved', 'Rejected'];
@@ -395,19 +399,13 @@ export const AdminClaimManagement: React.FC = () => {
               {selectedClaim.status === 'pending' && selectedClaim.mediationStatus !== 'approved' && selectedClaim.status !== 'resolved' && (
                 <div className="flex gap-4 pt-4 border-t border-border-default">
                   <button 
-                    onClick={() => {
-                      approve(selectedClaim._id);
-                      setSelectedClaim(null);
-                    }}
+                    onClick={() => approve(selectedClaim._id)}
                     className="flex-1 py-3 bg-success text-white font-bold rounded-xl text-sm hover:bg-success/90 transition-colors shadow-md"
                   >
                     Approve Claim
                   </button>
                   <button 
-                    onClick={() => {
-                      reject(selectedClaim._id);
-                      setSelectedClaim(null);
-                    }}
+                    onClick={() => reject(selectedClaim._id)}
                     className="flex-1 py-3 bg-danger text-white font-bold rounded-xl text-sm hover:bg-danger/90 transition-colors shadow-md"
                   >
                     Reject Claim
@@ -415,6 +413,44 @@ export const AdminClaimManagement: React.FC = () => {
                 </div>
               )}
 
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Action Modal */}
+      {actionModal.isOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-surface w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-text-primary mb-4">
+                {actionModal.type === 'approve' ? 'Approve Claim' : 'Reject Claim'}
+              </h3>
+              <p className="text-sm text-text-secondary mb-4">
+                {actionModal.type === 'approve' 
+                  ? 'Enter remarks for approval (optional):' 
+                  : 'Enter reason for rejection (optional):'}
+              </p>
+              <textarea
+                value={actionModal.inputText}
+                onChange={e => setActionModal(prev => ({ ...prev, inputText: e.target.value }))}
+                placeholder={actionModal.type === 'approve' ? 'e.g., Ownership verified' : 'e.g., Insufficient proof'}
+                className="w-full px-4 py-3 rounded-xl border border-border-default focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface transition-all resize-none h-24 outline-none"
+              ></textarea>
+              <div className="flex gap-4 mt-6">
+                <button 
+                  onClick={() => setActionModal(prev => ({ ...prev, isOpen: false }))}
+                  className="flex-1 py-3 bg-surface-container text-text-primary font-bold rounded-xl text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmAction}
+                  className={`flex-1 py-3 font-bold rounded-xl text-sm text-white shadow-md transition-colors ${actionModal.type === 'approve' ? 'bg-success hover:bg-success/90' : 'bg-danger hover:bg-danger/90'}`}
+                >
+                  Confirm
+                </button>
+              </div>
             </div>
           </div>
         </div>

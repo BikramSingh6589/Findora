@@ -39,7 +39,7 @@ const ClaimSchema = new mongoose_1.Schema({
     foundItemId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'FoundItem', required: true },
     lostItemId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'LostItem' },
     claimant: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
-    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'approved', 'rejected', 'resolved', 'mediated'], default: 'pending' },
     answers: {
         location: { type: String, default: '' },
         dateDetails: { type: String, default: '' },
@@ -50,6 +50,9 @@ const ClaimSchema = new mongoose_1.Schema({
     confidence: { type: Number, default: 0 },
     qrCodeUrl: { type: String, default: '' },
     qrToken: { type: String, default: '' },
+    qrExpiresAt: { type: Date },
+    mediationRequested: { type: Boolean, default: false },
+    mediationStatus: { type: String, enum: ['none', 'pending', 'approved', 'rejected'], default: 'none' },
     remarks: { type: String, default: '' },
     reason: { type: String, default: '' },
 }, { timestamps: true });

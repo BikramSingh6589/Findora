@@ -11,18 +11,25 @@ import LostItem from '../models/LostItem';
 
 export const fixLostItemStatuses = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Find all resolved/approved claims that have a lostItemId
+    // Find all resolved/approved claims
     const resolvedClaims = await Claim.find({
-      status: { $in: ['resolved', 'approved'] },
-      lostItemId: { $exists: true, $ne: null }
-    }).select('lostItemId status');
+      status: { $in: ['resolved', 'approved'] }
+    }).populate('claimant').populate('foundItemId');
 
     let fixed = 0;
     for (const claim of resolvedClaims) {
-      if ((claim as any).lostItemId) {
+      let targetLostItemId = (claim as any).lostItemId;
+      
+      // If not linked, try to find an active LostItem by this user
+      if (!targetLostItemId && claim.claimant) {
+        const fallbackLostItem = await LostItem.findOne({ owner: claim.claimant._id, status: 'active' });
+        if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
+      }
+
+      if (targetLostItemId) {
         const result = await LostItem.findByIdAndUpdate(
-          (claim as any).lostItemId,
-          { status: 'resolved' },
+          targetLostItemId,
+          { status: 'claimed' },
           { new: false }
         );
         if (result && result.status === 'active') fixed++;
