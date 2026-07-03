@@ -5,12 +5,11 @@ import {
   confirmHandover
 } from '../controllers/handover.controller';
 import { protect } from '../middleware/auth.middleware';
-import { adminOnly } from '../middleware/admin.middleware';
 
 const router = Router();
 
 router.get('/:itemId/qr', protect, getHandoverQR);
-router.post('/:itemId/scan', protect, adminOnly, scanHandoverQR);
-router.post('/:itemId/confirm', protect, adminOnly, confirmHandover);
+router.post('/:itemId/scan', protect, scanHandoverQR);
+router.post('/:itemId/confirm', protect, confirmHandover);
 
 export default router;

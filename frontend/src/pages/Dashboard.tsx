@@ -40,7 +40,7 @@ export const Dashboard: React.FC = () => {
             dateLabel: `Found ${new Date(item.createdAt).toLocaleDateString()}`,
             statusLabel: item.status,
           }));
-          const combined = [...losts, ...founds].sort((a: any, b: any) => 
+          const combined = [...losts, ...founds].sort((a: any, b: any) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
           setHistory(combined);
@@ -69,12 +69,12 @@ export const Dashboard: React.FC = () => {
           <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover rounded-bl-full" alt="background pattern" />
         </div>
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl hidden md:block"></div>
-        
+
         <div className="z-10">
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary">Welcome, {userName} 👋</h1>
           <p className="text-sm md:text-lg text-text-secondary mt-1 md:mt-2">Campus helper</p>
         </div>
-        
+
         {/* XP Progress Card */}
         <div className="w-full md:w-80 z-10 bg-surface-container-lowest/70 dark:bg-surface-container/70 backdrop-blur-md md:bg-transparent md:backdrop-blur-none rounded-2xl md:p-0 p-4 shadow-lg md:shadow-none border md:border-none border-white/20 dark:border-white/10">
           <div className="flex justify-between items-center mb-2">
@@ -91,27 +91,21 @@ export const Dashboard: React.FC = () => {
         </div>
       </section>
 
-        {/* Debug Actions (Temporary) */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <button 
-            onClick={() => navigate('/chat/finder/123')}
-            className="p-4 bg-primary/10 border border-primary text-primary rounded-[20px] flex flex-col items-center justify-center gap-2 hover:bg-primary/20 transition-all"
-          >
-            <span className="font-semibold text-sm">Simulate Finder Chat</span>
-          </button>
-          <button 
-            onClick={() => navigate('/handover/scan/123')}
-            className="p-4 bg-success/10 border border-success text-success rounded-[20px] flex flex-col items-center justify-center gap-2 hover:bg-success/20 transition-all"
-          >
-            <span className="font-semibold text-sm">Simulate Owner Scan</span>
-          </button>
-        </div>
+      {/* Debug Actions (Temporary) */}
+      <div className="mb-8">
+        <button 
+          onClick={() => navigate('/chats')}
+          className="w-full p-4 bg-primary/10 border border-primary text-primary rounded-[20px] flex flex-col items-center justify-center gap-2 hover:bg-primary/20 transition-all font-semibold text-sm"
+        >
+          Chat Window
+        </button>
+      </div>
 
-        {/* Quick Actions (Bento Grid on Mobile) */}
+      {/* Quick Actions (Bento Grid on Mobile) */}
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-text-primary hidden md:block">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-          <div 
+          <div
             onClick={() => navigate('/report/lost')}
             className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-6 p-4 md:p-6 bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
           >
@@ -123,8 +117,8 @@ export const Dashboard: React.FC = () => {
               <p className="text-xs md:text-sm text-text-secondary hidden md:block">AI will start searching immediately</p>
             </div>
           </div>
-          
-          <div 
+
+          <div
             onClick={() => navigate('/report/found')}
             className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-6 p-4 md:p-6 bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
           >
@@ -137,7 +131,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div 
+          <div
             onClick={() => navigate('/community')}
             className="col-span-2 md:col-span-1 flex flex-row items-center justify-center md:justify-start gap-4 md:gap-6 p-4 md:p-6 bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer border border-border-default group"
           >
@@ -154,7 +148,7 @@ export const Dashboard: React.FC = () => {
 
       {/* Main Grid: AI Matches & Recent Activity */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        
+
         {/* AI Matches Section */}
         <section className="xl:col-span-2 flex flex-col gap-6 relative">
           <div className="flex items-center justify-between">
@@ -165,7 +159,7 @@ export const Dashboard: React.FC = () => {
             </h3>
             <button className="text-primary font-semibold hover:underline">View All</button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {matches.length === 0 ? (
               <div className="md:col-span-2 p-8 bg-surface-container-lowest dark:bg-surface-container rounded-[20px] text-center border border-border-default">
@@ -200,8 +194,8 @@ export const Dashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
-                      <button 
-                        className="flex-1 py-2 bg-info-ai text-white rounded-xl font-semibold hover:brightness-105 transition-all text-xs" 
+                      <button
+                        className="flex-1 py-2 bg-info-ai text-white rounded-xl font-semibold hover:brightness-105 transition-all text-xs"
                         onClick={() => navigate(`/item/${matchItem._id || matchItem.id}`)}
                       >
                         View Details
@@ -236,7 +230,7 @@ export const Dashboard: React.FC = () => {
               <Filter className="w-6 h-6" />
             </button>
           </div>
-          
+
           <div className="flex flex-col gap-3">
             {history.length === 0 ? (
               <div className="p-6 bg-surface-container-lowest dark:bg-surface-container rounded-xl text-center border border-border-default">
@@ -248,8 +242,8 @@ export const Dashboard: React.FC = () => {
               history.slice(0, 3).map((item: any) => {
                 const isLost = item.historyType === 'lost';
                 return (
-                  <div 
-                    key={item._id} 
+                  <div
+                    key={item._id}
                     onClick={() => navigate(`/item/${item._id}`)}
                     className="bg-surface-container-lowest dark:bg-surface-container p-4 rounded-xl shadow-sm flex items-center gap-4 border border-border-default hover:border-primary/50 transition-all cursor-pointer"
                   >
@@ -260,10 +254,9 @@ export const Dashboard: React.FC = () => {
                       <h4 className="font-semibold text-text-primary truncate">{item.title}</h4>
                       <p className="text-xs text-text-secondary">{item.dateLabel}</p>
                     </div>
-                    <div className={`px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider ${
-                      item.statusLabel === 'active' ? 'bg-primary/10 text-primary' :
+                    <div className={`px-3 py-1 rounded-full font-bold text-[10px] uppercase tracking-wider ${item.statusLabel === 'active' ? 'bg-primary/10 text-primary' :
                       item.statusLabel === 'claimed' ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
-                    }`}>
+                      }`}>
                       {item.statusLabel}
                     </div>
                   </div>
@@ -284,7 +277,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </section>
-        
+
       </div>
     </div>
   );

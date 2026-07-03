@@ -1,5 +1,5 @@
-﻿import React from 'react';
-import { Check, Image, FileText, Edit3, MapPin, Clock, Lock, ShieldCheck, Send, ArrowLeft } from 'lucide-react';
+import React from 'react';
+import { Check, Image, FileText, Edit3, MapPin, Clock, Lock, ShieldCheck, MessageSquare } from 'lucide-react';
 import type { ClaimFormData } from '../types';
 
 interface Props {
@@ -115,33 +115,16 @@ export const ClaimReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
             <p className="text-xs text-text-secondary">Your proof is encrypted and visible only to verified staff.</p>
           </div>
         </div>
-
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <button
-            disabled
-            className="flex-1 px-6 py-3 rounded-full border-2 border-border-default text-text-secondary font-bold bg-surface cursor-not-allowed flex items-center justify-center gap-2 opacity-60 text-sm"
-          >
-            <Lock className="w-4 h-4" /> Waiting for Finder Permission
-          </button>
-          <button
-            onClick={onEdit}
-            className="flex-1 px-6 py-3 rounded-full border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-all text-sm flex items-center justify-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" /> Save Draft
-          </button>
           <button
             onClick={onSubmit}
             className="flex-1 px-8 py-3 rounded-full bg-primary text-white font-bold hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg text-sm group"
           >
-            Submit Claim
-            <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            Contact Finder
+            <MessageSquare className="w-4 h-4" />
           </button>
         </div>
       </div>
-
-      <p className="mt-6 text-center text-xs text-text-secondary">
-        By clicking "Submit Claim", you agree to our <button className="text-primary hover:underline">Community Guidelines</button> and confirm the accuracy of your statements.
-      </p>
     </div>
   );
 };

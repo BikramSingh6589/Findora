@@ -8,6 +8,7 @@ const FoundItemSchema = new Schema({
   color:             { type: String, required: true, trim: true },
   description:       { type: String, required: true },
   locationFound:     { type: String, required: true },
+  lastSeen:          { type: String, trim: true, default: '' },
   dateFound:         { type: Date, required: true },
   specialAppearance: { type: String, default: '' },
   additionalNotes:   { type: String, default: '' },

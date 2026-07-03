@@ -6,7 +6,10 @@ import {
   getClaimById,
   cancelClaim,
   approveClaim,
-  rejectClaim
+  rejectClaim,
+  resolveClaim,
+  mediateClaim,
+  mediationResolve
 } from '../controllers/claim.controller';
 import { protect } from '../middleware/auth.middleware';
 import { adminOnly } from '../middleware/admin.middleware';
@@ -70,6 +73,11 @@ router.delete('/:id', cancelClaim);
 // Admin claim decisions
 router.post('/:id/approve', adminOnly, validateRequest(adminDecisionSchema), approveClaim);
 router.post('/:id/reject', adminOnly, validateRequest(adminDecisionSchema), rejectClaim);
+
+// Resolve, mediation, and handover claim actions
+router.post('/:id/resolve', resolveClaim);
+router.post('/:id/mediate', mediateClaim);
+router.post('/:id/mediation-resolve', adminOnly, mediationResolve);
 
 // Support generic PUT /api/claims/:id for flexibility with frontend integration
 router.put('/:id', adminOnly, validateRequest(adminDecisionSchema), async (req: any, res: any, next: any) => {

@@ -40,6 +40,7 @@ export const ReportFound: React.FC = () => {
         color: formData.color || 'N/A',
         description: formData.description || 'N/A',
         locationFound: formData.location || 'Student Union',
+        lastSeen: formData.location || 'Student Union',
         dateFound: formData.foundDate ? new Date(formData.foundDate) : new Date()
       });
       setCurrentStep(4);

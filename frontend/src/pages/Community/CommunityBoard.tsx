@@ -1,6 +1,10 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 interface CommunityItem {
   id: string;
@@ -14,80 +18,121 @@ interface CommunityItem {
   img: string;
   imgContain?: boolean;
   isAIMatch?: boolean;
-  primaryAction: { label: string; route?: string };
-  secondaryAction: { label: string; route?: string };
+  primaryAction?: { label: string; route?: string };
+  secondaryAction?: { label: string; route?: string };
+  finderId: string;
+  status?: string;
 }
 
-const items: CommunityItem[] = [
-  {
-    id: '1',
-    title: 'Silver MacBook Air',
-    category: 'Electronics',
-    categoryColor: 'bg-primary/10 text-primary',
-    description: 'Left near the window study carrels. Has a "Computer Science" sticker on the lid.',
-    location: 'Library Level 4',
-    timeLeft: '14h 22m left',
-    timeLeftDanger: false,
-    img: 'https://lh3.googleusercontent.com/aida/AP1WRLuZvCgyHr43N0iFlOKyk6UiEoE0zimYrO69w8_AHQ8wkOimQ_lDiQavSvRYS9r-JEJoj726-4HVicEqIuvmsDoTUaIfckvI4Q2Hdhbwou3_7ZRBWuEz0RATnEwV0bpv8GEJ44d-8g-mNEt96uyyu-Udm3-tCEI0NRQXXlICHkTozaHjHmAH5nAYF0uq2UAbrJxMfUFfQzyRlW2kWXmLjMwab74EQcE2ZKBpxgrOAlXt5sYCxyy3JqV5HA',
-    primaryAction: { label: 'Suggest Owner', route: '/suggest/1' },
-    secondaryAction: { label: 'Claim Item', route: '/claim' },
-  },
-  {
-    id: '2',
-    title: 'Keyring with Airtag',
-    category: 'Accessories',
-    categoryColor: 'bg-warning/10 text-warning',
-    description: 'Blue silicon case Airtag with 3 keys and a small LEGO astronaut keychain.',
-    location: 'Gym Lockers',
-    timeLeft: '08h 15m left',
-    timeLeftDanger: true,
-    img: 'https://lh3.googleusercontent.com/aida/AP1WRLsr4JL9xFyttjBMcn_GVYXAmGxl9Md6v7gAlzmVmhaYF1q7VhncS30v3Mzkrtd1YKtbLqO7Gb0vqG35ke9eqsTvQCwztTzVNkO02peOHCjC9UxOWqlH5S5JoTODGuYFDlagBvcgJAKFuxWx9W9twMjtcOOtKDdYDAbHQPuzWqx2_utyIysyhHWx2sDuf62gbVtLIZqA4VAyfCMlP8YGUrey3UzBMj4Oz1EVCQWdW2crDQA6wQQ0xgA_Tw',
-    imgContain: true,
-    isAIMatch: true,
-    primaryAction: { label: 'View Details', route: '/item/123' },
-    secondaryAction: { label: 'Claim Item', route: '/claim' },
-  },
-  {
-    id: '3',
-    title: 'Sony XM4 Headphones',
-    category: 'Electronics',
-    categoryColor: 'bg-primary/10 text-primary',
-    description: 'Black noise-cancelling headphones found at the Student Union, Level 2.',
-    location: 'Student Union, Level 2',
-    timeLeft: '21h 05m left',
-    timeLeftDanger: false,
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCxa9_ydnBjuKRTq-ImOviaQ_SVAbnR8U4Wwl4_CMeztdBCXQvLrGepDf-5zziqnmwQS3yDxIEf2vo5VunlwoKNf6gkE3Fo0btIkr5JBSQ6bThYYzQM_AGmNQMd8NrzgZudENCGaUrB8L-P4JFwC0Dmnnpuo71DFWf_Yva5VksquE9kcv24qxVGEPA_DjoQJweSKbYKPqrKQGw8OM5v8R0A4E14Yg5dc6d1601U0a5kqzZHiRc5N1b-xOKO_vMDwFnI615WFF5fAVg',
-    primaryAction: { label: 'Suggest Owner', route: '/suggest/3' },
-    secondaryAction: { label: 'Claim Item', route: '/claim' },
-  },
-  {
-    id: '4',
-    title: 'Navy Blue Wallet',
-    category: 'Cards & IDs',
-    categoryColor: 'bg-info-ai/10 text-info-ai',
-    description: 'Blue leather wallet with a university student ID card visible inside.',
-    location: 'Cafeteria Terrace',
-    timeLeft: '02h 44m left',
-    timeLeftDanger: true,
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA4lshxlz8GQBaAj0-8hG1Nd5MDaarlOYSMQ8ktI3pR-mRbHNVGY8oaLluBSGy8e8nViAaAzKydiRMhQ4muDziBf5eaHHCbMc2Ss2U3ubhpNeDHAB6M3IoOxF3m_oFvnRq5YaejIxrhwJJDJnsEQzDs7pPUpmfhOcD24f6PKnpWufCrsw8dx50kPBZotud0N9retwZVviGXNfj4NG-4wkrRTM7yzhO6rlA1djTwJYFMVEmgl5xZRaUoLGJ9r15zRjTVzsGQwvK2euE',
-    primaryAction: { label: 'Suggest Owner', route: '/suggest/4' },
-    secondaryAction: { label: 'Claim Item', route: '/claim' },
-  },
-];
+const getCategoryColor = (category: string) => {
+  const cat = category.toLowerCase();
+  if (cat.includes('elect')) return 'bg-primary/10 text-primary';
+  if (cat.includes('card') || cat.includes('id')) return 'bg-info-ai/10 text-info-ai';
+  if (cat.includes('key')) return 'bg-warning/10 text-warning';
+  if (cat.includes('fash') || cat.includes('cloth') || cat.includes('access')) return 'bg-success/10 text-success';
+  return 'bg-secondary/10 text-secondary';
+};
+
+const calculateTimeLeft = (createdAtString: string) => {
+  const createdAt = new Date(createdAtString);
+  const expiresAt = new Date(createdAt.getTime() + 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const diffMs = expiresAt.getTime() - now.getTime();
+  
+  if (diffMs <= 0) {
+    return { timeLeft: '00h 00m left', isDanger: true };
+  }
+  
+  const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+  
+  const pad = (num: number) => String(num).padStart(2, '0');
+  return {
+    timeLeft: `${pad(diffHrs)}h ${pad(diffMins)}m left`,
+    isDanger: diffHrs < 12
+  };
+};
 
 export const CommunityBoard: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const currentUserId = user?._id || (user as any)?.id;
+  const [viewMode, setViewMode] = useState<'found' | 'lost'>('found');
   const [activeCategory, setActiveCategory] = useState('All Items');
+  const [items, setItems] = useState<CommunityItem[]>([]);
+  const [lostItems, setLostItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const categories = ['All Items', 'Electronics', 'Cards & IDs', 'Fashion', 'Keys'];
 
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${API_BASE}/api/found-items`);
+        if (res.data && res.data.success) {
+          const mapped = (res.data.items || []).map((dbItem: any) => {
+            const { timeLeft, isDanger } = calculateTimeLeft(dbItem.createdAt);
+            return {
+              id: dbItem._id,
+              title: dbItem.itemName,
+              category: dbItem.category,
+              categoryColor: getCategoryColor(dbItem.category),
+              description: dbItem.description,
+              location: dbItem.locationFound,
+              timeLeft,
+              timeLeftDanger: isDanger,
+              img: dbItem.images?.[0] || 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&q=80&w=600',
+              imgContain: false,
+              isAIMatch: false,
+              finderId: dbItem.finder?._id || dbItem.finder,
+              status: dbItem.status || 'active',
+            };
+          });
+          setItems(mapped);
+        }
+      } catch (err) {
+        console.error('Failed to fetch community board items:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchLostItems = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/lost-items`);
+        if (res.data && res.data.success) {
+          setLostItems(res.data.items || res.data.lostItems || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch lost items:', err);
+      }
+    };
+
+    fetchItems();
+    fetchLostItems();
+  }, []);
   const handleAction = (route?: string) => {
     if (route) navigate(route);
   };
 
+  const filteredItems = items.filter(item => {
+    if (activeCategory === 'All Items') return true;
+    return item.category.toLowerCase() === activeCategory.toLowerCase();
+  });
+
+  const filteredLostItems = lostItems.filter(item => {
+    // Hide the reporter's own lost item from the list
+    const ownerId = item.owner?._id || item.owner;
+    if (ownerId === currentUserId) return false;
+    // Hide resolved/archived items — item has been found
+    if (item.status === 'resolved' || item.status === 'archived') return false;
+    if (activeCategory === 'All Items') return true;
+    return (item.category || '').toLowerCase() === activeCategory.toLowerCase();
+  });
+
   return (
     <div className="flex flex-col gap-8 pb-10">
-
       {/* Hero Header Section */}
       <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative overflow-hidden rounded-[32px] bg-primary-container p-6 md:p-10 md:bg-transparent md:border-none">
         {/* Mobile Background */}
@@ -134,88 +179,230 @@ export const CommunityBoard: React.FC = () => {
       </section>
 
       {/* Filter & Search Section */}
-      <section className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-xl md:p-4 rounded-2xl flex flex-col md:flex-row items-center gap-4 md:shadow-sm md:border border-border-default">
-        {/* Categories (Scrollable on mobile) */}
-        <div className="w-full md:w-auto -mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto hide-scrollbar flex gap-2 md:gap-3 flex-nowrap">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-5 md:px-6 py-2 md:py-2.5 rounded-full font-semibold text-sm whitespace-nowrap transition-all shadow-sm ${
-                activeCategory === cat
-                  ? 'bg-gradient-to-r from-primary to-[#6b38d4] text-white hover:scale-105 active:scale-95'
-                  : 'bg-surface-container-high text-text-secondary hover:text-primary hover:bg-surface-variant'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+      <section className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-xl md:p-4 rounded-2xl flex flex-col gap-4 md:shadow-sm md:border border-border-default">
+
+        {/* Found / Lost Toggle */}
+        <div className="flex gap-2 p-1 bg-surface-container rounded-2xl w-full md:w-fit">
+          <button
+            onClick={() => setViewMode('found')}
+            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+              viewMode === 'found'
+                ? 'bg-primary text-white shadow-md'
+                : 'text-text-secondary hover:text-primary'
+            }`}
+          >
+            🔍 Found Items
+          </button>
+          <button
+            onClick={() => setViewMode('lost')}
+            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+              viewMode === 'lost'
+                ? 'bg-danger text-white shadow-md'
+                : 'text-text-secondary hover:text-danger'
+            }`}
+          >
+            🚨 Lost Items
+            {filteredLostItems.length > 0 && (
+              <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${
+                viewMode === 'lost' ? 'bg-white/20 text-white' : 'bg-danger/10 text-danger'
+              }`}>{filteredLostItems.length}</span>
+            )}
+          </button>
         </div>
 
-        {/* Filter Dropdown */}
-        <div className="w-full md:w-auto flex-1 md:max-w-xs md:ml-auto">
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary w-5 h-5" />
-            <select className="w-full pl-10 pr-4 py-2.5 md:py-2 bg-surface-container-low border-none rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary appearance-none cursor-pointer">
-              <option>Recently Found</option>
-              <option>Ending Soon</option>
-              <option>Near Me</option>
-            </select>
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          {/* Categories (Scrollable on mobile) */}
+          <div className="w-full md:w-auto -mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto hide-scrollbar flex gap-2 md:gap-3 flex-nowrap">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 md:px-6 py-2 md:py-2.5 rounded-full font-semibold text-sm whitespace-nowrap transition-all shadow-sm ${
+                  activeCategory === cat
+                    ? 'bg-gradient-to-r from-primary to-[#6b38d4] text-white hover:scale-105 active:scale-95'
+                    : 'bg-surface-container-high text-text-secondary hover:text-primary hover:bg-surface-variant'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
+
+          {/* Filter Dropdown */}
+          {viewMode === 'found' && (
+            <div className="w-full md:w-auto flex-1 md:max-w-xs md:ml-auto">
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary w-5 h-5" />
+                <select className="w-full pl-10 pr-4 py-2.5 md:py-2 bg-surface-container-low border-none rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary appearance-none cursor-pointer">
+                  <option>Recently Found</option>
+                  <option>Ending Soon</option>
+                  <option>Near Me</option>
+                </select>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* â”€â”€ MOBILE: Vertical list cards â”€â”€ */}
+      {/* ── MOBILE: Vertical list cards ── */}
       <div className="md:hidden space-y-4">
-        {items.map(item => (
-          <div
-            key={item.id}
-            className={`group bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border transition-all duration-300 transform hover:-translate-y-0.5 ${
-              item.isAIMatch ? 'border-2 border-info-ai/40 relative' : 'border-border-default'
-            }`}
-          >
-            {item.isAIMatch && (
-              <div className="absolute -top-3 left-4 px-3 py-0.5 bg-info-ai text-white rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center shadow-sm z-10">
-                <Zap className="w-3 h-3 mr-1 fill-current" /> Potential Match
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-3 mt-1">
-              <div className="flex gap-3">
-                <div className="w-16 h-16 rounded-2xl bg-surface-container overflow-hidden flex-shrink-0">
-                  <img src={item.img} alt={item.title} className={`w-full h-full ${item.imgContain ? 'object-contain p-2' : 'object-cover'}`} />
+        {viewMode === 'lost' ? (
+          /* ── LOST ITEMS MOBILE ── */
+          loading ? (
+            [...Array(3)].map((_, i) => (
+              <div key={`lost-skel-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border border-border-default/30 animate-pulse flex gap-3">
+                <div className="w-16 h-16 rounded-2xl bg-surface-container flex-shrink-0"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-3/4 bg-surface-container rounded"></div>
+                  <div className="h-3 w-1/2 bg-surface-container-low rounded"></div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-text-primary text-base leading-tight">{item.title}</h3>
-                  <div className="flex items-center text-text-secondary mt-1">
-                    <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-                    <span className="text-xs">{item.location}</span>
+              </div>
+            ))
+          ) : filteredLostItems.length === 0 ? (
+            <div className="py-8 text-center text-text-secondary">No lost items reported yet.</div>
+          ) : (
+            filteredLostItems.map((item: any) => (
+              <div
+                key={item._id}
+                className="group bg-danger/5 border-2 border-danger/20 rounded-[20px] p-4 shadow-sm transition-all duration-300"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex gap-3">
+                    <div className="w-16 h-16 rounded-2xl bg-surface-container overflow-hidden flex-shrink-0">
+                      <img
+                        src={item.images?.[0] || 'https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&q=80&w=200'}
+                        alt={item.itemName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-danger bg-danger/10 px-2 py-0.5 rounded-full">🚨 LOST</span>
+                      </div>
+                      <h3 className="font-bold text-text-primary text-base leading-tight">{item.itemName}</h3>
+                      <div className="flex items-center text-text-secondary mt-1">
+                        <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                        <span className="text-xs">{item.lastSeenLocation || item.locationLost || 'Unknown location'}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span className={`text-[10px] ${getCategoryColor(item.category || '')} px-2 py-1 rounded font-bold uppercase`}>{item.category}</span>
+                </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <img
+                    src={item.owner?.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=60&q=80'}
+                    alt={item.owner?.name}
+                    className="w-6 h-6 rounded-full object-cover border border-border-default"
+                  />
+                  <span className="text-xs text-text-secondary">Lost by <strong className="text-text-primary">{item.owner?.name || 'Someone'}</strong></span>
+                </div>
+                <button
+                  onClick={() => navigate(`/report/found`)}
+                  className="w-full h-11 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all"
+                >
+                  I Found This!
+                </button>
+              </div>
+            ))
+          )
+        ) : null}
+        {viewMode === 'found' ? (
+          <>
+        {loading ? (
+          [...Array(3)].map((_, i) => (
+            <div key={`skeleton-mob-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border border-border-default/30 animate-pulse flex gap-3">
+              <div className="w-16 h-16 rounded-2xl bg-surface-container flex-shrink-0"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-3/4 bg-surface-container rounded"></div>
+                <div className="h-3 w-1/2 bg-surface-container-low rounded"></div>
+              </div>
+            </div>
+          ))
+        ) : filteredItems.length === 0 ? (
+          <div className="py-8 text-center text-text-secondary">No items found.</div>
+        ) : (
+          filteredItems.map(item => (
+            <div
+              key={item.id}
+              onClick={() => navigate(`/item/${item.id}`)}
+              className={`cursor-pointer group bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border transition-all duration-300 transform hover:-translate-y-0.5 ${
+                item.isAIMatch ? 'border-2 border-info-ai/40 relative' : 'border-border-default'
+              }`}
+            >
+              {item.isAIMatch && (
+                <div className="absolute -top-3 left-4 px-3 py-0.5 bg-info-ai text-white rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center shadow-sm z-10">
+                  <Zap className="w-3 h-3 mr-1 fill-current" /> Potential Match
+                </div>
+              )}
+              <div className="flex justify-between items-start mb-3 mt-1">
+                <div className="flex gap-3">
+                  <div className="w-16 h-16 rounded-2xl bg-surface-container overflow-hidden flex-shrink-0">
+                    <img src={item.img} alt={item.title} className={`w-full h-full ${item.imgContain ? 'object-contain p-2' : 'object-cover'}`} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-text-primary text-base leading-tight">{item.title}</h3>
+                    <div className="flex items-center text-text-secondary mt-1">
+                      <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                      <span className="text-xs">{item.location}</span>
+                    </div>
                   </div>
                 </div>
+                <div className={`px-2 py-1 rounded-lg text-xs font-semibold flex items-center shrink-0 ml-2 ${
+                  item.timeLeftDanger ? 'bg-danger/10 text-danger' : 'bg-surface-container text-text-secondary'
+                }`}>
+                  <Timer className="w-3.5 h-3.5 mr-1" />
+                  {item.timeLeft.replace(' left', '')}
+                </div>
               </div>
-              <div className={`px-2 py-1 rounded-lg text-xs font-semibold flex items-center shrink-0 ml-2 ${
-                item.timeLeftDanger ? 'bg-danger/10 text-danger' : 'bg-surface-container text-text-secondary'
-              }`}>
-                <Timer className="w-3.5 h-3.5 mr-1" />
-                {item.timeLeft.replace(' left', '')}
-              </div>
-            </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleAction(item.primaryAction.route)}
-                className="flex-1 h-11 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-primary/10 transition-colors active:scale-95"
-              >
-                {item.primaryAction.label}
-              </button>
-              <button
-                onClick={() => handleAction(item.secondaryAction.route)}
-                className="flex-1 h-11 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary/90 transition-all active:scale-95"
-              >
-                {item.secondaryAction.label}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAction(`/suggest/${item.id}`);
+                  }}
+                  className="flex-1 h-11 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-primary/10 transition-colors active:scale-95"
+                >
+                  Suggest Owner
+                </button>
+                {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
+                  <div className="flex-1 flex flex-col items-center">
+                    <button
+                      disabled
+                      className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
+                    >
+                      Claimed
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/conflict/${item.id}`);
+                      }}
+                      className="text-danger hover:underline text-xs font-bold text-center mt-1"
+                    >
+                      Conflict this claim
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    disabled={item.finderId === currentUserId}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAction(`/claim/${item.id}`);
+                    }}
+                    className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all ${
+                      item.finderId === currentUserId
+                        ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
+                        : 'bg-primary text-white shadow-md hover:bg-primary/90 active:scale-95'
+                    }`}
+                  >
+                    Claim Item
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
 
         {/* Mobile Gamification Banner */}
         <div 
@@ -233,95 +420,176 @@ export const CommunityBoard: React.FC = () => {
             <span className="text-xs font-bold text-[#8455ef]">2/3</span>
           </div>
         </div>
+        </> ) : null}
       </div>
 
-      {/* â”€â”€ DESKTOP: 4-column Bento Grid â”€â”€ */}
+      {/* ── DESKTOP: 4-column Bento Grid ── */}
       <section className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
-        {/* Real item cards */}
-        {items.slice(0, 2).map(item => (
-          <div
-            key={item.id}
-            className={`bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group flex flex-col border ${
-              item.isAIMatch ? 'border-info-ai/30' : 'border-border-default/30'
-            }`}
-          >
-            <div className="relative h-48 overflow-hidden">
-              <img
-                alt={item.title}
-                className={`w-full h-full transition-transform duration-500 ${
-                  item.imgContain
-                    ? 'object-contain p-8 group-hover:rotate-3 bg-surface-container-low'
-                    : 'object-cover group-hover:scale-110'
-                }`}
-                src={item.img}
-              />
-              {/* Timer badge */}
-              <div className={`absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 backdrop-blur-sm ${
-                item.timeLeftDanger ? 'bg-danger/90' : 'bg-black/50'
-              }`}>
-                <Timer className="w-3.5 h-3.5" />
-                {item.timeLeft}
-              </div>
-              {/* Location badge */}
-              <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                Found @ {item.location}
-              </div>
-              {/* AI Match badge */}
-              {item.isAIMatch && (
-                <div className="absolute top-3 left-3 px-2 py-1 bg-info-ai text-white text-[10px] font-bold uppercase rounded-full flex items-center gap-1">
-                  <Zap className="w-3 h-3 fill-current" /> Potential Match
+        {viewMode === 'lost' ? (
+          /* ── LOST ITEMS DESKTOP ── */
+          filteredLostItems.length === 0 ? (
+            <div className="col-span-full py-12 text-center text-text-secondary">
+              No lost items have been reported yet.
+            </div>
+          ) : (
+            filteredLostItems.map((item: any) => (
+              <div
+                key={item._id}
+                className="bg-danger/5 border-2 border-danger/20 rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 flex flex-col"
+              >
+                <div className="relative h-48 overflow-hidden bg-surface-container">
+                  <img
+                    alt={item.itemName}
+                    className="w-full h-full object-cover"
+                    src={item.images?.[0] || 'https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&q=80&w=400'}
+                  />
+                  <div className="absolute top-3 left-3 bg-danger/90 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-full tracking-wider">
+                    🚨 LOST
+                  </div>
+                  <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+                    Last seen @ {item.lastSeenLocation || item.locationLost || 'Unknown'}
+                  </div>
                 </div>
-              )}
-            </div>
-            <div className="p-5 flex-1 flex flex-col">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-text-primary text-lg line-clamp-1">{item.title}</h3>
-                <span className={`text-[10px] ${item.categoryColor} px-2 py-1 rounded font-bold uppercase tracking-wider`}>{item.category}</span>
+                <div className="p-5 flex-1 flex flex-col gap-3">
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-bold text-text-primary text-lg line-clamp-1">{item.itemName}</h3>
+                    <span className={`text-[10px] ${getCategoryColor(item.category || '')} px-2 py-1 rounded font-bold uppercase tracking-wider`}>{item.category}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={item.owner?.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=60&q=80'}
+                      alt={item.owner?.name}
+                      className="w-7 h-7 rounded-full object-cover border border-border-default"
+                    />
+                    <span className="text-xs text-text-secondary">Lost by <strong className="text-text-primary">{item.owner?.name || 'Someone'}</strong></span>
+                  </div>
+                  <div className="mt-auto">
+                    <button
+                      onClick={() => navigate('/report/found')}
+                      className="w-full py-2.5 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all shadow-md"
+                    >
+                      I Found This!
+                    </button>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs text-text-secondary mb-4 line-clamp-2">{item.description}</p>
-              <div className="mt-auto space-y-2">
-                <button
-                  onClick={() => handleAction(item.primaryAction.route)}
-                  className="w-full py-2.5 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-colors text-sm"
-                >
-                  {item.primaryAction.label}
-                </button>
-                <button
-                  onClick={() => handleAction(item.secondaryAction.route)}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold shadow-md active:scale-95 transition-all text-sm"
-                >
-                  {item.secondaryAction.label}
-                </button>
+            ))
+          )
+        ) : (
+        loading ? (
+          /* Skeleton loading cards */
+          [...Array(4)].map((_, i) => (
+            <div key={`skeleton-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm border border-border-default/30 flex flex-col animate-pulse">
+              <div className="relative h-48 bg-surface-container flex items-center justify-center">
+                <Image className="w-12 h-12 text-text-secondary opacity-20" />
+              </div>
+              <div className="p-5 space-y-3">
+                <div className="h-5 w-3/4 bg-surface-container rounded"></div>
+                <div className="h-3 w-full bg-surface-container rounded"></div>
+                <div className="h-3 w-4/5 bg-surface-container rounded"></div>
+                <div className="pt-3 space-y-2">
+                  <div className="h-10 w-full bg-surface-container rounded-xl animate-pulse"></div>
+                  <div className="h-10 w-full bg-surface-container rounded-xl animate-pulse"></div>
+                </div>
               </div>
             </div>
+          ))
+        ) : filteredItems.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-text-secondary">
+            No items found matching this category.
           </div>
-        ))}
-
-        {/* Skeleton loading cards */}
-        {[
-          { time: '21h 05m left', danger: false },
-          { time: '02h 44m left', danger: true },
-        ].map((skeleton, i) => (
-          <div key={`skeleton-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm border border-border-default/30 flex flex-col">
-            <div className="relative h-48 bg-surface-container animate-pulse flex items-center justify-center">
-              <Image className="w-12 h-12 text-text-secondary opacity-20" />
-              <div className={`absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full ${
-                skeleton.danger ? 'bg-danger/90' : 'bg-black/50'
-              }`}>
-                {skeleton.time}
+        ) : (
+          filteredItems.map(item => (
+            <div
+              key={item.id}
+              onClick={() => navigate(`/item/${item.id}`)}
+              className={`cursor-pointer bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group flex flex-col border ${
+                item.isAIMatch ? 'border-info-ai/30' : 'border-border-default/30'
+              }`}
+            >
+              <div className="relative h-48 overflow-hidden bg-surface-container">
+                <img
+                  alt={item.title}
+                  className={`w-full h-full transition-transform duration-500 ${
+                    item.imgContain
+                      ? 'object-contain p-8 group-hover:rotate-3 bg-surface-container-low'
+                      : 'object-cover group-hover:scale-110'
+                  }`}
+                  src={item.img}
+                />
+                {/* Timer badge */}
+                <div className={`absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 backdrop-blur-sm ${
+                  item.timeLeftDanger ? 'bg-danger/90' : 'bg-black/50'
+                }`}>
+                  <Timer className="w-3.5 h-3.5" />
+                  {item.timeLeft}
+                </div>
+                {/* Location badge */}
+                <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+                  Found @ {item.location}
+                </div>
+                {/* AI Match badge */}
+                {item.isAIMatch && (
+                  <div className="absolute top-3 left-3 px-2 py-1 bg-info-ai text-white text-[10px] font-bold uppercase rounded-full flex items-center gap-1">
+                    <Zap className="w-3 h-3 fill-current" /> Potential Match
+                  </div>
+                )}
+              </div>
+              <div className="p-5 flex-1 flex flex-col">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-text-primary text-lg line-clamp-1">{item.title}</h3>
+                  <span className={`text-[10px] ${item.categoryColor} px-2 py-1 rounded font-bold uppercase tracking-wider`}>{item.category}</span>
+                </div>
+                <div className="mt-auto space-y-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAction(`/suggest/${item.id}`);
+                    }}
+                    className="w-full py-2.5 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-colors text-sm"
+                  >
+                    Suggest Owner
+                  </button>
+                  {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
+                    <div className="flex flex-col items-center w-full">
+                      <button
+                        disabled
+                        className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
+                      >
+                        Claimed
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/conflict/${item.id}`);
+                        }}
+                        className="text-danger hover:underline text-xs font-bold text-center mt-1"
+                      >
+                        Conflict this claim
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      disabled={item.finderId === currentUserId}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAction(`/claim/${item.id}`);
+                      }}
+                      className={`w-full py-2.5 rounded-xl font-bold transition-all text-sm ${
+                        item.finderId === currentUserId
+                          ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
+                          : 'bg-gradient-to-r from-primary to-[#6b38d4] text-white shadow-md active:scale-95'
+                      }`}
+                    >
+                      Claim Item
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="p-5 space-y-3">
-              <div className="h-5 w-3/4 bg-surface-container rounded animate-pulse"></div>
-              <div className="h-3 w-full bg-surface-container rounded animate-pulse"></div>
-              <div className="h-3 w-4/5 bg-surface-container rounded animate-pulse"></div>
-              <div className="pt-3 space-y-2">
-                <div className="h-10 w-full bg-surface-container rounded-xl animate-pulse"></div>
-                <div className="h-10 w-full bg-surface-container rounded-xl animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-        ))}
+          ))
+        )
+        )}
       </section>
 
       {/* Desktop CTA Banner */}

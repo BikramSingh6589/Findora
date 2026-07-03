@@ -16,6 +16,7 @@ import {
   approveCommunityPost,
   deleteCommunityPost
 } from '../controllers/admin.controller';
+import { fixLostItemStatuses } from '../controllers/migration.controller';
 
 const router = Router();
 
@@ -41,5 +42,8 @@ router.delete('/items/:id', deleteItem);
 router.get('/community', getCommunityPosts);
 router.put('/community/:id/approve', approveCommunityPost);
 router.delete('/community/:id', deleteCommunityPost);
+
+// One-time migration routes
+router.post('/migrate/fix-lost-item-statuses', fixLostItemStatuses);
 
 export default router;

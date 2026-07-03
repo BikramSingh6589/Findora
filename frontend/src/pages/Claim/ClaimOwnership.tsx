@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { ClaimVerification } from './components/ClaimVerification';
@@ -11,6 +11,7 @@ import type { ClaimFormData } from './types';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const ClaimOwnership: React.FC = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<ClaimFormData>({
     location: '',
@@ -44,7 +45,7 @@ export const ClaimOwnership: React.FC = () => {
         }
       }
 
-      await axios.post(`${API_BASE}/api/claims`, {
+      const res = await axios.post(`${API_BASE}/api/claims`, {
         foundItemId: finalItemId,
         answers: {
           location: formData.location || 'Main Library, 2nd Floor Study Lounge',
@@ -53,7 +54,12 @@ export const ClaimOwnership: React.FC = () => {
           specialMarks: formData.additionalInfo || 'N/A'
         }
       });
-      setCurrentStep(4);
+      const claimId = res.data?.claim?._id || res.data?.claim?.id;
+      if (claimId) {
+        navigate(`/chat/finder/${claimId}`);
+      } else {
+        setCurrentStep(4);
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.error || err.message || 'Failed to submit claim. Please try again.');

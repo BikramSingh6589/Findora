@@ -4,16 +4,32 @@ import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
-  const map: Record<string, string> = {
-    pending: 'bg-warning/10 text-warning',
-    reviewing: 'bg-info-ai/10 text-info-ai',
-    approved: 'bg-success/10 text-success',
-    rejected: 'bg-danger/10 text-danger',
-  };
+const StatusBadge: React.FC<{ claim: any }> = ({ claim }) => {
+  let text = claim.status || 'pending';
+  let badgeClass = 'bg-warning/10 text-warning';
+
+  // Priority: resolved/approved/rejected status wins over mediationStatus
+  if (claim.status === 'approved') {
+    text = 'Approved';
+    badgeClass = 'bg-success/10 text-success';
+  } else if (claim.status === 'resolved') {
+    text = 'Mutual Resolved';
+    badgeClass = 'bg-success/10 text-success';
+  } else if (claim.status === 'rejected') {
+    text = 'Rejected';
+    badgeClass = 'bg-danger/10 text-danger';
+  } else if (claim.status === 'mediated') {
+    text = 'Mediated';
+    badgeClass = 'bg-success/10 text-success';
+  } else if (claim.mediationStatus === 'pending' || claim.mediationRequested) {
+    // Only show this banner if NOT yet resolved
+    text = 'Mediation Pending';
+    badgeClass = 'bg-info-ai/10 text-info-ai animate-pulse';
+  }
+
   return (
-    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${map[status] ?? 'bg-surface text-text-secondary'}`}>
-      {status}
+    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeClass}`}>
+      {text}
     </span>
   );
 };
@@ -24,13 +40,12 @@ export const AdminClaimManagement: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
+  const [selectedClaim, setSelectedClaim] = useState<any | null>(null);
 
   const fetchClaims = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Let's call /api/claims (which returns all claims for admins)
       const res = await axios.get(`${API_BASE}/api/claims`);
       if (res.data && res.data.success) {
         setClaims(res.data.claims || res.data.data?.claims || []);
@@ -50,29 +65,41 @@ export const AdminClaimManagement: React.FC = () => {
   const approve = async (id: string) => {
     const remarks = prompt('Enter remarks for approval (optional):') || 'Approved by admin';
     try {
+      // Optimistic state update
+      setClaims(prev => prev.map(c => c._id === id ? { ...c, status: 'approved', mediationStatus: 'approved' } : c));
       await axios.post(`${API_BASE}/api/claims/${id}/approve`, { remarks });
-      fetchClaims();
+      await fetchClaims();
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to approve claim');
+      fetchClaims();
     }
   };
 
   const reject = async (id: string) => {
     const reason = prompt('Enter reason for rejection:') || 'Insufficient proof of ownership';
     try {
+      // Optimistic state update
+      setClaims(prev => prev.map(c => c._id === id ? { ...c, status: 'rejected', mediationStatus: 'rejected' } : c));
       await axios.post(`${API_BASE}/api/claims/${id}/reject`, { reason });
-      fetchClaims();
+      await fetchClaims();
     } catch (err: any) {
       alert(err.response?.data?.error || 'Failed to reject claim');
+      fetchClaims();
     }
   };
 
   const tabs = ['All', 'Pending', 'Approved', 'Rejected'];
 
   const filtered = claims.filter(c => {
-    const statusVal = c.status?.toLowerCase();
-    const filterVal = filter.toLowerCase();
-    const matchesFilter = filter === 'All' || statusVal === filterVal;
+    // Custom filter matching
+    let matchesFilter = filter === 'All';
+    if (filter === 'Pending') {
+      matchesFilter = c.status === 'pending' || c.mediationStatus === 'pending';
+    } else if (filter === 'Approved') {
+      matchesFilter = c.status === 'approved' || c.status === 'resolved';
+    } else if (filter === 'Rejected') {
+      matchesFilter = c.status === 'rejected';
+    }
     
     const itemName = c.foundItemId?.itemName || '';
     const claimantName = c.claimant?.name || '';
@@ -82,9 +109,20 @@ export const AdminClaimManagement: React.FC = () => {
     return matchesFilter && matchesSearch;
   });
 
+  // Sort claims: Admin request / Mediation pending first, normal pending second, mutually resolved third, closed fourth.
+  const sortedClaims = [...filtered].sort((a, b) => {
+    const getPriority = (c: any) => {
+      if (c.mediationStatus === 'pending' || c.mediationRequested) return 1;
+      if (c.status === 'pending') return 2;
+      if (c.status === 'resolved') return 3;
+      return 4;
+    };
+    return getPriority(a) - getPriority(b);
+  });
+
   const counts = {
-    pending: claims.filter(c => c.status === 'pending').length,
-    approved: claims.filter(c => c.status === 'approved').length,
+    pending: claims.filter(c => c.status === 'pending' || c.mediationStatus === 'pending').length,
+    approved: claims.filter(c => c.status === 'approved' || c.status === 'resolved').length,
     rejected: claims.filter(c => c.status === 'rejected').length,
   };
 
@@ -108,11 +146,11 @@ export const AdminClaimManagement: React.FC = () => {
         <div className="flex gap-4">
           <div className="bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl px-4 py-2 text-center">
             <p className="text-2xl font-extrabold text-warning">{counts.pending}</p>
-            <p className="text-xs text-text-secondary">Pending</p>
+            <p className="text-xs text-text-secondary">Pending / Review</p>
           </div>
           <div className="bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-xl px-4 py-2 text-center">
             <p className="text-2xl font-extrabold text-success">{counts.approved}</p>
-            <p className="text-xs text-text-secondary">Approved</p>
+            <p className="text-xs text-text-secondary">Resolved / Closed</p>
           </div>
         </div>
       </div>
@@ -167,7 +205,7 @@ export const AdminClaimManagement: React.FC = () => {
 
       {/* Claims Table */}
       <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl shadow-sm border border-border-default overflow-hidden">
-        {filtered.length === 0 ? (
+        {sortedClaims.length === 0 ? (
           <div className="p-8 text-center text-text-secondary">
             No claims matched your filters.
           </div>
@@ -185,80 +223,204 @@ export const AdminClaimManagement: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-default">
-                {filtered.map((claim: any) => (
-                  <tr key={claim._id} className="hover:bg-surface-container-low/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <img src={claim.foundItemId?.images?.[0] || 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=80&q=70'} alt={claim.foundItemId?.itemName} className="w-10 h-10 rounded-lg object-cover" />
-                        <div>
-                          <p className="font-bold text-sm text-text-primary">{claim.foundItemId?.itemName || 'Deleted Found Item'}</p>
-                          <p className="text-xs text-text-secondary">{claim.claimId}</p>
+                {sortedClaims.map((claim: any) => {
+                  const isClosed = claim.status === 'approved' || 
+                                   claim.status === 'rejected' || 
+                                   claim.status === 'resolved' || 
+                                   claim.status === 'mediated';
+                  return (
+                    <tr 
+                      key={claim._id} 
+                      onClick={() => setSelectedClaim(claim)} 
+                      className="hover:bg-surface-container-low/50 transition-colors cursor-pointer"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <img src={claim.foundItemId?.images?.[0] || 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=80&q=70'} alt={claim.foundItemId?.itemName} className="w-10 h-10 rounded-lg object-cover" />
+                          <div>
+                            <p className="font-bold text-sm text-text-primary">{claim.foundItemId?.itemName || 'Deleted Found Item'}</p>
+                            <p className="text-[10px] text-text-secondary tracking-wider">{claim.claimId}</p>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="font-bold text-sm text-text-primary">{claim.claimant?.name || 'Unknown'}</p>
-                      <p className="text-xs text-text-secondary">{claim.claimant?.email || ''} {claim.claimant?.studentId ? `· ${claim.claimant.studentId}` : ''}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full ${claim.confidence > 80 ? 'bg-success' : claim.confidence > 60 ? 'bg-warning' : 'bg-danger'}`} style={{ width: `${claim.confidence || 0}%` }} />
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-sm text-text-primary">{claim.claimant?.name || 'Unknown'}</p>
+                        <p className="text-xs text-text-secondary">{claim.claimant?.email || ''} {claim.claimant?.studentId ? `· ${claim.claimant.studentId}` : ''}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
+                            <div className={`h-full rounded-full ${claim.confidence > 80 ? 'bg-success' : claim.confidence > 60 ? 'bg-warning' : 'bg-danger'}`} style={{ width: `${claim.confidence || 0}%` }} />
+                          </div>
+                          <span className="text-xs font-bold text-text-secondary">{claim.confidence || 0}%</span>
                         </div>
-                        <span className="text-xs font-bold text-text-secondary">{claim.confidence || 0}%</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4"><StatusBadge status={claim.status} /></td>
-                    <td className="px-6 py-4">
-                      {claim.status === 'approved' || claim.status === 'rejected' ? (
-                        <span className="text-xs text-text-secondary italic">Closed</span>
-                      ) : (
-                        <div className="flex gap-2">
-                          <button onClick={() => approve(claim._id)} className="p-1.5 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors" title="Approve">
-                            <CheckCircle2 className="w-4 h-4" />
-                          </button>
-                          <button onClick={() => reject(claim._id)} className="p-1.5 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors" title="Reject">
-                            <XCircle className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-6 py-4"><StatusBadge claim={claim} /></td>
+                      <td className="px-6 py-4">
+                        {isClosed ? (
+                          <span className="text-xs text-text-secondary italic">Closed</span>
+                        ) : (
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); approve(claim._id); }} 
+                              className="p-1.5 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors" 
+                              title="Approve"
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); reject(claim._id); }} 
+                              className="p-1.5 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors" 
+                              title="Reject"
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
             {/* Mobile Cards */}
             <div className="md:hidden divide-y divide-border-default">
-              {filtered.map((claim: any) => (
-                <div key={claim._id} className="p-4">
-                  <div className="flex gap-3 mb-3">
-                    <img src={claim.foundItemId?.images?.[0] || 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=80&q=70'} alt={claim.foundItemId?.itemName} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
-                    <div className="flex-1">
-                      <h4 className="font-bold text-sm text-text-primary">{claim.foundItemId?.itemName}</h4>
-                      <p className="text-xs text-text-secondary">Claimed by {claim.claimant?.name || 'Unknown'}</p>
-                      <div className="mt-1 flex items-center gap-2">
-                        <StatusBadge status={claim.status} />
-                        <span className="text-xs text-text-secondary">{claim.confidence}% confidence</span>
+              {sortedClaims.map((claim: any) => {
+                const isClosed = claim.status === 'approved' || 
+                                 claim.status === 'rejected' || 
+                                 claim.status === 'resolved' || 
+                                 claim.status === 'mediated';
+                return (
+                  <div key={claim._id} onClick={() => setSelectedClaim(claim)} className="p-4 cursor-pointer hover:bg-surface-container-low/30 transition-colors">
+                    <div className="flex gap-3 mb-3">
+                      <img src={claim.foundItemId?.images?.[0] || 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=80&q=70'} alt={claim.foundItemId?.itemName} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                      <div className="flex-1">
+                        <h4 className="font-bold text-sm text-text-primary">{claim.foundItemId?.itemName}</h4>
+                        <p className="text-xs text-text-secondary">Claimed by {claim.claimant?.name || 'Unknown'}</p>
+                        <div className="mt-1 flex items-center gap-2">
+                          <StatusBadge claim={claim} />
+                          <span className="text-xs text-text-secondary">{claim.confidence}% confidence</span>
+                        </div>
                       </div>
                     </div>
+                    {!isClosed && (
+                      <div className="flex gap-2">
+                        <button onClick={(e) => { e.stopPropagation(); approve(claim._id); }} className="flex-1 py-2 bg-primary text-white rounded-xl font-bold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
+                          <CheckCircle2 className="w-4 h-4" /> Approve
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); reject(claim._id); }} className="flex-1 py-2 border border-danger text-danger rounded-xl font-bold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
+                          <XCircle className="w-4 h-4" /> Reject
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  {claim.status !== 'approved' && claim.status !== 'rejected' && (
-                    <div className="flex gap-2">
-                      <button onClick={() => approve(claim._id)} className="flex-1 py-2 bg-primary text-white rounded-xl font-bold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
-                        <CheckCircle2 className="w-4 h-4" /> Approve
-                      </button>
-                      <button onClick={() => reject(claim._id)} className="flex-1 py-2 border border-danger text-danger rounded-xl font-bold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
-                        <XCircle className="w-4 h-4" /> Reject
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
       </div>
+
+      {/* Claim Detail & Proof Modal */}
+      {selectedClaim && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[24px] max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-border-default animate-scale-up">
+            
+            {/* Modal Header */}
+            <div className="p-6 border-b border-border-default flex justify-between items-center bg-surface-container-low">
+              <div>
+                <h3 className="text-xl font-black text-text-primary">Claim Details & Proof</h3>
+                <p className="text-xs text-text-secondary mt-0.5">ID: {selectedClaim.claimId}</p>
+              </div>
+              <button 
+                onClick={() => setSelectedClaim(null)} 
+                className="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-container-high text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors font-bold text-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              
+              {/* Found Item Section */}
+              <div className="bg-surface-container-low p-4 rounded-2xl flex gap-4 border border-border-default/50">
+                <img 
+                  src={selectedClaim.foundItemId?.images?.[0] || 'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=150&q=70'} 
+                  alt={selectedClaim.foundItemId?.itemName} 
+                  className="w-20 h-20 rounded-xl object-cover border border-border-default"
+                />
+                <div>
+                  <h4 className="font-extrabold text-text-primary text-base">{selectedClaim.foundItemId?.itemName}</h4>
+                  <p className="text-xs text-text-secondary mt-0.5">Category: {selectedClaim.foundItemId?.category}</p>
+                  <p className="text-xs text-text-secondary mt-0.5">Found Location: {selectedClaim.foundItemId?.locationFound}</p>
+                  <p className="text-xs text-text-secondary mt-0.5">Reported By: {selectedClaim.foundItemId?.finder?.name || 'Helper'}</p>
+                </div>
+              </div>
+
+              {/* Claimant Information */}
+              <div>
+                <h4 className="font-extrabold text-text-primary text-sm uppercase tracking-wider mb-2">Claimant Info</h4>
+                <div className="grid grid-cols-2 gap-4 bg-surface-container-low/40 p-4 rounded-xl border border-border-default/30">
+                  <div>
+                    <p className="text-[11px] text-text-secondary">Name</p>
+                    <p className="font-semibold text-sm text-text-primary">{selectedClaim.claimant?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-text-secondary">Email</p>
+                    <p className="font-semibold text-sm text-text-primary">{selectedClaim.claimant?.email || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Submitted Answers */}
+              <div>
+                <h4 className="font-extrabold text-text-primary text-sm uppercase tracking-wider mb-2">Submitted Answers</h4>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Lost Location Details', val: selectedClaim.answers?.location },
+                    { label: 'Lost Date & Time Details', val: selectedClaim.answers?.dateDetails },
+                    { label: 'Identifiers & Color Match', val: selectedClaim.answers?.colorMatch },
+                    { label: 'Special Marks / Additional Info', val: selectedClaim.answers?.specialMarks }
+                  ].map((ans, idx) => (
+                    <div key={idx} className="p-3 bg-surface-container-low rounded-xl border border-border-default/40">
+                      <p className="text-xs font-bold text-primary mb-1">{ans.label}</p>
+                      <p className="text-sm text-text-primary leading-relaxed font-medium">{ans.val || 'No answer provided.'}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons inside Modal */}
+              {selectedClaim.status === 'pending' && selectedClaim.mediationStatus !== 'approved' && selectedClaim.status !== 'resolved' && (
+                <div className="flex gap-4 pt-4 border-t border-border-default">
+                  <button 
+                    onClick={() => {
+                      approve(selectedClaim._id);
+                      setSelectedClaim(null);
+                    }}
+                    className="flex-1 py-3 bg-success text-white font-bold rounded-xl text-sm hover:bg-success/90 transition-colors shadow-md"
+                  >
+                    Approve Claim
+                  </button>
+                  <button 
+                    onClick={() => {
+                      reject(selectedClaim._id);
+                      setSelectedClaim(null);
+                    }}
+                    className="flex-1 py-3 bg-danger text-white font-bold rounded-xl text-sm hover:bg-danger/90 transition-colors shadow-md"
+                  >
+                    Reject Claim
+                  </button>
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+export default AdminClaimManagement;

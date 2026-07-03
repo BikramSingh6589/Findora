@@ -1,5 +1,7 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
+import { createServer } from 'http';
+import { initSocket } from './services/socket.service';
 
 // Load environment variables from .env
 dotenv.config({ path: path.join(__dirname, '../.env') });
@@ -17,7 +19,10 @@ const startServer = async () => {
     console.error('Failed to initialize database connection. Continuing to start server...');
   }
 
-  app.listen(PORT, () => {
+  const httpServer = createServer(app);
+  initSocket(httpServer);
+
+  httpServer.listen(PORT, () => {
     console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });
 };
