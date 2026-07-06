@@ -47,6 +47,7 @@ const LostItemSchema = new mongoose_1.Schema({
     images: { type: [String], default: [] },
     status: { type: String, enum: ['active', 'claimed', 'resolved', 'archived'], default: 'active' },
     aiMatchScore: { type: Number, default: 0 },
+    communityHidden: { type: Boolean, default: false },
 }, { timestamps: true });
 // Create text index on itemName and description for text searches
 LostItemSchema.index({ itemName: 'text', description: 'text' });

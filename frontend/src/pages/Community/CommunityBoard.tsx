@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -22,6 +23,9 @@ interface CommunityItem {
   secondaryAction?: { label: string; route?: string };
   finderId: string;
   status?: string;
+  lockedBy?: string | null;
+  lockedUntil?: Date | string | null;
+  adminResolved?: boolean;
 }
 
 const getCategoryColor = (category: string) => {
@@ -87,6 +91,9 @@ export const CommunityBoard: React.FC = () => {
               isAIMatch: false,
               finderId: dbItem.finder?._id || dbItem.finder,
               status: dbItem.status || 'active',
+              lockedBy: dbItem.lockedBy,
+              lockedUntil: dbItem.lockedUntil,
+              adminResolved: dbItem.adminResolved,
             };
           });
           setItems(mapped);
@@ -112,12 +119,103 @@ export const CommunityBoard: React.FC = () => {
     fetchItems();
     fetchLostItems();
   }, []);
+
+  const [showCancelModal, setShowCancelModal] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const socket = io(API_BASE, {
+      auth: { token }
+    });
+
+    socket.on('item_locked', (data: { itemId: string, lockedBy: string, lockedUntil: string }) => {
+      setItems(prev => prev.map(item => 
+        item.id === data.itemId 
+          ? { ...item, lockedBy: data.lockedBy, lockedUntil: data.lockedUntil } 
+          : item
+      ));
+    });
+
+    socket.on('item_unlocked', (data: { itemId: string }) => {
+      setItems(prev => prev.map(item => 
+        item.id === data.itemId 
+          ? { ...item, lockedBy: null, lockedUntil: null } 
+          : item
+      ));
+    });
+
+    socket.on('item_claimed', (data: { itemId: string }) => {
+      setItems(prev => prev.map(item => 
+        item.id === data.itemId 
+          ? { ...item, status: 'claimed', lockedBy: null, lockedUntil: null } 
+          : item
+      ));
+    });
+
+    socket.on('item_resolved', (data: { itemId: string, adminResolved?: boolean }) => {
+      setItems(prev => prev.map(item => 
+        item.id === data.itemId 
+          ? { ...item, status: 'resolved', adminResolved: data.adminResolved, lockedBy: null, lockedUntil: null } 
+          : item
+      ));
+    });
+
+    socket.on('lost_item_claimed', (data: { itemId: string }) => {
+      setLostItems(prev => prev.map(item => 
+        (item._id === data.itemId || item.id === data.itemId)
+          ? { ...item, status: 'claimed' } 
+          : item
+      ));
+    });
+
+    socket.on('lost_item_resolved', (data: { itemId: string }) => {
+      setLostItems(prev => prev.map(item => 
+        (item._id === data.itemId || item.id === data.itemId)
+          ? { ...item, status: 'resolved' } 
+          : item
+      ));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const handleClaimClick = async (e: React.MouseEvent, itemId: string) => {
+    e.stopPropagation();
+    try {
+      const res = await axios.post(`${API_BASE}/api/found-items/${itemId}/lock`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (res.data.success) {
+        navigate(`/claim/${itemId}`);
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to lock item. It might be currently claimed by someone else.');
+    }
+  };
+
+  const handleCancelClaim = async (e: React.MouseEvent, itemId: string) => {
+    e.stopPropagation();
+    try {
+      await axios.post(`${API_BASE}/api/found-items/${itemId}/unlock`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setShowCancelModal(true);
+    } catch (err) {
+      console.error('Failed to unlock item', err);
+      alert('Failed to cancel claim. Please try again.');
+    }
+  };
+
   const handleAction = (route?: string) => {
     if (route) navigate(route);
   };
 
   const filteredItems = items.filter(item => {
-    // Only hide archived items
+    // Only hide archived items (keep claimed and resolved ones visible)
     if (item.status === 'archived') {
       return false;
     }
@@ -129,8 +227,8 @@ export const CommunityBoard: React.FC = () => {
     // Hide the reporter's own lost item from the list
     const ownerId = item.owner?._id || item.owner;
     if (String(ownerId) === String(currentUserId)) return false;
-    // Hide resolved/archived items (keep claimed ones visible)
-    if (item.status === 'resolved' || item.status === 'archived') return false;
+    // Hide resolved/archived/claimed items
+    if (item.status === 'resolved' || item.status === 'archived' || item.status === 'claimed') return false;
     if (activeCategory === 'All Items') return true;
     return (item.category || '').toLowerCase() === activeCategory.toLowerCase();
   });
@@ -320,7 +418,7 @@ export const CommunityBoard: React.FC = () => {
                   </div>
                 ) : (
                   <button
-                    onClick={() => navigate(`/report/found`)}
+                    onClick={() => navigate(`/report/found?lostItemId=${item._id}`)}
                     className="w-full h-11 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all"
                   >
                     I Found This!
@@ -389,40 +487,61 @@ export const CommunityBoard: React.FC = () => {
                 >
                   Suggest Owner
                 </button>
-                {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
-                  <div className="flex-1 flex flex-col items-center">
+                {(() => {
+                  const isLocked = item.lockedUntil && new Date(item.lockedUntil).getTime() > Date.now();
+                  const lockedByMe = item.lockedBy === currentUserId;
+
+                  if (item.status === 'resolved' || item.status === 'approved') {
+                    return (
+                      <div className="flex-1 flex flex-col items-center">
+                        <button disabled className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
+                          {item.adminResolved ? 'Admin Resolved' : 'Claimed'}
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }} className="text-danger hover:underline text-xs font-bold text-center mt-1">
+                          Conflict this claim
+                        </button>
+                      </div>
+                    );
+                  }
+
+                  if (item.status === 'claimed' || (isLocked && !lockedByMe)) {
+                    return (
+                      <button disabled className="flex-1 h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
+                        In process...
+                      </button>
+                    );
+                  }
+
+                  if (isLocked && lockedByMe) {
+                    return (
+                      <div className="flex-1 flex flex-col items-center justify-center gap-1 border border-primary/20 rounded-xl p-2 bg-primary/5">
+                        <span className="text-[10px] font-semibold text-primary text-center leading-tight mb-0.5">Your claim process is currently undergoing</span>
+                        <div className="flex gap-2 w-full">
+                          <button onClick={(e) => handleCancelClaim(e, item.id)} className="flex-1 py-1.5 rounded-lg bg-danger/10 text-danger text-xs font-bold hover:bg-danger/20 transition-colors">
+                            Cancel claim
+                          </button>
+                          <button onClick={(e) => { e.stopPropagation(); navigate(`/claim/${item.id}`); }} className="flex-1 py-1.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors shadow-sm">
+                            Reclaim
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
                     <button
-                      disabled
-                      className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
+                      disabled={item.finderId === currentUserId}
+                      onClick={(e) => handleClaimClick(e, item.id)}
+                      className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all ${
+                        item.finderId === currentUserId
+                          ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
+                          : 'bg-primary text-white shadow-md hover:bg-primary/90 active:scale-95'
+                      }`}
                     >
-                      Claimed
+                      Claim Item
                     </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/conflict/${item.id}`);
-                      }}
-                      className="text-danger hover:underline text-xs font-bold text-center mt-1"
-                    >
-                      Conflict this claim
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    disabled={item.finderId === currentUserId}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAction(`/claim/${item.id}`);
-                    }}
-                    className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all ${
-                      item.finderId === currentUserId
-                        ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
-                        : 'bg-primary text-white shadow-md hover:bg-primary/90 active:scale-95'
-                    }`}
-                  >
-                    Claim Item
-                  </button>
-                )}
+                  );
+                })()}
               </div>
             </div>
           ))
@@ -508,7 +627,7 @@ export const CommunityBoard: React.FC = () => {
                       </div>
                     ) : (
                       <button
-                        onClick={() => navigate('/report/found')}
+                        onClick={() => navigate(`/report/found?lostItemId=${item._id}`)}
                         className="w-full py-2.5 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all shadow-md"
                       >
                         I Found This!
@@ -594,40 +713,61 @@ export const CommunityBoard: React.FC = () => {
                   >
                     Suggest Owner
                   </button>
-                  {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
-                    <div className="flex flex-col items-center w-full">
+                  {(() => {
+                    const isLocked = item.lockedUntil && new Date(item.lockedUntil).getTime() > Date.now();
+                    const lockedByMe = item.lockedBy === currentUserId;
+
+                    if (item.status === 'resolved' || item.status === 'approved' || item.status === 'claimed') {
+                      return (
+                        <div className="flex flex-col items-center w-full">
+                          <button disabled className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
+                            {item.adminResolved ? 'Admin Resolved' : 'Claimed'}
+                          </button>
+                          <button onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }} className="text-danger hover:underline text-xs font-bold text-center mt-1">
+                            Conflict this claim
+                          </button>
+                        </div>
+                      );
+                    }
+
+                    if (isLocked && !lockedByMe) {
+                      return (
+                        <button disabled className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
+                          In process...
+                        </button>
+                      );
+                    }
+
+                    if (isLocked && lockedByMe) {
+                      return (
+                        <div className="flex flex-col items-center justify-center gap-1.5 w-full border border-primary/20 rounded-xl p-2.5 bg-primary/5">
+                          <span className="text-xs font-semibold text-primary text-center leading-tight mb-1">Your claim process is currently undergoing</span>
+                          <div className="flex gap-2 w-full">
+                            <button onClick={(e) => handleCancelClaim(e, item.id)} className="flex-1 py-2 rounded-lg bg-danger/10 text-danger text-xs font-bold hover:bg-danger/20 transition-colors">
+                              Cancel claim
+                            </button>
+                            <button onClick={(e) => { e.stopPropagation(); navigate(`/claim/${item.id}`); }} className="flex-1 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors shadow-sm">
+                              Reclaim
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return (
                       <button
-                        disabled
-                        className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
+                        disabled={item.finderId === currentUserId}
+                        onClick={(e) => handleClaimClick(e, item.id)}
+                        className={`w-full py-2.5 rounded-xl font-bold transition-all text-sm ${
+                          item.finderId === currentUserId
+                            ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
+                            : 'bg-gradient-to-r from-primary to-[#6b38d4] text-white shadow-md active:scale-95'
+                        }`}
                       >
-                        Claimed
+                        Claim Item
                       </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/conflict/${item.id}`);
-                        }}
-                        className="text-danger hover:underline text-xs font-bold text-center mt-1"
-                      >
-                        Conflict this claim
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      disabled={item.finderId === currentUserId}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAction(`/claim/${item.id}`);
-                      }}
-                      className={`w-full py-2.5 rounded-xl font-bold transition-all text-sm ${
-                        item.finderId === currentUserId
-                          ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
-                          : 'bg-gradient-to-r from-primary to-[#6b38d4] text-white shadow-md active:scale-95'
-                      }`}
-                    >
-                      Claim Item
-                    </button>
-                  )}
+                    );
+                  })()}
                 </div>
               </div>
             </div>
@@ -649,6 +789,29 @@ export const CommunityBoard: React.FC = () => {
           Report Now
         </button>
       </section>
+
+      {/* Cancel Success Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-xl max-w-sm w-full flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mb-4">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-text-primary mb-2">Claim Canceled</h3>
+            <p className="text-text-secondary text-sm mb-6">
+              Your claim process has been canceled successfully. The item is now available for others to claim.
+            </p>
+            <button
+              onClick={() => setShowCancelModal(false)}
+              className="w-full py-3 rounded-xl font-bold text-white bg-primary hover:bg-primary/90 transition-colors"
+            >
+              Okay
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

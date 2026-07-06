@@ -4,10 +4,12 @@ import { Home, PlusSquare, Users, Sparkles, History, Search, Bell, BarChart2, Se
 import { NotificationCenter } from '../components/NotificationCenter';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotification();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -131,7 +133,11 @@ export const AppLayout: React.FC = () => {
         <div className="flex items-center gap-4">
           <button onClick={(e) => { e.stopPropagation(); setShowNotifications(prev => !prev); }} className="relative text-text-secondary hover:text-primary transition-colors">
             <Bell className="w-6 h-6" />
-            <span className="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full border-2 border-white"></span>
+            {unreadCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-surface-container">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </button>
           <ThemeToggle />
           
@@ -179,7 +185,11 @@ export const AppLayout: React.FC = () => {
             <div className="relative">
               <button onClick={(e) => { e.stopPropagation(); setShowNotifications(prev => !prev); }} className="relative text-text-secondary hover:text-primary transition-colors">
                 <Bell className="w-6 h-6" />
-                <span className="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full border-2 border-white"></span>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-surface-container">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </button>
             </div>
             <ThemeToggle />

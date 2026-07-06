@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, Clock, Eye, Search } from 'lucide-react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -41,6 +42,7 @@ export const AdminClaimManagement: React.FC = () => {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [selectedClaim, setSelectedClaim] = useState<any | null>(null);
+  const [successModal, setSuccessModal] = useState<{ isOpen: boolean; message: string }>({ isOpen: false, message: '' });
 
   const fetchClaims = async () => {
     try {
@@ -60,6 +62,18 @@ export const AdminClaimManagement: React.FC = () => {
 
   useEffect(() => {
     fetchClaims();
+
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const socket = io(API_BASE, { auth: { token } });
+    socket.on('admin_claims_updated', () => {
+      fetchClaims();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const [actionModal, setActionModal] = useState<{ isOpen: boolean; type: 'approve' | 'reject'; claimId: string; inputText: string; }>({ 
@@ -73,13 +87,16 @@ export const AdminClaimManagement: React.FC = () => {
     try {
       setClaims(prev => prev.map(c => c._id === claimId ? { ...c, status: type === 'approve' ? 'approved' : 'rejected', mediationStatus: type === 'approve' ? 'approved' : 'rejected' } : c));
       
-      await axios.post(`${API_BASE}/api/claims/${claimId}/${type}`, type === 'approve' ? { remarks: value } : { reason: value });
+      await axios.post(`${API_BASE}/api/claims/${claimId}/${type}`, type === 'approve' ? { remarks: value } : { reason: value }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
       
       setActionModal(prev => ({ ...prev, isOpen: false }));
       setSelectedClaim(null);
+      setSuccessModal({ isOpen: true, message: `Claim successfully ${type}d.` });
       await fetchClaims();
     } catch (err: any) {
-      alert(err.response?.data?.error || `Failed to ${type} claim`);
+      setSuccessModal({ isOpen: true, message: err.response?.data?.error || `Failed to ${type} claim.` });
       fetchClaims();
     }
   };
@@ -452,6 +469,27 @@ export const AdminClaimManagement: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {successModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[#1A1D24] border border-white/10 rounded-2xl p-6 shadow-xl max-w-sm w-full flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Success</h3>
+            <p className="text-white/70 text-sm mb-6">
+              {successModal.message}
+            </p>
+            <button
+              onClick={() => setSuccessModal({ isOpen: false, message: '' })}
+              className="w-full py-3 rounded-xl font-bold text-white bg-[#4F46E5] hover:bg-[#4F46E5]/90 transition-colors"
+            >
+              Okay
+            </button>
           </div>
         </div>
       )}

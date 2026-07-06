@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteFoundItem = exports.updateFoundItem = exports.getFoundItemById = exports.getFoundItems = exports.createFoundItem = void 0;
+exports.unlockFoundItem = exports.lockFoundItem = exports.deleteFoundItem = exports.updateFoundItem = exports.getFoundItemById = exports.getFoundItems = exports.createFoundItem = void 0;
 const FoundItem_1 = __importDefault(require("../models/FoundItem"));
 const cloudinary_service_1 = require("../services/cloudinary.service");
 const ai_service_1 = require("../services/ai.service");
@@ -123,3 +123,70 @@ const deleteFoundItem = async (req, res, next) => {
     }
 };
 exports.deleteFoundItem = deleteFoundItem;
+const lockFoundItem = async (req, res, next) => {
+    try {
+        const item = await FoundItem_1.default.findById(req.params.id);
+        if (!item) {
+            (0, response_1.sendError)(res, 'Found item not found', 404);
+            return;
+        }
+        if (item.status !== 'active') {
+            (0, response_1.sendError)(res, `Item is currently ${item.status} and cannot be locked`, 400);
+            return;
+        }
+        // Check if locked by someone else and lock is not expired
+        if (item.lockedBy && item.lockedBy.toString() !== req.user._id.toString()) {
+            if (item.lockedUntil && new Date() < item.lockedUntil) {
+                (0, response_1.sendError)(res, 'Item is currently being claimed by someone else', 409);
+                return;
+            }
+        }
+        // Lock for 15 minutes
+        item.lockedBy = req.user._id;
+        item.lockedUntil = new Date(Date.now() + 15 * 60 * 1000);
+        await item.save();
+        // Emit socket event
+        try {
+            const { getIO } = require('../services/socket.service');
+            const io = getIO();
+            io.emit('item_locked', { itemId: item._id, lockedBy: item.lockedBy, lockedUntil: item.lockedUntil });
+        }
+        catch (e) {
+            console.warn('Socket emit failed for item_locked:', e);
+        }
+        (0, response_1.sendSuccess)(res, { item }, 'Item locked successfully');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.lockFoundItem = lockFoundItem;
+const unlockFoundItem = async (req, res, next) => {
+    try {
+        const item = await FoundItem_1.default.findById(req.params.id);
+        if (!item) {
+            (0, response_1.sendError)(res, 'Found item not found', 404);
+            return;
+        }
+        // Only allow unlock if it's the person who locked it, or admin
+        if (item.lockedBy && item.lockedBy.toString() === req.user._id.toString() || req.user.role === 'admin') {
+            item.lockedBy = null;
+            item.lockedUntil = null;
+            await item.save();
+            // Emit socket event
+            try {
+                const { getIO } = require('../services/socket.service');
+                const io = getIO();
+                io.emit('item_unlocked', { itemId: item._id });
+            }
+            catch (e) {
+                console.warn('Socket emit failed for item_unlocked:', e);
+            }
+        }
+        (0, response_1.sendSuccess)(res, { item }, 'Item unlocked successfully');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.unlockFoundItem = unlockFoundItem;

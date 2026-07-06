@@ -41,5 +41,6 @@ const NotificationSchema = new mongoose_1.Schema({
     message: { type: String, required: true },
     read: { type: Boolean, default: false },
     relatedItemId: { type: String, default: null },
+    relatedClaimId: { type: String, default: null },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('Notification', NotificationSchema);

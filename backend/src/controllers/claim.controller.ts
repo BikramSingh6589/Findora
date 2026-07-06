@@ -173,12 +173,29 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
       status: 'pending',
     });
 
-    // Reserve the FoundItem
-    await FoundItem.findByIdAndUpdate(foundItemId, { status: 'claimed' });
+    // Reserve the FoundItem and clear any locks
+    await FoundItem.findByIdAndUpdate(foundItemId, { 
+      status: 'claimed',
+      lockedBy: null,
+      lockedUntil: null
+    });
 
     // Also update LostItem status if provided
     if (lostItemId) {
       await LostItem.findByIdAndUpdate(lostItemId, { status: 'claimed' });
+    }
+    
+    // Emit socket event to update Community Board
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.emit('item_claimed', { itemId: foundItemId });
+      
+      if (lostItemId) {
+        io.emit('lost_item_claimed', { itemId: lostItemId });
+      }
+    } catch (e) {
+      console.warn('Socket emit failed for item_claimed:', e);
     }
 
     sendSuccess(res, { claim }, 'Claim submitted successfully. Item reserved.', 201);
@@ -245,8 +262,11 @@ export const getClaimById = async (req: AuthenticatedRequest, res: Response, nex
       return;
     }
 
-    // Authorization: User must be claimant or an admin
-    if (claim.claimant._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    // Authorization: User must be claimant, finder, or an admin
+    const isClaimant = claim.claimant._id.toString() === req.user._id.toString();
+    const isFinder = claim.foundItemId && (claim.foundItemId as any).finder && (claim.foundItemId as any).finder.toString() === req.user._id.toString();
+      
+    if (!isClaimant && !isFinder && req.user.role !== 'admin') {
       sendError(res, 'Access denied', 403);
       return;
     }
@@ -311,43 +331,77 @@ export const approveClaim = async (req: AuthenticatedRequest, res: Response, nex
       return;
     }
 
-    if (claim.status !== 'pending') {
+    if (claim.status !== 'pending' && claim.status !== 'mediated') {
       sendError(res, `Claim is already ${claim.status}`, 400);
       return;
     }
 
-    // Update claim status
-    const remarks = req.body.remarks || 'Approved by admin - Submit to Lost and Found Desk';
-    claim.status = 'approved';
+    // Update claim status to resolved
+    const handoverCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const remarks = req.body.remarks || 'Approved by admin - Check your chat for the handover code';
+    claim.status = 'resolved';
     claim.mediationStatus = 'approved'; // clear pending mediation flag
+    claim.qrToken = `ADMIN-CODE:${handoverCode}`;
     claim.remarks = remarks;
     await claim.save();
 
-    // Re-verify FoundItem is marked claimed
-    await FoundItem.findByIdAndUpdate(claim.foundItemId._id, { status: 'claimed' });
+    // Re-verify FoundItem is marked resolved and set adminResolved
+    await FoundItem.findByIdAndUpdate((claim.foundItemId as any)._id, { 
+      status: 'resolved',
+      adminResolved: true 
+    });
 
-    // Mark linked LostItem as claimed, or find one if not explicitly linked
-    let targetLostItemId = (claim as any).lostItemId;
-    if (!targetLostItemId && claim.claimant) {
-      const fallbackLostItem = await LostItem.findOne({ owner: claim.claimant._id, status: 'active' });
-      if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
-    }
-    
-    if (targetLostItemId) {
-      await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'claimed' });
-    }
-
-    // Notify room via socket
+    // Notify connected users via socket
     try {
       const { getIO } = require('../services/socket.service');
       const io = getIO();
       io.to(`claim:${claim._id}`).emit('claim_resolved', {
         claimId: claim._id,
-        status: 'approved',
+        status: 'resolved',
+        code: handoverCode,
         remarks
       });
+      
+      // Broadcast to community board
+      io.emit('item_resolved', {
+        itemId: (claim.foundItemId as any)._id,
+        adminResolved: true
+      });
+
+      io.emit('admin_claims_updated');
     } catch (e) {
-      console.warn('Socket emit failed:', e);
+      console.warn('Socket emit failed for claim_resolved:', e);
+    }
+
+    // Mark linked lost item as resolved so it updates appropriately, or fallback
+    let targetLostItemId = (claim as any).lostItemId;
+    if (!targetLostItemId && claim.claimant) {
+      const fallbackLostItem = await LostItem.findOne({ owner: (claim.claimant as any)._id, status: 'active' });
+      if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
+    }
+    
+    if (targetLostItemId) {
+      await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'resolved' });
+      try {
+        const { getIO } = require('../services/socket.service');
+        const io = getIO();
+        io.emit('lost_item_resolved', { itemId: targetLostItemId });
+      } catch (e) {
+        console.warn('Socket emit failed for lost_item_resolved:', e);
+      }
+    }
+
+    // Handle communityHidden for the original linked lost item if it exists
+    const foundItemData: any = await FoundItem.findById(claim.foundItemId);
+    if (foundItemData && foundItemData.linkedLostItem) {
+      const origLostItem = await LostItem.findById(foundItemData.linkedLostItem);
+      if (origLostItem && origLostItem.status === 'active') {
+        if (origLostItem.owner.toString() === claim.claimant._id.toString()) {
+          await LostItem.findByIdAndUpdate(foundItemData.linkedLostItem, { status: 'resolved' });
+        } else {
+          await LostItem.findByIdAndUpdate(foundItemData.linkedLostItem, { communityHidden: true });
+        }
+      }
     }
 
     // Send email notification to claimant
@@ -472,9 +526,36 @@ export const resolveClaim = async (req: AuthenticatedRequest, res: Response, nex
     await claim.save();
 
     await FoundItem.findByIdAndUpdate(foundItem._id, { status: 'claimed' });
-    // Mark linked lost item as resolved so it leaves the community board
-    if ((claim as any).lostItemId) {
-      await LostItem.findByIdAndUpdate((claim as any).lostItemId, { status: 'resolved' });
+    
+    // Mark linked lost item as resolved so it updates appropriately, or fallback
+    let targetLostItemId = (claim as any).lostItemId;
+    if (!targetLostItemId && claim.claimant) {
+      const fallbackLostItem = await LostItem.findOne({ owner: (claim.claimant as any)._id, status: 'active' });
+      if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
+    }
+    
+    if (targetLostItemId) {
+      await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'resolved' });
+      try {
+        const { getIO } = require('../services/socket.service');
+        const io = getIO();
+        io.emit('lost_item_resolved', { itemId: targetLostItemId });
+      } catch (e) {
+        console.warn('Socket emit failed for lost_item_resolved:', e);
+      }
+    }
+
+    // Handle communityHidden for the original linked lost item if it exists
+    const foundItemData2: any = await FoundItem.findById(claim.foundItemId);
+    if (foundItemData2 && foundItemData2.linkedLostItem) {
+      const origLostItem = await LostItem.findById(foundItemData2.linkedLostItem);
+      if (origLostItem && origLostItem.status === 'active') {
+        if (origLostItem.owner.toString() === claim.claimant._id.toString()) {
+          await LostItem.findByIdAndUpdate(foundItemData2.linkedLostItem, { status: 'resolved' });
+        } else {
+          await LostItem.findByIdAndUpdate(foundItemData2.linkedLostItem, { communityHidden: true });
+        }
+      }
     }
 
     // Send real-time notification to the room via Socket.IO
@@ -529,6 +610,8 @@ export const mediateClaim = async (req: AuthenticatedRequest, res: Response, nex
         mediationRequested: true,
         mediationStatus: 'pending'
       });
+      // Also emit a global update for the admin dashboard
+      io.emit('admin_claims_updated');
     } catch (e) {
       console.warn(e);
     }
@@ -557,31 +640,58 @@ export const mediationResolve = async (req: AuthenticatedRequest, res: Response,
     }
 
     if (action === 'approve') {
-      claim.status = 'approved';
+      claim.status = 'resolved'; // Mark as resolved directly based on admin approval
       claim.mediationStatus = 'approved';
-      claim.remarks = 'Ownership confirmed by Admin Mediation - Submit to Lost and Found Desk';
+      
+      // Generate a 6-digit alphanumeric code for the finder
+      const handoverCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      claim.qrToken = `ADMIN-CODE:${handoverCode}`;
+      claim.remarks = 'Ownership confirmed by Admin Mediation - No QR needed, check your chat window for the handover code.';
       await claim.save();
 
-      await FoundItem.findByIdAndUpdate(claim.foundItemId._id, { status: 'claimed' });
-      // Mark linked lost item as claimed so it updates appropriately, or fallback
-      let targetLostItemId = (claim as any).lostItemId;
-      if (!targetLostItemId && claim.claimant) {
-        const fallbackLostItem = await LostItem.findOne({ owner: claim.claimant._id, status: 'active' });
-        if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
-      }
-      
-      if (targetLostItemId) {
-        await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'claimed' });
-      }
+      await FoundItem.findByIdAndUpdate((claim.foundItemId as any)._id, { 
+        status: 'resolved',
+        adminResolved: true 
+      });
+  
+      // Notify connected users via socket
       try {
         const { getIO } = require('../services/socket.service');
         const io = getIO();
         io.to(`claim:${claim._id}`).emit('claim_resolved', {
           claimId: claim._id,
-          mediationStatus: 'approved'
+          status: 'resolved',
+          code: handoverCode,
+          remarks: claim.remarks
         });
+        
+        // Broadcast to community board
+        io.emit('item_resolved', {
+          itemId: (claim.foundItemId as any)._id,
+          adminResolved: true
+        });
+
+        io.emit('admin_claims_updated');
       } catch (e) {
-        console.warn(e);
+        console.warn('Socket emit failed for claim_resolved:', e);
+      }
+
+      // Mark linked lost item as resolved so it updates appropriately, or fallback
+      let targetLostItemId = (claim as any).lostItemId;
+      if (!targetLostItemId && claim.claimant) {
+        const fallbackLostItem = await LostItem.findOne({ owner: (claim.claimant as any)._id, status: 'active' });
+        if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
+      }
+      
+      if (targetLostItemId) {
+        await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'resolved' });
+        try {
+          const { getIO } = require('../services/socket.service');
+          const io = getIO();
+          io.emit('lost_item_resolved', { itemId: targetLostItemId });
+        } catch (e) {
+          console.warn('Socket emit failed for lost_item_resolved:', e);
+        }
       }
     } else {
       // Reject mediation request: Resume chat

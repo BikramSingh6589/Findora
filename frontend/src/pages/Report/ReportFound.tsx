@@ -7,10 +7,15 @@ import { StepReview } from './components/StepReview';
 import { ReportFoundSuccess } from './components/ReportFoundSuccess';
 import type { ReportFormData } from './types';
 
+import { useSearchParams } from 'react-router-dom';
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export type { ReportFormData };
 export const ReportFound: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const lostItemId = searchParams.get('lostItemId');
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<ReportFormData>({
     itemName: '',
@@ -41,7 +46,8 @@ export const ReportFound: React.FC = () => {
         description: formData.description || 'N/A',
         locationFound: formData.location || 'Student Union',
         lastSeen: formData.location || 'Student Union',
-        dateFound: formData.foundDate ? new Date(formData.foundDate) : new Date()
+        dateFound: formData.foundDate ? new Date(formData.foundDate) : new Date(),
+        linkedLostItem: lostItemId || undefined
       });
       setCurrentStep(4);
     } catch (err: any) {

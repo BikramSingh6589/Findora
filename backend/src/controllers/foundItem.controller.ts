@@ -128,3 +128,74 @@ export const deleteFoundItem = async (req: AuthenticatedRequest, res: Response, 
     next(error);
   }
 };
+
+export const lockFoundItem = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const item = await FoundItem.findById(req.params.id);
+    if (!item) {
+      sendError(res, 'Found item not found', 404);
+      return;
+    }
+
+    if (item.status !== 'active') {
+      sendError(res, `Item is currently ${item.status} and cannot be locked`, 400);
+      return;
+    }
+
+    // Check if locked by someone else and lock is not expired
+    if (item.lockedBy && item.lockedBy.toString() !== req.user._id.toString()) {
+      if (item.lockedUntil && new Date() < item.lockedUntil) {
+        sendError(res, 'Item is currently being claimed by someone else', 409);
+        return;
+      }
+    }
+
+    // Lock for 15 minutes
+    item.lockedBy = req.user._id;
+    item.lockedUntil = new Date(Date.now() + 15 * 60 * 1000);
+    await item.save();
+
+    // Emit socket event
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.emit('item_locked', { itemId: item._id, lockedBy: item.lockedBy, lockedUntil: item.lockedUntil });
+    } catch (e) {
+      console.warn('Socket emit failed for item_locked:', e);
+    }
+
+    sendSuccess(res, { item }, 'Item locked successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const unlockFoundItem = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const item = await FoundItem.findById(req.params.id);
+    if (!item) {
+      sendError(res, 'Found item not found', 404);
+      return;
+    }
+
+    // Only allow unlock if it's the person who locked it, or admin
+    if (item.lockedBy && item.lockedBy.toString() === req.user._id.toString() || req.user.role === 'admin') {
+      item.lockedBy = null;
+      item.lockedUntil = null;
+      await item.save();
+
+      // Emit socket event
+      try {
+        const { getIO } = require('../services/socket.service');
+        const io = getIO();
+        io.emit('item_unlocked', { itemId: item._id });
+      } catch (e) {
+        console.warn('Socket emit failed for item_unlocked:', e);
+      }
+    }
+
+    sendSuccess(res, { item }, 'Item unlocked successfully');
+  } catch (error) {
+    next(error);
+  }
+};

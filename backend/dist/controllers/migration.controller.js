@@ -8,15 +8,21 @@ const Claim_1 = __importDefault(require("../models/Claim"));
 const LostItem_1 = __importDefault(require("../models/LostItem"));
 const fixLostItemStatuses = async (req, res) => {
     try {
-        // Find all resolved/approved claims that have a lostItemId
+        // Find all resolved/approved claims
         const resolvedClaims = await Claim_1.default.find({
-            status: { $in: ['resolved', 'approved'] },
-            lostItemId: { $exists: true, $ne: null }
-        }).select('lostItemId status');
+            status: { $in: ['resolved', 'approved'] }
+        }).populate('claimant').populate('foundItemId');
         let fixed = 0;
         for (const claim of resolvedClaims) {
-            if (claim.lostItemId) {
-                const result = await LostItem_1.default.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' }, { new: false });
+            let targetLostItemId = claim.lostItemId;
+            // If not linked, try to find an active LostItem by this user
+            if (!targetLostItemId && claim.claimant) {
+                const fallbackLostItem = await LostItem_1.default.findOne({ owner: claim.claimant._id, status: 'active' });
+                if (fallbackLostItem)
+                    targetLostItemId = fallbackLostItem._id;
+            }
+            if (targetLostItemId) {
+                const result = await LostItem_1.default.findByIdAndUpdate(targetLostItemId, { status: 'claimed' }, { new: false });
                 if (result && result.status === 'active')
                     fixed++;
             }

@@ -106,11 +106,11 @@ export const ChatHistory: React.FC = () => {
                 statusLabel = 'Waiting to scan';
                 badgeStyle = 'bg-warning/10 text-warning';
               } else {
-                statusLabel = 'Closed';
-                badgeStyle = 'bg-danger/10 text-danger';
+                statusLabel = 'Resolved';
+                badgeStyle = 'bg-success/10 text-success';
               }
             } else if (claim.status === 'rejected') {
-              statusLabel = 'Closed';
+              statusLabel = 'Rejected';
               badgeStyle = 'bg-danger/10 text-danger';
             } else if (claim.status === 'approved') {
               statusLabel = 'Admin Approved';

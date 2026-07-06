@@ -24,4 +24,6 @@ router.get('/', auth_middleware_1.protect, foundItem_controller_1.getFoundItems)
 router.get('/:id', auth_middleware_1.protect, foundItem_controller_1.getFoundItemById);
 router.put('/:id', auth_middleware_1.protect, upload_middleware_1.upload.array('images', 5), (0, validate_middleware_1.validateRequest)(foundItemSchema), foundItem_controller_1.updateFoundItem);
 router.delete('/:id', auth_middleware_1.protect, foundItem_controller_1.deleteFoundItem);
+router.post('/:id/lock', auth_middleware_1.protect, foundItem_controller_1.lockFoundItem);
+router.post('/:id/unlock', auth_middleware_1.protect, foundItem_controller_1.unlockFoundItem);
 exports.default = router;

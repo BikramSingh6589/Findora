@@ -12,17 +12,36 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const ClaimOwnership: React.FC = () => {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<ClaimFormData>({
-    location: '',
-    lostDate: '',
-    lostTime: '',
-    identifiers: '',
-    additionalInfo: '',
-  });
+  const { itemId } = useParams();
+
+  // Load draft from local storage if available
+  const draftKey = `claimDraft_${itemId}`;
+  const getInitialState = () => {
+    const saved = localStorage.getItem(draftKey);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      currentStep: 1,
+      formData: {
+        location: '',
+        lostDate: '',
+        lostTime: '',
+        identifiers: '',
+        additionalInfo: '',
+      }
+    };
+  };
+
+  const initialState = getInitialState();
+  const [currentStep, setCurrentStep] = useState(initialState.currentStep);
+  const [formData, setFormData] = useState<ClaimFormData>(initialState.formData);
   const [error, setError] = useState<string | null>(null);
 
-  const { itemId } = useParams();
+  // Auto-save draft on change
+  React.useEffect(() => {
+    localStorage.setItem(draftKey, JSON.stringify({ currentStep, formData }));
+  }, [currentStep, formData, draftKey]);
 
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -49,12 +68,15 @@ export const ClaimOwnership: React.FC = () => {
         foundItemId: finalItemId,
         lostItemId: formData.lostItemId || undefined,
         answers: {
-          location: formData.location || 'Main Library, 2nd Floor Study Lounge',
-          dateDetails: formData.lostDate ? `${formData.lostDate} at ${formData.lostTime || 'N/A'}` : 'Tuesday, Oct 24th, between 2:00 PM and 4:30 PM',
-          colorMatch: formData.identifiers || 'A small scratch on the bottom left corner and a \'Senior Student\' sticker on the front lid.',
-          specialMarks: formData.additionalInfo || 'N/A'
-        }
+          location: formData.location,
+          dateDetails: `${formData.lostDate} ${formData.lostTime}`,
+          colorMatch: '',
+          specialMarks: formData.identifiers,
+        },
+        proofUrls: formData.proofImages || []
       });
+
+      localStorage.removeItem(draftKey);
       const claimId = res.data?.claim?._id || res.data?.claim?.id;
       if (claimId) {
         navigate(`/chat/finder/${claimId}`);

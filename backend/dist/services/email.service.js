@@ -88,7 +88,7 @@ exports.sendResetEmail = sendResetEmail;
 /**
  * Sends an email to the claimant when their claim has been approved.
  */
-const sendClaimApprovedEmail = async (to, claimantName, itemName, qrCodeUrl) => {
+const sendClaimApprovedEmail = async (to, claimantName, itemName) => {
     const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
     const port = parseInt(process.env.EMAIL_PORT || '587');
     const user = process.env.EMAIL_USER || 'placeholder@gmail.com';
@@ -107,15 +107,11 @@ const sendClaimApprovedEmail = async (to, claimantName, itemName, qrCodeUrl) => 
         from: `"Campus Lost & Found" <${user}>`,
         to,
         subject: 'Your Claim Has Been Approved! 🎉',
-        text: `Hi ${claimantName},\n\nGreat news! Your claim for "${itemName}" has been approved. Please present the QR code link below at the Lost & Found office to collect your item:\n\nQR Code URL: ${qrCodeUrl}\n\nHappy finding!\nThe Campus Lost & Found Team`,
+        text: `Hi ${claimantName},\n\nGreat news! Your claim for "${itemName}" has been approved by the Admin. Please come to the Lost and Found desk to collect your product.\n\nHappy finding!\nThe Campus Lost & Found Team`,
         html: `<div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px;">
       <h2 style="color: #4F46E5;">Great news, ${claimantName}! 🎉</h2>
-      <p>Your claim for the item <strong>"${itemName}"</strong> has been approved.</p>
-      <p>Please present the QR code below at the Lost & Found office to collect your item:</p>
-      <div style="text-align: center; margin: 20px 0;">
-        <img src="${qrCodeUrl}" alt="Pickup QR Code" style="width: 200px; height: 200px; border: 1px solid #ddd; padding: 5px; border-radius: 5px;" />
-      </div>
-      <p style="font-size: 14px; color: #6B7280;">If the QR code image is not loading, you can use <a href="${qrCodeUrl}">this link</a> instead.</p>
+      <p>Your claim for the item <strong>"${itemName}"</strong> has been approved by the Admin.</p>
+      <p>Please come to the Lost & Found desk to collect your product.</p>
       <p style="margin-top: 20px; font-size: 14px; color: #6B7280;">See you soon!<br/>The Campus Lost & Found Team</p>
     </div>`,
     };

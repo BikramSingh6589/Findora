@@ -44,6 +44,13 @@ export const initSocket = (httpServer: any) => {
       clearTimeout(lifespanTimeout);
     });
 
+    // Join personal user room for notifications
+    socket.on('join_user', () => {
+      const userRoom = `user:${userId}`;
+      socket.join(userRoom);
+      console.log(`Socket: User ${userId} joined room ${userRoom}`);
+    });
+
     // Join a claim chat room
     socket.on('join_room', async ({ claimId }) => {
       try {
@@ -121,8 +128,22 @@ export const initSocket = (httpServer: any) => {
         });
 
         const populatedMessage = await message.populate('sender', 'name profilePic');
-
+        
         io.to(`claim:${claimId}`).emit('receive_message', populatedMessage);
+        
+        // Send a notification to the recipient
+        const recipientId = isClaimant ? finderId : claimantId;
+        if (recipientId) {
+          const { createNotification } = require('./notification.service');
+          await createNotification(
+            recipientId,
+            'new_message',
+            'New Message',
+            `You have a new message from ${(populatedMessage.sender as any).name}`,
+            undefined,
+            claimId
+          );
+        }
       } catch (err: any) {
         console.error(err);
         socket.emit('error_message', 'Failed to send message');

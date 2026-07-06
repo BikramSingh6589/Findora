@@ -139,9 +139,17 @@ export const confirmHandover = async (req: AuthenticatedRequest, res: Response, 
     }
 
     // Mark items as returned/resolved
-    await FoundItem.findByIdAndUpdate(foundItem._id, { status: 'claimed' });
-    if (claim.lostItemId) {
-      await LostItem.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' });
+    await FoundItem.findByIdAndUpdate(foundItem._id, { status: 'resolved' });
+    
+    // Find linked lost item or fallback based on owner
+    let targetLostItemId = claim.lostItemId;
+    if (!targetLostItemId && claim.claimant) {
+      const fallbackLostItem = await LostItem.findOne({ owner: claim.claimant._id, status: { $in: ['active', 'claimed'] } });
+      if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
+    }
+    
+    if (targetLostItemId) {
+      await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'resolved' });
     }
 
     // Award XP and increment returned count
@@ -164,6 +172,18 @@ export const confirmHandover = async (req: AuthenticatedRequest, res: Response, 
     // Invalidate QR Token to prevent reuse
     claim.qrToken = '';
     await claim.save();
+    
+    // Notify room via socket
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.to(`claim:${claim._id}`).emit('handover_confirmed', {
+        claimId: claim._id,
+        status: 'resolved'
+      });
+    } catch (e) {
+      console.warn('Socket emit failed for handover_confirmed:', e);
+    }
     
     sendSuccess(res, { claim }, 'Item successfully returned! Reputation points distributed.');
   } catch (error) {

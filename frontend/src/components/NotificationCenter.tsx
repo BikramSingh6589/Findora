@@ -1,5 +1,7 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, CheckCircle2, Users, Medal, ArrowRight, QrCode } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Sparkles, CheckCircle2, Medal, QrCode, Bell, AlertTriangle, MessageCircle, MessageSquare } from 'lucide-react';
+import { useNotification, type AppNotification } from '../contexts/NotificationContext';
+import { useNavigate } from 'react-router-dom';
 
 interface NotificationCenterProps {
   isOpen: boolean;
@@ -9,15 +11,12 @@ interface NotificationCenterProps {
 export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose }) => {
   const [filter, setFilter] = useState<'All' | 'Unread' | 'Important'>('All');
   const popoverRef = useRef<HTMLDivElement>(null);
+  const { notifications, markAsRead, markAllAsRead } = useNotification();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // If the popover is open, and the click is outside the popover element, close it
       if (isOpen && popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
-        // Also ensure we aren't clicking the notification bell itself which toggles it.
-        // We can just rely on the bell's onClick stopping propagation, or just standard behavior since the bell button sets state.
-        // Wait, if the bell is clicked, it might immediately reopen. Let's let the bell handle its own logic or just check if it's the bell.
-        // Actually the safest way without modifying the bell is just calling onClose. 
         onClose();
       }
     };
@@ -30,18 +29,71 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
 
   if (!isOpen) return null;
 
+  const filteredNotifications = notifications.filter(n => {
+    if (filter === 'Unread') return !n.read;
+    if (filter === 'Important') return ['match', 'claim_approved', 'claim_rejected', 'new_message'].includes(n.type);
+    return true;
+  });
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'match': return <div className="w-10 h-10 rounded-xl bg-info-ai/10 flex items-center justify-center text-info-ai shrink-0"><Sparkles className="w-5 h-5" /></div>;
+      case 'claim_approved': return <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center text-success shrink-0"><CheckCircle2 className="w-5 h-5" /></div>;
+      case 'claim_rejected': return <div className="w-10 h-10 rounded-xl bg-danger/10 flex items-center justify-center text-danger shrink-0"><AlertTriangle className="w-5 h-5" /></div>;
+      case 'new_message': return <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0"><MessageCircle className="w-5 h-5" /></div>;
+      case 'system': return <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0"><Medal className="w-5 h-5" /></div>;
+      default: return <div className="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-text-primary shrink-0"><Bell className="w-5 h-5" /></div>;
+    }
+  };
+
+  const getBorderColor = (type: string) => {
+    switch (type) {
+      case 'match': return 'border-info-ai';
+      case 'claim_approved': return 'border-success';
+      case 'claim_rejected': return 'border-danger';
+      case 'new_message': return 'border-primary';
+      case 'system': return 'border-primary';
+      default: return 'border-border-default';
+    }
+  };
+
+  const handleNotificationClick = async (notif: AppNotification) => {
+    if (!notif.read) {
+      await markAsRead(notif._id);
+    }
+    
+    // Navigate based on type
+    if (notif.type === 'match' && notif.relatedItemId) {
+      navigate(`/item/${notif.relatedItemId}`);
+    } else if (notif.type === 'new_message' && notif.relatedClaimId) {
+      navigate(`/chat/finder/${notif.relatedClaimId}`);
+    } else if (notif.type.startsWith('claim') && notif.relatedClaimId) {
+      navigate('/chats');
+    }
+    onClose();
+  };
+
+  const formatTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diffMins = Math.floor((now.getTime() - d.getTime()) / 60000);
+    
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    const diffHrs = Math.floor(diffMins / 60);
+    if (diffHrs < 24) return `${diffHrs}h ago`;
+    return d.toLocaleDateString();
+  };
+
   return (
     <>
-      {/* Backdrop for mobile */}
       <div 
         className="fixed inset-0 bg-black/20 z-50 lg:hidden backdrop-blur-sm"
         onClick={onClose}
       />
       
-      {/* Popover Container */}
       <div ref={popoverRef} className="fixed lg:absolute top-16 right-0 lg:right-8 w-full h-[calc(100vh-4rem)] lg:h-auto lg:w-[450px] lg:max-h-[80vh] bg-surface dark:bg-surface z-50 shadow-2xl dark:shadow-lg lg:rounded-3xl border border-border-default transition-colors duration-300 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
         
-        {/* Header */}
         <div className="p-6 pb-4 border-b border-border-default bg-surface-container-lowest dark:bg-surface-container transition-colors duration-300">
           <div className="flex justify-between items-start mb-4">
             <div>
@@ -56,7 +108,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
             </button>
           </div>
           
-          {/* Filters */}
           <div className="flex bg-surface-container-low dark:bg-surface-container-high p-1 rounded-2xl w-fit">
             {['All', 'Unread', 'Important'].map(f => (
               <button
@@ -74,105 +125,71 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
           </div>
         </div>
 
-        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-container-low dark:bg-surface">
-          
-          {/* AI Match Card */}
-          <div className="group relative overflow-hidden bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm dark:shadow-md border-l-4 border-info-ai hover:shadow-md dark:hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-info-ai/10 flex items-center justify-center text-info-ai shrink-0">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-bold text-sm text-text-primary flex flex-wrap items-center gap-2">
-                    Potential Match Found!
-                    <span className="px-2 py-0.5 bg-info-ai/10 text-info-ai text-[10px] font-bold uppercase rounded-md">AI Matching</span>
-                  </h3>
-                  <span className="text-xs text-text-secondary whitespace-nowrap ml-2">2m ago</span>
-                </div>
-                <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                  âœ¨ Our algorithm found a <span className="font-semibold text-text-primary">Silver MacBook</span> reported at the Engineering Library that matches your recent "Lost Item" report.
-                </p>
-                <div className="mt-3 flex gap-2">
-                  <button className="px-4 py-2 bg-info-ai text-white rounded-lg text-xs font-bold hover:bg-info-ai/90 active:scale-95 transition-all">
-                    View Match
-                  </button>
-                  <button className="px-4 py-2 bg-surface-container-low text-text-secondary rounded-lg text-xs font-bold hover:bg-surface-container transition-all">
-                    Not Mine
-                  </button>
-                </div>
-              </div>
+          {filteredNotifications.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-text-secondary">
+              <Bell className="w-12 h-12 mb-3 opacity-20" />
+              <p className="font-bold">No notifications</p>
+              <p className="text-sm">You're all caught up!</p>
             </div>
-          </div>
-
-          {/* Claim Approved Card */}
-          <div className="group relative overflow-hidden bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm dark:shadow-md border-l-4 border-success hover:shadow-md dark:hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center text-success shrink-0">
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-bold text-sm text-text-primary">Claim Approved!</h3>
-                  <span className="text-xs text-text-secondary">1h ago</span>
+          ) : (
+            filteredNotifications.map(notif => (
+              <div 
+                key={notif._id}
+                onClick={() => handleNotificationClick(notif)}
+                className={`group relative overflow-hidden bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm dark:shadow-md border-l-4 ${getBorderColor(notif.type)} hover:shadow-md dark:hover:shadow-lg transition-shadow cursor-pointer ${!notif.read ? 'bg-primary/5 dark:bg-primary/10' : ''}`}
+              >
+                {!notif.read && (
+                  <div className="absolute top-4 right-4 w-2 h-2 bg-primary rounded-full"></div>
+                )}
+                <div className="flex items-start gap-4">
+                  {getNotificationIcon(notif.type)}
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start pr-4">
+                      <h3 className="font-bold text-sm text-text-primary flex flex-wrap items-center gap-2">
+                        {notif.title}
+                        {notif.type === 'match' && <span className="px-2 py-0.5 bg-info-ai/10 text-info-ai text-[10px] font-bold uppercase rounded-md">AI Matching</span>}
+                      </h3>
+                      <span className="text-xs text-text-secondary whitespace-nowrap ml-2">
+                        {formatTime(notif.createdAt)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-text-secondary mt-1 leading-relaxed">
+                      {notif.message}
+                    </p>
+                    
+                    <div className="mt-3 flex gap-2">
+                      {notif.type === 'match' && (
+                        <button className="px-4 py-2 bg-info-ai text-white rounded-lg text-xs font-bold hover:bg-info-ai/90 active:scale-95 transition-all">
+                          View Match
+                        </button>
+                      )}
+                      {notif.type === 'claim_approved' && (
+                        <button className="px-4 py-2 bg-success text-white rounded-lg text-xs font-bold hover:bg-success/90 active:scale-95 transition-all flex items-center gap-1.5">
+                          <QrCode className="w-4 h-4" />
+                          View Claim
+                        </button>
+                      )}
+                      {notif.type === 'new_message' && (
+                        <button className="px-4 py-2 bg-primary text-white rounded-lg text-xs font-bold hover:bg-primary/90 active:scale-95 transition-all flex items-center gap-1.5">
+                          <MessageSquare className="w-4 h-4" />
+                          Reply
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                  âœ… Great news! Your claim for <span className="font-semibold text-text-primary">'Blue JBL Earbuds'</span> has been verified. They are ready for pickup at the Student Union Hub.
-                </p>
-                <div className="mt-3">
-                  <button className="px-4 py-2 bg-success text-white rounded-lg text-xs font-bold hover:bg-success/90 active:scale-95 transition-all flex items-center gap-1.5">
-                    <QrCode className="w-4 h-4" />
-                    Get QR Code
-                  </button>
-                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Community Suggestion Card */}
-          <div className="group relative overflow-hidden bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm dark:shadow-md border-l-4 border-warning hover:shadow-md dark:hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center text-warning shrink-0">
-                <Users className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-bold text-sm text-text-primary">New Suggestion</h3>
-                  <span className="text-xs text-text-secondary">3h ago</span>
-                </div>
-                <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                  ðŸ™‹ <span className="font-semibold text-text-primary">Alex</span> thinks your <span className="font-semibold text-text-primary">'Black Wallet'</span> might be at the <span className="text-primary underline underline-offset-4 cursor-pointer">Cafeteria</span>.
-                </p>
-                <div className="mt-3">
-                  <button className="px-4 py-2 bg-surface-container-high text-text-primary rounded-lg text-xs font-bold hover:bg-surface-variant active:scale-95 transition-all flex items-center gap-1.5">
-                    Check it out
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* XP Reward Card */}
-          <div className="bg-gradient-to-br from-primary to-secondary rounded-[20px] p-5 shadow-sm dark:shadow-md text-white flex items-center gap-4 cursor-pointer hover:scale-[1.01] transition-transform">
-            <div className="w-12 h-12 bg-surface-container-lowest dark:bg-surface-container/20 dark:bg-surface-container-lowest/20 backdrop-blur-sm rounded-full flex items-center justify-center shrink-0">
-              <Medal className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="font-bold text-sm">You're making a difference!</p>
-              <p className="text-xs text-white/80 mt-0.5">Helping others earned you +50 XP.</p>
-              <div className="mt-2 bg-surface-container-lowest dark:bg-surface-container/20 dark:bg-surface-container-lowest/20 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-surface-container-lowest dark:bg-surface-container dark:bg-surface-container-lowest h-full w-[75%] rounded-full"></div>
-              </div>
-            </div>
-          </div>
-          
+            ))
+          )}
         </div>
         
-        {/* Footer */}
         <div className="p-3 bg-surface-container-lowest dark:bg-surface-container border-t border-border-default text-center transition-colors duration-300">
-          <button className="text-sm font-bold text-primary dark:text-primary hover:underline">
+          <button 
+            onClick={() => markAllAsRead()}
+            className="text-sm font-bold text-primary dark:text-primary hover:underline disabled:opacity-50"
+            disabled={filteredNotifications.filter(n => !n.read).length === 0}
+          >
             Mark all as read
           </button>
         </div>

@@ -6,13 +6,17 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { PopupProvider } from './contexts/PopupContext'
 
+import { NotificationProvider } from './contexts/NotificationContext'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <PopupProvider>
-          <App />
-        </PopupProvider>
+        <NotificationProvider>
+          <PopupProvider>
+            <App />
+          </PopupProvider>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>,

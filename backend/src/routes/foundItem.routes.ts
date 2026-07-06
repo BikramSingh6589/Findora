@@ -5,7 +5,9 @@ import {
   getFoundItems,
   getFoundItemById,
   updateFoundItem,
-  deleteFoundItem
+  deleteFoundItem,
+  lockFoundItem,
+  unlockFoundItem
 } from '../controllers/foundItem.controller';
 import { protect } from '../middleware/auth.middleware';
 import { validateRequest } from '../middleware/validate.middleware';
@@ -29,5 +31,7 @@ router.get('/', protect, getFoundItems);
 router.get('/:id', protect, getFoundItemById);
 router.put('/:id', protect, upload.array('images', 5), validateRequest(foundItemSchema), updateFoundItem);
 router.delete('/:id', protect, deleteFoundItem);
+router.post('/:id/lock', protect, lockFoundItem);
+router.post('/:id/unlock', protect, unlockFoundItem);
 
 export default router;

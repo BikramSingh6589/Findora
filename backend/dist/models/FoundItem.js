@@ -47,7 +47,11 @@ const FoundItemSchema = new mongoose_1.Schema({
     specialAppearance: { type: String, default: '' },
     additionalNotes: { type: String, default: '' },
     images: { type: [String], default: [] },
-    status: { type: String, enum: ['active', 'claimed', 'archived'], default: 'active' },
+    status: { type: String, enum: ['active', 'claimed', 'resolved', 'archived'], default: 'active' },
+    lockedBy: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', default: null },
+    lockedUntil: { type: Date, default: null },
+    adminResolved: { type: Boolean, default: false },
+    linkedLostItem: { type: mongoose_1.Schema.Types.ObjectId, ref: 'LostItem' },
 }, { timestamps: true });
 // Create text index for search query support
 FoundItemSchema.index({ itemName: 'text', description: 'text' });

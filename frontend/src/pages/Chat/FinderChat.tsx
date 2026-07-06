@@ -121,6 +121,16 @@ export const FinderChat: React.FC = () => {
         mediationStatus: data.mediationStatus 
       } : prev);
     });
+    
+    // Listen for handover confirmed
+    socket.on('handover_confirmed', (data: any) => {
+      setClaim((prev: any) => prev ? { 
+        ...prev, 
+        status: 'resolved',
+        qrToken: ''
+      } : prev);
+      setShowSuccessPopup(true);
+    });
 
     return () => {
       socket.disconnect();

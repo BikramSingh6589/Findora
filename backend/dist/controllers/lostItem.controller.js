@@ -39,6 +39,7 @@ const getLostItems = async (req, res, next) => {
             query.category = category;
         // Default to 'active' only — hide resolved/archived from community feed
         query.status = status || 'active';
+        query.communityHidden = { $ne: true };
         if (search)
             query['$text'] = { $search: search };
         const [items, total] = await Promise.all([
