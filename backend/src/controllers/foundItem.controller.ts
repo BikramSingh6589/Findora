@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import FoundItem from '../models/FoundItem';
+import LostItem from '../models/LostItem';
 import { uploadImage } from '../services/cloudinary.service';
 import { triggerMatching } from '../services/ai.service';
 import { addXP } from '../services/reputation.service';
@@ -21,8 +22,29 @@ export const createFoundItem = async (req: AuthenticatedRequest, res: Response, 
     // Trigger AI matching asynchronously
     triggerMatching(item._id.toString(), 'found').catch(console.error);
 
+    // If this FoundItem is linked to an existing LostItem from the Community Board,
+    // we instantly hide that LostItem from the community view.
+    if (req.body.linkedLostItem) {
+      await LostItem.findByIdAndUpdate(req.body.linkedLostItem, { communityHidden: true });
+      try {
+        const { getIO } = require('../services/socket.service');
+        getIO().emit('lost_item_resolved', { itemId: req.body.linkedLostItem });
+      } catch (e) {
+        console.warn('Socket emit failed for lost_item_resolved:', e);
+      }
+    }
+
     // Award XP for reporting a found item
     await addXP(req.user._id, 15);
+
+    // Emit real-time update
+    try {
+      const { getIO } = require('../services/socket.service');
+      const itemWithFinder = await FoundItem.findById(item._id).populate('finder', 'name profilePic');
+      getIO().emit('new_found_item', itemWithFinder);
+    } catch (e) {
+      console.warn('Socket emit failed for new_found_item:', e);
+    }
 
     sendSuccess(res, { item }, 'Found item reported successfully', 201);
   } catch (error) {

@@ -43,10 +43,10 @@ export const ClaimOwnership: React.FC = () => {
     localStorage.setItem(draftKey, JSON.stringify({ currentStep, formData }));
   }, [currentStep, formData, draftKey]);
 
-  const nextStep = () => setCurrentStep(prev => prev + 1);
-  const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+  const nextStep = () => setCurrentStep((prev: number) => prev + 1);
+  const prevStep = () => setCurrentStep((prev: number) => Math.max(prev - 1, 1));
   const updateData = (newData: Partial<ClaimFormData>) => {
-    setFormData(prev => ({ ...prev, ...newData }));
+    setFormData((prev: ClaimFormData) => ({ ...prev, ...newData }));
   };
 
   const handleSubmit = async () => {
@@ -73,7 +73,7 @@ export const ClaimOwnership: React.FC = () => {
           colorMatch: '',
           specialMarks: formData.identifiers,
         },
-        proofUrls: formData.proofImages || []
+        proofUrls: (formData as any).proofUrls || []
       });
 
       localStorage.removeItem(draftKey);
@@ -115,7 +115,7 @@ export const ClaimOwnership: React.FC = () => {
             <ClaimProof data={formData} updateData={updateData} onNext={nextStep} onPrev={prevStep} />
           )}
           {currentStep === 3 && (
-            <ClaimReview data={formData} onSubmit={handleSubmit} onEdit={() => setCurrentStep(1)} />
+            <ClaimReview data={formData} updateData={updateData} onSubmit={handleSubmit} onEdit={() => setCurrentStep(1)} />
           )}
         </div>
         

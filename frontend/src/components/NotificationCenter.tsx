@@ -92,7 +92,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
         onClick={onClose}
       />
       
-      <div ref={popoverRef} className="fixed lg:absolute top-16 right-0 lg:right-8 w-full h-[calc(100vh-4rem)] lg:h-auto lg:w-[450px] lg:max-h-[80vh] bg-surface dark:bg-surface z-50 shadow-2xl dark:shadow-lg lg:rounded-3xl border border-border-default transition-colors duration-300 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+      <div ref={popoverRef} className="fixed top-16 right-0 lg:right-8 w-full h-[calc(100vh-4rem)] lg:h-auto lg:w-[450px] lg:max-h-[80vh] bg-surface dark:bg-surface z-50 shadow-2xl dark:shadow-lg lg:rounded-3xl border border-border-default transition-colors duration-300 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
         
         <div className="p-6 pb-4 border-b border-border-default bg-surface-container-lowest dark:bg-surface-container transition-colors duration-300">
           <div className="flex justify-between items-start mb-4">

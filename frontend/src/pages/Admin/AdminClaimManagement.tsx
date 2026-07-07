@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, XCircle, Clock, Eye, Search } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, Eye, Search, X } from 'lucide-react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 
@@ -76,28 +76,76 @@ export const AdminClaimManagement: React.FC = () => {
     };
   }, []);
 
-  const [actionModal, setActionModal] = useState<{ isOpen: boolean; type: 'approve' | 'reject'; claimId: string; inputText: string; }>({ 
+  const [actionModal, setActionModal] = useState<{ isOpen: boolean; type: 'approve' | 'reject' | 'verifyCode' | 'verifyLocation'; claimId: string; inputText: string; }>({ 
     isOpen: false, type: 'approve', claimId: '', inputText: '' 
   });
 
   const confirmAction = async () => {
     const { type, claimId, inputText } = actionModal;
-    const value = inputText.trim() || (type === 'approve' ? 'Approved by admin' : 'Insufficient proof of ownership');
+    const value = inputText.trim();
     
     try {
-      setClaims(prev => prev.map(c => c._id === claimId ? { ...c, status: type === 'approve' ? 'approved' : 'rejected', mediationStatus: type === 'approve' ? 'approved' : 'rejected' } : c));
-      
-      await axios.post(`${API_BASE}/api/claims/${claimId}/${type}`, type === 'approve' ? { remarks: value } : { reason: value }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      if (type === 'approve' || type === 'reject') {
+        const payload = type === 'approve' ? { remarks: value || 'Approved by admin' } : { reason: value || 'Insufficient proof of ownership' };
+        setClaims(prev => prev.map(c => c._id === claimId ? { ...c, status: type === 'approve' ? 'approved' : 'rejected', mediationStatus: type === 'approve' ? 'approved' : 'rejected' } : c));
+        
+        await axios.post(`${API_BASE}/api/claims/${claimId}/${type}`, payload, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+      } else if (type === 'verifyCode') {
+        await axios.post(`${API_BASE}/api/claims/${claimId}/admin-verify-code`, { code: value }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+      } else if (type === 'verifyLocation') {
+        await axios.post(`${API_BASE}/api/claims/${claimId}/admin-verify-location`, { found: value === 'true' }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+      }
       
       setActionModal(prev => ({ ...prev, isOpen: false }));
       setSelectedClaim(null);
-      setSuccessModal({ isOpen: true, message: `Claim successfully ${type}d.` });
+      let successMsg = `Claim successfully ${type}d.`;
+      if (type === 'verifyCode') successMsg = 'Code verified successfully.';
+      if (type === 'verifyLocation') successMsg = 'Location verified successfully.';
+      setSuccessModal({ isOpen: true, message: successMsg });
       await fetchClaims();
     } catch (err: any) {
-      setSuccessModal({ isOpen: true, message: err.response?.data?.error || `Failed to ${type} claim.` });
+      setSuccessModal({ isOpen: true, message: err.response?.data?.error || `Failed action.` });
       fetchClaims();
+    }
+  };
+
+  const [verifyFlow, setVerifyFlow] = useState<{
+    isOpen: boolean;
+    step: 'input' | 'details';
+    claim: any | null;
+    inputCode: string;
+    error: string;
+  }>({ isOpen: false, step: 'input', claim: null, inputCode: '', error: '' });
+
+  const startVerifyFlow = (claim: any) => {
+    setVerifyFlow({ isOpen: true, step: 'input', claim, inputCode: '', error: '' });
+  };
+
+  const handleVerifySubmit = () => {
+    if (verifyFlow.inputCode === verifyFlow.claim.finderDropoffCode) {
+      setVerifyFlow(prev => ({ ...prev, step: 'details', error: '' }));
+    } else {
+      setVerifyFlow(prev => ({ ...prev, error: 'Invalid drop-off code. Please check again.' }));
+    }
+  };
+
+  const handleNotifyClaimant = async () => {
+    try {
+      await axios.post(`${API_BASE}/api/claims/${verifyFlow.claim._id}/admin-verify-code`, { code: verifyFlow.inputCode }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setSuccessModal({ isOpen: true, message: 'Code verified! Claimant has been notified.' });
+      setVerifyFlow(prev => ({ ...prev, isOpen: false }));
+      setSelectedClaim(null);
+      await fetchClaims();
+    } catch (err: any) {
+      setVerifyFlow(prev => ({ ...prev, error: err.response?.data?.error || 'Failed to notify claimant.' }));
     }
   };
 
@@ -107,6 +155,26 @@ export const AdminClaimManagement: React.FC = () => {
 
   const reject = (id: string) => {
     setActionModal({ isOpen: true, type: 'reject', claimId: id, inputText: '' });
+  };
+  
+  const verifyLocation = (id: string, found: boolean) => {
+    setActionModal({ isOpen: true, type: 'verifyLocation', claimId: id, inputText: found.toString() });
+    // Execute immediately for location verify since it doesn't need text input
+    setTimeout(() => {
+      confirmAction();
+    }, 100);
+  };
+
+  const notifyClaimantLocation = async (id: string) => {
+    try {
+      await axios.post(`${API_BASE}/api/claims/${id}/admin-notify-location`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      setSuccessModal({ isOpen: true, message: 'Claimant notified of location successfully.' });
+      await fetchClaims();
+    } catch (err: any) {
+      setSuccessModal({ isOpen: true, message: err.response?.data?.error || 'Failed to notify claimant.' });
+    }
   };
 
   const tabs = ['All', 'Pending', 'Approved', 'Rejected'];
@@ -124,8 +192,10 @@ export const AdminClaimManagement: React.FC = () => {
     
     const itemName = c.foundItemId?.itemName || '';
     const claimantName = c.claimant?.name || '';
+    const claimId = c.claimId || '';
     const matchesSearch = itemName.toLowerCase().includes(search.toLowerCase()) || 
-                          claimantName.toLowerCase().includes(search.toLowerCase());
+                          claimantName.toLowerCase().includes(search.toLowerCase()) ||
+                          claimId.toLowerCase().includes(search.toLowerCase());
                           
     return matchesFilter && matchesSearch;
   });
@@ -280,7 +350,14 @@ export const AdminClaimManagement: React.FC = () => {
                       <td className="px-6 py-4">
                         {isClosed ? (
                           <span className="text-xs text-text-secondary italic">Closed</span>
-                        ) : (
+                        ) : claim.status === 'approved' && claim.finderHandoverChoice === 'me' ? (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); startVerifyFlow(claim); }}
+                            className="px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
+                          >
+                            Verify Drop-off
+                          </button>
+                        ) : claim.mediationRequested || claim.mediationStatus === 'pending' ? (
                           <div className="flex gap-2">
                             <button 
                               onClick={(e) => { e.stopPropagation(); approve(claim._id); }} 
@@ -297,6 +374,8 @@ export const AdminClaimManagement: React.FC = () => {
                               <XCircle className="w-4 h-4" />
                             </button>
                           </div>
+                        ) : (
+                          <span className="text-xs text-text-secondary italic">Awaiting Mediation</span>
                         )}
                       </td>
                     </tr>
@@ -308,8 +387,7 @@ export const AdminClaimManagement: React.FC = () => {
             {/* Mobile Cards */}
             <div className="md:hidden divide-y divide-border-default">
               {sortedClaims.map((claim: any) => {
-                const isClosed = claim.status === 'approved' || 
-                                 claim.status === 'rejected' || 
+                const isClosed = claim.status === 'rejected' || 
                                  claim.status === 'resolved' || 
                                  claim.status === 'mediated';
                 return (
@@ -325,15 +403,23 @@ export const AdminClaimManagement: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    {!isClosed && (
+                    {!isClosed && claim.status === 'approved' && claim.finderHandoverChoice === 'me' ? (
                       <div className="flex gap-2">
-                        <button onClick={(e) => { e.stopPropagation(); approve(claim._id); }} className="flex-1 py-2 bg-primary text-white rounded-xl font-bold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
-                          <CheckCircle2 className="w-4 h-4" /> Approve
-                        </button>
-                        <button onClick={(e) => { e.stopPropagation(); reject(claim._id); }} className="flex-1 py-2 border border-danger text-danger rounded-xl font-bold text-sm flex items-center justify-center gap-1 active:scale-95 transition-transform">
-                          <XCircle className="w-4 h-4" /> Reject
+                        <button onClick={(e) => { e.stopPropagation(); startVerifyFlow(claim); }} className="flex-1 py-2 bg-primary text-white rounded-xl font-bold text-xs hover:bg-primary/90 transition-colors">
+                          Verify Drop-off
                         </button>
                       </div>
+                    ) : !isClosed && (claim.mediationRequested || claim.mediationStatus === 'pending') ? (
+                      <div className="flex gap-2">
+                        <button onClick={(e) => { e.stopPropagation(); approve(claim._id); }} className="flex-1 py-2 bg-success text-white rounded-xl font-bold text-xs hover:bg-success/90 transition-colors">
+                          Approve
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); reject(claim._id); }} className="flex-1 py-2 bg-danger text-white rounded-xl font-bold text-xs hover:bg-danger/90 transition-colors">
+                          Reject
+                        </button>
+                      </div>
+                    ) : !isClosed && (
+                      <div className="mt-2 text-xs text-text-secondary italic">Awaiting Mediation</div>
                     )}
                   </div>
                 );
@@ -379,17 +465,33 @@ export const AdminClaimManagement: React.FC = () => {
                 </div>
               </div>
 
-              {/* Claimant Information */}
-              <div>
-                <h4 className="font-extrabold text-text-primary text-sm uppercase tracking-wider mb-2">Claimant Info</h4>
-                <div className="grid grid-cols-2 gap-4 bg-surface-container-low/40 p-4 rounded-xl border border-border-default/30">
-                  <div>
-                    <p className="text-[11px] text-text-secondary">Name</p>
-                    <p className="font-semibold text-sm text-text-primary">{selectedClaim.claimant?.name || 'N/A'}</p>
+              {/* Claimant & Finder Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-extrabold text-text-primary text-sm uppercase tracking-wider mb-2">Claimant Info</h4>
+                  <div className="flex flex-col gap-3 bg-surface-container-low/40 p-4 rounded-xl border border-border-default/30">
+                    <div>
+                      <p className="text-[11px] text-text-secondary">Name</p>
+                      <p className="font-semibold text-sm text-text-primary">{selectedClaim.claimant?.name || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] text-text-secondary">Email</p>
+                      <p className="font-semibold text-sm text-text-primary">{selectedClaim.claimant?.email || 'N/A'}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[11px] text-text-secondary">Email</p>
-                    <p className="font-semibold text-sm text-text-primary">{selectedClaim.claimant?.email || 'N/A'}</p>
+                </div>
+
+                <div>
+                  <h4 className="font-extrabold text-text-primary text-sm uppercase tracking-wider mb-2">Finder Info</h4>
+                  <div className="flex flex-col gap-3 bg-surface-container-low/40 p-4 rounded-xl border border-border-default/30">
+                    <div>
+                      <p className="text-[11px] text-text-secondary">Name</p>
+                      <p className="font-semibold text-sm text-text-primary">{selectedClaim.foundItemId?.finder?.name || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] text-text-secondary">Email</p>
+                      <p className="font-semibold text-sm text-text-primary">{selectedClaim.foundItemId?.finder?.email || 'N/A'}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -414,19 +516,69 @@ export const AdminClaimManagement: React.FC = () => {
 
               {/* Action Buttons inside Modal */}
               {selectedClaim.status === 'pending' && selectedClaim.mediationStatus !== 'approved' && selectedClaim.status !== 'resolved' && (
-                <div className="flex gap-4 pt-4 border-t border-border-default">
-                  <button 
-                    onClick={() => approve(selectedClaim._id)}
-                    className="flex-1 py-3 bg-success text-white font-bold rounded-xl text-sm hover:bg-success/90 transition-colors shadow-md"
-                  >
-                    Approve Claim
-                  </button>
-                  <button 
-                    onClick={() => reject(selectedClaim._id)}
-                    className="flex-1 py-3 bg-danger text-white font-bold rounded-xl text-sm hover:bg-danger/90 transition-colors shadow-md"
-                  >
-                    Reject Claim
-                  </button>
+                <div className="pt-4 border-t border-border-default">
+                  {(selectedClaim.mediationRequested || selectedClaim.mediationStatus === 'pending') ? (
+                    <div className="flex gap-4">
+                      <button 
+                        onClick={() => approve(selectedClaim._id)}
+                        className="flex-1 py-3 bg-success text-white font-bold rounded-xl text-sm hover:bg-success/90 transition-colors shadow-md"
+                      >
+                        Approve Claim
+                      </button>
+                      <button 
+                        onClick={() => reject(selectedClaim._id)}
+                        className="flex-1 py-3 bg-danger text-white font-bold rounded-xl text-sm hover:bg-danger/90 transition-colors shadow-md"
+                      >
+                        Reject Claim
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-surface-container-low rounded-xl border border-border-default text-center">
+                      <p className="text-sm font-bold text-text-secondary">Awaiting Mediation</p>
+                      <p className="text-xs text-text-secondary mt-1">Actions will become available if a user requests admin mediation.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Handover Actions inside Modal */}
+              {selectedClaim.status === 'approved' && (
+                <div className="pt-4 border-t border-border-default space-y-4">
+                  <h4 className="font-extrabold text-text-primary text-sm uppercase tracking-wider mb-2">Admin Handover Actions</h4>
+                  
+                  {selectedClaim.finderHandoverChoice === 'me' && (
+                    <div className="bg-surface-container-low p-4 rounded-xl border border-border-default flex flex-col gap-3">
+                      <p className="text-sm text-text-primary">Finder is dropping off at admin location.</p>
+                      <button 
+                        onClick={() => { setSelectedClaim(null); startVerifyFlow(selectedClaim); }}
+                        className="w-full py-2.5 bg-primary text-white font-bold rounded-xl text-sm hover:brightness-110 transition-colors shadow-md"
+                      >
+                        Verify Dropoff Code
+                      </button>
+                    </div>
+                  )}
+
+                  {selectedClaim.finderHandoverChoice === 'other' && (
+                    <div className="bg-surface-container-low p-4 rounded-xl border border-border-default flex flex-col gap-3">
+                      <p className="text-sm text-text-primary">Finder left item at: <span className="font-bold">{selectedClaim.finderHandoverLocation}</span></p>
+                      {selectedClaim.locationNotifiedToClaimant ? (
+                        <p className="text-sm font-bold text-success">Claimant has been notified to check the location.</p>
+                      ) : (
+                        <button 
+                          onClick={() => notifyClaimantLocation(selectedClaim._id)}
+                          className="w-full py-2.5 bg-primary text-white font-bold rounded-xl text-sm hover:brightness-110 transition-colors shadow-md"
+                        >
+                          Send to claimant
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {!selectedClaim.finderHandoverChoice || selectedClaim.finderHandoverChoice === 'none' && (
+                    <div className="bg-warning/10 p-4 rounded-xl border border-warning/20">
+                      <p className="text-xs font-bold text-warning-text">Waiting for finder to select handover method...</p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -441,19 +593,31 @@ export const AdminClaimManagement: React.FC = () => {
           <div className="bg-surface w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6">
               <h3 className="text-xl font-bold text-text-primary mb-4">
-                {actionModal.type === 'approve' ? 'Approve Claim' : 'Reject Claim'}
+                {actionModal.type === 'approve' ? 'Approve Claim' : actionModal.type === 'verifyCode' ? 'Verify Code' : 'Reject Claim'}
               </h3>
               <p className="text-sm text-text-secondary mb-4">
                 {actionModal.type === 'approve' 
                   ? 'Enter remarks for approval (optional):' 
+                  : actionModal.type === 'verifyCode'
+                  ? 'Enter the 6-digit dropoff code provided by the finder:'
                   : 'Enter reason for rejection (optional):'}
               </p>
-              <textarea
-                value={actionModal.inputText}
-                onChange={e => setActionModal(prev => ({ ...prev, inputText: e.target.value }))}
-                placeholder={actionModal.type === 'approve' ? 'e.g., Ownership verified' : 'e.g., Insufficient proof'}
-                className="w-full px-4 py-3 rounded-xl border border-border-default focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface transition-all resize-none h-24 outline-none"
-              ></textarea>
+              {actionModal.type === 'verifyCode' ? (
+                <input
+                  type="text"
+                  value={actionModal.inputText}
+                  onChange={e => setActionModal(prev => ({ ...prev, inputText: e.target.value }))}
+                  placeholder="e.g., 123456"
+                  className="w-full px-4 py-3 rounded-xl border border-border-default focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface transition-all outline-none"
+                />
+              ) : (
+                <textarea
+                  value={actionModal.inputText}
+                  onChange={e => setActionModal(prev => ({ ...prev, inputText: e.target.value }))}
+                  placeholder={actionModal.type === 'approve' ? 'e.g., Ownership verified' : 'e.g., Insufficient proof'}
+                  className="w-full px-4 py-3 rounded-xl border border-border-default focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface transition-all resize-none h-24 outline-none"
+                ></textarea>
+              )}
               <div className="flex gap-4 mt-6">
                 <button 
                   onClick={() => setActionModal(prev => ({ ...prev, isOpen: false }))}
@@ -469,6 +633,88 @@ export const AdminClaimManagement: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Verify Flow Modal */}
+      {verifyFlow.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-surface-container-lowest dark:bg-surface-container p-6 md:p-8 rounded-[24px] max-w-lg w-full shadow-2xl border border-border-default my-auto">
+            {verifyFlow.step === 'input' ? (
+              <>
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-extrabold text-text-primary">Verify Drop-off Code</h3>
+                  <button onClick={() => setVerifyFlow({ isOpen: false, step: 'input', claim: null, inputCode: '', error: '' })} className="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+                    <X className="w-5 h-5 text-text-secondary" />
+                  </button>
+                </div>
+                <p className="text-sm text-text-secondary mb-6 leading-relaxed">
+                  Enter the 6-digit code provided by the finder to verify the handover.
+                </p>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Enter 6-digit code"
+                    value={verifyFlow.inputCode}
+                    onChange={(e) => setVerifyFlow(prev => ({ ...prev, inputCode: e.target.value, error: '' }))}
+                    className="w-full px-4 py-3 rounded-xl border border-border-default focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface transition-all text-center text-xl tracking-[0.2em] font-mono outline-none"
+                    maxLength={6}
+                  />
+                  {verifyFlow.error && <p className="text-danger text-sm font-bold text-center">{verifyFlow.error}</p>}
+                </div>
+                <div className="flex gap-4 mt-6">
+                  <button onClick={() => setVerifyFlow({ isOpen: false, step: 'input', claim: null, inputCode: '', error: '' })} className="flex-1 py-3 bg-surface-container text-text-primary font-bold rounded-xl text-sm hover:bg-surface-container-high transition-colors">
+                    Cancel
+                  </button>
+                  <button onClick={handleVerifySubmit} className="flex-1 py-3 font-bold rounded-xl text-sm text-white shadow-md transition-colors bg-primary hover:bg-primary/90">
+                    Verify Code
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-extrabold text-success flex items-center gap-2">
+                    <CheckCircle2 className="w-6 h-6" /> Code Verified
+                  </h3>
+                  <button onClick={() => setVerifyFlow({ isOpen: false, step: 'input', claim: null, inputCode: '', error: '' })} className="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+                    <X className="w-5 h-5 text-text-secondary" />
+                  </button>
+                </div>
+                
+                <div className="space-y-4 mb-6">
+                  <div className="bg-surface-container-low p-4 rounded-xl border border-border-default">
+                    <div className="flex gap-4">
+                      {verifyFlow.claim?.foundItemId?.images?.[0] && (
+                        <img src={verifyFlow.claim.foundItemId.images[0]} className="w-20 h-20 rounded-lg object-cover" alt="Item" />
+                      )}
+                      <div className="flex-1">
+                        <h4 className="font-bold text-text-primary text-lg">{verifyFlow.claim?.foundItemId?.itemName}</h4>
+                        <p className="text-sm text-text-secondary mb-1">Claim ID: <span className="font-mono text-text-primary">{verifyFlow.claim?.claimId}</span></p>
+                        <p className="text-xs text-text-secondary"><span className="uppercase tracking-wider font-bold">Claimant:</span> {verifyFlow.claim?.claimant?.name}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-primary/10 border border-primary/20 p-4 rounded-xl">
+                    <p className="text-sm text-primary font-bold mb-2">Item is now secured at the Admin Office.</p>
+                    <p className="text-xs text-text-secondary leading-relaxed">
+                      Click the button below to officially resolve the claim and notify the claimant that they can come collect their product from the admin office.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <button onClick={() => setVerifyFlow({ isOpen: false, step: 'input', claim: null, inputCode: '', error: '' })} className="flex-1 py-3 bg-surface-container text-text-primary font-bold rounded-xl text-sm hover:bg-surface-container-high transition-colors">
+                    Cancel
+                  </button>
+                  <button onClick={handleNotifyClaimant} className="flex-1 py-3 font-bold rounded-xl text-sm text-white shadow-md transition-colors bg-success hover:bg-success/90">
+                    Notify Claimant to Collect
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

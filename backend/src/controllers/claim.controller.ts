@@ -147,18 +147,6 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
       ...uploadedProofUrls,
     ];
 
-    // Auto-link a LostItem if not explicitly provided
-    if (!lostItemId) {
-      const potentialLostItem = await LostItem.findOne({
-        owner: req.user._id,
-        category: foundItem.category,
-        status: 'active'
-      });
-      if (potentialLostItem) {
-        lostItemId = potentialLostItem._id;
-      }
-    }
-
     // Calculate confidence match score
     const confidence = await calculateConfidence(foundItemId, lostItemId, answers);
 
@@ -227,7 +215,14 @@ export const getClaims = async (req: AuthenticatedRequest, res: Response, next: 
     }
     const [claims, total] = await Promise.all([
       Claim.find(query)
-        .populate('foundItemId', 'itemName category brand color images status locationFound finder')
+        .populate({
+          path: 'foundItemId',
+          select: 'itemName category brand color images status locationFound finder',
+          populate: {
+            path: 'finder',
+            select: 'name email profilePic studentId'
+          }
+        })
         .populate('lostItemId', 'itemName category brand color status locationLost owner')
         .populate('claimant', 'name email profilePic studentId')
         .sort({ createdAt: -1 })
@@ -253,7 +248,13 @@ export const getClaims = async (req: AuthenticatedRequest, res: Response, next: 
 export const getClaimById = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const claim = await Claim.findById(req.params.id)
-      .populate('foundItemId')
+      .populate({
+        path: 'foundItemId',
+        populate: {
+          path: 'finder',
+          select: 'name email profilePic studentId'
+        }
+      })
       .populate('lostItemId')
       .populate('claimant', 'name email profilePic studentId phone');
 
@@ -264,7 +265,8 @@ export const getClaimById = async (req: AuthenticatedRequest, res: Response, nex
 
     // Authorization: User must be claimant, finder, or an admin
     const isClaimant = claim.claimant._id.toString() === req.user._id.toString();
-    const isFinder = claim.foundItemId && (claim.foundItemId as any).finder && (claim.foundItemId as any).finder.toString() === req.user._id.toString();
+    const finderData = claim.foundItemId && (claim.foundItemId as any).finder;
+    const isFinder = finderData && (finderData._id ? finderData._id.toString() : finderData.toString()) === req.user._id.toString();
       
     if (!isClaimant && !isFinder && req.user.role !== 'admin') {
       sendError(res, 'Access denied', 403);
@@ -336,29 +338,20 @@ export const approveClaim = async (req: AuthenticatedRequest, res: Response, nex
       return;
     }
 
-    // Update claim status to resolved
-    const handoverCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const remarks = req.body.remarks || 'Approved by admin - Check your chat for the handover code';
-    claim.status = 'resolved';
+    // Update claim status to approved for handover
+    const remarks = req.body.remarks || 'Approved by admin - Awaiting handover';
+    claim.status = 'approved';
     claim.mediationStatus = 'approved'; // clear pending mediation flag
-    claim.qrToken = `ADMIN-CODE:${handoverCode}`;
     claim.remarks = remarks;
     await claim.save();
-
-    // Re-verify FoundItem is marked resolved and set adminResolved
-    await FoundItem.findByIdAndUpdate((claim.foundItemId as any)._id, { 
-      status: 'resolved',
-      adminResolved: true 
-    });
 
     // Notify connected users via socket
     try {
       const { getIO } = require('../services/socket.service');
       const io = getIO();
-      io.to(`claim:${claim._id}`).emit('claim_resolved', {
+      io.to(`claim:${claim._id}`).emit('claim_approved', {
         claimId: claim._id,
-        status: 'resolved',
-        code: handoverCode,
+        status: 'approved',
         remarks
       });
       
@@ -640,58 +633,24 @@ export const mediationResolve = async (req: AuthenticatedRequest, res: Response,
     }
 
     if (action === 'approve') {
-      claim.status = 'resolved'; // Mark as resolved directly based on admin approval
+      claim.status = 'approved'; 
       claim.mediationStatus = 'approved';
-      
-      // Generate a 6-digit alphanumeric code for the finder
-      const handoverCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-      claim.qrToken = `ADMIN-CODE:${handoverCode}`;
-      claim.remarks = 'Ownership confirmed by Admin Mediation - No QR needed, check your chat window for the handover code.';
+      claim.remarks = 'Ownership confirmed by Admin Mediation - Awaiting handover';
       await claim.save();
 
-      await FoundItem.findByIdAndUpdate((claim.foundItemId as any)._id, { 
-        status: 'resolved',
-        adminResolved: true 
-      });
-  
       // Notify connected users via socket
       try {
         const { getIO } = require('../services/socket.service');
         const io = getIO();
-        io.to(`claim:${claim._id}`).emit('claim_resolved', {
+        io.to(`claim:${claim._id}`).emit('claim_approved', {
           claimId: claim._id,
-          status: 'resolved',
-          code: handoverCode,
+          status: 'approved',
           remarks: claim.remarks
         });
         
-        // Broadcast to community board
-        io.emit('item_resolved', {
-          itemId: (claim.foundItemId as any)._id,
-          adminResolved: true
-        });
-
         io.emit('admin_claims_updated');
       } catch (e) {
-        console.warn('Socket emit failed for claim_resolved:', e);
-      }
-
-      // Mark linked lost item as resolved so it updates appropriately, or fallback
-      let targetLostItemId = (claim as any).lostItemId;
-      if (!targetLostItemId && claim.claimant) {
-        const fallbackLostItem = await LostItem.findOne({ owner: (claim.claimant as any)._id, status: 'active' });
-        if (fallbackLostItem) targetLostItemId = fallbackLostItem._id;
-      }
-      
-      if (targetLostItemId) {
-        await LostItem.findByIdAndUpdate(targetLostItemId, { status: 'resolved' });
-        try {
-          const { getIO } = require('../services/socket.service');
-          const io = getIO();
-          io.emit('lost_item_resolved', { itemId: targetLostItemId });
-        } catch (e) {
-          console.warn('Socket emit failed for lost_item_resolved:', e);
-        }
+        console.warn('Socket emit failed for claim_approved:', e);
       }
     } else {
       // Reject mediation request: Resume chat
@@ -713,6 +672,259 @@ export const mediationResolve = async (req: AuthenticatedRequest, res: Response,
     }
 
     sendSuccess(res, { claim }, `Mediation request successfully resolved with action: ${action}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Finder submits their handover choice after admin approval.
+ */
+export const finderHandoverChoice = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { choice, location } = req.body;
+    
+    if (choice !== 'me' && choice !== 'other') {
+      sendError(res, 'Invalid choice', 400);
+      return;
+    }
+
+    const claim: any = await Claim.findById(req.params.id).populate('foundItemId');
+    if (!claim) {
+      sendError(res, 'Claim not found', 404);
+      return;
+    }
+
+    const foundItem = claim.foundItemId;
+    if (foundItem.finder.toString() !== req.user._id.toString()) {
+      sendError(res, 'Only finder can make this choice', 403);
+      return;
+    }
+
+    claim.finderHandoverChoice = choice;
+    
+    if (choice === 'me') {
+      const code = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digits
+      claim.finderDropoffCode = code;
+    } else {
+      if (!location) {
+        sendError(res, 'Location is required when choice is other', 400);
+        return;
+      }
+      claim.finderHandoverLocation = location;
+    }
+
+    await claim.save();
+
+    // Emit socket event to update the room
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.to(`claim:${claim._id}`).emit('finder_handover_submitted', { claimId: claim._id, choice, location });
+      io.emit('admin_claims_updated');
+    } catch (e) {}
+
+    sendSuccess(res, { claim }, 'Handover choice submitted successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Admin verifies dropoff code provided by finder.
+ */
+export const adminVerifyDropoffCode = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { code } = req.body;
+    
+    const claim: any = await Claim.findById(req.params.id);
+    if (!claim) {
+      sendError(res, 'Claim not found', 404);
+      return;
+    }
+
+    if (claim.finderDropoffCode !== code) {
+      sendError(res, 'Invalid code', 400);
+      return;
+    }
+
+    claim.status = 'resolved';
+    claim.remarks = `Admin verified drop-off. Collect your product with Claim ID: ${claim.claimId || claim._id}`;
+    await claim.save();
+
+    await FoundItem.findByIdAndUpdate(claim.foundItemId, { 
+      status: 'resolved',
+      adminResolved: true 
+    });
+
+    if (claim.lostItemId) {
+      await LostItem.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' });
+    }
+
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.to(`claim:${claim._id}`).emit('claim_resolved', { claimId: claim._id });
+      io.emit('admin_claims_updated');
+
+      const { createNotification } = require('../services/notification.service');
+      await createNotification(
+        String(claim.claimant),
+        'admin_handover',
+        'Ready for Collection',
+        'The admin has verified your item. Please collect it from the admin office.',
+        String(claim.claimId || claim._id),
+        String(claim._id)
+      );
+    } catch (e) {}
+
+    sendSuccess(res, { claim }, 'Code verified successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Admin verifies location if finder left it somewhere.
+ */
+export const adminVerifyLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { found } = req.body; // boolean
+    
+    const claim: any = await Claim.findById(req.params.id);
+    if (!claim) {
+      sendError(res, 'Claim not found', 404);
+      return;
+    }
+
+    if (found) {
+      claim.status = 'resolved';
+      claim.remarks = `Item found at specified location. Collect your product with Claim ID: ${claim.claimId || claim._id}`;
+      
+      await FoundItem.findByIdAndUpdate(claim.foundItemId, { 
+        status: 'resolved',
+        adminResolved: true 
+      });
+
+      if (claim.lostItemId) {
+        await LostItem.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' });
+      }
+    } else {
+      claim.status = 'rejected';
+      claim.remarks = 'Item not found at specified location. Claim rejected.';
+      
+      // Release item
+      await FoundItem.findByIdAndUpdate(claim.foundItemId, { status: 'active' });
+    }
+    
+    await claim.save();
+
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      if (found) {
+        io.to(`claim:${claim._id}`).emit('claim_resolved', { claimId: claim._id });
+      } else {
+        io.to(`claim:${claim._id}`).emit('claim_rejected', { claimId: claim._id, reason: claim.remarks });
+      }
+      io.emit('admin_claims_updated');
+    } catch (e) {}
+
+    sendSuccess(res, { claim }, 'Location verification submitted');
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Admin notifies the claimant of the item's location.
+ */
+export const adminNotifyClaimantLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const claim: any = await Claim.findById(req.params.id);
+    if (!claim) {
+      sendError(res, 'Claim not found', 404);
+      return;
+    }
+
+    claim.locationNotifiedToClaimant = true;
+    await claim.save();
+
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      io.to(`claim:${claim._id}`).emit('location_notified', { claimId: claim._id });
+      io.emit('admin_claims_updated');
+
+      const { createNotification } = require('../services/notification.service');
+      await createNotification(
+        String(claim.claimant),
+        'location_verify',
+        'Verify Item Location',
+        `Your item has been left at an alternate location. Please check: ${claim.finderHandoverLocation}`,
+        String(claim.claimId || claim._id),
+        String(claim._id)
+      );
+    } catch (e) {}
+
+    sendSuccess(res, { claim }, 'Claimant notified of location successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Claimant verifies if they found the item at the location.
+ */
+export const claimantVerifyLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { found } = req.body;
+    
+    const claim: any = await Claim.findById(req.params.id);
+    if (!claim) {
+      sendError(res, 'Claim not found', 404);
+      return;
+    }
+
+    if (claim.claimant.toString() !== req.user._id.toString()) {
+      sendError(res, 'Only the claimant can verify the location', 403);
+      return;
+    }
+
+    if (found) {
+      claim.status = 'resolved';
+      claim.remarks = `Item collected by claimant from the alternate location. Claim ID: ${claim.claimId || claim._id}`;
+      
+      await FoundItem.findByIdAndUpdate(claim.foundItemId, { 
+        status: 'resolved',
+        adminResolved: true 
+      });
+
+      if (claim.lostItemId) {
+        await LostItem.findByIdAndUpdate(claim.lostItemId, { status: 'resolved' });
+      }
+    } else {
+      claim.status = 'rejected';
+      claim.remarks = 'Claimant did not find the item at the specified location. Claim rejected.';
+      
+      // Release item
+      await FoundItem.findByIdAndUpdate(claim.foundItemId, { status: 'active' });
+    }
+    
+    await claim.save();
+
+    try {
+      const { getIO } = require('../services/socket.service');
+      const io = getIO();
+      if (found) {
+        io.to(`claim:${claim._id}`).emit('claim_resolved', { claimId: claim._id });
+      } else {
+        io.to(`claim:${claim._id}`).emit('claim_rejected', { claimId: claim._id, reason: claim.remarks });
+      }
+      io.emit('admin_claims_updated');
+    } catch (e) {}
+
+    sendSuccess(res, { claim }, 'Location verified by claimant successfully');
   } catch (error) {
     next(error);
   }

@@ -1,16 +1,85 @@
-import React from 'react';
-import { Check, Image, FileText, Edit3, MapPin, Clock, Lock, ShieldCheck, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, Image, FileText, Edit3, MapPin, Clock, Lock, ShieldCheck, MessageSquare, AlertCircle } from 'lucide-react';
 import type { ClaimFormData } from '../types';
+import { useAuth } from '../../../contexts/AuthContext';
+import axios from 'axios';
 
 interface Props {
   data: ClaimFormData;
+  updateData: (newData: Partial<ClaimFormData>) => void;
   onEdit: () => void;
   onSubmit: () => void;
 }
 
-export const ClaimReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
+export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmit }) => {
+  const { user } = useAuth();
+  const [lostItems, setLostItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  useEffect(() => {
+    const fetchLostItems = async () => {
+      if (!user?._id) return;
+      try {
+        const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+        const res = await axios.get(`${API_BASE}/api/users/${user._id}/reports`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        const activeLostItems = res.data?.lostItems?.filter((item: any) => item.status === 'active') || [];
+        setLostItems(activeLostItems);
+      } catch (err) {
+        console.error('Failed to fetch user reports', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLostItems();
+  }, [user]);
+
+  const handleInterceptSubmit = () => {
+    if (!data.lostItemId) {
+      setShowConfirmModal(true);
+    } else {
+      onSubmit();
+    }
+  };
+
+  const confirmSubmit = () => {
+    setShowConfirmModal(false);
+    onSubmit();
+  };
+
   return (
-    <div>
+    <div className="relative">
+      {/* Confirm Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface rounded-2xl p-6 w-full max-w-md shadow-2xl border border-border-default transform transition-all animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-warning mb-4">
+              <AlertCircle className="w-8 h-8" />
+              <h3 className="text-xl font-bold text-text-primary">Are you sure?</h3>
+            </div>
+            <p className="text-text-secondary mb-6">
+              There is no lost item selected from your history. Are you sure this is the lost item you claimed?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 rounded-xl text-text-secondary font-semibold hover:bg-surface-container transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmSubmit}
+                className="px-6 py-2 rounded-xl bg-primary text-white font-bold hover:scale-105 transition-transform"
+              >
+                Yes, Proceed
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stepper */}
       <nav className="flex items-center justify-between mb-10 px-4">
         {[
@@ -100,6 +169,40 @@ export const ClaimReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
         </div>
       </div>
 
+      {/* Explicit Lost Item Linker */}
+      <div className="mt-6 bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-6 shadow-sm border border-border-default">
+        <h3 className="text-xl font-bold text-text-primary flex items-center gap-2 mb-4">
+          <AlertCircle className="text-primary w-5 h-5" />
+          Link Your Lost Item (Optional)
+        </h3>
+        <p className="text-sm text-text-secondary mb-4">
+          If you previously reported this item as lost on the platform, please select it below so we can mark it as found.
+        </p>
+        
+        {loading ? (
+          <p className="text-sm text-text-secondary animate-pulse">Loading your lost items...</p>
+        ) : lostItems.length > 0 ? (
+          <select
+            value={data.lostItemId || ''}
+            onChange={(e) => updateData({ lostItemId: e.target.value })}
+            className="w-full h-12 bg-surface border border-border-default rounded-xl px-4 text-text-primary text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+          >
+            <option value="">-- Select a lost item from your history --</option>
+            {lostItems.map(item => (
+              <option key={item._id} value={item._id}>
+                {item.itemName} ({item.category}) - Lost on {new Date(item.createdAt).toLocaleDateString()}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className="p-4 rounded-xl bg-surface border border-border-default">
+            <p className="text-sm text-text-secondary">
+              No active lost items found in your history. You can proceed without linking.
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Reassurance & Action Area */}
       <div className="mt-8 bg-surface rounded-[20px] p-6 border border-border-default flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-6">
@@ -117,7 +220,7 @@ export const ClaimReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <button
-            onClick={onSubmit}
+            onClick={handleInterceptSubmit}
             className="flex-1 px-8 py-3 rounded-full bg-primary text-white font-bold hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg text-sm group"
           >
             Contact Finder

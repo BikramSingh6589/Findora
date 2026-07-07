@@ -31,6 +31,11 @@ export const FinderChat: React.FC = () => {
   const [qrExpiresHours, setQrExpiresHours] = useState(24);
   const [resolving, setResolving] = useState(false);
 
+  // Handover state
+  const [handoverChoice, setHandoverChoice] = useState<'me' | 'other'>('me');
+  const [handoverLocation, setHandoverLocation] = useState('');
+  const [submittingHandover, setSubmittingHandover] = useState(false);
+
   const currentUserId = user?._id || (user as any)?.id;
 
   // 1. Fetch Claim Details
@@ -104,6 +109,16 @@ export const FinderChat: React.FC = () => {
       } : prev);
       setShowSuccessPopup(true);
     });
+    // Listen for real-time approval
+    socket.on('claim_approved', (data: any) => {
+      setClaim((prev: any) => prev ? { 
+        ...prev, 
+        status: 'approved',
+        mediationStatus: 'approved',
+        remarks: data.remarks
+      } : prev);
+      setShowSuccessPopup(true);
+    });
     // Listen for real-time rejection
     socket.on('claim_rejected', (data: any) => {
       setClaim((prev: any) => prev ? { 
@@ -123,13 +138,28 @@ export const FinderChat: React.FC = () => {
     });
     
     // Listen for handover confirmed
-    socket.on('handover_confirmed', (data: any) => {
+    socket.on('handover_confirmed', () => {
       setClaim((prev: any) => prev ? { 
         ...prev, 
         status: 'resolved',
         qrToken: ''
       } : prev);
       setShowSuccessPopup(true);
+    });
+
+    socket.on('finder_handover_submitted', (data: any) => {
+      setClaim((prev: any) => prev ? {
+        ...prev,
+        finderHandoverChoice: data.choice,
+        finderHandoverLocation: data.location
+      } : prev);
+    });
+
+    socket.on('location_notified', () => {
+      setClaim((prev: any) => prev ? {
+        ...prev,
+        locationNotifiedToClaimant: true
+      } : prev);
     });
 
     return () => {
@@ -204,6 +234,24 @@ export const FinderChat: React.FC = () => {
     }
   };
 
+  // 8. Action: Submit Handover Choice (Admin Approved)
+  const handleHandoverSubmit = async () => {
+    setSubmittingHandover(true);
+    try {
+      const res = await axios.post(`${API_BASE}/api/claims/${itemId}/finder-handover`, {
+        choice: handoverChoice,
+        location: handoverChoice === 'other' ? handoverLocation : undefined
+      });
+      if (res.data && res.data.success) {
+        setClaim(res.data.claim);
+      }
+    } catch (err) {
+      console.error('Failed to submit handover choice', err);
+    } finally {
+      setSubmittingHandover(false);
+    }
+  };
+
   if (!claim) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -224,11 +272,14 @@ export const FinderChat: React.FC = () => {
 
   const partner = isClaimant ? finder : claimant;
   const partnerName = partner?.name || 'Helper';
-  const partnerPic = partner?.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80';  // Treat admin-approved OR mutually resolved as fully resolved
+  const partnerPic = partner?.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80';  
+  
+  const isAdminApproved = claim.status === 'approved' || claim.mediationStatus === 'approved';
+  const isPeerResolved = claim.status === 'resolved' && !isAdminApproved;
+  
   const isResolved =
-    claim.status === 'resolved' ||
-    claim.status === 'approved' ||
-    claim.mediationStatus === 'approved';
+    claim.status === 'resolved' || isAdminApproved;
+
   // Only show pending mediation banner if NOT yet resolved by admin
   const isPendingMediation =
     claim.mediationStatus === 'pending' && !isResolved;
@@ -457,17 +508,130 @@ export const FinderChat: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-card-bg p-5 rounded-2xl border border-border-default shadow-sm">
-            <h3 className="font-bold text-xs text-text-primary mb-3">Handover Rules</h3>
-            <ul className="text-xs text-text-secondary space-y-2 list-disc list-inside">
-              <li>Agree on a secure public location.</li>
-              <li>Ask verification questions regarding unique marks.</li>
-              <li>Scan/Verify the QR token to release the item state.</li>
-            </ul>
-          </div>
+          {!isAdminApproved && (
+            <div className="bg-card-bg p-5 rounded-2xl border border-border-default shadow-sm">
+              <h3 className="font-bold text-xs text-text-primary mb-3">Handover Rules</h3>
+              <ul className="text-xs text-text-secondary space-y-2 list-disc list-inside">
+                <li>Agree on a secure public location.</li>
+                <li>Ask verification questions regarding unique marks.</li>
+                <li>Scan/Verify the QR token to release the item state.</li>
+              </ul>
+            </div>
+          )}
 
-          {/* Collection Point Section — shown only when claim is resolved */}
-          {isResolved && (
+          {/* Admin Approved State Flow */}
+          {isAdminApproved && (
+            <div className="bg-surface-container-lowest border border-border-default rounded-2xl p-5 space-y-4">
+              <h3 className="font-bold text-xs text-primary uppercase tracking-wider">Admin Handover</h3>
+              
+              {isFinder ? (
+                <>
+                  {claim.finderHandoverChoice === 'none' ? (
+                    <div className="space-y-3">
+                      <p className="text-xs text-text-secondary font-bold">Where is the product?</p>
+                      <select 
+                        value={handoverChoice}
+                        onChange={(e: any) => setHandoverChoice(e.target.value)}
+                        className="w-full bg-surface border border-border-default rounded-xl p-2.5 text-sm outline-none text-text-primary"
+                      >
+                        <option value="me">With Me</option>
+                        <option value="other">Left at other location</option>
+                      </select>
+                      
+                      {handoverChoice === 'other' && (
+                        <input 
+                          type="text"
+                          placeholder="Enter location..."
+                          value={handoverLocation}
+                          onChange={(e) => setHandoverLocation(e.target.value)}
+                          className="w-full bg-surface border border-border-default rounded-xl p-2.5 text-sm outline-none text-text-primary"
+                        />
+                      )}
+                      
+                      <button
+                        onClick={handleHandoverSubmit}
+                        disabled={submittingHandover || (handoverChoice === 'other' && !handoverLocation)}
+                        className="w-full bg-primary text-white py-2 rounded-xl text-sm font-bold disabled:opacity-50 hover:brightness-110"
+                      >
+                        {submittingHandover ? 'Submitting...' : 'Submit'}
+                      </button>
+                    </div>
+                  ) : claim.finderHandoverChoice === 'me' ? (
+                    <div className="bg-success/10 border border-success/20 p-4 rounded-xl space-y-3">
+                      <p className="text-xs text-success font-bold">Please come to the Lost and Found office location to submit this product.</p>
+                      <div className="bg-white p-3 rounded-lg text-center shadow-sm">
+                        <span className="text-xl tracking-widest font-mono font-bold text-black">{claim.finderDropoffCode}</span>
+                      </div>
+                      <div className="bg-surface p-2 rounded-lg text-center border border-success/20">
+                        <p className="text-[10px] text-text-secondary uppercase">Claim ID</p>
+                        <p className="text-xs font-bold text-text-primary">{claim.claimId}</p>
+                      </div>
+                      <p className="text-[10px] text-text-secondary text-center">Show this code and Claim ID to the admin.</p>
+                    </div>
+                  ) : (
+                    <div className="bg-warning/10 border border-warning/20 p-4 rounded-xl">
+                      <p className="text-xs text-warning font-bold">You left the item at: {claim.finderHandoverLocation}</p>
+                      <p className="text-[10px] text-text-secondary mt-1">Ok waiting for the claimant to recieve the product.</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-3">
+                  {claim.finderHandoverChoice === 'other' ? (
+                    claim.locationNotifiedToClaimant ? (
+                      <div className="bg-primary/10 border border-primary/20 p-4 rounded-xl space-y-3">
+                        <p className="text-sm font-bold text-primary">Your product is in the location:</p>
+                        <p className="text-sm text-text-primary font-bold bg-surface p-3 rounded-lg border border-border-default">{claim.finderHandoverLocation}</p>
+                        <p className="text-xs text-text-secondary">Please check this location and confirm if you found your item.</p>
+                        <div className="flex gap-3 mt-2">
+                          <button 
+                            onClick={async () => {
+                              try {
+                                await axios.post(`${API_BASE}/api/claims/${claim._id}/claimant-verify-location`, { found: true }, {
+                                  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                                });
+                              } catch (e) { console.error(e); }
+                            }}
+                            className="flex-1 py-2.5 bg-success text-white font-bold rounded-xl text-sm hover:bg-success/90 transition-colors shadow-sm"
+                          >
+                            Found
+                          </button>
+                          <button 
+                            onClick={async () => {
+                              try {
+                                await axios.post(`${API_BASE}/api/claims/${claim._id}/claimant-verify-location`, { found: false }, {
+                                  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                                });
+                              } catch (e) { console.error(e); }
+                            }}
+                            className="flex-1 py-2.5 bg-danger text-white font-bold rounded-xl text-sm hover:bg-danger/90 transition-colors shadow-sm"
+                          >
+                            Not Found
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-surface-container-low p-4 rounded-xl border border-border-default">
+                        <p className="text-xs text-text-secondary font-bold text-center">Waiting for admin to provide collection instructions...</p>
+                      </div>
+                    )
+                  ) : (
+                    <>
+                      <h4 className="font-bold text-sm text-text-primary">Collect from Admin office</h4>
+                      <p className="text-xs text-text-secondary">Location: Main Campus, Room 101</p>
+                      <div className="bg-surface p-3 rounded-xl border border-border-default">
+                        <p className="text-[10px] text-text-secondary uppercase">Your Claim ID</p>
+                        <p className="font-bold text-text-primary">{claim.claimId}</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Peer-to-Peer Flow */}
+          {isPeerResolved && (
             <>
               {isFinder ? (
                 /* FINDER: button to set collection point */
@@ -510,7 +674,7 @@ export const FinderChat: React.FC = () => {
           )}
 
           {/* Scan QR button for finder */}
-          {isResolved && isFinder && (
+          {isPeerResolved && isFinder && (
             <button
               onClick={() => navigate(`/handover/scan/${claim._id}`)}
               className="w-full bg-surface-container border border-border-default text-text-primary py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-surface-container-high active:scale-95 transition-all"
@@ -573,28 +737,30 @@ export const FinderChat: React.FC = () => {
             
             <div className="space-y-2">
               <h3 className="font-bold text-text-primary text-xl md:text-2xl">
-                {claim.mediationStatus === 'approved' 
-                  ? '✅ Admin Approved!' 
-                  : (!claim.qrToken && claim.status === 'resolved' 
-                    ? 'Handover Complete! 🎊' 
-                    : 'Ownership Confirmed! 🎉')}
+                {claim.status === 'resolved' 
+                  ? 'Handover Complete! 🎊' 
+                  : claim.mediationStatus === 'approved' 
+                    ? '✅ Admin Approved!' 
+                    : 'Ownership Confirmed! 🎉'}
               </h3>
               <p className="text-xs md:text-sm text-text-secondary leading-relaxed">
-                {claim.mediationStatus === 'approved'
-                  ? isFinder
-                    ? 'Admin has approved! Please come and deposit the item to the Lost and Found desk.'
-                    : 'Admin has approved! Please come to the Lost and Found desk to collect your product.'
-                  : (!claim.qrToken && claim.status === 'resolved'
-                    ? 'Thank you for being an amazing part of our community! The item has been successfully returned to its rightful owner. We appreciate your integrity and help.'
-                    : isFinder 
-                      ? 'You have successfully confirmed ownership. Please navigate to the scanner tool to verify and finalize the return handover.'
-                      : 'Great news! The finder has verified your answers and confirmed your ownership. Show your secure QR code to finalize the return.')}
+                {claim.status === 'resolved'
+                  ? (claim.remarks 
+                      ? `Thank you for participating in this process! The claim has been successfully resolved. Details: ${claim.remarks}`
+                      : 'Thank you for being an amazing part of our community! The item has been successfully returned to its rightful owner. We appreciate your integrity and help.')
+                  : claim.mediationStatus === 'approved'
+                    ? isFinder
+                      ? 'Admin has approved! Please come and deposit the item to the Lost and Found desk.'
+                      : 'Admin has approved! Please come to the Lost and Found desk to collect your product.'
+                    : (isFinder 
+                        ? 'You have successfully confirmed ownership. Please navigate to the scanner tool to verify and finalize the return handover.'
+                        : 'Great news! The finder has verified your answers and confirmed your ownership. Show your secure QR code to finalize the return.')}
               </p>
             </div>
 
             <div className="flex flex-col gap-2.5">
               {/* Only show the action button if the handover is not fully complete */}
-              {(!(!claim.qrToken && claim.status === 'resolved') && claim.mediationStatus !== 'approved') && (
+              {claim.status !== 'resolved' && claim.mediationStatus !== 'approved' && (
                 isFinder ? (
                   <button 
                     onClick={() => {

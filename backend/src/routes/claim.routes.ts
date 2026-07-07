@@ -79,6 +79,14 @@ router.post('/:id/resolve', resolveClaim);
 router.post('/:id/mediate', mediateClaim);
 router.post('/:id/mediation-resolve', adminOnly, mediationResolve);
 
+// Admin Handover Routes
+import { finderHandoverChoice, adminVerifyDropoffCode, adminVerifyLocation, adminNotifyClaimantLocation, claimantVerifyLocation } from '../controllers/claim.controller';
+router.post('/:id/finder-handover', finderHandoverChoice);
+router.post('/:id/admin-verify-code', adminOnly, adminVerifyDropoffCode);
+router.post('/:id/admin-verify-location', adminOnly, adminVerifyLocation);
+router.post('/:id/admin-notify-location', adminOnly, adminNotifyClaimantLocation);
+router.post('/:id/claimant-verify-location', claimantVerifyLocation);
+
 // Support generic PUT /api/claims/:id for flexibility with frontend integration
 router.put('/:id', adminOnly, validateRequest(adminDecisionSchema), async (req: any, res: any, next: any) => {
   const { status, remarks, reason } = req.body;

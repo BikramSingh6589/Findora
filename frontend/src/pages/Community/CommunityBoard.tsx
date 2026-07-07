@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image } from 'lucide-react';
+import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -22,6 +22,7 @@ interface CommunityItem {
   primaryAction?: { label: string; route?: string };
   secondaryAction?: { label: string; route?: string };
   finderId: string;
+  finderName?: string;
   status?: string;
   lockedBy?: string | null;
   lockedUntil?: Date | string | null;
@@ -90,6 +91,7 @@ export const CommunityBoard: React.FC = () => {
               imgContain: false,
               isAIMatch: false,
               finderId: dbItem.finder?._id || dbItem.finder,
+              finderName: dbItem.finder?.name || 'Someone',
               status: dbItem.status || 'active',
               lockedBy: dbItem.lockedBy,
               lockedUntil: dbItem.lockedUntil,
@@ -144,6 +146,35 @@ export const CommunityBoard: React.FC = () => {
           ? { ...item, lockedBy: null, lockedUntil: null } 
           : item
       ));
+    });
+
+    socket.on('new_found_item', (dbItem: any) => {
+      setItems(prev => {
+        // Prevent duplicate items
+        if (prev.some(item => item.id === dbItem._id)) return prev;
+        
+        const { timeLeft, isDanger } = calculateTimeLeft(dbItem.createdAt);
+        const newItem = {
+          id: dbItem._id,
+          title: dbItem.itemName,
+          category: dbItem.category,
+          categoryColor: getCategoryColor(dbItem.category),
+          description: dbItem.description,
+          location: dbItem.locationFound,
+          timeLeft,
+          timeLeftDanger: isDanger,
+          img: dbItem.images?.[0] || 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&q=80&w=600',
+          imgContain: false,
+          isAIMatch: false,
+          finderId: dbItem.finder?._id || dbItem.finder,
+          finderName: dbItem.finder?.name || 'Someone',
+          status: dbItem.status || 'active',
+          lockedBy: dbItem.lockedBy,
+          lockedUntil: dbItem.lockedUntil,
+          adminResolved: dbItem.adminResolved,
+        };
+        return [newItem, ...prev];
+      });
     });
 
     socket.on('item_claimed', (data: { itemId: string }) => {
@@ -283,34 +314,6 @@ export const CommunityBoard: React.FC = () => {
       {/* Filter & Search Section */}
       <section className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-xl md:p-4 rounded-2xl flex flex-col gap-4 md:shadow-sm md:border border-border-default">
 
-        {/* Found / Lost Toggle */}
-        <div className="flex gap-2 p-1 bg-surface-container rounded-2xl w-full md:w-fit">
-          <button
-            onClick={() => setViewMode('found')}
-            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
-              viewMode === 'found'
-                ? 'bg-primary text-white shadow-md'
-                : 'text-text-secondary hover:text-primary'
-            }`}
-          >
-            🔍 Found Items
-          </button>
-          <button
-            onClick={() => setViewMode('lost')}
-            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
-              viewMode === 'lost'
-                ? 'bg-danger text-white shadow-md'
-                : 'text-text-secondary hover:text-danger'
-            }`}
-          >
-            🚨 Lost Items
-            {filteredLostItems.length > 0 && (
-              <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${
-                viewMode === 'lost' ? 'bg-white/20 text-white' : 'bg-danger/10 text-danger'
-              }`}>{filteredLostItems.length}</span>
-            )}
-          </button>
-        </div>
 
         <div className="flex flex-col md:flex-row items-center gap-4">
           {/* Categories (Scrollable on mobile) */}
@@ -404,7 +407,7 @@ export const CommunityBoard: React.FC = () => {
                       disabled
                       className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
                     >
-                      Claimed
+                      {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
                     </button>
                     <button
                       onClick={(e) => {
@@ -464,8 +467,8 @@ export const CommunityBoard: React.FC = () => {
                   <div>
                     <h3 className="font-bold text-text-primary text-base leading-tight">{item.title}</h3>
                     <div className="flex items-center text-text-secondary mt-1">
-                      <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-                      <span className="text-xs">{item.location}</span>
+                      <User className="w-4 h-4 mr-1 flex-shrink-0" />
+                      <span className="text-xs">@{item.finderName}</span>
                     </div>
                   </div>
                 </div>
@@ -495,7 +498,7 @@ export const CommunityBoard: React.FC = () => {
                     return (
                       <div className="flex-1 flex flex-col items-center">
                         <button disabled className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
-                          {item.adminResolved ? 'Admin Resolved' : 'Claimed'}
+                          {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
                         </button>
                         <button onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }} className="text-danger hover:underline text-xs font-bold text-center mt-1">
                           Conflict this claim
@@ -504,10 +507,10 @@ export const CommunityBoard: React.FC = () => {
                     );
                   }
 
-                  if (item.status === 'claimed' || (isLocked && !lockedByMe)) {
+                  if ((item.status === 'claimed' && !isLocked) || (isLocked && !lockedByMe)) {
                     return (
                       <button disabled className="flex-1 h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
-                        In process...
+                        {item.status === 'claimed' ? 'Claim Requested' : 'In process...'}
                       </button>
                     );
                   }
@@ -613,7 +616,7 @@ export const CommunityBoard: React.FC = () => {
                           disabled
                           className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
                         >
-                          Claimed
+                          {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
                         </button>
                         <button
                           onClick={(e) => {
@@ -689,7 +692,7 @@ export const CommunityBoard: React.FC = () => {
                 </div>
                 {/* Location badge */}
                 <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                  Found @ {item.location}
+                  Found by @{item.finderName}
                 </div>
                 {/* AI Match badge */}
                 {item.isAIMatch && (
@@ -721,7 +724,7 @@ export const CommunityBoard: React.FC = () => {
                       return (
                         <div className="flex flex-col items-center w-full">
                           <button disabled className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
-                            {item.adminResolved ? 'Admin Resolved' : 'Claimed'}
+                            {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
                           </button>
                           <button onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }} className="text-danger hover:underline text-xs font-bold text-center mt-1">
                             Conflict this claim

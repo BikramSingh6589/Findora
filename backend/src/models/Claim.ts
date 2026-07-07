@@ -21,6 +21,10 @@ const ClaimSchema = new Schema({
   mediationStatus:    { type: String, enum: ['none', 'pending', 'approved', 'rejected'], default: 'none' },
   remarks:            { type: String, default: '' },
   reason:             { type: String, default: '' },
+  finderHandoverChoice: { type: String, enum: ['me', 'other', 'none'], default: 'none' },
+  finderHandoverLocation: { type: String, default: '' },
+  finderDropoffCode:  { type: String, default: '' },
+  locationNotifiedToClaimant: { type: Boolean, default: false },
 }, { timestamps: true });
 
 ClaimSchema.index({ status: 1, claimant: 1 });
