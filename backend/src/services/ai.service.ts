@@ -38,12 +38,15 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
           if (finalScore >= 80) {
             const ownerId = type === 'lost' ? (sourceItem as any).owner : (target as any).owner;
             if (ownerId) {
+              const matchingFoundItemId = type === 'lost' ? target._id.toString() : itemId;
+              const lostItemName = type === 'lost' ? (sourceItem as any).itemName : (target as any).itemName;
+              
               await createNotification(
                 String(ownerId),
                 'match',
                 'Potential Match Found!',
-                `We found a potential match for your lost item: "${type === 'lost' ? (sourceItem as any).itemName : (target as any).itemName}".`,
-                String(itemId)
+                `We found a potential match for your lost item: "${lostItemName}".`,
+                matchingFoundItemId
               );
             }
           }
@@ -57,10 +60,22 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
   }
 };
 
-const textSimilarity = (a: string, b: string): number => {
-  const wordsA = a.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-  const wordsB = new Set(b.toLowerCase().split(/\s+/).filter(w => w.length > 2));
-  if (wordsA.length === 0 || wordsB.size === 0) return 0;
-  const common = wordsA.filter(w => wordsB.has(w));
-  return common.length / Math.max(wordsA.length, wordsB.size);
+export const textSimilarity = (a: string, b: string): number => {
+  const cleanWords = (text: string) =>
+    text
+      .toLowerCase()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+      .split(/\s+/)
+      .filter(Boolean);
+
+  const wordsA = cleanWords(a);
+  const wordsB = cleanWords(b);
+
+  if (wordsA.length === 0 || wordsB.length === 0) return 0;
+
+  const setA = new Set(wordsA);
+  const setB = new Set(wordsB);
+
+  const common = [...setA].filter(w => setB.has(w));
+  return common.length / Math.max(setA.size, setB.size);
 };

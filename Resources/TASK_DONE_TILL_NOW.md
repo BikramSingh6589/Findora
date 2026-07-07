@@ -1,11 +1,12 @@
 # TASK_DONE_TILL_NOW.md
 
 ## Current Development State
-- **Current Implementation Phase**: Phase 5: Integration, Notification System, Admin & Match Resolution
-- **Status**: Completed (Part 1 - In-App)
+- **Current Implementation Phase**: Phase 6: AI Matching (MVP Text-Based)
+- **Status**: Completed
 
 ## Completed Modules
 - **Authentication Module**: Complete endpoints and schema definitions for registering, logging in, requesting password recovery tokens, and changing credentials.
+- **AI Matching Module**: Implemented Mongoose schemas, indexes, and unique database constraints for `AIMatch`. Built robust, punctuation-immune Jaccard text similarity scoring. Configured automatic async matching triggers upon Lost & Found reports. Integrated high-confidence socket-backed notification workflows and secure REST endpoints with access control.
 - **Lost & Found Item CRUD Module**: Implemented schemas, controllers, and upload handlers for categories, lost items, and found items.
 - **Claim Management Module**: Implemented schemas, controllers, validations, business rules, and endpoints for claim submission, retrieval, cancellation, admin reviews (approve/reject), and QR code collection generation.
 
@@ -39,6 +40,11 @@
 - `POST /api/claims/:id/approve` (Approve a claim, generate secure QR token and image, update item status, and send approved email; Admin restricted)
 - `POST /api/claims/:id/reject` (Reject a claim, release item back to active, and send rejection email; Admin restricted)
 - `PUT /api/claims/:id` (Admin review update route, routes to approve or reject based on request status field; Admin restricted)
+- `GET /api/ai/matches` (Retrieve AI match recommendations for the current user's items)
+- `GET /api/ai/matches/:itemId` (Retrieve AI match recommendations for a specific lost or found item with ownership validation)
+- `GET /api/ai/matches/match/:matchId` (Retrieve detail information for a single match with ownership validation)
+- `PUT /api/ai/matches/:matchId/status` (Update match status with validation: new, reviewed, or dismissed)
+- `POST /api/ai/trigger` (Manual trigger for running AI matching workflow on a lost/found item)
 
 ## Completed Models
 - `User.ts` (Mongoose Schema containing fields for authentication credentials, student IDs, avatar URLs, role check, status validation, reputation stats (XP, level, badges), and reset token data)
@@ -74,6 +80,7 @@
 - Frontend `.env` and `.env.example` created pointing `VITE_API_BASE_URL` to local server port 5000.
 
 ## Completed Work (Latest Update)
+- **AI Matching (MVP Text-Based) (Phase 6)**: Created a robust text similarity algorithm utilizing Jaccard matching over unique description words, stripping out punctuation to prevent false negatives. Added index optimizations to the `AIMatch` database schema including a unique compound index on `[lostItem, foundItem]` to prevent duplicate match generation. Integrated matching automatically as an asynchronous background trigger into Lost/Found item creation flows. Hooked up high confidence matches (score >= 80%) to emit socket-backed notifications directly to the lost item owner's personal channel, pointing them straight to the matching found item's detail page. Built five backend REST routes (Get matches, Get item matches, Get match details, Update status, Manual trigger) guarded by JWT authentication and protected by ownership-based authorization validation.
 - **Real-Time In-App Notification System (Phase 5 Part 1):** Implemented a complete real-time in-app notification system. Created a global `NotificationProvider` using React Context connected directly to Socket.IO and the REST API. Added `Notification` mongoose schema and controllers to manage fetching and updating (mark as read/unread). Extended `socket.service.ts` to emit `new_notification` events directly to personal user socket rooms. Completely removed hardcoded elements from the `NotificationCenter.tsx` dropdown, formatting and styling incoming messages with dynamic Tailwind CSS classes and precise Lucide icons. Integrated a custom bottom-right toast notification overlay for instant feedback. Updated chat messaging so that each chat directly spawns a `new_message` notification allowing recipients to click a "Reply" button and directly navigate to the relevant chat room.
 - **Real-Time Claim Chat & Handover (Phases 8 & 9):** Implemented a full Socket.IO messaging layer with 24h lifespan constraints, JWT handshake authorization, and message log persistence in the DB via `ChatMessage`. Created claimant/finder dynamic chat interface showing match confidence, online presence, typing status, resolve handover actions, conflict escalation (mediation), and direct secure QR Code display for claimants. Added custom QR code validity window selection (up to 48 hours) for finders. Implemented a robust local Base64 QR code Data URL fallback generation in `qr.service.ts` to prevent 403 Cloudinary issues from breaking resolution flow. Integrated real-time success confirmation modals inside the chat interface to offer role-specific redirections (navigating finders directly to the scanner tool or scrolling claimants down to verify their secure QR code).
 - **Chat History View & Dashboard Refinements:** Created the `ChatHistory.tsx` screen to list all active conversations matching user claims dynamically, with search/filtering and dynamic status tags (*"Open"*, *"Waiting to scan"*, *"Closed"*). Linked the dashboard **"Chat Window"** button directly to this list page (`/chats`), while keeping **"Contact Finder"** on claim submission directly routed to the corresponding chat room. Removed the redundant *"Qr Scan/Code"* debug button.
