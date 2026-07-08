@@ -1,5 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Package, BookOpen, Wallet, Key, MoreHorizontal, MapPin, Calendar, AlignLeft, Sparkles, ChevronDown } from 'lucide-react';
+import { useAuth } from '../../../contexts/AuthContext';
 import type { LostFormData } from '../types';
 
 interface Props {
@@ -19,6 +20,7 @@ const CATEGORIES = [
 const LOCATIONS = ['Main Library', 'Student Union', 'Engineering Quad', 'Cafeteria', 'Gym', 'Sports Complex', 'Dormitory'];
 
 export const LostStepBasicInfo: React.FC<Props> = ({ data, updateData, onNext }) => {
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState(data.category);
 
   const handleCategorySelect = (cat: string) => {
@@ -34,23 +36,24 @@ export const LostStepBasicInfo: React.FC<Props> = ({ data, updateData, onNext })
   return (
     <div>
       {/* Stepper */}
-      <section className="mb-10">
-        <div className="flex justify-between items-center relative px-4">
-          <div className="absolute top-5 left-0 w-full h-1 bg-surface-variant -z-10 rounded-full">
+      {/* Stepper */}
+      <section className="mb-10 px-2 md:px-8">
+        <div className="flex justify-between items-center relative">
+          <div className="absolute top-5 left-0 w-full h-1.5 bg-surface-container-high dark:bg-surface-variant -z-10 rounded-full overflow-hidden">
             <div className="h-full w-1/3 bg-gradient-to-r from-primary to-[#6b38d4] rounded-full"></div>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#6b38d4] flex items-center justify-center text-white shadow-lg shadow-primary/25 ring-4 ring-white">
+          <div className="flex flex-col items-center gap-2 relative z-10">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#6b38d4] flex items-center justify-center text-white shadow-lg shadow-primary/25 ring-4 ring-surface dark:ring-surface">
               <span className="text-sm font-bold">1</span>
             </div>
-            <span className="font-semibold text-sm text-primary">Item Details</span>
+            <span className="font-bold text-sm text-primary">Item Details</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-surface-container-lowest dark:bg-surface-container border-2 border-border-default flex items-center justify-center text-text-secondary font-bold">2</div>
+          <div className="flex flex-col items-center gap-2 relative z-10">
+            <div className="w-10 h-10 rounded-full bg-surface-container-lowest dark:bg-surface-container border-2 border-border-default flex items-center justify-center text-text-secondary font-bold ring-4 ring-surface dark:ring-surface">2</div>
             <span className="font-semibold text-sm text-text-secondary">Detail & Image</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-text-secondary font-bold">3</div>
+          <div className="flex flex-col items-center gap-2 relative z-10">
+            <div className="w-10 h-10 rounded-full bg-surface-container-lowest dark:bg-surface-container border-2 border-border-default flex items-center justify-center text-text-secondary font-bold ring-4 ring-surface dark:ring-surface">3</div>
             <span className="font-semibold text-sm text-text-secondary">Confirm</span>
           </div>
         </div>
@@ -58,7 +61,9 @@ export const LostStepBasicInfo: React.FC<Props> = ({ data, updateData, onNext })
 
       {/* Hero Header */}
       <div className="mb-8 text-center md:text-left">
-        <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">Let's find your item ðŸŽ’</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
+          Let's find your item, {user?.name?.split(' ')[0] || 'Friend'}! 🎒
+        </h2>
         <p className="text-base text-text-secondary max-w-xl">Don't worry, the campus community and our AI are here to help. Just give us a few details to start the search.</p>
       </div>
 

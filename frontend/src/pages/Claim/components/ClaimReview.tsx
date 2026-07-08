@@ -50,7 +50,7 @@ export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmi
   };
 
   return (
-    <div className="relative">
+    <div className="py-6 md:py-8 px-6 md:px-10 relative">
       {/* Confirm Modal */}
       {showConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">

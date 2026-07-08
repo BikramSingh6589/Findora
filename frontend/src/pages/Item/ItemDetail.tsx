@@ -26,13 +26,30 @@ export const ItemDetail: React.FC = () => {
         setLoading(true);
         const res = await axios.get(`${API_BASE}/api/found-items/${itemId}`);
         if (res.data && res.data.success) {
-          setItem(res.data.item);
+          setItem({ ...res.data.item, itemType: 'found' });
         } else {
           setError('Failed to load item details.');
         }
       } catch (err: any) {
-        console.error(err);
-        setError(err.response?.data?.error || 'Failed to load item details.');
+        if (err.response?.status === 404) {
+          try {
+            const res2 = await axios.get(`${API_BASE}/api/lost-items/${itemId}`);
+            if (res2.data && res2.data.success) {
+              setItem({ ...res2.data.item, itemType: 'lost' });
+              return;
+            }
+          } catch (err2: any) {
+            console.error(err2);
+            if (err2.response?.status === 404) {
+              setError('This item could not be found. It may have been deleted or resolved.');
+            } else {
+              setError(err2.response?.data?.error || 'Failed to load item details.');
+            }
+          }
+        } else {
+          console.error(err);
+          setError(err.response?.data?.error || 'Failed to load item details.');
+        }
       } finally {
         setLoading(false);
       }
@@ -44,6 +61,9 @@ export const ItemDetail: React.FC = () => {
 
   const [claimId, setClaimId] = useState<string | null>(null);
   const isFinder = item?.finder?._id === currentUserId || item?.finder === currentUserId;
+  const isOwner = item?.owner?._id === currentUserId || item?.owner === currentUserId;
+  const isFoundItem = item?.itemType === 'found' || !!item?.finder;
+  const isLostItem = item?.itemType === 'lost' || !!item?.owner;
 
   useEffect(() => {
     if (isFinder && item?._id) {
@@ -172,8 +192,8 @@ export const ItemDetail: React.FC = () => {
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs text-text-secondary font-semibold">Last Seen Location</p>
-                    <p className="text-sm font-bold text-text-primary">{item.lastSeen || item.locationFound}</p>
+                    <p className="text-xs text-text-secondary font-semibold">{isLostItem ? 'Location Lost' : 'Last Seen Location'}</p>
+                    <p className="text-sm font-bold text-text-primary">{item.lastSeen || item.locationFound || item.locationLost}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -181,9 +201,9 @@ export const ItemDetail: React.FC = () => {
                     <Calendar className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs text-text-secondary font-semibold">Date Reported</p>
+                    <p className="text-xs text-text-secondary font-semibold">Date {isLostItem ? 'Lost' : 'Reported'}</p>
                     <p className="text-sm font-bold text-text-primary">
-                      {new Date(item.dateFound).toLocaleDateString()} &bull; {new Date(item.dateFound).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(item.dateFound || item.dateLost).toLocaleDateString()} &bull; {new Date(item.dateFound || item.dateLost).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
@@ -192,8 +212,8 @@ export const ItemDetail: React.FC = () => {
                     <User className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs text-text-secondary font-semibold">Found By</p>
-                    <p className="text-sm font-bold text-text-primary">{item.finder?.name || 'Community Member'}</p>
+                    <p className="text-xs text-text-secondary font-semibold">{isLostItem ? 'Owner' : 'Found By'}</p>
+                    <p className="text-sm font-bold text-text-primary">{item.finder?.name || item.owner?.name || 'Community Member'}</p>
                   </div>
                 </div>
               </div>
@@ -215,32 +235,42 @@ export const ItemDetail: React.FC = () => {
  
               {/* Actions */}
               <div className="flex flex-col gap-3">
-                {isFinder ? (
-                  claimId ? (
-                    <button
-                      onClick={() => navigate(`/chat/finder/${claimId}`)}
-                      className="w-full bg-gradient-to-r from-primary to-[#6b38d4] text-white py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-95 transition-all"
-                    >
-                      <MessageSquare className="w-5 h-5" />
-                      Open Chat with Claimant
-                    </button>
+                {isFoundItem ? (
+                  isFinder ? (
+                    claimId ? (
+                      <button
+                        onClick={() => navigate(`/chat/finder/${claimId}`)}
+                        className="w-full bg-gradient-to-r from-primary to-[#6b38d4] text-white py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-95 transition-all"
+                      >
+                        <MessageSquare className="w-5 h-5" />
+                        Open Chat with Claimant
+                      </button>
+                    ) : (
+                      <div className="text-center p-4 bg-surface-container rounded-2xl text-xs text-text-secondary font-medium">
+                        No active claims have been filed for this item yet. You will be notified when someone claims it.
+                      </div>
+                    )
                   ) : (
-                    <div className="text-center p-4 bg-surface-container rounded-2xl text-xs text-text-secondary font-medium">
-                      No active claims have been filed for this item yet. You will be notified when someone claims it.
-                    </div>
+                    <button 
+                      disabled={item?.finder?._id === currentUserId || item?.finder === currentUserId}
+                      onClick={() => navigate(`/claim/${item._id}`)}
+                      className={`w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${
+                        (item?.finder?._id === currentUserId || item?.finder === currentUserId)
+                          ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
+                          : 'bg-gradient-to-r from-primary to-[#6b38d4] text-white shadow-md hover:scale-[1.02] active:scale-95'
+                      }`}
+                    >
+                      <Verified className="w-5 h-5" />
+                      Claim Item
+                    </button>
                   )
                 ) : (
-                  <button 
-                    disabled={item?.finder?._id === currentUserId || item?.finder === currentUserId}
-                    onClick={() => navigate(`/claim/${item._id}`)}
-                    className={`w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${
-                      (item?.finder?._id === currentUserId || item?.finder === currentUserId)
-                        ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
-                        : 'bg-gradient-to-r from-primary to-[#6b38d4] text-white shadow-md hover:scale-[1.02] active:scale-95'
-                    }`}
+                  <button
+                    onClick={() => navigate(`/report/found?lostItemId=${item._id}`)}
+                    className="w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-danger text-white shadow-md hover:scale-[1.02] active:scale-95"
                   >
                     <Verified className="w-5 h-5" />
-                    Claim Item
+                    I Found This!
                   </button>
                 )}
               </div>

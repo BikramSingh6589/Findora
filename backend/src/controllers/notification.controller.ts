@@ -71,7 +71,16 @@ export const deleteNotification = async (req: AuthenticatedRequest, res: Respons
       return;
     }
 
-    sendSuccess(res, {}, 'Notification deleted successfully');
+    sendSuccess(res, {}, 'Notification deleted');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAllNotifications = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    await Notification.deleteMany({ recipient: req.user._id });
+    sendSuccess(res, {}, 'All notifications deleted');
   } catch (error) {
     next(error);
   }

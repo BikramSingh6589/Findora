@@ -54,7 +54,7 @@ export const AdminLogin: React.FC = () => {
             </div>
           )}
 
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-8" onSubmit={handleLogin}>
             {/* Admin ID / Email */}
             <div className="space-y-2">
               <label className="font-semibold text-text-primary block" htmlFor="adminId">Admin ID / Email</label>
@@ -110,6 +110,16 @@ export const AdminLogin: React.FC = () => {
               {isSubmitting ? 'Authenticating...' : 'Sign In'}
               {!isSubmitting && <LogIn className="w-5 h-5" />}
             </Button>
+            {/* Redirect to User Login */}
+            <div className="text-center mt-6">
+              <a 
+                className="text-sm font-semibold text-text-secondary hover:text-primary transition-colors"
+                href="/login"
+                onClick={(e) => { e.preventDefault(); navigate('/login'); }}
+              >
+                Not an admin? Go to User Login
+              </a>
+            </div>
           </form>
 
           {/* Security Notice */}

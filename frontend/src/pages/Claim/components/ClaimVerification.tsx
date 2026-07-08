@@ -39,30 +39,30 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext })
   };
 
   return (
-    <div>
+    <div className="py-6 md:py-8 px-6 md:px-10">
       {/* Stepper */}
-      <div className="mb-10">
+      <div className="mb-12">
         <div className="flex items-center justify-between relative px-6">
           <div className="absolute top-5 left-0 w-full h-1 bg-surface-variant -translate-y-0 z-0"></div>
           <div className="absolute top-5 left-0 w-1/3 h-1 bg-primary z-0 transition-all duration-500"></div>
 
           <div className="relative z-10 flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-lg shadow-primary/25 ring-4 ring-white">1</div>
+            <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-lg shadow-primary/25 ring-4 ring-surface dark:ring-surface">1</div>
             <span className="font-semibold text-sm text-primary">Verification</span>
           </div>
           <div className="relative z-10 flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-full border-2 border-border-default bg-surface text-text-secondary flex items-center justify-center font-bold">2</div>
+            <div className="w-12 h-12 rounded-full border-2 border-border-default bg-surface-container-lowest dark:bg-surface-container text-text-secondary flex items-center justify-center font-bold ring-4 ring-surface dark:ring-surface">2</div>
             <span className="font-semibold text-sm text-text-secondary">Proof</span>
           </div>
           <div className="relative z-10 flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-full border-2 border-border-default bg-surface text-text-secondary flex items-center justify-center font-bold">3</div>
+            <div className="w-12 h-12 rounded-full border-2 border-border-default bg-surface-container-lowest dark:bg-surface-container text-text-secondary flex items-center justify-center font-bold ring-4 ring-surface dark:ring-surface">3</div>
             <span className="font-semibold text-sm text-text-secondary">Review</span>
           </div>
         </div>
       </div>
 
       {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* Left Column: Form */}
         <div className="lg:col-span-8">
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-8 shadow-sm border border-border-default">
@@ -71,7 +71,7 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext })
               <p className="text-base text-text-secondary">Help us confirm you're the rightful owner by answering a few quick questions about your item.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Optional: Select existing Lost Item */}
               {myLostItems.length > 0 && (
                 <div className="space-y-2 p-4 rounded-xl border border-primary/20 bg-primary/5">

@@ -50,12 +50,51 @@ const calculateTimeLeft = (createdAtString: string) => {
   
   const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
   const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+  const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
   
   const pad = (num: number) => String(num).padStart(2, '0');
   return {
-    timeLeft: `${pad(diffHrs)}h ${pad(diffMins)}m left`,
-    isDanger: diffHrs < 12
+    timeLeft: `${pad(diffHrs)}h ${pad(diffMins)}m ${pad(diffSecs)}s left`,
+    isDanger: diffHrs < 12,
+    rawMs: diffMs
   };
+};
+
+const LiveTimer: React.FC<{ createdAt: string | undefined, defaultText: string, dangerFallback: boolean }> = ({ createdAt, defaultText, dangerFallback }) => {
+  const [timeState, setTimeState] = useState(() => createdAt ? calculateTimeLeft(createdAt) : { timeLeft: defaultText, isDanger: dangerFallback, rawMs: 0 });
+
+  useEffect(() => {
+    if (!createdAt) return;
+    const interval = setInterval(() => {
+      setTimeState(calculateTimeLeft(createdAt));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [createdAt]);
+
+  return (
+    <span className="whitespace-nowrap">{timeState.timeLeft}</span>
+  );
+};
+
+const LiveTimerBadge: React.FC<{ createdAt: string | undefined, defaultText: string, dangerFallback: boolean }> = ({ createdAt, defaultText, dangerFallback }) => {
+  const [timeState, setTimeState] = useState(() => createdAt ? calculateTimeLeft(createdAt) : { timeLeft: defaultText, isDanger: dangerFallback, rawMs: 0 });
+
+  useEffect(() => {
+    if (!createdAt) return;
+    const interval = setInterval(() => {
+      setTimeState(calculateTimeLeft(createdAt));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [createdAt]);
+
+  return (
+    <div className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 mt-3 w-fit transition-colors ${
+      timeState.isDanger ? 'bg-danger/10 text-danger' : 'bg-surface-container text-text-secondary'
+    }`}>
+      <Clock className="w-3 h-3" />
+      {timeState.timeLeft.replace(' left', '')}
+    </div>
+  );
 };
 
 export const CommunityBoard: React.FC = () => {
@@ -92,10 +131,10 @@ export const CommunityBoard: React.FC = () => {
               isAIMatch: false,
               finderId: dbItem.finder?._id || dbItem.finder,
               finderName: dbItem.finder?.name || 'Someone',
-              status: dbItem.status || 'active',
               lockedBy: dbItem.lockedBy,
               lockedUntil: dbItem.lockedUntil,
               adminResolved: dbItem.adminResolved,
+              createdAt: dbItem.createdAt,
             };
           });
           setItems(mapped);
@@ -168,10 +207,10 @@ export const CommunityBoard: React.FC = () => {
           isAIMatch: false,
           finderId: dbItem.finder?._id || dbItem.finder,
           finderName: dbItem.finder?.name || 'Someone',
-          status: dbItem.status || 'active',
           lockedBy: dbItem.lockedBy,
           lockedUntil: dbItem.lockedUntil,
           adminResolved: dbItem.adminResolved,
+          createdAt: dbItem.createdAt,
         };
         return [newItem, ...prev];
       });
@@ -470,8 +509,10 @@ export const CommunityBoard: React.FC = () => {
                       <User className="w-4 h-4 mr-1 flex-shrink-0" />
                       <span className="text-xs">@{item.finderName}</span>
                     </div>
-                  </div>
-                </div>
+                  {/* Time Left Badge for list view */}
+                <LiveTimerBadge createdAt={item.createdAt} defaultText={item.timeLeft} dangerFallback={item.timeLeftDanger} />
+              </div>
+              </div>
                 <div className={`px-2 py-1 rounded-lg text-xs font-semibold flex items-center shrink-0 ml-2 ${
                   item.timeLeftDanger ? 'bg-danger/10 text-danger' : 'bg-surface-container text-text-secondary'
                 }`}>
@@ -684,11 +725,11 @@ export const CommunityBoard: React.FC = () => {
                   src={item.img}
                 />
                 {/* Timer badge */}
-                <div className={`absolute top-3 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 backdrop-blur-sm ${
+                <div className={`absolute top-4 right-4 backdrop-blur-md text-white px-3 py-1.5 rounded-xl font-bold text-sm shadow-lg flex items-center gap-1.5 transition-colors ${
                   item.timeLeftDanger ? 'bg-danger/90' : 'bg-black/50'
                 }`}>
-                  <Timer className="w-3.5 h-3.5" />
-                  {item.timeLeft}
+                  <Timer className="w-4 h-4" />
+                  <LiveTimer createdAt={item.createdAt} defaultText={item.timeLeft} dangerFallback={item.timeLeftDanger} />
                 </div>
                 {/* Location badge */}
                 <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">

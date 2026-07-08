@@ -11,7 +11,7 @@ interface NotificationCenterProps {
 export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose }) => {
   const [filter, setFilter] = useState<'All' | 'Unread' | 'Important'>('All');
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { notifications, markAsRead, markAllAsRead } = useNotification();
+  const { notifications, markAsRead, markAllAsRead, clearAllNotifications } = useNotification();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -184,13 +184,20 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
           )}
         </div>
         
-        <div className="p-3 bg-surface-container-lowest dark:bg-surface-container border-t border-border-default text-center transition-colors duration-300">
+        <div className="p-3 bg-surface-container-lowest dark:bg-surface-container border-t border-border-default flex justify-between items-center transition-colors duration-300">
           <button 
             onClick={() => markAllAsRead()}
             className="text-sm font-bold text-primary dark:text-primary hover:underline disabled:opacity-50"
             disabled={filteredNotifications.filter(n => !n.read).length === 0}
           >
             Mark all as read
+          </button>
+          <button 
+            onClick={() => clearAllNotifications()}
+            className="text-sm font-bold text-danger hover:underline disabled:opacity-50"
+            disabled={notifications.length === 0}
+          >
+            Clear all
           </button>
         </div>
       </div>

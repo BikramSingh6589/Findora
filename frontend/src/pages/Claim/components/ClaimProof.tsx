@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Check, UploadCloud, FileText, Trash2, Lightbulb, Bot, ChevronRight, ArrowLeft } from 'lucide-react';
 import type { ClaimFormData } from '../types';
 
@@ -16,7 +16,7 @@ export const ClaimProof: React.FC<Props> = ({ data, updateData, onNext, onPrev }
   };
 
   return (
-    <div>
+    <div className="py-6 md:py-8 px-6 md:px-10">
       {/* Stepper */}
       <div className="mb-10">
         <div className="flex items-center justify-between relative">

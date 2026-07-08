@@ -22,6 +22,7 @@ interface NotificationContextType {
   unreadCount: number;
   markAsRead: (id: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
+  clearAllNotifications: () => Promise<void>;
   fetchNotifications: () => Promise<void>;
 }
 
@@ -110,6 +111,19 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
+  const clearAllNotifications = async () => {
+    try {
+      setNotifications([]);
+      await axios.delete(`${API_BASE}/api/notifications/all`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (err) {
+      console.error('Failed to clear all notifications:', err);
+      // fallback fetch if it failed to delete completely
+      fetchNotifications();
+    }
+  };
+
   useEffect(() => {
     if (user && token) {
       fetchNotifications();
@@ -144,7 +158,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications }}>
+    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, clearAllNotifications, fetchNotifications }}>
       {children}
       {toastNotification && (
         <Toast notification={toastNotification} onClose={() => setToastNotification(null)} />
