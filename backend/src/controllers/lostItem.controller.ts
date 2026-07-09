@@ -130,3 +130,59 @@ export const deleteLostItem = async (req: AuthenticatedRequest, res: Response, n
     next(error);
   }
 };
+
+export const resolveLostItem = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const item = await LostItem.findById(req.params.id);
+    if (!item) {
+      sendError(res, 'Lost item not found', 404);
+      return;
+    }
+
+    // Verify ownership
+    if (item.owner.toString() !== req.user._id.toString()) {
+      sendError(res, 'Access denied', 403);
+      return;
+    }
+
+    if (item.status === 'resolved') {
+      sendError(res, 'Item is already resolved', 400);
+      return;
+    }
+
+    item.status = 'resolved';
+    await item.save();
+
+    sendSuccess(res, { item }, 'Lost item marked as resolved successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const revertLostItem = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const item = await LostItem.findById(req.params.id);
+    if (!item) {
+      sendError(res, 'Lost item not found', 404);
+      return;
+    }
+
+    // Verify ownership
+    if (item.owner.toString() !== req.user._id.toString()) {
+      sendError(res, 'Access denied', 403);
+      return;
+    }
+
+    if (item.status !== 'resolved') {
+      sendError(res, 'Item is not resolved', 400);
+      return;
+    }
+
+    item.status = 'active';
+    await item.save();
+
+    sendSuccess(res, { item }, 'Lost item reverted to active successfully');
+  } catch (error) {
+    next(error);
+  }
+};
