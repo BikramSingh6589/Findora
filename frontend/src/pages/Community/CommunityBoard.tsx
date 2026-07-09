@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image, User } from 'lucide-react';
+import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image, User, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -135,6 +135,7 @@ export const CommunityBoard: React.FC = () => {
               lockedBy: dbItem.lockedBy,
               lockedUntil: dbItem.lockedUntil,
               adminResolved: dbItem.adminResolved,
+              status: dbItem.status,
               createdAt: dbItem.createdAt,
             };
           });
@@ -305,375 +306,132 @@ export const CommunityBoard: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col gap-8 pb-10">
-      {/* Hero Header Section */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative overflow-hidden rounded-[32px] bg-primary-container p-6 md:p-10 md:bg-transparent md:border-none">
-        {/* Mobile Background */}
-        <div className="absolute inset-0 bg-primary-container md:hidden rounded-[32px] -z-10"></div>
-        <div className="absolute -right-4 -top-4 opacity-20 pointer-events-none w-48 h-48 md:hidden">
-          <img alt="Playful Doodles" className="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLsr4JL9xFyttjBMcn_GVYXAmGxl9Md6v7gAlzmVmhaYF1q7VhncS30v3Mzkrtd1YKtbLqO7Gb0vqG35ke9eqsTvQCwztTzVNkO02peOHCjC9UxOWqlH5S5JoTODGuYFDlagBvcgJAKFuxWx9W9twMjtcOOtKDdYDAbHQPuzWqx2_utyIysyhHWx2sDuf62gbVtLIZqA4VAyfCMlP8YGUrey3UzBMj4Oz1EVCQWdW2crDQA6wQQ0xgA_Tw" />
+    <div className="flex flex-col pb-20 pt-4">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-primary-container to-secondary-container p-6 mb-8 shadow-2xl mx-4 md:mx-8">
+        <div className="absolute -right-8 -bottom-8 opacity-20 w-48 h-48 blur-2xl bg-white rounded-full"></div>
+        <div className="relative z-10">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 text-white text-[12px] font-bold mb-3 backdrop-blur-md">
+            <Timer className="w-[14px] h-[14px] mr-1.5" />
+            Active 24h
+          </span>
+          <h2 className="text-[28px] md:text-4xl font-bold text-white mb-1">Community Feed</h2>
+          <p className="text-white/80 max-w-[240px] text-[14px]">Join the mission to reunite students with their gear.</p>
         </div>
+        <button 
+          onClick={() => navigate('/leaderboard')}
+          className="absolute top-6 right-6 w-12 h-12 rounded-2xl bg-white/10 text-white flex items-center justify-center backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
+        >
+          <Trophy className="w-6 h-6" />
+        </button>
+      </div>
 
-        <div className="z-10">
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-on-primary-container/20 md:bg-surface-container-high text-on-primary-container md:text-text-primary text-xs font-semibold mb-3">
-            <Clock className="w-4 h-4 mr-1.5" />
-            Last 24 Hours
-          </div>
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl md:text-4xl font-bold text-on-primary-container md:text-primary tracking-tight mb-2">
-              Community Board <span className="md:text-[#6b38d4] hidden md:inline">(24h)</span>
-            </h2>
-            {/* Mobile Leaderboard Button */}
-            <button 
-              onClick={() => navigate('/leaderboard')}
-              className="md:hidden absolute top-6 right-6 w-10 h-10 rounded-full bg-on-primary-container/20 text-on-primary-container flex items-center justify-center hover:bg-on-primary-container/30 transition-colors active:scale-95 shadow-sm"
-            >
-              <Trophy className="w-5 h-5" />
-            </button>
-          </div>
-          <p className="text-sm md:text-lg text-on-primary-container/80 md:text-text-secondary max-w-2xl mt-1">
-            A live feed of items found across campus within the last 24 hours. Let's help our neighbors reconnect with their lost belongings through the power of community!
-          </p>
-        </div>
-
-        <div className="hidden md:flex items-center gap-3 z-10">
-          <div className="flex items-center gap-2 bg-[#e1e0ff] px-5 py-2.5 rounded-full border border-primary/20 shadow-sm">
-            <Zap className="w-5 h-5 text-primary fill-current" />
-            <span className="font-semibold text-primary">24 Active Matches Found</span>
-          </div>
-          <button 
-            onClick={() => navigate('/leaderboard')}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-high text-primary hover:bg-primary/5 transition-all font-semibold border border-primary/20 shadow-sm"
+      {/* Categories */}
+      <div className="mb-8 overflow-x-auto hide-scrollbar flex gap-3 px-4 md:px-8">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-5 py-2.5 rounded-xl text-[16px] font-semibold whitespace-nowrap transition-all border ${
+              activeCategory === cat
+                ? 'bg-primary text-white border-primary shadow-[0_4px_12px_rgba(99,102,241,0.4)]'
+                : 'bg-white/5 text-text-secondary border-white/10 hover:border-white/20 hover:text-white'
+            }`}
           >
-            <Trophy className="w-5 h-5" />
-            <span>View Leaderboard</span>
+            {cat}
           </button>
-        </div>
-      </section>
+        ))}
+      </div>
 
-      {/* Filter & Search Section */}
-      <section className="bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-xl md:p-4 rounded-2xl flex flex-col gap-4 md:shadow-sm md:border border-border-default">
-
-
-        <div className="flex flex-col md:flex-row items-center gap-4">
-          {/* Categories (Scrollable on mobile) */}
-          <div className="w-full md:w-auto -mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto hide-scrollbar flex gap-2 md:gap-3 flex-nowrap">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-5 md:px-6 py-2 md:py-2.5 rounded-full font-semibold text-sm whitespace-nowrap transition-all shadow-sm ${
-                  activeCategory === cat
-                    ? 'bg-gradient-to-r from-primary to-[#6b38d4] text-white hover:scale-105 active:scale-95'
-                    : 'bg-surface-container-high text-text-secondary hover:text-primary hover:bg-surface-variant'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Filter Dropdown */}
-          {viewMode === 'found' && (
-            <div className="w-full md:w-auto flex-1 md:max-w-xs md:ml-auto">
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary w-5 h-5" />
-                <select className="w-full pl-10 pr-4 py-2.5 md:py-2 bg-surface-container-low border-none rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary appearance-none cursor-pointer">
-                  <option>Recently Found</option>
-                  <option>Ending Soon</option>
-                  <option>Near Me</option>
-                </select>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── MOBILE: Vertical list cards ── */}
-      <div className="md:hidden space-y-4">
+      {/* Unified Item Grid */}
+      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 px-4 md:px-8">
         {viewMode === 'lost' ? (
-          /* ── LOST ITEMS MOBILE ── */
+          /* ── LOST ITEMS ── */
           loading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={`lost-skel-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border border-border-default/30 animate-pulse flex gap-3">
-                <div className="w-16 h-16 rounded-2xl bg-surface-container flex-shrink-0"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 w-3/4 bg-surface-container rounded"></div>
-                  <div className="h-3 w-1/2 bg-surface-container-low rounded"></div>
+            /* Skeleton loading cards */
+            [...Array(4)].map((_, i) => (
+              <div key={`lost-skeleton-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-2xl border border-border-default flex flex-col animate-pulse">
+                <div className="relative h-48 bg-surface-container flex items-center justify-center">
+                  <Image className="w-8 h-8 text-text-secondary opacity-20" />
+                </div>
+                <div className="p-5 pt-2 space-y-3">
+                  <div className="h-5 w-3/4 bg-surface-container rounded mt-4"></div>
+                  <div className="h-3 w-1/2 bg-surface-container rounded"></div>
+                  <div className="pt-3 h-12 w-full bg-surface-container rounded-xl"></div>
                 </div>
               </div>
             ))
           ) : filteredLostItems.length === 0 ? (
-            <div className="py-8 text-center text-text-secondary">No lost items reported yet.</div>
-          ) : (
-            filteredLostItems.map((item: any) => (
-              <div
-                key={item._id}
-                className="group bg-danger/5 border-2 border-danger/20 rounded-[20px] p-4 shadow-sm transition-all duration-300"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex gap-3">
-                    <div className="w-16 h-16 rounded-2xl bg-surface-container overflow-hidden flex-shrink-0">
-                      <img
-                        src={item.images?.[0] || 'https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&q=80&w=200'}
-                        alt={item.itemName}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-danger bg-danger/10 px-2 py-0.5 rounded-full">🚨 LOST</span>
-                      </div>
-                      <h3 className="font-bold text-text-primary text-base leading-tight">{item.itemName}</h3>
-                      <div className="flex items-center text-text-secondary mt-1">
-                        <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-                        <span className="text-xs">{item.lastSeenLocation || item.locationLost || 'Unknown location'}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <span className={`text-[10px] ${getCategoryColor(item.category || '')} px-2 py-1 rounded font-bold uppercase`}>{item.category}</span>
-                </div>
-                <div className="flex items-center gap-2 mb-3">
-                  <img
-                    src={item.owner?.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=60&q=80'}
-                    alt={item.owner?.name}
-                    className="w-6 h-6 rounded-full object-cover border border-border-default"
-                  />
-                  <span className="text-xs text-text-secondary">Lost by <strong className="text-text-primary">{item.owner?.name || 'Someone'}</strong></span>
-                </div>
-                {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
-                  <div className="flex flex-col items-center w-full">
-                    <button
-                      disabled
-                      className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
-                    >
-                      {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/conflict/${item._id}`);
-                      }}
-                      className="text-danger hover:underline text-xs font-bold text-center mt-1"
-                    >
-                      Conflict this claim
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => navigate(`/report/found?lostItemId=${item._id}`)}
-                    className="w-full h-11 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all"
-                  >
-                    I Found This!
-                  </button>
-                )}
-              </div>
-            ))
-          )
-        ) : null}
-        {viewMode === 'found' ? (
-          <>
-        {loading ? (
-          [...Array(3)].map((_, i) => (
-            <div key={`skeleton-mob-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border border-border-default/30 animate-pulse flex gap-3">
-              <div className="w-16 h-16 rounded-2xl bg-surface-container flex-shrink-0"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-4 w-3/4 bg-surface-container rounded"></div>
-                <div className="h-3 w-1/2 bg-surface-container-low rounded"></div>
-              </div>
-            </div>
-          ))
-        ) : filteredItems.length === 0 ? (
-          <div className="py-8 text-center text-text-secondary">No items found.</div>
-        ) : (
-          filteredItems.map(item => (
-            <div
-              key={item.id}
-              onClick={() => navigate(`/item/${item.id}`)}
-              className={`cursor-pointer group bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-4 shadow-sm border transition-all duration-300 transform hover:-translate-y-0.5 ${
-                item.isAIMatch ? 'border-2 border-info-ai/40 relative' : 'border-border-default'
-              }`}
-            >
-              {item.isAIMatch && (
-                <div className="absolute -top-3 left-4 px-3 py-0.5 bg-info-ai text-white rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center shadow-sm z-10">
-                  <Zap className="w-3 h-3 mr-1 fill-current" /> Potential Match
-                </div>
-              )}
-              <div className="flex justify-between items-start mb-3 mt-1">
-                <div className="flex gap-3">
-                  <div className="w-16 h-16 rounded-2xl bg-surface-container overflow-hidden flex-shrink-0">
-                    <img src={item.img} alt={item.title} className={`w-full h-full ${item.imgContain ? 'object-contain p-2' : 'object-cover'}`} />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-text-primary text-base leading-tight">{item.title}</h3>
-                    <div className="flex items-center text-text-secondary mt-1">
-                      <User className="w-4 h-4 mr-1 flex-shrink-0" />
-                      <span className="text-xs">@{item.finderName}</span>
-                    </div>
-                  {/* Time Left Badge for list view */}
-                <LiveTimerBadge createdAt={item.createdAt} defaultText={item.timeLeft} dangerFallback={item.timeLeftDanger} />
-              </div>
-              </div>
-                <div className={`px-2 py-1 rounded-lg text-xs font-semibold flex items-center shrink-0 ml-2 ${
-                  item.timeLeftDanger ? 'bg-danger/10 text-danger' : 'bg-surface-container text-text-secondary'
-                }`}>
-                  <Timer className="w-3.5 h-3.5 mr-1" />
-                  {item.timeLeft.replace(' left', '')}
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAction(`/suggest/${item.id}`);
-                  }}
-                  className="flex-1 h-11 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-primary/10 transition-colors active:scale-95"
-                >
-                  Suggest Owner
-                </button>
-                {(() => {
-                  const isLocked = item.lockedUntil && new Date(item.lockedUntil).getTime() > Date.now();
-                  const lockedByMe = item.lockedBy === currentUserId;
-
-                  if (item.status === 'resolved' || item.status === 'approved') {
-                    return (
-                      <div className="flex-1 flex flex-col items-center">
-                        <button disabled className="w-full h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
-                          {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
-                        </button>
-                        <button onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }} className="text-danger hover:underline text-xs font-bold text-center mt-1">
-                          Conflict this claim
-                        </button>
-                      </div>
-                    );
-                  }
-
-                  if ((item.status === 'claimed' && !isLocked) || (isLocked && !lockedByMe)) {
-                    return (
-                      <button disabled className="flex-1 h-11 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
-                        {item.status === 'claimed' ? 'Claim Requested' : 'In process...'}
-                      </button>
-                    );
-                  }
-
-                  if (isLocked && lockedByMe) {
-                    return (
-                      <div className="flex-1 flex flex-col items-center justify-center gap-1 border border-primary/20 rounded-xl p-2 bg-primary/5">
-                        <span className="text-[10px] font-semibold text-primary text-center leading-tight mb-0.5">Your claim process is currently undergoing</span>
-                        <div className="flex gap-2 w-full">
-                          <button onClick={(e) => handleCancelClaim(e, item.id)} className="flex-1 py-1.5 rounded-lg bg-danger/10 text-danger text-xs font-bold hover:bg-danger/20 transition-colors">
-                            Cancel claim
-                          </button>
-                          <button onClick={(e) => { e.stopPropagation(); navigate(`/claim/${item.id}`); }} className="flex-1 py-1.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors shadow-sm">
-                            Reclaim
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <button
-                      disabled={item.finderId === currentUserId}
-                      onClick={(e) => handleClaimClick(e, item.id)}
-                      className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all ${
-                        item.finderId === currentUserId
-                          ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
-                          : 'bg-primary text-white shadow-md hover:bg-primary/90 active:scale-95'
-                      }`}
-                    >
-                      Claim Item
-                    </button>
-                  );
-                })()}
-              </div>
-            </div>
-          ))
-        )}
-
-        {/* Mobile Gamification Banner */}
-        <div 
-          onClick={() => navigate('/leaderboard')}
-          className="mt-2 p-4 bg-[#f9f6ff] border border-[#d0bcff]/40 rounded-2xl flex items-center gap-4 cursor-pointer hover:bg-[#f0eaff] transition-colors"
-        >
-          <div className="w-12 h-12 rounded-full bg-[#8455ef] flex items-center justify-center text-white flex-shrink-0">
-            <Trophy className="w-6 h-6" />
-          </div>
-          <div className="flex-1">
-            <p className="font-bold text-sm text-[#5516be]">Community Hero Goal</p>
-            <p className="text-xs text-text-secondary mt-0.5">Identify 3 owners to earn 50 XP!</p>
-          </div>
-          <div className="w-10 h-10 rounded-full border-4 border-[#8455ef]/20 border-t-[#8455ef] flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-[#8455ef]">2/3</span>
-          </div>
-        </div>
-        </> ) : null}
-      </div>
-
-      {/* ── DESKTOP: 4-column Bento Grid ── */}
-      <section className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
-        {viewMode === 'lost' ? (
-          /* ── LOST ITEMS DESKTOP ── */
-          filteredLostItems.length === 0 ? (
-            <div className="col-span-full py-12 text-center text-text-secondary">
-              No lost items have been reported yet.
+            <div className="col-span-full py-12 text-center text-text-secondary font-semibold">
+              No lost items reported yet.
             </div>
           ) : (
             filteredLostItems.map((item: any) => (
               <div
                 key={item._id}
-                className="bg-danger/5 border-2 border-danger/20 rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 flex flex-col"
+                onClick={() => navigate(`/item/${item._id}`)}
+                className="group bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-2xl border border-border-default hover:border-primary/50 transition-all duration-300 flex flex-col cursor-pointer"
               >
-                <div className="relative h-48 overflow-hidden bg-surface-container">
+                <div className="relative h-48 w-full overflow-hidden">
                   <img
                     alt={item.itemName}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     src={item.images?.[0] || 'https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&q=80&w=400'}
                   />
-                  <div className="absolute top-3 left-3 bg-danger/90 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-full tracking-wider">
-                    🚨 LOST
+                  <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest dark:from-surface-container via-transparent to-transparent"></div>
+                  
+                  {/* Status Pill */}
+                  <div className="absolute top-4 right-4 bg-danger/90 text-white px-3 py-1.5 rounded-xl text-[13px] font-bold flex items-center shadow-lg backdrop-blur-md">
+                    <span className="text-[11px] font-black uppercase tracking-widest">🚨 Lost</span>
                   </div>
-                  <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                    Last seen @ {item.lastSeenLocation || item.locationLost || 'Unknown'}
+                  
+                  {/* Category Pill */}
+                  <div className="absolute bottom-4 left-4">
+                    <span className="px-3 py-1 bg-primary/80 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider backdrop-blur-md">{item.category}</span>
                   </div>
+
+                  {/* Claimed Stamp Overlay */}
+                  {['claimed', 'resolved', 'approved'].includes(item.status) && (
+                    <div className="absolute inset-0 z-20 bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
+                      <div className="bg-success text-white px-8 py-3 rounded-2xl font-black text-2xl shadow-2xl -rotate-12 border-4 border-success/50 backdrop-blur-md">
+                        CLAIMED
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="p-5 flex-1 flex flex-col gap-3">
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-text-primary text-lg line-clamp-1">{item.itemName}</h3>
-                    <span className={`text-[10px] ${getCategoryColor(item.category || '')} px-2 py-1 rounded font-bold uppercase tracking-wider`}>{item.category}</span>
+                
+                <div className="p-5 pt-2 flex-1 flex flex-col relative z-10">
+                  <h3 className="font-bold text-[22px] text-text-primary line-clamp-1 mb-1">{item.itemName}</h3>
+                  <div className="flex items-center gap-1.5 text-text-secondary mb-4">
+                    <MapPin className="w-[18px] h-[18px] flex-shrink-0" />
+                    <span className="text-[14px] line-clamp-1">{item.lastSeenLocation || item.locationLost || 'Unknown location'}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  
+                  <div className="flex items-center gap-2 mb-4 p-2 bg-surface-container-low dark:bg-white/5 rounded-xl border border-border-default dark:border-white/10">
                     <img
                       src={item.owner?.profilePic || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=60&q=80'}
                       alt={item.owner?.name}
-                      className="w-7 h-7 rounded-full object-cover border border-border-default"
+                      className="w-6 h-6 rounded-full object-cover border border-white/20"
                     />
-                    <span className="text-xs text-text-secondary">Lost by <strong className="text-text-primary">{item.owner?.name || 'Someone'}</strong></span>
+                    <span className="text-xs font-semibold text-text-secondary">Lost by <strong className="text-text-primary">{item.owner?.name || 'Someone'}</strong></span>
                   </div>
+
                   <div className="mt-auto">
                     {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
-                      <div className="flex flex-col items-center w-full">
-                        <button
-                          disabled
-                          className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm"
-                        >
-                          {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/conflict/${item._id}`);
-                          }}
-                          className="text-danger hover:underline text-xs font-bold text-center mt-1"
-                        >
-                          Conflict this claim
-                        </button>
-                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/conflict/${item._id}`);
+                        }}
+                        className="w-full h-12 rounded-xl bg-danger/10 border border-danger/50 text-danger font-bold flex items-center justify-center gap-2 hover:bg-danger hover:text-white transition-all active:scale-95"
+                      >
+                        <AlertTriangle className="w-5 h-5" />
+                        Conflict this claim
+                      </button>
                     ) : (
                       <button
-                        onClick={() => navigate(`/report/found?lostItemId=${item._id}`)}
-                        className="w-full py-2.5 rounded-xl bg-danger text-white font-bold text-sm hover:bg-danger/90 active:scale-95 transition-all shadow-md"
+                        onClick={(e) => { e.stopPropagation(); navigate(`/report/found?lostItemId=${item._id}`); }}
+                        className="w-full h-12 rounded-xl primary-gradient text-white font-semibold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                       >
                         I Found This!
                       </button>
@@ -684,155 +442,169 @@ export const CommunityBoard: React.FC = () => {
             ))
           )
         ) : (
-        loading ? (
-          /* Skeleton loading cards */
-          [...Array(4)].map((_, i) => (
-            <div key={`skeleton-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm border border-border-default/30 flex flex-col animate-pulse">
-              <div className="relative h-48 bg-surface-container flex items-center justify-center">
-                <Image className="w-12 h-12 text-text-secondary opacity-20" />
-              </div>
-              <div className="p-5 space-y-3">
-                <div className="h-5 w-3/4 bg-surface-container rounded"></div>
-                <div className="h-3 w-full bg-surface-container rounded"></div>
-                <div className="h-3 w-4/5 bg-surface-container rounded"></div>
-                <div className="pt-3 space-y-2">
-                  <div className="h-10 w-full bg-surface-container rounded-xl animate-pulse"></div>
-                  <div className="h-10 w-full bg-surface-container rounded-xl animate-pulse"></div>
+          /* ── FOUND ITEMS ── */
+          loading ? (
+            /* Skeleton loading cards */
+            [...Array(4)].map((_, i) => (
+              <div key={`skeleton-${i}`} className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-2xl border border-border-default flex flex-col animate-pulse">
+                <div className="relative h-48 bg-surface-container flex items-center justify-center">
+                  <Image className="w-8 h-8 text-text-secondary opacity-20" />
+                </div>
+                <div className="p-5 pt-2 space-y-3">
+                  <div className="h-5 w-3/4 bg-surface-container rounded mt-4"></div>
+                  <div className="h-3 w-1/2 bg-surface-container rounded"></div>
+                  <div className="pt-3 h-12 w-full bg-surface-container rounded-xl"></div>
                 </div>
               </div>
+            ))
+          ) : filteredItems.length === 0 ? (
+            <div className="col-span-full py-12 text-center text-text-secondary font-semibold">
+              No items found matching this category.
             </div>
-          ))
-        ) : filteredItems.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-text-secondary">
-            No items found matching this category.
-          </div>
-        ) : (
-          filteredItems.map(item => (
-            <div
-              key={item.id}
-              onClick={() => navigate(`/item/${item.id}`)}
-              className={`cursor-pointer bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 group flex flex-col border ${
-                item.isAIMatch ? 'border-info-ai/30' : 'border-border-default/30'
-              }`}
-            >
-              <div className="relative h-48 overflow-hidden bg-surface-container">
-                <img
-                  alt={item.title}
-                  className={`w-full h-full transition-transform duration-500 ${
-                    item.imgContain
-                      ? 'object-contain p-8 group-hover:rotate-3 bg-surface-container-low'
-                      : 'object-cover group-hover:scale-110'
+          ) : (
+            filteredItems.map(item => {
+              const isResolved = item.status === 'resolved' || item.status === 'approved' || item.status === 'claimed';
+              const isLocked = item.lockedUntil && new Date(item.lockedUntil).getTime() > Date.now();
+              const lockedByMe = item.lockedBy === currentUserId;
+
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => navigate(`/item/${item.id}`)}
+                  className={`group relative bg-surface-container-lowest dark:bg-surface-container rounded-[20px] overflow-hidden border shadow-2xl transition-all duration-300 flex flex-col cursor-pointer ${
+                    item.isAIMatch ? 'border-info-ai/50 hover:border-info-ai' : 'border-border-default hover:border-primary/50'
                   }`}
-                  src={item.img}
-                />
-                {/* Timer badge */}
-                <div className={`absolute top-4 right-4 backdrop-blur-md text-white px-3 py-1.5 rounded-xl font-bold text-sm shadow-lg flex items-center gap-1.5 transition-colors ${
-                  item.timeLeftDanger ? 'bg-danger/90' : 'bg-black/50'
-                }`}>
-                  <Timer className="w-4 h-4" />
-                  <LiveTimer createdAt={item.createdAt} defaultText={item.timeLeft} dangerFallback={item.timeLeftDanger} />
-                </div>
-                {/* Location badge */}
-                <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                  Found by @{item.finderName}
-                </div>
-                {/* AI Match badge */}
-                {item.isAIMatch && (
-                  <div className="absolute top-3 left-3 px-2 py-1 bg-info-ai text-white text-[10px] font-bold uppercase rounded-full flex items-center gap-1">
-                    <Zap className="w-3 h-3 fill-current" /> Potential Match
-                  </div>
-                )}
-              </div>
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-text-primary text-lg line-clamp-1">{item.title}</h3>
-                  <span className={`text-[10px] ${item.categoryColor} px-2 py-1 rounded font-bold uppercase tracking-wider`}>{item.category}</span>
-                </div>
-                <div className="mt-auto space-y-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAction(`/suggest/${item.id}`);
-                    }}
-                    className="w-full py-2.5 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary/5 transition-colors text-sm"
-                  >
-                    Suggest Owner
-                  </button>
-                  {(() => {
-                    const isLocked = item.lockedUntil && new Date(item.lockedUntil).getTime() > Date.now();
-                    const lockedByMe = item.lockedBy === currentUserId;
+                >
+                  <div className={`relative h-48 w-full overflow-hidden ${isResolved ? 'opacity-80' : ''}`}>
+                    <img
+                      alt={item.title}
+                      className={`w-full h-full transition-transform duration-700 ${
+                        item.imgContain ? 'object-contain p-6 group-hover:scale-105' : 'object-cover group-hover:scale-105'
+                      }`}
+                      src={item.img}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest dark:from-surface-container via-transparent to-transparent"></div>
+                    
+                    {/* Timer Badge (Stitch Style) */}
+                    <div className={`absolute top-4 right-4 text-white px-3 py-1.5 rounded-xl text-[13px] font-bold flex items-center shadow-lg backdrop-blur-md ${
+                      item.timeLeftDanger ? 'bg-danger/90 status-badge-glow animate-pulse' : 'bg-black/70'
+                    }`}>
+                      <Timer className="w-[16px] h-[16px] mr-1" />
+                      <LiveTimer createdAt={item.createdAt} defaultText={item.timeLeft} dangerFallback={item.timeLeftDanger} />
+                    </div>
+                    
+                    {/* Category Pill */}
+                    <div className="absolute bottom-4 left-4">
+                      <span className="px-3 py-1 bg-primary/80 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider backdrop-blur-md">{item.category}</span>
+                    </div>
 
-                    if (item.status === 'resolved' || item.status === 'approved' || item.status === 'claimed') {
-                      return (
-                        <div className="flex flex-col items-center w-full">
-                          <button disabled className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
-                            {item.status === 'resolved' || item.status === 'approved' ? (item.adminResolved ? 'Admin Resolved' : 'Resolved') : 'Claim Requested'}
-                          </button>
-                          <button onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }} className="text-danger hover:underline text-xs font-bold text-center mt-1">
-                            Conflict this claim
-                          </button>
+                    {/* AI Match Badge */}
+                    {item.isAIMatch && (
+                      <div className="absolute top-4 left-4 bg-info-ai text-white px-3 py-1 rounded-full text-[12px] font-bold uppercase tracking-wider flex items-center shadow-md">
+                        <Zap className="w-[14px] h-[14px] mr-1 fill-current" />
+                        Potential Match
+                      </div>
+                    )}
+
+                    {/* Claimed Stamp Overlay */}
+                    {isResolved && (
+                      <div className="absolute inset-0 z-20 bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
+                        <div className="bg-success text-white px-8 py-3 rounded-2xl font-black text-2xl shadow-2xl -rotate-12 border-4 border-success/50 backdrop-blur-md">
+                          CLAIMED
                         </div>
-                      );
-                    }
+                      </div>
+                    )}
+                  </div>
 
-                    if (isLocked && !lockedByMe) {
-                      return (
-                        <button disabled className="w-full py-2.5 rounded-xl bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed font-bold text-sm">
+                  <div className={`p-5 pt-2 flex-1 flex flex-col ${isResolved ? 'opacity-80' : ''}`}>
+                    <h3 className="font-bold text-[22px] text-text-primary line-clamp-1 mb-1">{item.title}</h3>
+                    <div className="flex items-center gap-1.5 text-text-secondary mb-3">
+                      <MapPin className="w-[18px] h-[18px] flex-shrink-0" />
+                      <span className="text-[14px] line-clamp-1">{item.location || 'Unknown location'}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-4 p-2 bg-surface-container-low dark:bg-white/5 rounded-xl border border-border-default dark:border-white/10">
+                      <User className="w-4 h-4 text-text-secondary" />
+                      <span className="text-xs font-semibold text-text-secondary">Found by <strong className="text-text-primary">@{item.finderName}</strong></span>
+                    </div>
+
+                    <div className="mt-auto">
+                      {isResolved ? (
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }}
+                          className="w-full h-12 rounded-xl bg-danger/10 border border-danger/50 text-danger font-bold flex items-center justify-center gap-2 hover:bg-danger hover:text-white transition-all active:scale-95"
+                        >
+                          <AlertTriangle className="w-5 h-5" />
+                          Conflict This Claim
+                        </button>
+                      ) : isLocked && !lockedByMe ? (
+                        <button disabled className="w-full h-12 rounded-xl bg-surface-container-low dark:bg-white/5 border border-border-default dark:border-white/10 text-text-secondary font-semibold">
                           In process...
                         </button>
-                      );
-                    }
-
-                    if (isLocked && lockedByMe) {
-                      return (
-                        <div className="flex flex-col items-center justify-center gap-1.5 w-full border border-primary/20 rounded-xl p-2.5 bg-primary/5">
-                          <span className="text-xs font-semibold text-primary text-center leading-tight mb-1">Your claim process is currently undergoing</span>
-                          <div className="flex gap-2 w-full">
-                            <button onClick={(e) => handleCancelClaim(e, item.id)} className="flex-1 py-2 rounded-lg bg-danger/10 text-danger text-xs font-bold hover:bg-danger/20 transition-colors">
-                              Cancel claim
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); navigate(`/claim/${item.id}`); }} className="flex-1 py-2 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors shadow-sm">
-                              Reclaim
-                            </button>
-                          </div>
+                      ) : isLocked && lockedByMe ? (
+                        <div className="flex gap-2 w-full">
+                          <button onClick={(e) => handleCancelClaim(e, item.id)} className="flex-1 h-12 rounded-xl bg-danger/10 text-danger text-sm font-bold hover:bg-danger/20 transition-colors">
+                            Cancel
+                          </button>
+                          <button onClick={(e) => { e.stopPropagation(); navigate(`/claim/${item.id}`); }} className="flex-1 h-12 rounded-xl primary-gradient text-white text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                            Reclaim
+                          </button>
                         </div>
-                      );
-                    }
-
-                    return (
-                      <button
-                        disabled={item.finderId === currentUserId}
-                        onClick={(e) => handleClaimClick(e, item.id)}
-                        className={`w-full py-2.5 rounded-xl font-bold transition-all text-sm ${
-                          item.finderId === currentUserId
-                            ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
-                            : 'bg-gradient-to-r from-primary to-[#6b38d4] text-white shadow-md active:scale-95'
-                        }`}
-                      >
-                        Claim Item
-                      </button>
-                    );
-                  })()}
+                      ) : (
+                        <div className="flex gap-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAction(`/suggest/${item.id}`);
+                            }}
+                            className="flex-1 h-12 rounded-xl bg-surface-container-low dark:bg-white/5 border border-border-default dark:border-white/10 text-text-secondary dark:text-white font-semibold text-[16px] hover:bg-surface-container hover:dark:bg-white/10 transition-all hover:text-text-primary active:scale-95"
+                          >
+                            Suggest
+                          </button>
+                          <button
+                            disabled={item.finderId === currentUserId}
+                            onClick={(e) => handleClaimClick(e, item.id)}
+                            className={`flex-1 h-12 rounded-xl font-semibold text-[16px] transition-all ${
+                              item.finderId === currentUserId
+                                ? 'bg-surface-container-low dark:bg-white/5 border border-border-default dark:border-white/10 text-text-secondary cursor-not-allowed'
+                                : 'primary-gradient text-white shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95'
+                            }`}
+                          >
+                            Claim Item
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))
-        )
+              );
+            })
+          )
         )}
       </section>
 
-      {/* Desktop CTA Banner */}
-      <section className="hidden md:flex mt-4 rounded-[32px] bg-gradient-to-br from-[#FB923C] to-[#F9BD22] p-10 items-center justify-between gap-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
-          <Search className="w-48 h-48 text-white" />
+      {/* Reward CTA Banner */}
+      <section className="mt-8 px-4 md:px-8">
+        <div className="reward-gradient rounded-[40px] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-2xl shadow-orange-500/20">
+          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none rotate-12">
+            <Zap className="w-48 h-48 text-white" />
+          </div>
+          <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-white/10 blur-3xl rounded-full"></div>
+          
+          <div className="relative z-10 text-center md:text-left max-w-xl space-y-4">
+            <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">Can't find your item?</h3>
+            <p className="text-lg text-white/90 font-medium leading-relaxed">
+              Our AI matches found items with lost reports every hour. Post your missing item and let the community help!
+            </p>
+          </div>
+          <button 
+            onClick={() => navigate('/report/lost')}
+            className="relative z-10 bg-white text-orange-500 font-black py-5 px-10 rounded-2xl shadow-2xl hover:scale-105 active:scale-95 transition-all text-lg flex items-center gap-3 shrink-0"
+          >
+            <AlertTriangle className="w-6 h-6" />
+            Report Now
+          </button>
         </div>
-        <div className="relative z-10 max-w-2xl">
-          <h3 className="text-3xl font-extrabold text-white mb-2">Can't find your item?</h3>
-          <p className="text-lg text-white/90">Our AI matches found items with lost reports every hour. Post your missing item now!</p>
-        </div>
-        <button onClick={() => navigate('/report/lost')} className="relative z-10 bg-surface-container-lowest dark:bg-surface-container text-[#FB923C] font-bold py-4 px-10 rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all">
-          Report Now
-        </button>
       </section>
 
       {/* Cancel Success Modal */}
@@ -840,9 +612,7 @@ export const CommunityBoard: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-xl max-w-sm w-full flex flex-col items-center text-center animate-in zoom-in-95 duration-200">
             <div className="w-12 h-12 rounded-full bg-success/10 text-success flex items-center justify-center mb-4">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+              <CheckCircle2 className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-text-primary mb-2">Claim Canceled</h3>
             <p className="text-text-secondary text-sm mb-6">
@@ -857,7 +627,6 @@ export const CommunityBoard: React.FC = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

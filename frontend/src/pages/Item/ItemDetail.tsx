@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Share2, Maximize2,
-  MapPin, Calendar, User, Sparkles, Verified, MessageSquare, ChevronRight
+  MapPin, Calendar, User, Sparkles, Verified, MessageSquare, ChevronRight, AlertTriangle
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
@@ -357,7 +357,29 @@ export const ItemDetail: React.FC = () => {
 
               {/* Actions */}
               <div className="flex flex-col gap-3">
-                {isFoundItem ? (
+                {['resolved', 'claimed', 'approved'].includes(item.status) ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="w-full bg-[#0B0F1A]/80 text-white py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-sm border border-border-default backdrop-blur-md">
+                      <Verified className="w-5 h-5 text-success" />
+                      Item Claimed{item.owner?.name ? ` by ${item.owner.name}` : ''}
+                    </div>
+                    <button
+                      onClick={() => navigate(`/conflict/${item._id}`)}
+                      className="w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20 shadow-sm hover:scale-[1.02] active:scale-95"
+                    >
+                      <AlertTriangle className="w-5 h-5" />
+                      Conflict this claim
+                    </button>
+                    {isOwner && (
+                      <button
+                        onClick={() => setShowRevertModal(true)}
+                        className="text-xs text-text-secondary hover:text-primary transition-colors font-semibold py-2"
+                      >
+                        Mark as lost again
+                      </button>
+                    )}
+                  </div>
+                ) : isFoundItem ? (
                   isFinder ? (
                     claimId ? (
                       <button
@@ -395,22 +417,7 @@ export const ItemDetail: React.FC = () => {
                   )
                 ) : (
                   <>
-                    {item.status === 'resolved' ? (
-                      <div className="flex flex-col gap-2">
-                        <div className="w-full bg-success/10 text-success py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-sm border border-success/20">
-                          <Verified className="w-5 h-5" />
-                          Report Resolved
-                        </div>
-                        {isOwner && (
-                          <button
-                            onClick={() => setShowRevertModal(true)}
-                            className="text-xs text-text-secondary hover:text-primary transition-colors font-semibold py-2"
-                          >
-                            Mark as lost again
-                          </button>
-                        )}
-                      </div>
-                    ) : isOwner ? (
+                    {isOwner ? (
                       <button
                         onClick={() => setShowResolveModal(true)}
                         className="w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-surface-container-high text-text-primary shadow-sm hover:scale-[1.02] active:scale-95 border border-border-default"
