@@ -109,7 +109,7 @@ export const ClaimOwnership: React.FC = () => {
 
         <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[24px] shadow-sm border border-border-default overflow-hidden">
           {currentStep === 1 && (
-            <ClaimVerification data={formData} updateData={updateData} onNext={nextStep} />
+            <ClaimVerification data={formData} updateData={updateData} onNext={nextStep} foundItemId={itemId} />
           )}
           {currentStep === 2 && (
             <ClaimProof data={formData} updateData={updateData} onNext={nextStep} onPrev={prevStep} />

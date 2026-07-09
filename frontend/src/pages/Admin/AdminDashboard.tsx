@@ -34,21 +34,26 @@ export const AdminDashboard: React.FC = () => {
     totalUsers: 0
   });
   const [claims, setClaims] = useState<any[]>([]);
+  const [matches, setMatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [statsRes, claimsRes] = await Promise.all([
+      const [statsRes, claimsRes, matchesRes] = await Promise.all([
         axios.get(`${API_BASE}/api/admin/dashboard`),
-        axios.get(`${API_BASE}/api/claims?status=pending`)
+        axios.get(`${API_BASE}/api/claims?status=pending`),
+        axios.get(`${API_BASE}/api/ai/matches`)
       ]);
       if (statsRes.data && statsRes.data.success) {
         setStats(statsRes.data);
       }
       if (claimsRes.data && claimsRes.data.success) {
         setClaims(claimsRes.data.claims || claimsRes.data.data?.claims || []);
+      }
+      if (matchesRes.data && matchesRes.data.success) {
+        setMatches(matchesRes.data.matches || []);
       }
     } catch (err: any) {
       console.error('Failed to load dashboard data', err);
@@ -134,25 +139,33 @@ export const AdminDashboard: React.FC = () => {
               <Star className="w-5 h-5 text-info-ai" />
             </div>
             <h3 className="font-bold text-lg text-text-primary">AI Match Alerts</h3>
-            <span className="ml-auto bg-info-ai text-white text-[10px] px-2 py-0.5 rounded-full font-bold">2 NEW</span>
+            <span className="ml-auto bg-info-ai text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+              {matches.filter((m: any) => m.status === 'new').length} NEW
+            </span>
           </div>
           <div className="space-y-3">
-            {[
-              { item: 'MacBook Air M2', match: '98% Match', img: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=80&q=70' },
-              { item: 'Sony XM5 Headphones', match: '94% Match', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=80&q=70' },
-            ].map((alert, i) => (
-              <div key={i} className="flex gap-3 items-center p-3 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer">
-                <img src={alert.img} alt={alert.item} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
-                <div className="flex-1">
-                  <h4 className="font-bold text-sm text-text-primary">{alert.item}</h4>
-                  <p className="text-xs text-info-ai font-bold">{alert.match}</p>
-                </div>
-                <span className="text-text-secondary">›</span>
-              </div>
-            ))}
-            <button className="w-full py-3 bg-info-ai/10 text-info-ai font-bold rounded-xl hover:bg-info-ai/20 transition-colors text-sm">
-              View All Suggested Matches
-            </button>
+            {matches.slice(0, 2).map((match: any) => {
+              const itemTitle = match.lostItem?.itemName || match.foundItem?.itemName || 'Unknown Item';
+              const img = match.lostItem?.images?.[0] || match.foundItem?.images?.[0] || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=80&q=70';
+              return (
+                <Link to="/matches" key={match._id} className="flex gap-3 items-center p-3 rounded-xl hover:bg-surface-container-low transition-colors cursor-pointer block">
+                  <img src={img} alt={itemTitle} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                  <div className="flex-1">
+                    <h4 className="font-bold text-sm text-text-primary">{itemTitle}</h4>
+                    <p className="text-xs text-info-ai font-bold">{match.score}% Match</p>
+                  </div>
+                  <span className="text-text-secondary">›</span>
+                </Link>
+              );
+            })}
+            {matches.length === 0 && (
+              <p className="text-xs text-text-secondary text-center py-6">No Suggested Matches available.</p>
+            )}
+            <Link to="/matches" className="block w-full">
+              <button className="w-full py-3 bg-info-ai/10 text-info-ai font-bold rounded-xl hover:bg-info-ai/20 transition-colors text-sm">
+                View All Suggested Matches
+              </button>
+            </Link>
           </div>
         </div>
 

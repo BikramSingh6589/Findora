@@ -7,15 +7,17 @@ export interface IAIMatch extends Document {
   status: 'new' | 'reviewed' | 'dismissed';
   matchedFields: string[];
   aiReason: string;
+  missingEvidence: string[];
   breakdown: {
-    categoryScore: number;
+    objectScore: number;
     brandScore: number;
     colorScore: number;
     semanticScore: number;
-    ocrScore: number;
     imageScore: number;
-    textScore?: number;
-    metadataScore?: number;
+    ocrScore: number;
+    categoryScore?: number; // legacy fallback
+    textScore?: number;     // legacy fallback
+    metadataScore?: number; // legacy fallback
   };
   createdAt: Date;
   updatedAt: Date;
@@ -28,15 +30,17 @@ const AIMatchSchema = new Schema({
   status:    { type: String, enum: ['new', 'reviewed', 'dismissed'], default: 'new' },
   matchedFields: { type: [String], default: [] },
   aiReason:      { type: String, default: '' },
+  missingEvidence: { type: [String], default: [] },
   breakdown: {
-    categoryScore: { type: Number, default: 0 },
+    objectScore:   { type: Number, default: 0 },
     brandScore:    { type: Number, default: 0 },
     colorScore:    { type: Number, default: 0 },
     semanticScore: { type: Number, default: 0 },
-    ocrScore:      { type: Number, default: 0 },
     imageScore:    { type: Number, default: 0 },
-    textScore:     { type: Number, default: 0 },
-    metadataScore: { type: Number, default: 0 }
+    ocrScore:      { type: Number, default: 0 },
+    categoryScore: { type: Number, default: 0 }, // legacy fallback
+    textScore:     { type: Number, default: 0 }, // legacy fallback
+    metadataScore: { type: Number, default: 0 }  // legacy fallback
   },
 }, { timestamps: true });
 

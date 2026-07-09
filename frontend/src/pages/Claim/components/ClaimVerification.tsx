@@ -10,11 +10,14 @@ interface Props {
   data: ClaimFormData;
   updateData: (d: Partial<ClaimFormData>) => void;
   onNext: () => void;
+  foundItemId?: string;
 }
 
-export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext }) => {
+export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext, foundItemId }) => {
   const { user } = useAuth();
   const [myLostItems, setMyLostItems] = useState<any[]>([]);
+  const [match, setMatch] = useState<any | null>(null);
+  const [loadingMatch, setLoadingMatch] = useState<boolean>(true);
 
   useEffect(() => {
     if (!user) return;
@@ -32,6 +35,40 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext })
     };
     fetchMyItems();
   }, [user]);
+
+  useEffect(() => {
+    const fetchMatch = async () => {
+      if (!foundItemId) {
+        setLoadingMatch(false);
+        return;
+      }
+      try {
+        setLoadingMatch(true);
+        const res = await axios.get(`${API_BASE}/api/ai/matches`);
+        if (res.data?.success && res.data.matches) {
+          let foundMatch = null;
+          if (data.lostItemId) {
+            foundMatch = res.data.matches.find(
+              (m: any) =>
+                (m.foundItem?._id === foundItemId || m.foundItem === foundItemId) &&
+                (m.lostItem?._id === data.lostItemId || m.lostItem === data.lostItemId)
+            );
+          } else {
+            foundMatch = res.data.matches.find(
+              (m: any) =>
+                (m.foundItem?._id === foundItemId || m.foundItem === foundItemId)
+            );
+          }
+          setMatch(foundMatch || null);
+        }
+      } catch (err) {
+        console.error('Error fetching AI match for claim verification', err);
+      } finally {
+        setLoadingMatch(false);
+      }
+    };
+    fetchMatch();
+  }, [foundItemId, data.lostItemId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,28 +205,83 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext })
 
         {/* Right Column */}
         <div className="lg:col-span-4 space-y-6">
-          {/* AI Match Card */}
-          <div className="bg-info-ai/10 border-2 border-info-ai rounded-[20px] p-6 overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-              <Sparkles className="w-16 h-16" />
+          {/* AI Match Card Container */}
+          {loadingMatch ? (
+            <div className="bg-info-ai/10 border border-info-ai/30 rounded-[20px] p-6 text-center flex flex-col items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-info-ai"></div>
+              <p className="text-sm font-semibold text-info-ai">AI is checking possible matches...</p>
             </div>
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="text-info-ai w-5 h-5 fill-current" />
-                <span className="font-semibold text-sm text-info-ai">AI Matching In Progress</span>
-              </div>
-              <h4 className="text-xl font-bold text-text-primary mb-2">92% Confidence Match</h4>
-              <p className="text-xs text-text-secondary mb-4">Our system has flagged this item as a high-probability match for your lost report from yesterday.</p>
-              <div className="w-full h-40 rounded-xl overflow-hidden mb-3 shadow-inner bg-surface">
-                <img
-                  className="w-full h-full object-cover"
-                  src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=400&q=80"
-                  alt="Found item"
-                />
-              </div>
-              <span className="inline-block px-3 py-1 bg-info-ai text-white rounded-lg text-xs font-bold">Found near Central Hub</span>
+          ) : !match ? (
+            <div className="bg-surface-container-lowest dark:bg-surface-container border border-border-default rounded-[20px] p-6 text-center flex flex-col items-center justify-center gap-3">
+              <Sparkles className="w-8 h-8 text-text-secondary opacity-45" />
+              <h4 className="font-bold text-sm text-text-primary">No AI matches found yet</h4>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                We will notify you when a similar item appears.
+              </p>
             </div>
-          </div>
+          ) : (
+            <div className="bg-info-ai/10 border-2 border-info-ai rounded-[20px] p-6 overflow-hidden relative animate-fade-in">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Sparkles className="w-16 h-16" />
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="text-info-ai w-5 h-5 fill-current" />
+                  <span className="font-semibold text-sm text-info-ai">
+                    {match.score >= 80 ? 'Strong AI Match' : match.score >= 60 ? 'Possible Match' : 'Weak Match'}
+                  </span>
+                </div>
+                <h4 className="text-xl font-bold text-text-primary mb-2">{match.score}% Confidence</h4>
+                <p className="text-xs text-text-secondary mb-4">
+                  {match.aiReason || 'AI analysis completed.'}
+                </p>
+                <div className="w-full h-40 rounded-xl overflow-hidden mb-3 shadow-inner bg-surface flex items-center justify-center border border-border-default">
+                  {match.foundItem?.images?.[0] || match.lostItem?.images?.[0] ? (
+                    <img
+                      className="w-full h-full object-cover"
+                      src={match.foundItem?.images?.[0] || match.lostItem?.images?.[0]}
+                      alt={match.foundItem?.itemName || 'Item image'}
+                    />
+                  ) : (
+                    <Sparkles className="w-10 h-10 text-info-ai/40" />
+                  )}
+                </div>
+                <div className="mb-4">
+                  <span className="inline-block px-3 py-1 bg-info-ai text-white rounded-lg text-xs font-bold">
+                    Found near {match.foundItem?.locationFound || match.foundItem?.location || 'Campus'}
+                  </span>
+                </div>
+
+                {/* Score Breakdown Section */}
+                {match.breakdown && (
+                  <div className="mt-4 pt-4 border-t border-info-ai/20 space-y-2">
+                    <h5 className="font-bold text-xs text-text-primary">Match Score Breakdown</h5>
+                    <div className="grid grid-cols-2 gap-2 text-[10px] text-text-secondary font-bold">
+                      <div>Object: {match.breakdown.objectScore ?? 0}/30</div>
+                      <div>Description: {match.breakdown.semanticScore ?? 0}/20</div>
+                      <div>Image: {match.missingEvidence?.includes('Image not available') ? 'Not available' : `${match.breakdown.imageScore ?? 0}/15`}</div>
+                      <div>Receipt: {match.missingEvidence?.includes('Receipt not available') ? 'Not available' : `${match.breakdown.ocrScore ?? 0}/10`}</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Why matched checkmarks */}
+                {match.matchedFields && match.matchedFields.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-info-ai/20 space-y-2">
+                    <h5 className="font-bold text-xs text-text-primary">Why AI matched:</h5>
+                    <div className="grid grid-cols-1 gap-1">
+                      {match.matchedFields.slice(0, 4).map((field: string, idx: number) => (
+                        <div key={idx} className="flex items-center gap-1.5 text-xs text-text-secondary">
+                          <span className="text-success font-bold">✓</span>
+                          <span>{field}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* XP Card */}
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-6 shadow-sm border border-border-default">

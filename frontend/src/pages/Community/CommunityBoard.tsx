@@ -27,6 +27,7 @@ interface CommunityItem {
   lockedBy?: string | null;
   lockedUntil?: Date | string | null;
   adminResolved?: boolean;
+  createdAt?: string;
 }
 
 const getCategoryColor = (category: string) => {
@@ -101,7 +102,7 @@ export const CommunityBoard: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const currentUserId = user?._id || (user as any)?.id;
-  const [viewMode, setViewMode] = useState<'found' | 'lost'>('found');
+  const [viewMode, _setViewMode] = useState<'found' | 'lost'>('found');
   const [activeCategory, setActiveCategory] = useState('All Items');
   const [items, setItems] = useState<CommunityItem[]>([]);
   const [lostItems, setLostItems] = useState<any[]>([]);

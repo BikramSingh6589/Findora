@@ -23,7 +23,18 @@ const getMatches = async (req, res, next) => {
             ]
         }).populate('lostItem').populate('foundItem');
         // Filter out matches where populated items are null (deleted)
-        const activeMatches = matches.filter(m => m.lostItem && m.foundItem);
+        const activeMatches = matches.filter(m => m.lostItem && m.foundItem).map(m => {
+            const matchObj = m.toObject();
+            if (matchObj.lostItem) {
+                matchObj.lostItem.title = matchObj.lostItem.itemName;
+                matchObj.lostItem.location = matchObj.lostItem.locationLost;
+            }
+            if (matchObj.foundItem) {
+                matchObj.foundItem.title = matchObj.foundItem.itemName;
+                matchObj.foundItem.location = matchObj.foundItem.locationFound;
+            }
+            return matchObj;
+        });
         (0, response_1.sendSuccess)(res, { matches: activeMatches }, 'AI matches retrieved successfully');
     }
     catch (error) {
@@ -59,7 +70,18 @@ const getItemMatches = async (req, res, next) => {
             ]
         }).populate('lostItem').populate('foundItem');
         // Filter out matches where populated items are null (deleted)
-        const activeMatches = matches.filter(m => m.lostItem && m.foundItem);
+        const activeMatches = matches.filter(m => m.lostItem && m.foundItem).map(m => {
+            const matchObj = m.toObject();
+            if (matchObj.lostItem) {
+                matchObj.lostItem.title = matchObj.lostItem.itemName;
+                matchObj.lostItem.location = matchObj.lostItem.locationLost;
+            }
+            if (matchObj.foundItem) {
+                matchObj.foundItem.title = matchObj.foundItem.itemName;
+                matchObj.foundItem.location = matchObj.foundItem.locationFound;
+            }
+            return matchObj;
+        });
         (0, response_1.sendSuccess)(res, { matches: activeMatches }, 'Item matches retrieved successfully');
     }
     catch (error) {
@@ -93,7 +115,16 @@ const getMatchDetails = async (req, res, next) => {
             (0, response_1.sendError)(res, 'Access denied. You do not own the items associated with this match.', 403);
             return;
         }
-        (0, response_1.sendSuccess)(res, { match }, 'Match details retrieved successfully');
+        const matchObj = match.toObject();
+        if (matchObj.lostItem) {
+            matchObj.lostItem.title = matchObj.lostItem.itemName;
+            matchObj.lostItem.location = matchObj.lostItem.locationLost;
+        }
+        if (matchObj.foundItem) {
+            matchObj.foundItem.title = matchObj.foundItem.itemName;
+            matchObj.foundItem.location = matchObj.foundItem.locationFound;
+        }
+        (0, response_1.sendSuccess)(res, { match: matchObj }, 'Match details retrieved successfully');
     }
     catch (error) {
         next(error);

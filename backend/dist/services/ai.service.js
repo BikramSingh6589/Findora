@@ -93,32 +93,58 @@ const triggerMatching = async (itemId, type) => {
                 if (!reloadedTarget || !reloadedTarget.aiData || !reloadedTarget.aiData?.processed)
                     continue;
             }
+            const descA = sourceItem.description || '';
+            const descB = target.description || '';
+            const nameA = sourceItem.itemName || '';
+            const nameB = target.itemName || '';
+            const cleanTokens = (t) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').split(/\s+/).filter(Boolean);
+            const wordsA = cleanTokens(`${nameA} ${descA}`);
+            const wordsB = cleanTokens(`${nameB} ${descB}`);
+            const primaryObjA = (0, semanticMatching_service_1.detectPrimaryObject)(wordsA);
+            const primaryObjB = (0, semanticMatching_service_1.detectPrimaryObject)(wordsB);
             const matchedFields = [];
-            // 1. Category Score (15 points)
-            let categoryScore = 0;
-            if (sourceItem.category && target.category && String(sourceItem.category).trim().toLowerCase() === String(target.category).trim().toLowerCase()) {
-                categoryScore = 15;
-                matchedFields.push('Same category');
+            const missingEvidence = [];
+            // 1. Main Object Match (30 points)
+            let objectScore = 0;
+            if (primaryObjA && primaryObjB && primaryObjA === primaryObjB) {
+                objectScore = 30;
+                matchedFields.push('Same device type');
+                if (primaryObjA === 'computer')
+                    matchedFields.push('Notebook matched Laptop');
+                else if (primaryObjA === 'charger')
+                    matchedFields.push('Adapter matched Charger');
+                else if (primaryObjA === 'phone')
+                    matchedFields.push('Phone matched Mobile');
+                else if (primaryObjA === 'earphones')
+                    matchedFields.push('Earbuds matched Earphones');
+                else if (primaryObjA === 'bag')
+                    matchedFields.push('Bag matched Backpack');
             }
-            // 2. Brand Score (15 points)
+            else if (!primaryObjA && !primaryObjB) {
+                // generic category check
+                if (sourceItem.category && target.category && String(sourceItem.category).trim().toLowerCase() === String(target.category).trim().toLowerCase()) {
+                    objectScore = 15;
+                    matchedFields.push('Same category');
+                }
+            }
+            const isMismatch = (primaryObjA && primaryObjB && primaryObjA !== primaryObjB);
+            // 2. Brand Match (15 points)
             let brandScore = 0;
             if (sourceItem.brand && target.brand && String(sourceItem.brand).trim().toLowerCase() === String(target.brand).trim().toLowerCase()) {
                 brandScore = 15;
-                matchedFields.push(`Same ${sourceItem.brand} brand`);
+                matchedFields.push(`Same brand ${sourceItem.brand}`);
             }
-            // 3. Color Score (10 points)
+            // 3. Color Match (10 points)
             let colorScore = 0;
             if (sourceItem.color && target.color && String(sourceItem.color).trim().toLowerCase() === String(target.color).trim().toLowerCase()) {
                 colorScore = 10;
-                matchedFields.push(`Same ${sourceItem.color} color`);
+                matchedFields.push(`Same color ${sourceItem.color}`);
             }
-            // 4. Semantic Description Score (20 points) with Jaccard Fallback
+            // 4. Semantic Description Score (20 points)
             let semanticScore = 0;
             let semanticConcepts = [];
-            const descA = sourceItem.description || '';
-            const descB = target.description || '';
             try {
-                const semResult = (0, semanticMatching_service_1.compareSemanticText)(descA, descB);
+                const semResult = (0, semanticMatching_service_1.compareSemanticText)(`${nameA} ${descA}`, `${nameB} ${descB}`);
                 semanticScore = Math.round(semResult.score * 20);
                 semanticConcepts = semResult.matchedConcepts;
             }
@@ -127,60 +153,79 @@ const triggerMatching = async (itemId, type) => {
                 const fallbackSimilarity = (0, textSimilarity_1.textSimilarity)(descA, descB);
                 semanticScore = Math.round(fallbackSimilarity * 20);
             }
-            // Append semantic concepts to matchedFields
             if (semanticScore > 0 && semanticConcepts.length > 0) {
                 matchedFields.push(...semanticConcepts);
             }
-            else if (semanticScore > 0) {
-                matchedFields.push('Similar description');
-            }
-            // 5. OCR Similarity Score (20 points)
-            const ocrA = sourceItem.aiData?.extractedText || '';
-            const ocrB = target.aiData?.extractedText || '';
-            const ocrSimilarity = (0, textSimilarity_1.textSimilarity)(ocrA, ocrB);
-            let ocrScore = Math.round(ocrSimilarity * 20);
-            if (ocrSimilarity > 0) {
-                matchedFields.push('Similar receipt/label text');
-            }
-            // 6. Image Match Score (20 points)
-            let maxImageScore = 0;
-            if (sourceItem.images && sourceItem.images.length > 0 && target.images && target.images.length > 0) {
-                for (const imgA of sourceItem.images) {
-                    for (const imgB of target.images) {
-                        const imgRes = await (0, imageMatching_service_1.compareImages)(imgA, imgB);
-                        if (imgRes.score > maxImageScore) {
-                            maxImageScore = imgRes.score;
-                        }
-                    }
-                }
-            }
-            let imageScore = Math.round(maxImageScore * 20);
-            if (imageScore > 10) {
+            // 5. Image Score (15 points max)
+            const imgA = sourceItem.images?.[0];
+            const imgB = target.images?.[0];
+            const imgRes = await (0, imageMatching_service_1.compareImages)(imgA, imgB);
+            const imageScore = Math.round(imgRes.score); // returns 0-15
+            if (imageScore >= 12) {
                 matchedFields.push('Similar images');
             }
-            // Calculate base score
-            let scoreSum = categoryScore + brandScore + colorScore + semanticScore + ocrScore + imageScore;
-            // 7. Identifier Match Boost (+30 points)
+            if (!imgA || !imgB) {
+                missingEvidence.push('Image not available');
+            }
+            // 6. OCR / Identifier Score (10 points max)
             const sourceIds = sourceItem.aiData?.identifiers || [];
             const targetIds = target.aiData?.identifiers || [];
             const matchingIds = sourceIds.filter((id) => targetIds.includes(id));
+            let ocrScore = 0;
             if (matchingIds.length > 0) {
-                console.log(`[Matching Engine] Identifier matched: ${matchingIds}. Applying +30 boost.`);
-                scoreSum += 30;
+                ocrScore = 10;
                 matchedFields.push(`Matching Identifier (${matchingIds.join(', ')})`);
             }
-            // Cap final score at 100
-            const finalScore = Math.min(Math.round(scoreSum), 100);
+            else {
+                const ocrA = sourceItem.aiData?.extractedText || '';
+                const ocrB = target.aiData?.extractedText || '';
+                const ocrSimilarity = (0, textSimilarity_1.textSimilarity)(ocrA, ocrB);
+                ocrScore = Math.min(Math.round(ocrSimilarity * 2), 2); // max 2 points
+            }
+            if (matchingIds.length === 0) {
+                missingEvidence.push('Receipt not available');
+            }
+            // Calculate initial sum
+            let scoreSum = objectScore + brandScore + colorScore + semanticScore + imageScore + ocrScore;
+            // Normalization and Penalties
+            let finalScore = scoreSum;
+            if (isMismatch) {
+                // Different objects: cap at 30%
+                finalScore = Math.min(finalScore, 30);
+            }
+            else {
+                // Normalization checks
+                const hasStrongImage = (imageScore >= 12);
+                const hasStrongSerial = (ocrScore === 10);
+                const hasStrongSemantic = (semanticScore >= 16);
+                let strongSignalsCount = 0;
+                if (hasStrongImage)
+                    strongSignalsCount++;
+                if (hasStrongSerial)
+                    strongSignalsCount++;
+                if (hasStrongSemantic)
+                    strongSignalsCount++;
+                const sameObject = (primaryObjA && primaryObjB && primaryObjA === primaryObjB);
+                if (finalScore >= 90) {
+                    if (!sameObject || strongSignalsCount < 2) {
+                        // Cap at 89% if missing proof
+                        finalScore = Math.min(finalScore, 89);
+                    }
+                }
+            }
+            finalScore = Math.min(Math.max(Math.round(finalScore), 0), 100);
             // Generate clean aiReason sentence
             let aiReason = 'Both reports share matching characteristics.';
-            if (matchingIds.length > 0) {
+            if (isMismatch) {
+                aiReason = 'Items have different primary object types.';
+            }
+            else if (matchingIds.length > 0) {
                 aiReason = `High confidence match due to matching identifier code: ${matchingIds.join(', ')}.`;
             }
-            else if (categoryScore > 0 && brandScore > 0) {
-                aiReason = `Both reports describe the same ${sourceItem.brand || ''} ${sourceItem.category} device with matching accessories.`;
-            }
-            else if (categoryScore > 0) {
-                aiReason = `Both reports describe items in the same "${sourceItem.category}" category with similar details.`;
+            else {
+                const brandText = sourceItem.brand || target.brand || '';
+                const objectText = primaryObjA || 'item';
+                aiReason = `Both reports describe the same ${brandText} ${objectText} device with matching accessories.`.replace(/\s+/g, ' ');
             }
             const lostId = type === 'lost' ? itemId : target._id;
             const foundId = type === 'found' ? itemId : target._id;
@@ -191,15 +236,17 @@ const triggerMatching = async (itemId, type) => {
                     score: finalScore,
                     matchedFields: [...new Set(matchedFields)],
                     aiReason,
+                    missingEvidence,
                     breakdown: {
-                        categoryScore,
+                        objectScore,
                         brandScore,
                         colorScore,
                         semanticScore,
-                        ocrScore,
                         imageScore,
-                        textScore: semanticScore, // fallback compatibility
-                        metadataScore: categoryScore + brandScore + colorScore // fallback compatibility
+                        ocrScore,
+                        categoryScore: objectScore, // legacy fallback
+                        textScore: semanticScore, // legacy fallback
+                        metadataScore: brandScore + colorScore // legacy fallback
                     }
                 };
                 const existing = await AIMatch_1.default.findOne({ lostItem: lostId, foundItem: foundId });
@@ -222,6 +269,7 @@ const triggerMatching = async (itemId, type) => {
                     existing.score = finalScore;
                     existing.matchedFields = matchData.matchedFields;
                     existing.aiReason = aiReason;
+                    existing.missingEvidence = missingEvidence;
                     existing.breakdown = matchData.breakdown;
                     await existing.save();
                 }

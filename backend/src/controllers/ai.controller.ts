@@ -23,7 +23,18 @@ export const getMatches = async (req: AuthenticatedRequest, res: Response, next:
     }).populate('lostItem').populate('foundItem');
 
     // Filter out matches where populated items are null (deleted)
-    const activeMatches = matches.filter(m => m.lostItem && m.foundItem);
+    const activeMatches = matches.filter(m => m.lostItem && m.foundItem).map(m => {
+      const matchObj = m.toObject();
+      if (matchObj.lostItem) {
+        (matchObj.lostItem as any).title = (matchObj.lostItem as any).itemName;
+        (matchObj.lostItem as any).location = (matchObj.lostItem as any).locationLost;
+      }
+      if (matchObj.foundItem) {
+        (matchObj.foundItem as any).title = (matchObj.foundItem as any).itemName;
+        (matchObj.foundItem as any).location = (matchObj.foundItem as any).locationFound;
+      }
+      return matchObj;
+    });
 
     sendSuccess(res, { matches: activeMatches }, 'AI matches retrieved successfully');
   } catch (error) {
@@ -66,7 +77,18 @@ export const getItemMatches = async (req: AuthenticatedRequest, res: Response, n
     }).populate('lostItem').populate('foundItem');
 
     // Filter out matches where populated items are null (deleted)
-    const activeMatches = matches.filter(m => m.lostItem && m.foundItem);
+    const activeMatches = matches.filter(m => m.lostItem && m.foundItem).map(m => {
+      const matchObj = m.toObject();
+      if (matchObj.lostItem) {
+        (matchObj.lostItem as any).title = (matchObj.lostItem as any).itemName;
+        (matchObj.lostItem as any).location = (matchObj.lostItem as any).locationLost;
+      }
+      if (matchObj.foundItem) {
+        (matchObj.foundItem as any).title = (matchObj.foundItem as any).itemName;
+        (matchObj.foundItem as any).location = (matchObj.foundItem as any).locationFound;
+      }
+      return matchObj;
+    });
 
     sendSuccess(res, { matches: activeMatches }, 'Item matches retrieved successfully');
   } catch (error) {
@@ -107,7 +129,17 @@ export const getMatchDetails = async (req: AuthenticatedRequest, res: Response, 
       return;
     }
 
-    sendSuccess(res, { match }, 'Match details retrieved successfully');
+    const matchObj = match.toObject();
+    if (matchObj.lostItem) {
+      (matchObj.lostItem as any).title = (matchObj.lostItem as any).itemName;
+      (matchObj.lostItem as any).location = (matchObj.lostItem as any).locationLost;
+    }
+    if (matchObj.foundItem) {
+      (matchObj.foundItem as any).title = (matchObj.foundItem as any).itemName;
+      (matchObj.foundItem as any).location = (matchObj.foundItem as any).locationFound;
+    }
+
+    sendSuccess(res, { match: matchObj }, 'Match details retrieved successfully');
   } catch (error) {
     next(error);
   }

@@ -73,7 +73,7 @@ export const AIMatches: React.FC = () => {
   };
 
   const getConfidenceLevel = (score: number) => {
-    if (score >= 80) return { text: 'Strong AI Match', color: 'text-success border-success/30 bg-success/10' };
+    if (score >= 80) return { text: 'Strong Match', color: 'text-success border-success/30 bg-success/10' };
     if (score >= 60) return { text: 'Possible Match', color: 'text-warning border-warning/30 bg-warning/10' };
     return { text: 'Weak Match', color: 'text-danger border-danger/30 bg-danger/10' };
   };
@@ -204,7 +204,7 @@ export const AIMatches: React.FC = () => {
               const foundImg = matchItem.images?.[0] || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=400&q=80';
 
               const breakdown = match.breakdown || {
-                categoryScore: 0,
+                objectScore: 0,
                 brandScore: 0,
                 colorScore: 0,
                 semanticScore: 0,
@@ -212,13 +212,15 @@ export const AIMatches: React.FC = () => {
                 imageScore: 0
               };
 
+              const missingEvidence = match.missingEvidence || [];
+
               const breakdownItems = [
-                { label: 'Category Match', value: breakdown.categoryScore, max: 15, color: 'bg-success' },
-                { label: 'Brand Match', value: breakdown.brandScore, max: 15, color: 'bg-primary' },
-                { label: 'Color Match', value: breakdown.colorScore, max: 10, color: 'bg-warning' },
-                { label: 'Description (Semantic)', value: breakdown.semanticScore, max: 20, color: 'bg-info-ai' },
-                { label: 'Receipt Match (OCR)', value: breakdown.ocrScore, max: 20, color: 'bg-[#8455ef]' },
-                { label: 'Image Match', value: breakdown.imageScore, max: 20, color: 'bg-danger' }
+                { label: 'Object Match', value: breakdown.objectScore ?? 0, max: 30, color: 'bg-success', isAvailable: true },
+                { label: 'Brand Match', value: breakdown.brandScore ?? 0, max: 15, color: 'bg-primary', isAvailable: true },
+                { label: 'Color Match', value: breakdown.colorScore ?? 0, max: 10, color: 'bg-warning', isAvailable: true },
+                { label: 'Description (Semantic)', value: breakdown.semanticScore ?? 0, max: 20, color: 'bg-info-ai', isAvailable: true },
+                { label: 'Image Match', value: breakdown.imageScore ?? 0, max: 15, color: 'bg-danger', isAvailable: !missingEvidence.includes('Image not available') },
+                { label: 'Receipt Match (OCR)', value: breakdown.ocrScore ?? 0, max: 10, color: 'bg-[#8455ef]', isAvailable: !missingEvidence.includes('Receipt not available') }
               ];
 
               const conf = getConfidenceLevel(match.score);
@@ -262,17 +264,17 @@ export const AIMatches: React.FC = () => {
                       <div className="p-4 bg-surface-container-low rounded-2xl space-y-3">
                         <h4 className="font-bold text-xs text-text-primary mb-1">Match Score Breakdown</h4>
                         {breakdownItems.map(s => {
-                          const percent = s.max > 0 ? Math.round((s.value / s.max) * 100) : 0;
+                          const percent = s.isAvailable ? (s.max > 0 ? Math.round((s.value / s.max) * 100) : 0) : 0;
                           return (
                             <div key={s.label}>
                               <div className="flex justify-between items-center text-xs mb-1">
                                 <span className="text-text-secondary font-medium">{s.label}</span>
-                                <span className={`font-bold ${s.color.replace('bg-', 'text-')}`}>
-                                  {s.value}/{s.max}
+                                <span className={`font-bold ${s.isAvailable ? s.color.replace('bg-', 'text-') : 'text-text-secondary'}`}>
+                                  {s.isAvailable ? `${s.value}/${s.max}` : 'Not available'}
                                 </span>
                               </div>
                               <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                                <div className={`h-full ${s.color} rounded-full transition-all duration-700`} style={{ width: `${percent}%` }}></div>
+                                <div className={`h-full ${s.isAvailable ? s.color : 'bg-border-default/40'} rounded-full transition-all duration-700`} style={{ width: `${percent}%` }}></div>
                               </div>
                             </div>
                           );
@@ -326,6 +328,21 @@ export const AIMatches: React.FC = () => {
                                 "{match.aiReason}"
                               </p>
                             )}
+                          </div>
+                        )}
+
+                        {/* Missing Evidence Section */}
+                        {missingEvidence && missingEvidence.length > 0 && (
+                          <div className="p-4 bg-warning/5 rounded-2xl mt-3 border border-warning/15">
+                            <h4 className="font-bold text-xs text-warning mb-2">Missing Evidence</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {missingEvidence.map((ev: string, idx: number) => (
+                                <div key={idx} className="flex items-center gap-1.5 text-xs text-warning font-medium">
+                                  <span>⚠</span>
+                                  <span>{ev}</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>

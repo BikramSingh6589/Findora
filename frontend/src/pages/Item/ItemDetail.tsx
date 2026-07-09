@@ -84,7 +84,6 @@ export const ItemDetail: React.FC = () => {
 
   const [claimId, setClaimId] = useState<string | null>(null);
   const isFinder = item?.finder?._id === currentUserId || item?.finder === currentUserId;
-  const isOwner = item?.owner?._id === currentUserId || item?.owner === currentUserId;
   const isFoundItem = item?.itemType === 'found' || !!item?.finder;
   const isLostItem = item?.itemType === 'lost' || !!item?.owner;
 
@@ -242,35 +241,61 @@ export const ItemDetail: React.FC = () => {
               </div>
  
               {/* AI Confidence Score */}
-              {match && (
-                <div className="bg-info-ai/10 rounded-2xl p-4 mb-8 border border-info-ai/20">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-info-ai fill-current" />
-                      <span className="text-sm font-bold text-info-ai">
-                        {match.score >= 80 ? 'Strong AI Match' : match.score >= 60 ? 'Possible Match' : 'Weak Match'}
-                      </span>
+              {match && (() => {
+                const missingEvidence = match.missingEvidence || [];
+                return (
+                  <div className="bg-info-ai/10 rounded-2xl p-4 mb-8 border border-info-ai/20 animate-fade-in">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-info-ai fill-current" />
+                        <span className="text-sm font-bold text-info-ai">
+                          {match.score >= 80 ? 'Strong Match' : match.score >= 60 ? 'Possible Match' : 'Weak Match'}
+                        </span>
+                      </div>
+                      <span className="text-sm font-bold text-info-ai">{match.score}%</span>
                     </div>
-                    <span className="text-sm font-bold text-info-ai">{match.score}%</span>
-                  </div>
-                  <div className="w-full bg-info-ai/20 h-2 rounded-full overflow-hidden">
-                    <div className="bg-info-ai h-full rounded-full transition-all duration-1000" style={{ width: `${match.score}%` }}></div>
-                  </div>
-                  {match.aiReason && (
-                    <p className="text-xs text-info-ai/85 mt-2 font-medium italic">"{match.aiReason}"</p>
-                  )}
-                  {match.breakdown && (
-                    <div className="mt-3 pt-3 border-t border-info-ai/20 grid grid-cols-2 gap-1 text-[10px] text-info-ai/80 font-bold">
-                      <div>Category: {match.breakdown.categoryScore}/15</div>
-                      <div>Brand: {match.breakdown.brandScore}/15</div>
-                      <div>Color: {match.breakdown.colorScore}/10</div>
-                      <div>Semantic: {match.breakdown.semanticScore}/20</div>
-                      <div>Image: {match.breakdown.imageScore}/20</div>
-                      <div>OCR/Receipt: {match.breakdown.ocrScore}/20</div>
+                    <div className="w-full bg-info-ai/20 h-2 rounded-full overflow-hidden">
+                      <div className="bg-info-ai h-full rounded-full transition-all duration-1000" style={{ width: `${match.score}%` }}></div>
                     </div>
-                  )}
-                </div>
-              )}
+                    {match.aiReason && (
+                      <p className="text-xs text-info-ai/85 mt-2 font-medium italic">"{match.aiReason}"</p>
+                    )}
+
+                    {/* Missing Evidence Section */}
+                    {missingEvidence.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-info-ai/20 space-y-1">
+                        <span className="text-[10px] uppercase font-bold text-warning tracking-wider">Missing Evidence</span>
+                        <div className="grid grid-cols-1 gap-1">
+                          {missingEvidence.map((ev: string, idx: number) => (
+                            <div key={idx} className="flex items-center gap-1 text-[10px] text-warning font-semibold">
+                              <span>⚠</span>
+                              <span>{ev}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {match.breakdown && (
+                      <div className="mt-3 pt-3 border-t border-info-ai/20 space-y-2">
+                        <span className="text-[10px] uppercase font-bold text-info-ai/80 tracking-wider">Score Breakdown</span>
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[10px] text-info-ai/80 font-bold">
+                          <div>Object: {match.breakdown.objectScore ?? 0}/30</div>
+                          <div>Brand: {match.breakdown.brandScore ?? 0}/15</div>
+                          <div>Color: {match.breakdown.colorScore ?? 0}/10</div>
+                          <div>Semantic: {match.breakdown.semanticScore ?? 0}/20</div>
+                          <div>
+                            Image: {missingEvidence.includes('Image not available') ? 'Not available' : `${match.breakdown.imageScore ?? 0}/15`}
+                          </div>
+                          <div>
+                            Receipt: {missingEvidence.includes('Receipt not available') ? 'Not available' : `${match.breakdown.ocrScore ?? 0}/10`}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
  
               {/* Actions */}
               <div className="flex flex-col gap-3">
