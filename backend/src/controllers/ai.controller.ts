@@ -4,7 +4,7 @@ import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import AIMatch from '../models/AIMatch';
 import LostItem from '../models/LostItem';
 import FoundItem from '../models/FoundItem';
-import { triggerMatching } from '../services/ai.service';
+import { processAIData } from '../services/ai.service';
 import { sendSuccess, sendError } from '../utils/response';
 
 export const getMatches = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -174,7 +174,16 @@ export const triggerManualMatching = async (req: AuthenticatedRequest, res: Resp
       return;
     }
 
-    const matchCount = await triggerMatching(itemId, itemType as 'lost' | 'found');
+    await processAIData(itemId, itemType as 'lost' | 'found');
+
+    const matchCount = await AIMatch.countDocuments({
+      $or: [
+        { lostItem: itemId },
+        { foundItem: itemId }
+      ],
+      status: { $ne: 'dismissed' }
+    });
+
     sendSuccess(res, { matchCount }, 'Matching workflow triggered successfully');
   } catch (error) {
     next(error);

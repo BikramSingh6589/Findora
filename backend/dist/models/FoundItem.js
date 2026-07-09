@@ -52,6 +52,12 @@ const FoundItemSchema = new mongoose_1.Schema({
     lockedUntil: { type: Date, default: null },
     adminResolved: { type: Boolean, default: false },
     linkedLostItem: { type: mongoose_1.Schema.Types.ObjectId, ref: 'LostItem' },
+    aiData: {
+        extractedText: { type: String, default: '' },
+        keywords: { type: [String], default: [] },
+        identifiers: { type: [String], default: [] },
+        processed: { type: Boolean, default: false }
+    },
 }, { timestamps: true });
 // Create text index for search query support
 FoundItemSchema.index({ itemName: 'text', description: 'text' });

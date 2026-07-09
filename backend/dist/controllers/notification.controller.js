@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteNotification = exports.markAllAsRead = exports.markAsRead = exports.getNotifications = void 0;
+exports.deleteAllNotifications = exports.deleteNotification = exports.markAllAsRead = exports.markAsRead = exports.getNotifications = void 0;
 const Notification_1 = __importDefault(require("../models/Notification"));
 const response_1 = require("../utils/response");
 const getNotifications = async (req, res, next) => {
@@ -61,10 +61,20 @@ const deleteNotification = async (req, res, next) => {
             (0, response_1.sendError)(res, 'Notification not found', 404);
             return;
         }
-        (0, response_1.sendSuccess)(res, {}, 'Notification deleted successfully');
+        (0, response_1.sendSuccess)(res, {}, 'Notification deleted');
     }
     catch (error) {
         next(error);
     }
 };
 exports.deleteNotification = deleteNotification;
+const deleteAllNotifications = async (req, res, next) => {
+    try {
+        await Notification_1.default.deleteMany({ recipient: req.user._id });
+        (0, response_1.sendSuccess)(res, {}, 'All notifications deleted');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.deleteAllNotifications = deleteAllNotifications;

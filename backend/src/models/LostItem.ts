@@ -17,6 +17,7 @@ const LostItemSchema = new Schema({
   aiData: {
     extractedText:  { type: String, default: '' },
     keywords:       { type: [String], default: [] },
+    identifiers:    { type: [String], default: [] },
     processed:      { type: Boolean, default: false }
   },
 }, { timestamps: true });

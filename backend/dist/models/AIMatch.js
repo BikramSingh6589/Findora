@@ -39,5 +39,20 @@ const AIMatchSchema = new mongoose_1.Schema({
     foundItem: { type: mongoose_1.Schema.Types.ObjectId, ref: 'FoundItem', required: true },
     score: { type: Number, required: true },
     status: { type: String, enum: ['new', 'reviewed', 'dismissed'], default: 'new' },
+    matchedFields: { type: [String], default: [] },
+    aiReason: { type: String, default: '' },
+    breakdown: {
+        categoryScore: { type: Number, default: 0 },
+        brandScore: { type: Number, default: 0 },
+        colorScore: { type: Number, default: 0 },
+        semanticScore: { type: Number, default: 0 },
+        ocrScore: { type: Number, default: 0 },
+        imageScore: { type: Number, default: 0 },
+        textScore: { type: Number, default: 0 },
+        metadataScore: { type: Number, default: 0 }
+    },
 }, { timestamps: true });
+// Prevent duplicate matches and optimize queries
+AIMatchSchema.index({ lostItem: 1, foundItem: 1 }, { unique: true });
+AIMatchSchema.index({ foundItem: 1 });
 exports.default = mongoose_1.default.model('AIMatch', AIMatchSchema);

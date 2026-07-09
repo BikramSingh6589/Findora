@@ -17,7 +17,6 @@ export const AIMatches: React.FC = () => {
   const [matches, setMatches] = useState<any[]>([]);
   const [loadingItems, setLoadingItems] = useState(true);
   const [loadingMatches, setLoadingMatches] = useState(false);
-  const [dismissed, setDismissed] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -51,7 +50,9 @@ export const AIMatches: React.FC = () => {
         setLoadingMatches(true);
         const res = await axios.get(`${API_BASE}/api/ai/matches/${selectedItemId}`);
         if (res.data && res.data.success) {
-          setMatches(res.data.matches || []);
+          // Filter out dismissed matches
+          const activeMatches = (res.data.matches || []).filter((m: any) => m.status !== 'dismissed');
+          setMatches(activeMatches);
         }
       } catch (err) {
         console.error('Error fetching item matches', err);
@@ -62,12 +63,21 @@ export const AIMatches: React.FC = () => {
     fetchItemMatches();
   }, [selectedItemId]);
 
-  const confidenceColor = (c: number) =>
-    c >= 90 ? 'text-info-ai border-info-ai/30 bg-info-ai/10'
-      : c >= 70 ? 'text-warning border-warning/30 bg-warning/10'
-      : 'text-text-secondary border-border-default bg-surface-container-low';
+  const dismissMatch = async (matchId: string) => {
+    try {
+      await axios.put(`${API_BASE}/api/ai/matches/${matchId}/status`, { status: 'dismissed' });
+      setMatches(prev => prev.filter(m => m._id !== matchId));
+    } catch (err) {
+      console.error('Error dismissing match', err);
+    }
+  };
 
-  const visibleMatches = matches.filter(m => !dismissed.includes(m._id));
+  const getConfidenceLevel = (score: number) => {
+    if (score >= 80) return { text: 'Strong AI Match', color: 'text-success border-success/30 bg-success/10' };
+    if (score >= 60) return { text: 'Possible Match', color: 'text-warning border-warning/30 bg-warning/10' };
+    return { text: 'Weak Match', color: 'text-danger border-danger/30 bg-danger/10' };
+  };
+
   const activeItem = myItems.find(i => (i._id || i.id) === selectedItemId);
   const isSelectedLost = activeItem?.type === 'lost';
 
@@ -84,7 +94,7 @@ export const AIMatches: React.FC = () => {
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-info-ai/10 text-info-ai rounded-full border border-info-ai/20 self-start md:self-auto whitespace-nowrap">
           <Sparkles className="w-4 h-4 fill-current animate-pulse" />
-          <span className="font-bold text-sm">{visibleMatches.length} Matches Found</span>
+          <span className="font-bold text-sm">{matches.length} Matches Found</span>
         </div>
       </section>
 
@@ -164,34 +174,63 @@ export const AIMatches: React.FC = () => {
         <section className="lg:col-span-9 space-y-6">
           {loadingMatches ? (
             <p className="text-center text-text-secondary py-12">Loading matching results...</p>
-          ) : visibleMatches.length === 0 ? (
-            <div className="p-12 text-center bg-surface-container-lowest dark:bg-surface-container rounded-[32px] border border-border-default">
+          ) : activeItem && activeItem.aiData && !activeItem.aiData.processed ? (
+            <div className="p-12 text-center bg-surface-container-lowest dark:bg-surface-container rounded-[32px] border border-border-default flex flex-col items-center justify-center gap-4 shadow-sm">
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+              <h3 className="text-lg font-bold text-text-primary">AI is analyzing...</h3>
+              <p className="text-sm text-text-secondary max-w-sm">We are analyzing your item's parameters to generate smart matches.</p>
+              <div className="flex flex-wrap gap-4 justify-center text-xs font-semibold text-text-secondary mt-2 bg-surface-container-low px-4 py-2 rounded-full border border-border-default">
+                <span className="flex items-center gap-1 text-success">✓ Description</span>
+                <span className="flex items-center gap-1 text-success">✓ Images</span>
+                <span className="flex items-center gap-1 text-success">✓ Receipts</span>
+              </div>
+            </div>
+          ) : matches.length === 0 ? (
+            <div className="p-12 text-center bg-surface-container-lowest dark:bg-surface-container rounded-[32px] border border-border-default shadow-sm">
               <AlertCircle className="w-12 h-12 text-text-secondary mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-text-primary">No Smart Matches</h3>
-              <p className="text-sm text-text-secondary mt-1">Our AI is continuously parsing listings. We will alert you immediately once a match is registered.</p>
+              <h3 className="text-lg font-bold text-text-primary">AI is still searching</h3>
+              <p className="text-sm text-text-secondary mt-2 leading-relaxed">
+                No similar item found yet.
+                <br />
+                You will be notified automatically.
+              </p>
             </div>
           ) : (
-            visibleMatches.map((match: any) => {
+            matches.map((match: any) => {
               const matchItem = isSelectedLost ? match.foundItem : match.lostItem;
               if (!matchItem) return null;
               
               const yourImg = activeItem?.images?.[0] || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80';
               const foundImg = matchItem.images?.[0] || 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=400&q=80';
 
-              const matchScores = [
-                { label: 'Category Match', value: activeItem?.category === matchItem.category ? 100 : 0, color: 'bg-success' },
-                { label: 'Color Similarity', value: activeItem?.color?.toLowerCase() === matchItem.color?.toLowerCase() ? 100 : 0, color: 'bg-primary' },
-                { label: 'AI Text Match Score', value: match.score, color: 'bg-info-ai' }
+              const breakdown = match.breakdown || {
+                categoryScore: 0,
+                brandScore: 0,
+                colorScore: 0,
+                semanticScore: 0,
+                ocrScore: 0,
+                imageScore: 0
+              };
+
+              const breakdownItems = [
+                { label: 'Category Match', value: breakdown.categoryScore, max: 15, color: 'bg-success' },
+                { label: 'Brand Match', value: breakdown.brandScore, max: 15, color: 'bg-primary' },
+                { label: 'Color Match', value: breakdown.colorScore, max: 10, color: 'bg-warning' },
+                { label: 'Description (Semantic)', value: breakdown.semanticScore, max: 20, color: 'bg-info-ai' },
+                { label: 'Receipt Match (OCR)', value: breakdown.ocrScore, max: 20, color: 'bg-[#8455ef]' },
+                { label: 'Image Match', value: breakdown.imageScore, max: 20, color: 'bg-danger' }
               ];
+
+              const conf = getConfidenceLevel(match.score);
 
               return (
                 <div key={match._id} className="bg-surface-container-lowest dark:bg-surface-container rounded-[32px] p-6 shadow-sm border border-border-default hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
                   
                   {/* AI Badge */}
                   <div className="absolute top-0 right-0 p-4">
-                    <div className={`px-4 py-2 rounded-full border flex items-center gap-2 text-sm font-bold ${confidenceColor(match.score)}`}>
+                    <div className={`px-4 py-2 rounded-full border flex items-center gap-2 text-sm font-bold ${conf.color}`}>
                       <Sparkles className="w-4 h-4 fill-current animate-pulse" />
-                      {match.score}% Match
+                      {conf.text} ({match.score}%)
                     </div>
                   </div>
 
@@ -219,19 +258,25 @@ export const AIMatches: React.FC = () => {
                         </div>
                       </div>
                       
-                      {/* Score Bars */}
+                      {/* Score Breakdown Card */}
                       <div className="p-4 bg-surface-container-low rounded-2xl space-y-3">
-                        {matchScores.map(s => (
-                          <div key={s.label}>
-                            <div className="flex justify-between items-center text-xs mb-1">
-                              <span className="text-text-secondary font-medium">{s.label}</span>
-                              <span className={`font-bold ${s.color.replace('bg-', 'text-')}`}>{s.value}%</span>
+                        <h4 className="font-bold text-xs text-text-primary mb-1">Match Score Breakdown</h4>
+                        {breakdownItems.map(s => {
+                          const percent = s.max > 0 ? Math.round((s.value / s.max) * 100) : 0;
+                          return (
+                            <div key={s.label}>
+                              <div className="flex justify-between items-center text-xs mb-1">
+                                <span className="text-text-secondary font-medium">{s.label}</span>
+                                <span className={`font-bold ${s.color.replace('bg-', 'text-')}`}>
+                                  {s.value}/{s.max}
+                                </span>
+                              </div>
+                              <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                                <div className={`h-full ${s.color} rounded-full transition-all duration-700`} style={{ width: `${percent}%` }}></div>
+                              </div>
                             </div>
-                            <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                              <div className={`h-full ${s.color} rounded-full transition-all duration-700`} style={{ width: `${s.value}%` }}></div>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -263,33 +308,60 @@ export const AIMatches: React.FC = () => {
                             <p className="leading-relaxed">{matchItem.description || 'No description available.'}</p>
                           </div>
                         </div>
+
+                        {/* AI Explanation Section */}
+                        {match.matchedFields && match.matchedFields.length > 0 && (
+                          <div className="p-4 bg-surface-container-low rounded-2xl mt-4">
+                            <h4 className="font-bold text-xs text-text-primary mb-2">Why AI Matched</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {match.matchedFields.map((field: string, idx: number) => (
+                                <div key={idx} className="flex items-center gap-1.5 text-xs text-text-secondary">
+                                  <span className="text-success font-bold">✓</span>
+                                  <span>{field}</span>
+                                </div>
+                              ))}
+                            </div>
+                            {match.aiReason && (
+                              <p className="text-xs text-text-secondary italic mt-3 border-t border-border-default pt-2">
+                                "{match.aiReason}"
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-border-default">
+                      <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-border-default mt-4">
                         {isSelectedLost ? (
                           <button
                             onClick={() => navigate(`/claim/${matchItem._id || matchItem.id}`)}
-                            className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold rounded-2xl shadow-md hover:scale-[1.02] active:scale-95 transition-all text-sm"
+                            className="flex-grow flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold rounded-2xl shadow-md hover:scale-[1.02] active:scale-95 transition-all text-sm"
                           >
-                            <CheckCircle2 className="w-5 h-5" />
-                            This is mine! (Claim)
+                            <CheckCircle2 className="w-4 h-4" />
+                            This is my item
                           </button>
                         ) : (
                           <button
-                            onClick={() => navigate(`/chat/${matchItem._id || matchItem.id}`)}
-                            className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold rounded-2xl shadow-md hover:scale-[1.02] active:scale-95 transition-all text-sm"
+                            onClick={() => navigate(`/chat/finder/${matchItem._id || matchItem.id}`)}
+                            className="flex-grow flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold rounded-2xl shadow-md hover:scale-[1.02] active:scale-95 transition-all text-sm"
                           >
-                            <MessageCircle className="w-5 h-5" />
+                            <MessageCircle className="w-4 h-4" />
                             Chat with Owner
                           </button>
                         )}
                         <button
-                          onClick={() => setDismissed(d => [...d, match._id])}
-                          className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-border-default text-text-secondary font-bold rounded-2xl hover:bg-surface-container transition-all text-sm"
+                          onClick={() => dismissMatch(match._id)}
+                          className="flex-1 flex items-center justify-center gap-2 py-3 border border-border-default text-text-secondary font-bold rounded-2xl hover:bg-surface-container transition-all text-sm"
                         >
-                          <X className="w-5 h-5" />
-                          Not a match
+                          <X className="w-4 h-4" />
+                          Not my item
+                        </button>
+                        <button
+                          onClick={() => navigate(`/item/${matchItem._id || matchItem.id}`)}
+                          className="flex-1 flex items-center justify-center gap-2 py-3 border border-border-default text-primary font-bold rounded-2xl hover:bg-surface-container transition-all text-sm"
+                        >
+                          <Info className="w-4 h-4" />
+                          View details
                         </button>
                       </div>
                     </div>
@@ -310,10 +382,10 @@ export const AIMatches: React.FC = () => {
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { value: 'Category', label: 'Weight: 20%' },
+                    { value: 'Category', label: 'Weight: 15%' },
                     { value: 'Brand', label: 'Weight: 15%' },
                     { value: 'Color', label: 'Weight: 10%' },
-                    { value: 'Text', label: 'Weight: 55%' },
+                    { value: 'Semantic', label: 'Weight: 20%' },
                   ].map(stat => (
                     <div key={stat.label} className="bg-surface-container-lowest/10 dark:bg-surface-container/10 backdrop-blur-md p-3 rounded-2xl text-center">
                       <p className="text-base font-bold">{stat.value}</p>

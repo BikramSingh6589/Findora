@@ -8,10 +8,14 @@ export interface IAIMatch extends Document {
   matchedFields: string[];
   aiReason: string;
   breakdown: {
-    textScore: number;
-    imageScore: number;
+    categoryScore: number;
+    brandScore: number;
+    colorScore: number;
+    semanticScore: number;
     ocrScore: number;
-    metadataScore: number;
+    imageScore: number;
+    textScore?: number;
+    metadataScore?: number;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -25,10 +29,14 @@ const AIMatchSchema = new Schema({
   matchedFields: { type: [String], default: [] },
   aiReason:      { type: String, default: '' },
   breakdown: {
-    textScore:     { type: Number, default: 0 },
-    imageScore:    { type: Number, default: 0 },
+    categoryScore: { type: Number, default: 0 },
+    brandScore:    { type: Number, default: 0 },
+    colorScore:    { type: Number, default: 0 },
+    semanticScore: { type: Number, default: 0 },
     ocrScore:      { type: Number, default: 0 },
-    metadataScore: { type: Number, default: 0 },
+    imageScore:    { type: Number, default: 0 },
+    textScore:     { type: Number, default: 0 },
+    metadataScore: { type: Number, default: 0 }
   },
 }, { timestamps: true });
 

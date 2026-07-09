@@ -57,6 +57,13 @@ router.post('/:id/reject', admin_middleware_1.adminOnly, (0, validate_middleware
 router.post('/:id/resolve', claim_controller_1.resolveClaim);
 router.post('/:id/mediate', claim_controller_1.mediateClaim);
 router.post('/:id/mediation-resolve', admin_middleware_1.adminOnly, claim_controller_1.mediationResolve);
+// Admin Handover Routes
+const claim_controller_2 = require("../controllers/claim.controller");
+router.post('/:id/finder-handover', claim_controller_2.finderHandoverChoice);
+router.post('/:id/admin-verify-code', admin_middleware_1.adminOnly, claim_controller_2.adminVerifyDropoffCode);
+router.post('/:id/admin-verify-location', admin_middleware_1.adminOnly, claim_controller_2.adminVerifyLocation);
+router.post('/:id/admin-notify-location', admin_middleware_1.adminOnly, claim_controller_2.adminNotifyClaimantLocation);
+router.post('/:id/claimant-verify-location', claim_controller_2.claimantVerifyLocation);
 // Support generic PUT /api/claims/:id for flexibility with frontend integration
 router.put('/:id', admin_middleware_1.adminOnly, (0, validate_middleware_1.validateRequest)(adminDecisionSchema), async (req, res, next) => {
     const { status, remarks, reason } = req.body;

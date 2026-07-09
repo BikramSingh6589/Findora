@@ -19,6 +19,29 @@ export const ItemDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [match, setMatch] = useState<any | null>(null);
+
+  useEffect(() => {
+    const fetchItemMatch = async () => {
+      if (!itemId || !user) return;
+      try {
+        const res = await axios.get(`${API_BASE}/api/ai/matches`);
+        if (res.data && res.data.success && res.data.matches) {
+          const foundMatch = res.data.matches.find(
+            (m: any) =>
+              (m.lostItem?._id === itemId || m.lostItem === itemId) ||
+              (m.foundItem?._id === itemId || m.foundItem === itemId)
+          );
+          if (foundMatch) {
+            setMatch(foundMatch);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching match for details page', err);
+      }
+    };
+    fetchItemMatch();
+  }, [itemId, user]);
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -219,19 +242,35 @@ export const ItemDetail: React.FC = () => {
               </div>
  
               {/* AI Confidence Score */}
-              <div className="bg-info-ai/10 rounded-2xl p-4 mb-8 border border-info-ai/20">
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-info-ai fill-current" />
-                    <span className="text-sm font-bold text-info-ai">AI Match Confidence</span>
+              {match && (
+                <div className="bg-info-ai/10 rounded-2xl p-4 mb-8 border border-info-ai/20">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-info-ai fill-current" />
+                      <span className="text-sm font-bold text-info-ai">
+                        {match.score >= 80 ? 'Strong AI Match' : match.score >= 60 ? 'Possible Match' : 'Weak Match'}
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-info-ai">{match.score}%</span>
                   </div>
-                  <span className="text-sm font-bold text-info-ai">95%</span>
+                  <div className="w-full bg-info-ai/20 h-2 rounded-full overflow-hidden">
+                    <div className="bg-info-ai h-full rounded-full transition-all duration-1000" style={{ width: `${match.score}%` }}></div>
+                  </div>
+                  {match.aiReason && (
+                    <p className="text-xs text-info-ai/85 mt-2 font-medium italic">"{match.aiReason}"</p>
+                  )}
+                  {match.breakdown && (
+                    <div className="mt-3 pt-3 border-t border-info-ai/20 grid grid-cols-2 gap-1 text-[10px] text-info-ai/80 font-bold">
+                      <div>Category: {match.breakdown.categoryScore}/15</div>
+                      <div>Brand: {match.breakdown.brandScore}/15</div>
+                      <div>Color: {match.breakdown.colorScore}/10</div>
+                      <div>Semantic: {match.breakdown.semanticScore}/20</div>
+                      <div>Image: {match.breakdown.imageScore}/20</div>
+                      <div>OCR/Receipt: {match.breakdown.ocrScore}/20</div>
+                    </div>
+                  )}
                 </div>
-                <div className="w-full bg-info-ai/20 h-2 rounded-full overflow-hidden">
-                  <div className="bg-info-ai h-full rounded-full w-[95%]"></div>
-                </div>
-                <p className="text-xs text-info-ai/80 mt-2 font-medium">Based on similarity with reported lost items.</p>
-              </div>
+              )}
  
               {/* Actions */}
               <div className="flex flex-col gap-3">

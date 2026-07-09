@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import LostItem from '../models/LostItem';
 import { uploadImage } from '../services/cloudinary.service';
-import { triggerMatching } from '../services/ai.service';
+import { processAIData } from '../services/ai.service';
 import { addXP } from '../services/reputation.service';
 import { sendSuccess, sendError } from '../utils/response';
 import { getPagination } from '../utils/pagination';
@@ -18,8 +18,8 @@ export const createLostItem = async (req: AuthenticatedRequest, res: Response, n
       owner: req.user._id,
     });
 
-    // Trigger AI matching asynchronously (do not await)
-    triggerMatching(item._id.toString(), 'lost').catch(console.error);
+    // Trigger AI processing & matching asynchronously (do not await)
+    processAIData(item._id.toString(), 'lost').catch(console.error);
 
     // Award XP for reporting a lost item
     await addXP(req.user._id, 10);

@@ -19,8 +19,8 @@ const createLostItem = async (req, res, next) => {
             images: imageUrls,
             owner: req.user._id,
         });
-        // Trigger AI matching asynchronously (do not await)
-        (0, ai_service_1.triggerMatching)(item._id.toString(), 'lost').catch(console.error);
+        // Trigger AI processing & matching asynchronously (do not await)
+        (0, ai_service_1.processAIData)(item._id.toString(), 'lost').catch(console.error);
         // Award XP for reporting a lost item
         await (0, reputation_service_1.addXP)(req.user._id, 10);
         (0, response_1.sendSuccess)(res, { item }, 'Lost item reported successfully', 201);
