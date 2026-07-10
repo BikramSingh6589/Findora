@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unlockFoundItem = exports.lockFoundItem = exports.deleteFoundItem = exports.updateFoundItem = exports.getFoundItemById = exports.getFoundItems = exports.createFoundItem = void 0;
 const FoundItem_1 = __importDefault(require("../models/FoundItem"));
+const LostItem_1 = __importDefault(require("../models/LostItem"));
 const cloudinary_service_1 = require("../services/cloudinary.service");
 const ai_service_1 = require("../services/ai.service");
 const reputation_service_1 = require("../services/reputation.service");
@@ -19,10 +20,31 @@ const createFoundItem = async (req, res, next) => {
             images: imageUrls,
             finder: req.user._id,
         });
-        // Trigger AI matching asynchronously
-        (0, ai_service_1.triggerMatching)(item._id.toString(), 'found').catch(console.error);
+        // Trigger AI processing & matching asynchronously (do not await)
+        (0, ai_service_1.processAIData)(item._id.toString(), 'found').catch(console.error);
+        // If this FoundItem is linked to an existing LostItem from the Community Board,
+        // we instantly hide that LostItem from the community view.
+        if (req.body.linkedLostItem) {
+            await LostItem_1.default.findByIdAndUpdate(req.body.linkedLostItem, { communityHidden: true });
+            try {
+                const { getIO } = require('../services/socket.service');
+                getIO().emit('lost_item_resolved', { itemId: req.body.linkedLostItem });
+            }
+            catch (e) {
+                console.warn('Socket emit failed for lost_item_resolved:', e);
+            }
+        }
         // Award XP for reporting a found item
         await (0, reputation_service_1.addXP)(req.user._id, 15);
+        // Emit real-time update
+        try {
+            const { getIO } = require('../services/socket.service');
+            const itemWithFinder = await FoundItem_1.default.findById(item._id).populate('finder', 'name profilePic');
+            getIO().emit('new_found_item', itemWithFinder);
+        }
+        catch (e) {
+            console.warn('Socket emit failed for new_found_item:', e);
+        }
         (0, response_1.sendSuccess)(res, { item }, 'Found item reported successfully', 201);
     }
     catch (error) {

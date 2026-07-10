@@ -157,13 +157,7 @@ export const AdminClaimManagement: React.FC = () => {
     setActionModal({ isOpen: true, type: 'reject', claimId: id, inputText: '' });
   };
   
-  const verifyLocation = (id: string, found: boolean) => {
-    setActionModal({ isOpen: true, type: 'verifyLocation', claimId: id, inputText: found.toString() });
-    // Execute immediately for location verify since it doesn't need text input
-    setTimeout(() => {
-      confirmAction();
-    }, 100);
-  };
+  // verifyLocation was unused in AdminClaimManagement.tsx
 
   const notifyClaimantLocation = async (id: string) => {
     try {

@@ -30,10 +30,12 @@ import { AdminItemModeration } from './pages/Admin/AdminItemModeration';
 import { AdminUserManagement } from './pages/Admin/AdminUserManagement';
 import { AdminCommModeration } from './pages/Admin/AdminCommModeration';
 import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute';
+import CustomCursor from './components/CustomCursor';
 
 function App() {
   return (
     <BrowserRouter>
+      <CustomCursor />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

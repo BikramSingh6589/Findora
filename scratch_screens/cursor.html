@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Custom Cursor Playground</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#3c0091",
+                        "on-primary-container": "#f9f6ff",
+                        "on-primary": "#0e00aa",
+                        "outline": "#908fa0",
+                        "outline-variant": "#464555",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "surface-dim": "#0b1326",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#2d3449",
+                        "primary": "#c0c1ff",
+                        "inverse-on-surface": "#283044",
+                        "secondary": "#d0bcff",
+                        "on-surface": "#dae2fd",
+                        "surface-bright": "#31394d",
+                        "on-tertiary": "#402d00",
+                        "surface-variant": "#2d3449",
+                        "primary-fixed": "#e1e0ff",
+                        "inverse-surface": "#dae2fd",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#060e20",
+                        "tertiary-container": "#916c00",
+                        "on-secondary-fixed": "#23005c",
+                        "on-surface-variant": "#c6c5d7",
+                        "tertiary": "#f9bd22",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-tertiary-container": "#fff7ee",
+                        "surface-container-low": "#131b2e",
+                        "error-container": "#93000a",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-tertiary-fixed": "#261a00",
+                        "background": "#0b1326",
+                        "surface-container-high": "#222a3d",
+                        "primary-container": "#5b5fef",
+                        "on-primary-fixed": "#05006c",
+                        "surface-container": "#171f33",
+                        "inverse-primary": "#474adb",
+                        "on-background": "#dae2fd",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#c0c1ff",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-secondary-container": "#c4abff",
+                        "surface": "#0b1326",
+                        "secondary-container": "#571bc1",
+                        "secondary-fixed": "#e9ddff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "breakpoint-md": "768px",
+                        "unit": "8px",
+                        "container-padding": "24px",
+                        "breakpoint-lg": "1200px",
+                        "bento-gap": "20px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "title-md": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide default cursor globally */
+        html, body, a, button, [role="button"], input, textarea, select, .cursor-none {
+            cursor: none !important;
+        }
+
+        /* Custom Cursor Styles */
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease-out, height 0.3s ease-out, background-color 0.3s ease-out, border-color 0.3s ease-out, transform 0.1s ease-out;
+        }
+
+        /* Hover States */
+        .cursor-hover .cursor-dot {
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+        .cursor-hover .cursor-outline {
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        /* Click Ripple */
+        .click-ripple {
+            position: fixed;
+            border: 2px solid white;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: ripple-animation 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes ripple-animation {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 160px; height: 160px; opacity: 0; }
+        }
+
+        /* Typing Pulse Animation */
+        @keyframes cursor-pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.4); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        .cursor-pulse .cursor-dot {
+            animation: cursor-pulse 0.3s ease-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cursor-outline, .cursor-dot {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-sans selection:bg-primary/30 overflow-x-hidden">
+<!-- Custom Cursor Markup -->
+<div class="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference hidden md:block" id="custom-cursor">
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+</div>
+<!-- Main Content -->
+<main class="relative flex flex-col items-center justify-center min-h-screen px-container-padding py-16 text-center">
+<!-- Background Glow -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary-container/20 blur-[120px] rounded-full"></div>
+<div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary-container/20 blur-[120px] rounded-full"></div>
+</div>
+<div class="relative z-10 max-w-5xl w-full space-y-12">
+<div class="space-y-4">
+<h1 class="text-display-lg font-extrabold text-on-surface tracking-tight">
+                    Custom Cursor <span class="text-primary">Playground</span>
+</h1>
+<p class="text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                    Experience fluid, dual-layer interaction with physics-based trailing. Explore the interactive zones below to see various feedback effects.
+                </p>
+</div>
+<!-- Interactive Elements Section -->
+<section class="space-y-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Primary Button Tester -->
+<div class="bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col items-center justify-center space-y-6">
+<p class="text-label-caps text-primary tracking-widest uppercase">Cursor Expansion</p>
+<button class="bg-primary-container text-on-primary-container px-10 py-5 rounded-full text-title-md font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20">
+                            Primary Button
+                        </button>
+<p class="text-body-md text-on-surface-variant italic">Hover over me to expand the outer ring</p>
+</div>
+<!-- Text Link Tester -->
+<div class="bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col items-center justify-center space-y-6">
+<p class="text-label-caps text-secondary tracking-widest uppercase">Magnetic Interaction</p>
+<a class="text-secondary font-semibold text-headline-lg border-b-2 border-transparent hover:border-secondary transition-all flex items-center gap-2 group" href="#">
+<span>Text Link</span>
+<span class="material-symbols-outlined text-2xl group-hover:translate-x-2 transition-transform">arrow_forward</span>
+</a>
+<p class="text-body-md text-on-surface-variant italic">Hover for magnetic scale effect</p>
+</div>
+</div>
+<!-- Card Grid Tester (Ripple Effect) -->
+<div class="bg-surface-container border border-outline-variant p-8 rounded-lg space-y-8">
+<div class="flex flex-col items-center space-y-2">
+<p class="text-label-caps text-tertiary tracking-widest uppercase">Celebratory Ripple</p>
+<p class="text-body-md text-on-surface-variant italic">Click any card for the ripple effect</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+<div class="ripple-card bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant p-6 rounded-lg text-left transition-colors cursor-none">
+<span class="material-symbols-outlined text-primary mb-4 text-3xl">bolt</span>
+<h3 class="text-title-md font-bold mb-2">Instant Feedback</h3>
+<p class="text-body-md text-on-surface-variant">Visual ripples provide immediate tactile confirmation.</p>
+</div>
+<div class="ripple-card bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant p-6 rounded-lg text-left transition-colors cursor-none">
+<span class="material-symbols-outlined text-secondary mb-4 text-3xl">auto_fix_high</span>
+<h3 class="text-title-md font-bold mb-2">Fluid Physics</h3>
+<p class="text-body-md text-on-surface-variant">LERP interpolation ensures smooth motion across the screen.</p>
+</div>
+<div class="ripple-card bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant p-6 rounded-lg text-left transition-colors cursor-none">
+<span class="material-symbols-outlined text-tertiary mb-4 text-3xl">palette</span>
+<h3 class="text-title-md font-bold mb-2">Dark Aesthetic</h3>
+<p class="text-body-md text-on-surface-variant">Optimized for Campus Pulse neon accents and high contrast.</p>
+</div>
+</div>
+</div>
+<!-- Input Pulse Tester -->
+<div class="bg-surface-container-low border border-outline-variant p-10 rounded-lg flex flex-col items-center justify-center space-y-6">
+<p class="text-label-caps text-on-surface-variant tracking-widest uppercase">Typing Pulse</p>
+<div class="w-full max-w-md relative group">
+<input class="w-full bg-surface-container-highest border-2 border-outline-variant rounded-full px-8 py-5 text-on-surface text-title-md placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none" id="pulse-input" placeholder="Type here to see cursor pulse..." type="text"/>
+</div>
+<p class="text-body-md text-on-surface-variant italic">Typing triggers a subtle cursor pulse effect</p>
+</div>
+</section>
+<!-- Bottom Stats/Info -->
+<div class="flex flex-wrap justify-center gap-4 text-sm font-medium text-on-surface-variant">
+<span class="px-4 py-2 bg-surface-container rounded-full border border-outline-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span> Cursor Active
+                </span>
+<span class="px-4 py-2 bg-surface-container rounded-full border border-outline-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> 60 FPS Interpolation
+                </span>
+<span class="px-4 py-2 bg-surface-container rounded-full border border-outline-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Mix-Blend Enabled
+                </span>
+</div>
+</div>
+</main>
+<script>
+        const dot = document.querySelector('.cursor-dot');
+        const outline = document.querySelector('.cursor-outline');
+        const cursorContainer = document.querySelector('#custom-cursor');
+        const pulseInput = document.querySelector('#pulse-input');
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let outlineX = 0;
+        let outlineY = 0;
+
+        // Mouse Move Listener
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Instant update for dot position
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+        });
+
+        // Smooth Trailing Ring Animation (LERP)
+        function animate() {
+            // Speed of the trailing effect
+            const speed = 0.18;
+            outlineX += (mouseX - outlineX) * speed;
+            outlineY += (mouseY - outlineY) * speed;
+            
+            outline.style.left = outlineX + 'px';
+            outline.style.top = outlineY + 'px';
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Interaction Handling
+        const interactables = 'a, button, .clickable, input, select, textarea, [role="button"], .group, .ripple-card';
+        
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest(interactables)) {
+                cursorContainer.classList.add('cursor-hover');
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            if (e.target.closest(interactables)) {
+                cursorContainer.classList.remove('cursor-hover');
+            }
+        });
+
+        // Click Ripple Effect
+        document.addEventListener('mousedown', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'click-ripple';
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            document.body.appendChild(ripple);
+            
+            // Remove ripple after animation ends
+            setTimeout(() => ripple.remove(), 700);
+            
+            // Visual click compression feedback
+            dot.style.transform = 'translate(-50%, -50%) scale(0.7)';
+            outline.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        });
+
+        document.addEventListener('mouseup', () => {
+            dot.style.transform = 'translate(-50%, -50%) scale(1)';
+            outline.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+
+        // Input Pulse Trigger
+        if (pulseInput) {
+            pulseInput.addEventListener('input', () => {
+                cursorContainer.classList.remove('cursor-pulse');
+                void cursorContainer.offsetWidth; // Trigger reflow
+                cursorContainer.classList.add('cursor-pulse');
+                
+                // Remove class after animation
+                setTimeout(() => {
+                    cursorContainer.classList.remove('cursor-pulse');
+                }, 300);
+            });
+        }
+
+        // Visibility Handlers
+        document.addEventListener('mouseleave', () => {
+            cursorContainer.style.opacity = '0';
+        });
+        document.addEventListener('mouseenter', () => {
+            cursorContainer.style.opacity = '1';
+        });
+
+        // Error prevention for touch devices
+        window.addEventListener('touchstart', () => {
+            cursorContainer.style.display = 'none';
+        });
+    </script>
+</body></html>

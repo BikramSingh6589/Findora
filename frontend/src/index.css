@@ -184,3 +184,152 @@
   transform: translate(-50%, -50%) scale(50);
   opacity: 0;
 }
+
+/* Stitch Custom Classes */
+.glass-card {
+  background: rgba(31, 41, 55, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+.primary-gradient {
+  background: linear-gradient(135deg, #5b5fef 0%, #8455ef 100%);
+}
+.reward-gradient {
+  background: linear-gradient(135deg, #FB923C 0%, #F9BD22 100%);
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@layer utilities {
+  .gen-z-card {
+    @apply bg-white dark:bg-surface-container rounded-[24px] transition-all duration-300;
+    box-shadow: 0 10px 40px -10px rgba(65, 67, 213, 0.08);
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .gen-z-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(65, 67, 213, 0.15);
+  }
+  .indigo-purple-gradient {
+    background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+  }
+  .floating-sticker {
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+  .doodle-bg {
+    mask-image: linear-gradient(to bottom, black 50%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent);
+  }
+  .bubbly-stat {
+    border-radius: 100px;
+  }
+}
+@layer base {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .fill-icon {
+    font-variation-settings: 'FILL' 1;
+  }
+}
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  }
+  .dark .glass-card {
+    background: rgba(31, 41, 55, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .neon-shadow-primary {
+    box-shadow: 0 10px 25px -5px rgba(65, 67, 213, 0.4);
+  }
+}
+@layer utilities {
+  /* Hide default cursor globally */
+  * {
+    cursor: none !important;
+  }
+
+  /* Custom Cursor Styles */
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+  }
+
+  .cursor-outline {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease-out, height 0.3s ease-out, background-color 0.3s ease-out, border-color 0.3s ease-out, transform 0.1s ease-out;
+  }
+
+  /* Hover States */
+  .cursor-hover .cursor-dot {
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  .cursor-hover .cursor-outline {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+  }
+
+  /* Click Ripple */
+  .click-ripple {
+    position: fixed;
+    border: 2px solid white;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    animation: ripple-animation 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes ripple-animation {
+    0% { width: 0; height: 0; opacity: 1; }
+    100% { width: 160px; height: 160px; opacity: 0; }
+  }
+
+  /* Typing Pulse Animation */
+  @keyframes cursor-pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.4); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+  }
+  .cursor-pulse .cursor-dot {
+    animation: cursor-pulse 0.3s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-outline, .cursor-dot {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}

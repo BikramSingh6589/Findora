@@ -1,9 +1,10 @@
 import { Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import AIMatch from '../models/AIMatch';
 import LostItem from '../models/LostItem';
 import FoundItem from '../models/FoundItem';
-import { triggerMatching } from '../services/ai.service';
+import { processAIData } from '../services/ai.service';
 import { sendSuccess, sendError } from '../utils/response';
 
 export const getMatches = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -21,7 +22,21 @@ export const getMatches = async (req: AuthenticatedRequest, res: Response, next:
       ]
     }).populate('lostItem').populate('foundItem');
 
-    sendSuccess(res, { matches }, 'AI matches retrieved successfully');
+    // Filter out matches where populated items are null (deleted)
+    const activeMatches = matches.filter(m => m.lostItem && m.foundItem).map(m => {
+      const matchObj = m.toObject();
+      if (matchObj.lostItem) {
+        (matchObj.lostItem as any).title = (matchObj.lostItem as any).itemName;
+        (matchObj.lostItem as any).location = (matchObj.lostItem as any).locationLost;
+      }
+      if (matchObj.foundItem) {
+        (matchObj.foundItem as any).title = (matchObj.foundItem as any).itemName;
+        (matchObj.foundItem as any).location = (matchObj.foundItem as any).locationFound;
+      }
+      return matchObj;
+    });
+
+    sendSuccess(res, { matches: activeMatches }, 'AI matches retrieved successfully');
   } catch (error) {
     next(error);
   }
@@ -29,7 +44,12 @@ export const getMatches = async (req: AuthenticatedRequest, res: Response, next:
 
 export const getItemMatches = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { itemId } = req.params;
+    const itemId = req.params.itemId as string;
+
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+      sendError(res, 'Invalid item ID format', 400);
+      return;
+    }
 
     // Security Check: Verify item ownership/finder status or admin role
     const lostItem = await LostItem.findById(itemId);
@@ -56,7 +76,21 @@ export const getItemMatches = async (req: AuthenticatedRequest, res: Response, n
       ]
     }).populate('lostItem').populate('foundItem');
 
-    sendSuccess(res, { matches }, 'Item matches retrieved successfully');
+    // Filter out matches where populated items are null (deleted)
+    const activeMatches = matches.filter(m => m.lostItem && m.foundItem).map(m => {
+      const matchObj = m.toObject();
+      if (matchObj.lostItem) {
+        (matchObj.lostItem as any).title = (matchObj.lostItem as any).itemName;
+        (matchObj.lostItem as any).location = (matchObj.lostItem as any).locationLost;
+      }
+      if (matchObj.foundItem) {
+        (matchObj.foundItem as any).title = (matchObj.foundItem as any).itemName;
+        (matchObj.foundItem as any).location = (matchObj.foundItem as any).locationFound;
+      }
+      return matchObj;
+    });
+
+    sendSuccess(res, { matches: activeMatches }, 'Item matches retrieved successfully');
   } catch (error) {
     next(error);
   }
@@ -64,7 +98,12 @@ export const getItemMatches = async (req: AuthenticatedRequest, res: Response, n
 
 export const getMatchDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { matchId } = req.params;
+    const matchId = req.params.matchId as string;
+
+    if (!mongoose.Types.ObjectId.isValid(matchId)) {
+      sendError(res, 'Invalid match ID format', 400);
+      return;
+    }
 
     const match = await AIMatch.findById(matchId).populate('lostItem').populate('foundItem');
     if (!match) {
@@ -76,8 +115,13 @@ export const getMatchDetails = async (req: AuthenticatedRequest, res: Response, 
     const lostItem = match.lostItem as any;
     const foundItem = match.foundItem as any;
 
-    const isOwner = lostItem && String(lostItem.owner) === String(req.user._id);
-    const isFinder = foundItem && String(foundItem.finder) === String(req.user._id);
+    if (!lostItem || !foundItem) {
+      sendError(res, 'Match associated items are no longer available', 404);
+      return;
+    }
+
+    const isOwner = String(lostItem.owner) === String(req.user._id);
+    const isFinder = String(foundItem.finder) === String(req.user._id);
     const isAdmin = req.user.role === 'admin';
 
     if (!isOwner && !isFinder && !isAdmin) {
@@ -85,7 +129,17 @@ export const getMatchDetails = async (req: AuthenticatedRequest, res: Response, 
       return;
     }
 
-    sendSuccess(res, { match }, 'Match details retrieved successfully');
+    const matchObj = match.toObject();
+    if (matchObj.lostItem) {
+      (matchObj.lostItem as any).title = (matchObj.lostItem as any).itemName;
+      (matchObj.lostItem as any).location = (matchObj.lostItem as any).locationLost;
+    }
+    if (matchObj.foundItem) {
+      (matchObj.foundItem as any).title = (matchObj.foundItem as any).itemName;
+      (matchObj.foundItem as any).location = (matchObj.foundItem as any).locationFound;
+    }
+
+    sendSuccess(res, { match: matchObj }, 'Match details retrieved successfully');
   } catch (error) {
     next(error);
   }
@@ -93,8 +147,13 @@ export const getMatchDetails = async (req: AuthenticatedRequest, res: Response, 
 
 export const updateMatchStatus = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { matchId } = req.params;
+    const matchId = req.params.matchId as string;
     const { status } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(matchId)) {
+      sendError(res, 'Invalid match ID format', 400);
+      return;
+    }
 
     if (!status || !['new', 'reviewed', 'dismissed'].includes(status)) {
       sendError(res, 'Invalid status. Must be new, reviewed, or dismissed.', 400);
@@ -111,8 +170,13 @@ export const updateMatchStatus = async (req: AuthenticatedRequest, res: Response
     const lostItem = match.lostItem as any;
     const foundItem = match.foundItem as any;
 
-    const isOwner = lostItem && String(lostItem.owner) === String(req.user._id);
-    const isFinder = foundItem && String(foundItem.finder) === String(req.user._id);
+    if (!lostItem || !foundItem) {
+      sendError(res, 'Match associated items are no longer available', 404);
+      return;
+    }
+
+    const isOwner = String(lostItem.owner) === String(req.user._id);
+    const isFinder = String(foundItem.finder) === String(req.user._id);
     const isAdmin = req.user.role === 'admin';
 
     if (!isOwner && !isFinder && !isAdmin) {
@@ -137,7 +201,21 @@ export const triggerManualMatching = async (req: AuthenticatedRequest, res: Resp
       return;
     }
 
-    const matchCount = await triggerMatching(itemId, itemType as 'lost' | 'found');
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+      sendError(res, 'Invalid item ID format', 400);
+      return;
+    }
+
+    await processAIData(itemId, itemType as 'lost' | 'found');
+
+    const matchCount = await AIMatch.countDocuments({
+      $or: [
+        { lostItem: itemId },
+        { foundItem: itemId }
+      ],
+      status: { $ne: 'dismissed' }
+    });
+
     sendSuccess(res, { matchCount }, 'Matching workflow triggered successfully');
   } catch (error) {
     next(error);

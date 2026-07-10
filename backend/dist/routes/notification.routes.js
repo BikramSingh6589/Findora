@@ -6,6 +6,7 @@ const auth_middleware_1 = require("../middleware/auth.middleware");
 const router = (0, express_1.Router)();
 router.get('/', auth_middleware_1.protect, notification_controller_1.getNotifications);
 router.put('/read-all', auth_middleware_1.protect, notification_controller_1.markAllAsRead);
+router.delete('/all', auth_middleware_1.protect, notification_controller_1.deleteAllNotifications);
 router.put('/:id/read', auth_middleware_1.protect, notification_controller_1.markAsRead);
 router.delete('/:id', auth_middleware_1.protect, notification_controller_1.deleteNotification);
 exports.default = router;

@@ -30,6 +30,7 @@ router.get('/matches', getMatches);
 router.get('/matches/:itemId', getItemMatches);
 router.get('/matches/match/:matchId', getMatchDetails);
 router.put('/matches/:matchId/status', validateRequest(updateStatusSchema), updateMatchStatus);
+router.patch('/matches/:matchId/status', validateRequest(updateStatusSchema), updateMatchStatus);
 router.post('/trigger', validateRequest(triggerSchema), triggerManualMatching);
 
 export default router;

@@ -1,16 +1,19 @@
 # TASK_DONE_TILL_NOW.md
 
 ## Current Development State
+
 - **Current Implementation Phase**: Phase 6: AI Matching (MVP Text-Based)
-- **Status**: Completed
+- **Status**: InComplete
 
 ## Completed Modules
+
 - **Authentication Module**: Complete endpoints and schema definitions for registering, logging in, requesting password recovery tokens, and changing credentials.
 - **AI Matching Module**: Implemented Mongoose schemas, indexes, and unique database constraints for `AIMatch`. Built robust, punctuation-immune Jaccard text similarity scoring. Configured automatic async matching triggers upon Lost & Found reports. Integrated high-confidence socket-backed notification workflows and secure REST endpoints with access control.
 - **Lost & Found Item CRUD Module**: Implemented schemas, controllers, and upload handlers for categories, lost items, and found items.
 - **Claim Management Module**: Implemented schemas, controllers, validations, business rules, and endpoints for claim submission, retrieval, cancellation, admin reviews (approve/reject), and QR code collection generation.
 
 ## Completed APIs
+
 - `GET /health` (Server status health check)
 - `POST /api/auth/register` (User registration with input validation)
 - `POST /api/auth/login` (User login, returns JWT and user profile)
@@ -47,6 +50,7 @@
 - `POST /api/ai/trigger` (Manual trigger for running AI matching workflow on a lost/found item)
 
 ## Completed Models
+
 - `User.ts` (Mongoose Schema containing fields for authentication credentials, student IDs, avatar URLs, role check, status validation, reputation stats (XP, level, badges), and reset token data)
 - `Category.ts` (Mongoose Schema for categorization of items)
 - `LostItem.ts` (Mongoose Schema for lost item records with search indexes)
@@ -54,6 +58,7 @@
 - `Claim.ts` (Mongoose Schema for claim workflow tracking, including answers, proof documents, confidence scores, and QR code pickup tokens)
 
 ## Middleware Completed
+
 - `errorHandler.ts` (Centralized error-handling middleware)
 - `auth.middleware.ts` (Parses Bearer token from headers, verifies using `jwt.verify`, and adds authenticated user to `req.user`)
 - `admin.middleware.ts` (Checks if authenticated user role is admin)
@@ -61,6 +66,7 @@
 - `upload.middleware.ts` (Multer configurations to process incoming files into memory buffers)
 
 ## Utilities & Services Completed
+
 - `response.ts` (Standardized JSON success/error response helpers)
 - `jwt.ts` (JWT sign and verify helpers)
 - `pagination.ts` (Pagination offset and limit builder helper)
@@ -68,6 +74,7 @@
 - `email.service.ts` (Nodemailer email transaction helper, now includes claim approval and rejection layouts)
 
 ## Configurations Completed
+
 - `tsconfig.json` (TypeScript compilation setup)
 - `.env` & `.env.example` (Placeholder variables setup)
 - `db.ts` (Mongoose connection helper with DNS resolver fallback override)
@@ -76,14 +83,25 @@
 - `server.ts` (Bootstrap entry point to launch the server)
 
 ## Environment Setup Completed
+
 - Dependencies: Installed typescript, ts-node, nodemon, @types, express, mongoose, dotenv, cors, helmet, morgan, bcryptjs, jsonwebtoken, multer, cloudinary, qrcode, nodemailer, socket.io, zod, and uuid.
 - Frontend `.env` and `.env.example` created pointing `VITE_API_BASE_URL` to local server port 5000.
 
 ## Completed Work (Latest Update)
-- **AI Matching (MVP Text-Based) (Phase 6)**: Created a robust text similarity algorithm utilizing Jaccard matching over unique description words, stripping out punctuation to prevent false negatives. Added index optimizations to the `AIMatch` database schema including a unique compound index on `[lostItem, foundItem]` to prevent duplicate match generation. Integrated matching automatically as an asynchronous background trigger into Lost/Found item creation flows. Hooked up high confidence matches (score >= 80%) to emit socket-backed notifications directly to the lost item owner's personal channel, pointing them straight to the matching found item's detail page. Built five backend REST routes (Get matches, Get item matches, Get match details, Update status, Manual trigger) guarded by JWT authentication and protected by ownership-based authorization validation.
+
+- **Phase 6 final AI accuracy and UI integration fixes completed**:
+  - **Primary Object Detection**: Implemented English-syntax positional parsing inside `semanticMatching.service.ts` to identify the core noun (e.g. distinguishing a laptop modifier from a laptop bag or charger).
+  - **Object Mismatch Penalty**: Configured the matching engine to flag primary object mismatches (e.g. laptop vs bag, or bottle vs laptop) and restrict their maximum similarity to 30%.
+  - **Stop Words Exclusion**: Filtered out noise vocabulary (`lost`, `found`, `my`, `the`, `a`, `an`, `with`, `near`, `inside`, `outside`, `item`, `thing`) before comparing descriptions.
+  - **Weighted Score Formula**: Implemented a balanced 100-point formula: Main Object Match (30 pts), Brand Match (15 pts), Color Match (10 pts), Semantic description similarity (20 pts), Image evidence (15 pts), and OCR/identifier check (10 pts).
+  - **Evidence Cases & Missing Tags**: Configured image matching to enforce low limits for missing images (max 5 points if one is missing, max 3-5 points if both are missing). Tracks missing data as `missingEvidence` tags (`["Image not available"]`).
+  - **Normalized Confidence**: Normalized confidence scores so that `90-100%` requires identical objects and at least two strong verification signals (Image, Serial/OCR, or Semantic matches).
+  - **UI Updates**: Extended `AIMatches.tsx` and `ItemDetail.tsx` to handle the `objectScore` breakdown and dynamic warnings for missing evidence.
+  - **Security & Build Safety**: Confirmed strict compilation safety for both backend and frontend builds.
+  - **AI Matches UI Connected**: Connected real AIMatch API data to the frontend, removing all mock match data, static images, fake "Central Hub" locations, and hardcoded percentages (e.g. 92%, 94%, 98%) from the Claim Verification screen and Admin Dashboard alerts.
 - **Real-Time In-App Notification System (Phase 5 Part 1):** Implemented a complete real-time in-app notification system. Created a global `NotificationProvider` using React Context connected directly to Socket.IO and the REST API. Added `Notification` mongoose schema and controllers to manage fetching and updating (mark as read/unread). Extended `socket.service.ts` to emit `new_notification` events directly to personal user socket rooms. Completely removed hardcoded elements from the `NotificationCenter.tsx` dropdown, formatting and styling incoming messages with dynamic Tailwind CSS classes and precise Lucide icons. Integrated a custom bottom-right toast notification overlay for instant feedback. Updated chat messaging so that each chat directly spawns a `new_message` notification allowing recipients to click a "Reply" button and directly navigate to the relevant chat room.
 - **Real-Time Claim Chat & Handover (Phases 8 & 9):** Implemented a full Socket.IO messaging layer with 24h lifespan constraints, JWT handshake authorization, and message log persistence in the DB via `ChatMessage`. Created claimant/finder dynamic chat interface showing match confidence, online presence, typing status, resolve handover actions, conflict escalation (mediation), and direct secure QR Code display for claimants. Added custom QR code validity window selection (up to 48 hours) for finders. Implemented a robust local Base64 QR code Data URL fallback generation in `qr.service.ts` to prevent 403 Cloudinary issues from breaking resolution flow. Integrated real-time success confirmation modals inside the chat interface to offer role-specific redirections (navigating finders directly to the scanner tool or scrolling claimants down to verify their secure QR code).
-- **Chat History View & Dashboard Refinements:** Created the `ChatHistory.tsx` screen to list all active conversations matching user claims dynamically, with search/filtering and dynamic status tags (*"Open"*, *"Waiting to scan"*, *"Closed"*). Linked the dashboard **"Chat Window"** button directly to this list page (`/chats`), while keeping **"Contact Finder"** on claim submission directly routed to the corresponding chat room. Removed the redundant *"Qr Scan/Code"* debug button.
+- **Chat History View & Dashboard Refinements:** Created the `ChatHistory.tsx` screen to list all active conversations matching user claims dynamically, with search/filtering and dynamic status tags (_"Open"_, _"Waiting to scan"_, _"Closed"_). Linked the dashboard **"Chat Window"** button directly to this list page (`/chats`), while keeping **"Contact Finder"** on claim submission directly routed to the corresponding chat room. Removed the redundant _"Qr Scan/Code"_ debug button.
 - **Admin Claim Management & Real-Time Resolution:** Overhauled `AdminClaimManagement.tsx` to sort admin mediation requests first and mutually resolved claims at the bottom (with a dedicated "Mutual Resolved" tag status). Blocked action buttons (Approve/Reject) on mutually resolved claims to prevent duplication. Created a detailed claim proof modal to review user answers for location, date, identifiers, and special marks. Added real-time Socket.IO room broadcast notifications upon admin claim approval/rejection, immediately rendering success or status modal alerts on both users' screens dynamically. Fixed `mediationStatus` not being updated to `'approved'/'rejected'` in backend `approveClaim`/`rejectClaim` controllers. Fixed `StatusBadge` priority to check `status` before `mediationStatus` so already-approved claims no longer show "Mediation Pending".
 - **Community Board — Lost Items Tab:** Added a prominent **"🔍 Found Items / 🚨 Lost Items"** view toggle above the category filters. The Lost Items tab fetches `/api/lost-items`, shows red-themed cards for each report with item name, last-seen location, reporter profile, and an **"I Found This!"** CTA. The reporter's own lost items are filtered out from their view (they shouldn't see their own report). Badge count on the tab reflects only items visible to the current user.
 - **Chat & Handover — Collection Point:** Added a **"📍 Set Collection Point"** button in the FinderChat sidebar (finder-only, shown when resolved) routing to `/collect-item/:claimId`. Claimant sees a **"Collect From"** card showing the finder's profile as the default collection contact. Registered the `/collect-item/:claimId` route as a styled placeholder page ready for future implementation.
@@ -93,6 +111,7 @@
 - **Notification & Message Models**: Implemented live MongoDB schemas and controllers for `Notification`, `AIMatch`, and `ChatMessage`.
 
 ## Important Implementation Notes
+
 - Lost & Found item controllers trigger asynchronous matching triggers via `aiService` and reputation increments via `reputationService`.
 - Cloudinary service automatically handles mock links if cloud configuration variables match placeholder defaults.
 - QR Generation Service automatically falls back to Unsplash mock links if Cloudinary default credentials are detected.

@@ -14,6 +14,12 @@ const LostItemSchema = new Schema({
   status:           { type: String, enum: ['active', 'claimed', 'resolved', 'archived'], default: 'active' },
   aiMatchScore:     { type: Number, default: 0 },
   communityHidden:  { type: Boolean, default: false },
+  aiData: {
+    extractedText:  { type: String, default: '' },
+    keywords:       { type: [String], default: [] },
+    identifiers:    { type: [String], default: [] },
+    processed:      { type: Boolean, default: false }
+  },
 }, { timestamps: true });
 
 // Create text index on itemName and description for text searches

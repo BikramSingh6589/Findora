@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import LostItem from '../models/LostItem';
 import { uploadImage } from '../services/cloudinary.service';
-import { triggerMatching } from '../services/ai.service';
+import { processAIData } from '../services/ai.service';
 import { addXP } from '../services/reputation.service';
 import { sendSuccess, sendError } from '../utils/response';
 import { getPagination } from '../utils/pagination';
@@ -18,8 +18,8 @@ export const createLostItem = async (req: AuthenticatedRequest, res: Response, n
       owner: req.user._id,
     });
 
-    // Trigger AI matching asynchronously (do not await)
-    triggerMatching(item._id.toString(), 'lost').catch(console.error);
+    // Trigger AI processing & matching asynchronously (do not await)
+    processAIData(item._id.toString(), 'lost').catch(console.error);
 
     // Award XP for reporting a lost item
     await addXP(req.user._id, 10);
@@ -126,6 +126,62 @@ export const deleteLostItem = async (req: AuthenticatedRequest, res: Response, n
 
     await LostItem.findByIdAndDelete(req.params.id);
     sendSuccess(res, {}, 'Lost item deleted successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resolveLostItem = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const item = await LostItem.findById(req.params.id);
+    if (!item) {
+      sendError(res, 'Lost item not found', 404);
+      return;
+    }
+
+    // Verify ownership
+    if (item.owner.toString() !== req.user._id.toString()) {
+      sendError(res, 'Access denied', 403);
+      return;
+    }
+
+    if (item.status === 'resolved') {
+      sendError(res, 'Item is already resolved', 400);
+      return;
+    }
+
+    item.status = 'resolved';
+    await item.save();
+
+    sendSuccess(res, { item }, 'Lost item marked as resolved successfully');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const revertLostItem = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const item = await LostItem.findById(req.params.id);
+    if (!item) {
+      sendError(res, 'Lost item not found', 404);
+      return;
+    }
+
+    // Verify ownership
+    if (item.owner.toString() !== req.user._id.toString()) {
+      sendError(res, 'Access denied', 403);
+      return;
+    }
+
+    if (item.status !== 'resolved') {
+      sendError(res, 'Item is not resolved', 400);
+      return;
+    }
+
+    item.status = 'active';
+    await item.save();
+
+    sendSuccess(res, { item }, 'Lost item reverted to active successfully');
   } catch (error) {
     next(error);
   }

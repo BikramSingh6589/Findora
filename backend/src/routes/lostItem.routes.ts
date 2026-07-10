@@ -5,7 +5,9 @@ import {
   getLostItems,
   getLostItemById,
   updateLostItem,
-  deleteLostItem
+  deleteLostItem,
+  resolveLostItem,
+  revertLostItem
 } from '../controllers/lostItem.controller';
 import { protect } from '../middleware/auth.middleware';
 import { validateRequest } from '../middleware/validate.middleware';
@@ -28,6 +30,8 @@ router.post('/', protect, upload.array('images', 5), validateRequest(lostItemSch
 router.get('/', protect, getLostItems);
 router.get('/:id', protect, getLostItemById);
 router.put('/:id', protect, upload.array('images', 5), validateRequest(lostItemSchema), updateLostItem);
+router.patch('/:id/resolve', protect, resolveLostItem);
+router.patch('/:id/revert', protect, revertLostItem);
 router.delete('/:id', protect, deleteLostItem);
 
 export default router;
