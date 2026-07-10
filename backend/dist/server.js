@@ -40,6 +40,7 @@ const dotenv = __importStar(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const http_1 = require("http");
 const socket_service_1 = require("./services/socket.service");
+const ai_worker_1 = require("./workers/ai.worker");
 // Load environment variables from .env
 dotenv.config({ path: path_1.default.join(__dirname, '../.env') });
 const app_1 = __importDefault(require("./app"));
@@ -53,6 +54,8 @@ const startServer = async () => {
     catch (error) {
         console.error('Failed to initialize database connection. Continuing to start server...');
     }
+    // Initialize background AI matching queue worker
+    await (0, ai_worker_1.initAIWorker)();
     const httpServer = (0, http_1.createServer)(app_1.default);
     (0, socket_service_1.initSocket)(httpServer);
     httpServer.listen(PORT, () => {

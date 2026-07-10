@@ -113,20 +113,63 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
       const nameA = sourceItem.itemName || '';
       const nameB = target.itemName || '';
 
-      const cleanTokens = (t: string) => t.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').split(/\s+/).filter(Boolean);
+      const cleanTokens = (t: string) => t.toLowerCase()
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean)
+        .filter(w => w.length >= 3)
+        .filter(w => !['a', 'n', 'x'].includes(w));
       const wordsA = cleanTokens(`${nameA} ${descA}`);
       const wordsB = cleanTokens(`${nameB} ${descB}`);
       
       const primaryObjA = detectPrimaryObject(wordsA);
       const primaryObjB = detectPrimaryObject(wordsB);
 
+      const negativeSignals: string[] = [];
+      
+      // A. Color conflict
+      let hasColorConflict = false;
+      const colorConflictDetail = checkColorConflict(sourceItem.color || '', target.color || '');
+      if (colorConflictDetail) {
+        hasColorConflict = true;
+        negativeSignals.push(`Color mismatch: ${colorConflictDetail}`);
+      }
+      
+      // B. Brand conflict
+      let hasBrandConflict = false;
+      const brandConflictDetail = checkBrandConflict(sourceItem.brand || '', target.brand || '');
+      if (brandConflictDetail) {
+        hasBrandConflict = true;
+        negativeSignals.push(`Brand mismatch: ${brandConflictDetail}`);
+      }
+      
+      // C. Model conflict
+      let hasModelConflict = false;
+      const modelConflictDetail = checkModelConflict(`${nameA} ${descA}`, `${nameB} ${descB}`);
+      if (modelConflictDetail) {
+        hasModelConflict = true;
+        negativeSignals.push(`Different model detected: ${modelConflictDetail}`);
+      }
+
+      // D. Material/Size conflict
+      const materialConflictDetail = checkMaterialConflict(`${nameA} ${descA}`, `${nameB} ${descB}`);
+      if (materialConflictDetail) {
+        negativeSignals.push(`Material mismatch: ${materialConflictDetail}`);
+      }
+      const sizeConflictDetail = checkSizeConflict(`${nameA} ${descA}`, `${nameB} ${descB}`);
+      if (sizeConflictDetail) {
+        negativeSignals.push(`Size mismatch: ${sizeConflictDetail}`);
+      }
+
       const matchedFields: string[] = [];
 
       // 1. Main Object Match (30 points)
       let objectScore = 0;
+      const isMismatch = !!(primaryObjA && primaryObjB && primaryObjA !== primaryObjB);
+
       if (primaryObjA && primaryObjB && primaryObjA === primaryObjB) {
         objectScore = 30;
-        matchedFields.push('Same item type');
+        matchedFields.push(`Same item type: ${primaryObjA.charAt(0).toUpperCase() + primaryObjA.slice(1)}`);
       } else if (!primaryObjA && !primaryObjB) {
         // generic category check
         if (sourceItem.category && target.category && String(sourceItem.category).trim().toLowerCase() === String(target.category).trim().toLowerCase()) {
@@ -135,20 +178,22 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
         }
       }
 
-      const isMismatch = (primaryObjA && primaryObjB && primaryObjA !== primaryObjB);
+      if (isMismatch) {
+        negativeSignals.push(`Object mismatch: ${primaryObjA} vs ${primaryObjB}`);
+      }
 
       // 2. Brand Match (15 points)
       let brandScore = 0;
-      if (sourceItem.brand && target.brand && String(sourceItem.brand).trim().toLowerCase() === String(target.brand).trim().toLowerCase()) {
+      if (sourceItem.brand && target.brand && String(sourceItem.brand).trim().toLowerCase() === String(target.brand).trim().toLowerCase() && !hasBrandConflict) {
         brandScore = 15;
-        matchedFields.push(`Same brand ${sourceItem.brand}`);
+        matchedFields.push(`Same brand: ${sourceItem.brand}`);
       }
 
       // 3. Color Match (10 points)
       let colorScore = 0;
-      if (sourceItem.color && target.color && String(sourceItem.color).trim().toLowerCase() === String(target.color).trim().toLowerCase()) {
+      if (sourceItem.color && target.color && String(sourceItem.color).trim().toLowerCase() === String(target.color).trim().toLowerCase() && !hasColorConflict) {
         colorScore = 10;
-        matchedFields.push(`Same color ${sourceItem.color}`);
+        matchedFields.push(`Same color: ${sourceItem.color}`);
       }
 
       // 4. Semantic Description Score (20 points)
@@ -164,8 +209,23 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
         semanticScore = Math.round(fallbackSimilarity * 20);
       }
 
-      if (semanticScore > 0 && semanticConcepts.length > 0) {
-        matchedFields.push(...semanticConcepts);
+      // Filter duplicate semantic concepts
+      const cleanSemanticConcepts = semanticConcepts.filter(concept => {
+        const conceptLower = concept.toLowerCase();
+        if (primaryObjA && (conceptLower.includes(primaryObjA.toLowerCase()) || primaryObjA.toLowerCase().includes(conceptLower))) {
+          return false;
+        }
+        if (conceptLower.includes('same item type') || conceptLower.includes('same category')) {
+          return false;
+        }
+        if (conceptLower.includes('same brand') || conceptLower.includes('same color')) {
+          return false;
+        }
+        return true;
+      });
+
+      if (semanticScore > 0 && cleanSemanticConcepts.length > 0) {
+        matchedFields.push(...cleanSemanticConcepts);
       }
 
       // 5. Image Score (15 points max)
@@ -197,7 +257,7 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
       // Calculate missing evidence
       const missingEvidence: string[] = [];
       if (!imgA || !imgB) {
-        missingEvidence.push('Image verification unavailable');
+        missingEvidence.push('No image available');
       }
       
       const hasOcrA = !!sourceItem.aiData?.extractedText?.trim();
@@ -214,64 +274,78 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
 
       // Normalization and Penalties
       let finalScore = scoreSum;
-      const unrelated = isMismatch || (!primaryObjA && !primaryObjB && String(sourceItem.category).trim().toLowerCase() !== String(target.category).trim().toLowerCase());
       
+      // Apply penalties after base calculation
+      if (hasColorConflict) {
+        finalScore -= 10;
+      }
+      if (hasBrandConflict) {
+        finalScore -= 15;
+      }
+      if (hasModelConflict) {
+        finalScore -= 15;
+      }
+
       if (isMismatch) {
-        // Different objects: cap at 20% (low match, well below 40%)
+        // Different objects: cap strictly below 30
         finalScore = Math.min(finalScore, 20);
-      } else if (unrelated) {
-        // Unrelated categories/objects: cap at 25% (well below 40%)
-        finalScore = Math.min(finalScore, 25);
       } else {
-        // Normalization checks
-        const hasStrongImage = (imageScore >= 12);
-        const hasStrongSerial = (ocrScore === 10);
-        const hasStrongSemantic = (semanticScore >= 16);
-        const sameObject = (primaryObjA && primaryObjB && primaryObjA === primaryObjB);
-
-        const hasStrongEvidence = hasStrongImage || hasStrongSerial || hasStrongSemantic;
-
-        // Exact identifier match strongly improves confidence
-        if (matchingIds.length > 0) {
-          finalScore = Math.max(finalScore + 35, 95);
-        } else {
-          if (finalScore >= 90) {
-            if (!sameObject || !hasStrongEvidence) {
-              // Cap at 89% if missing proof
-              finalScore = Math.min(finalScore, 89);
+        // Text-only checks and boosts (Task 10)
+        const isTextOnly = !imgA && !imgB && matchingIds.length === 0;
+        
+        if (isTextOnly) {
+          const hasConflicts = hasColorConflict || hasBrandConflict || hasModelConflict;
+          if (!hasConflicts) {
+            if (objectScore === 30 && (brandScore > 0 || colorScore > 0)) {
+              // Text + object + semantic property match: boost to 70-80%
+              finalScore = Math.max(finalScore + 15, 70);
+              finalScore = Math.min(finalScore, 80);
+            } else if (objectScore === 30) {
+              // Just same object type, no other property match, e.g. helmet vs helmet: cap at 55%
+              finalScore = Math.min(finalScore, 55);
             }
           }
-
-          // Text-only matches (no images and no serial code) stay within 70-85%
-          const isTextOnly = !imgA && !imgB && matchingIds.length === 0;
-          if (isTextOnly && finalScore > 85) {
-            finalScore = 85;
+        } else {
+          // With images or OCR, can reach 90%+
+          if (matchingIds.length > 0) {
+            finalScore = Math.max(finalScore + 35, 95);
+          } else {
+            if (finalScore >= 90) {
+              const sameObject = (primaryObjA && primaryObjB && primaryObjA === primaryObjB);
+              const hasStrongImage = (imageScore >= 12);
+              const hasStrongSemantic = (semanticScore >= 16);
+              const hasStrongEvidence = hasStrongImage || hasStrongSemantic;
+              if (!sameObject || !hasStrongEvidence) {
+                finalScore = Math.min(finalScore, 89);
+              }
+            }
           }
+        }
+        
+        // Ensure finalScore is at least 40% if the primary object matches and there isn't multiple conflicts
+        if (objectScore === 30) {
+          finalScore = Math.max(finalScore, 40);
         }
       }
 
       finalScore = Math.min(Math.max(Math.round(finalScore), 0), 100);
 
-      // Generate clean context-aware aiReason sentence (Task 7)
+      // Generate clean context-aware aiReason sentence (Task 13)
       let aiReason = 'Both reports share matching characteristics.';
       if (isMismatch) {
         aiReason = 'Items have different primary object types.';
       } else if (matchingIds.length > 0) {
         aiReason = `High confidence match due to matching identifier code: ${matchingIds.join(', ')}.`;
-      } else {
-        const brandText = sourceItem.brand || target.brand || '';
-        const objectText = primaryObjA || 'item';
-        const brandStr = brandText ? `${brandText.charAt(0).toUpperCase() + brandText.slice(1)} ` : '';
-        
-        if (objectText === 'computer' || objectText === 'laptop' || objectText === 'macbook') {
-          aiReason = `Both items appear to be ${brandStr}laptops with matching accessories.`;
-        } else if (objectText === 'charger' || objectText === 'adapter') {
-          aiReason = `Both reports describe a similar ${brandStr}charger item with matching characteristics.`;
+      } else if (primaryObjA && primaryObjA === primaryObjB) {
+        if (negativeSignals.length > 0) {
+          aiReason = `Both reports describe a ${primaryObjA}, but some details are different.`;
         } else {
-          aiReason = `Both reports describe a similar ${brandStr}${objectText} item.`;
+          const brandText = sourceItem.brand || target.brand || '';
+          const brandStr = brandText ? `${brandText.charAt(0).toUpperCase() + brandText.slice(1)} ` : '';
+          aiReason = `Both reports describe a similar ${brandStr}${primaryObjA} item.`;
         }
-        aiReason = aiReason.replace(/\s+/g, ' ');
       }
+      aiReason = aiReason.replace(/\s+/g, ' ');
 
       const lostId = type === 'lost' ? itemId : target._id;
       const foundId = type === 'found' ? itemId : target._id;
@@ -283,6 +357,7 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
           score: finalScore,
           matchedFields: [...new Set(matchedFields)],
           aiReason,
+          negativeSignals: [...new Set(negativeSignals)],
           missingEvidence,
           breakdown: {
             objectScore,
@@ -323,6 +398,7 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
           existing.score = finalScore;
           existing.matchedFields = matchData.matchedFields;
           existing.aiReason = aiReason;
+          existing.negativeSignals = matchData.negativeSignals;
           existing.missingEvidence = missingEvidence;
           existing.breakdown = matchData.breakdown;
           await existing.save();
@@ -335,4 +411,102 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
     console.error('AI Matching Service error:', error);
     return 0;
   }
+};
+
+// Helper conflict checks (Task 6)
+const checkColorConflict = (strA: string, strB: string): string | null => {
+  const cleanA = strA.toLowerCase();
+  const cleanB = strB.toLowerCase();
+  const COLORS_LIST = ['black', 'white', 'red', 'blue', 'green', 'brown', 'yellow', 'grey', 'gray', 'silver', 'gold', 'pink', 'purple', 'orange'];
+  
+  const colorsA = COLORS_LIST.filter(c => cleanA.includes(c));
+  const colorsB = COLORS_LIST.filter(c => cleanB.includes(c));
+  
+  if (colorsA.length > 0 && colorsB.length > 0) {
+    const shareColor = colorsA.some(c => colorsB.includes(c) || (c === 'grey' && colorsB.includes('gray')) || (c === 'gray' && colorsB.includes('grey')));
+    if (!shareColor) {
+      return `${colorsA.join('/')} vs ${colorsB.join('/')}`;
+    }
+  }
+  return null;
+};
+
+const checkBrandConflict = (brandA: string, brandB: string): string | null => {
+  const bA = brandA.trim().toLowerCase();
+  const bB = brandB.trim().toLowerCase();
+  const ignoreList = ['', 'unknown', 'none', 'other', 'n/a', 'na'];
+  if (ignoreList.includes(bA) || ignoreList.includes(bB)) {
+    return null;
+  }
+  if (bA !== bB) {
+    return `${brandA} vs ${brandB}`;
+  }
+  return null;
+};
+
+const checkModelConflict = (textA: string, textB: string): string | null => {
+  const wordsA = textA.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').split(/\s+/).filter(Boolean);
+  const wordsB = textB.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').split(/\s+/).filter(Boolean);
+  
+  const brandsAndProducts = [
+    'dell', 'apple', 'hp', 'samsung', 'lenovo', 'asus', 'sony', 'google', 
+    'acer', 'microsoft', 'lg', 'oneplus', 'xiaomi', 'huawei', 'toshiba',
+    'iphone', 'ipad', 'macbook', 'galaxy', 'pixel', 'playstation', 'xbox', 'nintendo'
+  ];
+  
+  const stopWords = new Set(['lost', 'found', 'my', 'the', 'a', 'an', 'with', 'near', 'inside', 'outside', 'item', 'thing', 'please', 'help']);
+  const properties = new Set([
+    'black', 'white', 'red', 'blue', 'green', 'brown', 'yellow', 'grey', 'gray', 'silver', 'gold',
+    'small', 'large', 'big', 'new', 'old', 'leather', 'plastic', 'metal'
+  ]);
+
+  for (const key of brandsAndProducts) {
+    const idxA = wordsA.indexOf(key);
+    const idxB = wordsB.indexOf(key);
+    if (idxA !== -1 && idxB !== -1) {
+      const nextWordA = wordsA[idxA + 1];
+      const nextWordB = wordsB[idxB + 1];
+      if (nextWordA && nextWordB) {
+        if (!stopWords.has(nextWordA) && !properties.has(nextWordA) &&
+            !stopWords.has(nextWordB) && !properties.has(nextWordB)) {
+          if (nextWordA !== nextWordB) {
+            const keyCap = key.charAt(0).toUpperCase() + key.slice(1);
+            return `${keyCap} ${nextWordA} vs ${keyCap} ${nextWordB}`;
+          }
+        }
+      }
+    }
+  }
+  return null;
+};
+
+const checkMaterialConflict = (textA: string, textB: string): string | null => {
+  const materials = ['leather', 'plastic', 'metal', 'fabric', 'rubber', 'silicon', 'wooden', 'glass'];
+  const cleanA = textA.toLowerCase();
+  const cleanB = textB.toLowerCase();
+  
+  const matA = materials.find(m => cleanA.includes(m));
+  const matB = materials.find(m => cleanB.includes(m));
+  
+  if (matA && matB && matA !== matB) {
+    return `${matA} vs ${matB}`;
+  }
+  return null;
+};
+
+const checkSizeConflict = (textA: string, textB: string): string | null => {
+  const sizes = ['small', 'medium', 'large', 'big', 'tiny', 'huge'];
+  const cleanA = textA.toLowerCase();
+  const cleanB = textB.toLowerCase();
+  
+  const sizeA = sizes.find(s => cleanA.includes(s));
+  const sizeB = sizes.find(s => cleanB.includes(s));
+  
+  if (sizeA && sizeB && sizeA !== sizeB) {
+    if ((sizeA === 'big' && sizeB === 'large') || (sizeA === 'large' && sizeB === 'big')) {
+      return null;
+    }
+    return `${sizeA} vs ${sizeB}`;
+  }
+  return null;
 };

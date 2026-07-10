@@ -41,6 +41,7 @@ const AIMatchSchema = new mongoose_1.Schema({
     status: { type: String, enum: ['new', 'reviewed', 'dismissed'], default: 'new' },
     matchedFields: { type: [String], default: [] },
     aiReason: { type: String, default: '' },
+    negativeSignals: { type: [String], default: [] },
     missingEvidence: { type: [String], default: [] },
     breakdown: {
         objectScore: { type: Number, default: 0 },

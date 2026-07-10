@@ -7,6 +7,7 @@ export interface IAIMatch extends Document {
   status: 'new' | 'reviewed' | 'dismissed';
   matchedFields: string[];
   aiReason: string;
+  negativeSignals: string[];
   missingEvidence: string[];
   breakdown: {
     objectScore: number;
@@ -30,6 +31,7 @@ const AIMatchSchema = new Schema({
   status:    { type: String, enum: ['new', 'reviewed', 'dismissed'], default: 'new' },
   matchedFields: { type: [String], default: [] },
   aiReason:      { type: String, default: '' },
+  negativeSignals: { type: [String], default: [] },
   missingEvidence: { type: [String], default: [] },
   breakdown: {
     objectScore:   { type: Number, default: 0 },

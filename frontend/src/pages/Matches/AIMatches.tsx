@@ -345,6 +345,21 @@ export const AIMatches: React.FC = () => {
                             </div>
                           </div>
                         )}
+
+                        {/* Match Warnings & Conflicts Section */}
+                        {match.negativeSignals && match.negativeSignals.length > 0 && (
+                          <div className="p-4 bg-danger/5 rounded-2xl mt-3 border border-danger/15">
+                            <h4 className="font-bold text-xs text-danger mb-2">Match Warnings & Conflicts</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {match.negativeSignals.map((sig: string, idx: number) => (
+                                <div key={idx} className="flex items-center gap-1.5 text-xs text-danger font-semibold">
+                                  <span>⚠</span>
+                                  <span>{sig}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Action Buttons */}

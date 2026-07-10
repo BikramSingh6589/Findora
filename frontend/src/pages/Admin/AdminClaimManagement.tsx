@@ -551,6 +551,21 @@ export const AdminClaimManagement: React.FC = () => {
                         </div>
                       )}
 
+                      {/* Match Warnings & Conflicts */}
+                      {claimAIMatch.negativeSignals && claimAIMatch.negativeSignals.length > 0 && (
+                        <div className="p-3 bg-danger/5 rounded-xl border border-danger/15 space-y-1">
+                          <h5 className="font-bold text-xs text-danger">Match Warnings & Conflicts:</h5>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-danger/90 font-semibold">
+                            {claimAIMatch.negativeSignals.map((sig: string, idx: number) => (
+                              <div key={idx} className="flex items-center gap-1">
+                                <span>⚠</span>
+                                <span>{sig}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Score Breakdown */}
                       {claimAIMatch.breakdown && (
                         <div className="space-y-2 pt-3 border-t border-border-default/50">

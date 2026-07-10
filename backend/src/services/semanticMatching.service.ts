@@ -6,28 +6,15 @@ export interface SemanticMatchingResult {
 }
 
 const PRIMARY_OBJECTS: { [key: string]: string[] } = {
-  'computer': ['laptop', 'macbook', 'computer', 'pc', 'notebook'],
+  'computer': ['laptop', 'notebook', 'macbook', 'computer', 'pc'],
   'phone': ['phone', 'mobile', 'iphone', 'smartphone'],
-  'wallet': ['wallet', 'purse', 'card holder', 'billfold', 'cardholder'],
-  'id': ['id card', 'identity card', 'college id', 'student card', 'badge', 'pass', 'license'],
-  'keys': ['key', 'keys', 'keychain', 'fob', 'keyfob'],
-  'books': ['book', 'textbook', 'copy', 'notebook'],
-  'documents': ['document', 'file', 'certificate', 'paper'],
-  'accessories': ['watch', 'smartwatch', 'band', 'earphones', 'headphones', 'earbuds', 'airpods', 'headset'],
-  'bottle': ['bottle', 'flask', 'thermos', 'tumbler'],
-  'bag': ['bag', 'backpack', 'knapsack', 'handbag', 'briefcase'],
-  'electronics': ['calculator', 'mouse', 'keyboard', 'tablet'],
-  'clothing': ['jacket', 'shirt', 'hoodie', 'sweater', 'coat', 'cap', 'hat'],
-  'storage': ['pendrive', 'usb', 'flash drive', 'hard disk', 'hdd', 'ssd', 'hard drive'],
-  'umbrella': ['umbrella'],
-  'jewelry': ['ring', 'chain', 'bracelet', 'necklace'],
-  'eyewear': ['glasses', 'spectacles', 'eyeglasses'],
-  'vehicle': ['cycle', 'bicycle', 'bike']
+  'charger': ['adapter', 'power brick', 'charger'],
+  'bag': ['backpack', 'bag']
 };
 
 const STOP_WORDS = new Set([
   'lost', 'found', 'my', 'the', 'a', 'an', 'with', 'near',
-  'inside', 'outside', 'item', 'thing'
+  'inside', 'outside', 'item', 'thing', 'please', 'help'
 ]);
 
 const BRANDS = new Set([
@@ -35,70 +22,93 @@ const BRANDS = new Set([
   'acer', 'microsoft', 'lg', 'oneplus', 'xiaomi', 'huawei', 'toshiba'
 ]);
 
+// Dynamic main object extraction (Task 2)
+export const extractMainObject = (text: string): string | null => {
+  if (!text) return null;
+
+  // 1. Convert to lowercase and clean punctuation
+  const cleanText = text
+    .toLowerCase()
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ')
+    .trim();
+
+  const words = cleanText.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return null;
+
+  // Define lists of words to remove / stop words
+  const stopWords = new Set([
+    'lost', 'found', 'my', 'the', 'a', 'an', 'item', 'thing', 'please', 'help'
+  ]);
+  const cutOffWords = new Set([
+    'with', 'near', 'inside', 'outside', 'in', 'on', 'at', 'under', 'for', 'from'
+  ]);
+  const properties = new Set([
+    'black', 'white', 'red', 'blue', 'green', 'brown', 'yellow', 'grey', 'gray',
+    'small', 'large', 'big',
+    'new', 'old',
+    'leather', 'plastic', 'metal'
+  ]);
+  const brands = new Set([
+    'dell', 'apple', 'hp', 'samsung', 'lenovo', 'asus', 'sony', 'google',
+    'acer', 'microsoft', 'lg', 'oneplus', 'xiaomi', 'huawei', 'toshiba'
+  ]);
+
+  // Synonym dictionary mapping (Task 3)
+  const SYNONYM_MAP: { [key: string]: string[] } = {
+    'computer': ['laptop', 'notebook', 'macbook'],
+    'phone': ['mobile', 'smartphone', 'iphone'],
+    'charger': ['adapter', 'power brick'],
+    'bag': ['backpack']
+  };
+
+  const computerIndicators = ['dell', 'hp', 'lenovo', 'macbook', 'asus', 'acer', 'computer', 'charger', 'adapter'];
+
+  // Check synonym dictionary first
+  for (const word of words) {
+    for (const [key, synonyms] of Object.entries(SYNONYM_MAP)) {
+      if (synonyms.includes(word)) {
+        if (word === 'notebook') {
+          // Resolve notebook ambiguity
+          const isComputer = words.some(w => computerIndicators.includes(w) || brands.has(w));
+          if (isComputer) {
+            return 'computer';
+          }
+          continue; // Let it fall through to dynamic extraction as 'notebook'
+        }
+        return key;
+      }
+      if (key === word) {
+        return key;
+      }
+    }
+  }
+
+  // If no synonym found, extract dynamically:
+  const dynamicWords: string[] = [];
+  for (const word of words) {
+    if (cutOffWords.has(word)) {
+      break; // stop processing after cutoff words (near, inside, outside, with)
+    }
+    if (stopWords.has(word) || properties.has(word) || brands.has(word)) {
+      continue;
+    }
+    // Also ignore short/noise tokens
+    if (word.length < 2 || /^\d+$/.test(word)) {
+      continue;
+    }
+    dynamicWords.push(word);
+  }
+
+  if (dynamicWords.length > 0) {
+    return dynamicWords[dynamicWords.length - 1]; // last word is the head noun
+  }
+
+  return null;
+};
+
 // Get primary object type from words list
 export const detectPrimaryObject = (words: string[]): string | null => {
-  let primaryObj: string | null = null;
-  let maxIndex = -1;
-
-  // Pre-process context for "notebook" to resolve study vs laptop laptop ambiguity
-  const hasNotebook = words.includes('notebook');
-  let notebookCategory: string | null = null;
-  if (hasNotebook) {
-    const computerIndicators = ['dell', 'hp', 'lenovo', 'macbook', 'asus', 'acer', 'computer', 'charger', 'adapter'];
-    const studyIndicators = ['math', 'class', 'subject', 'notes', 'pages', 'spiral', 'study', 'ruled', 'writing', 'physics', 'chemistry'];
-    
-    const isComputer = words.some(w => computerIndicators.includes(w));
-    const isStudy = words.some(w => studyIndicators.includes(w));
-
-    if (isComputer) {
-      notebookCategory = 'computer';
-    } else if (isStudy) {
-      notebookCategory = 'books';
-    } else {
-      notebookCategory = 'books'; // Default stationery unless computer context indicators present
-    }
-  }
-
-  for (const [objType, keywords] of Object.entries(PRIMARY_OBJECTS)) {
-    for (const keyword of keywords) {
-      if (keyword === 'notebook') {
-        if (notebookCategory === objType) {
-          const lastIdx = words.lastIndexOf('notebook');
-          if (lastIdx !== -1 && lastIdx > maxIndex) {
-            maxIndex = lastIdx;
-            primaryObj = objType;
-          }
-        }
-        continue;
-      }
-
-      const keywordWords = keyword.split(' ');
-      if (keywordWords.length > 1) {
-        // Multi-word search
-        for (let i = 0; i <= words.length - keywordWords.length; i++) {
-          let match = true;
-          for (let j = 0; j < keywordWords.length; j++) {
-            if (words[i + j] !== keywordWords[j]) {
-              match = false;
-              break;
-            }
-          }
-          if (match && i > maxIndex) {
-            maxIndex = i;
-            primaryObj = objType;
-          }
-        }
-      } else {
-        const lastIdx = words.lastIndexOf(keyword);
-        if (lastIdx !== -1 && lastIdx > maxIndex) {
-          maxIndex = lastIdx;
-          primaryObj = objType;
-        }
-      }
-    }
-  }
-
-  return primaryObj;
+  return extractMainObject(words.join(' '));
 };
 
 /**
@@ -116,27 +126,30 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
       .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ')
       .split(/\s+/)
       .filter(Boolean)
+      .filter(w => w.length >= 3)
+      .filter(w => !['a', 'n', 'x'].includes(w))
       .filter(w => !STOP_WORDS.has(w));
   };
 
   const wordsA = cleanAndTokenize(textA);
   const wordsB = cleanAndTokenize(textB);
 
-  if (wordsA.length === 0 || wordsB.length === 0) {
-    return { score: 0, matchedConcepts: [], primaryObjectA: null, primaryObjectB: null };
-  }
+  // 1. Detect Primary Object using the new extractMainObject
+  const primaryObjA = extractMainObject(textA);
+  const primaryObjB = extractMainObject(textB);
 
-  // 1. Detect Primary Object
-  const primaryObjA = detectPrimaryObject(wordsA);
-  const primaryObjB = detectPrimaryObject(wordsB);
+  if (wordsA.length === 0 || wordsB.length === 0) {
+    return { score: 0, matchedConcepts: [], primaryObjectA: primaryObjA, primaryObjectB: primaryObjB };
+  }
 
   const matchedConcepts: string[] = [];
 
   // Mismatch check
-  if (primaryObjA && primaryObjB && primaryObjA !== primaryObjB) {
+  const isMismatch = primaryObjA && primaryObjB && primaryObjA !== primaryObjB;
+  if (isMismatch) {
     return {
-      score: 0.1,
-      matchedConcepts: [`Different objects (${primaryObjA} vs ${primaryObjB})`],
+      score: 0.05, // very low score for mismatched items
+      matchedConcepts: [], // no matches
       primaryObjectA: primaryObjA,
       primaryObjectB: primaryObjB
     };
@@ -146,7 +159,7 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
   let semanticScore = 0;
   if (primaryObjA && primaryObjB && primaryObjA === primaryObjB) {
     semanticScore += 0.5; // Strong base for matching main object type
-    matchedConcepts.push(`Same item type`);
+    // Note: Do NOT push "Same item type" here, ai.service.ts will handle it
   }
 
   // 2. Brand Matching
@@ -157,7 +170,7 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
   if (commonBrands.length > 0) {
     semanticScore += 0.25;
     for (const brand of commonBrands) {
-      matchedConcepts.push(`Same brand ${brand.charAt(0).toUpperCase() + brand.slice(1)}`);
+      matchedConcepts.push(`Same brand: ${brand.charAt(0).toUpperCase() + brand.slice(1)}`);
     }
   } else if (brandsA.length > 0 && brandsB.length > 0 && brandsA[0] !== brandsB[0]) {
     semanticScore -= 0.15;
@@ -186,7 +199,18 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
   const commonConcepts = [...conceptsA].filter(c => conceptsB.has(c));
   
   // Calculate keyword similarity excluding stop words and already matched brands/primary objects
-  const ignoredForKeywords = new Set([...commonBrands, primaryObjA || '']);
+  const ignoredForKeywords = new Set([
+    ...commonBrands, 
+    primaryObjA || '', 
+    // Also ignore synonyms of primaryObjA to prevent duplicate concept output
+    ...(primaryObjA === 'computer' ? ['laptop', 'notebook', 'macbook', 'computer'] : []),
+    ...(primaryObjA === 'phone' ? ['phone', 'mobile', 'iphone', 'smartphone'] : []),
+    ...(primaryObjA === 'charger' ? ['charger', 'adapter', 'power brick'] : []),
+    ...(primaryObjA === 'bag' ? ['bag', 'backpack'] : []),
+    // also ignore primaryObjA directly as lowercase
+    ...(primaryObjA ? [primaryObjA.toLowerCase()] : [])
+  ]);
+  
   const relevantConceptMatches = commonConcepts.filter(c => !ignoredForKeywords.has(c));
 
   if (relevantConceptMatches.length > 0) {

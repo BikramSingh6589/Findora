@@ -277,6 +277,19 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext, f
                   </div>
                 )}
 
+                {/* Match Warnings & Conflicts */}
+                {match.negativeSignals && match.negativeSignals.length > 0 && (
+                  <div className="mt-3 space-y-1 p-2.5 bg-danger/5 border border-danger/10 rounded-xl">
+                    <h5 className="font-bold text-[10px] text-danger uppercase tracking-wider mb-1">Match Warnings & Conflicts</h5>
+                    {match.negativeSignals.map((sig: string, idx: number) => (
+                      <div key={idx} className="flex items-center gap-1 text-[11px] font-bold text-danger">
+                        <span className="text-sm">⚠</span>
+                        <span>{sig}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Why matched checkmarks */}
                 {match.matchedFields && match.matchedFields.length > 0 && (
                   <div className="mt-4 pt-4 border-t border-info-ai/20 space-y-2">
