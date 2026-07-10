@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Dashboard | Lost&amp;Found AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "secondary": "#6b38d4",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-container": "#fff7ee",
+                        "surface-container-high": "#e6e8ea",
+                        "text-primary": "#111827",
+                        "primary-fixed": "#e1e0ff",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "primary": "#4143d5",
+                        "on-tertiary": "#ffffff",
+                        "danger": "#F43F5E",
+                        "outline-variant": "#c6c5d7",
+                        "on-primary-container": "#f9f6ff",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "on-surface-variant": "#464555",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#735500",
+                        "outline": "#767586",
+                        "surface-container-lowest": "#ffffff",
+                        "dark-card": "#1F2937",
+                        "warning": "#FB923C",
+                        "on-tertiary-fixed": "#261a00",
+                        "secondary-container": "#8455ef",
+                        "info-ai": "#38BDF8",
+                        "background": "#f7f9fb",
+                        "surface-container": "#eceef0",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed": "#05006c",
+                        "on-background": "#191c1e",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#2c2cc3",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-error": "#ffffff",
+                        "dark-primary": "#8B80FF",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "inverse-primary": "#c0c1ff",
+                        "on-secondary-fixed": "#23005c",
+                        "on-secondary-container": "#fffbff",
+                        "border-default": "#E5E7EB",
+                        "success": "#22C55E",
+                        "dark-bg": "#111827",
+                        "card-bg": "#FFFFFF",
+                        "primary-container": "#5b5fef",
+                        "on-surface": "#191c1e",
+                        "surface-tint": "#474adb",
+                        "surface-container-highest": "#e0e3e5",
+                        "text-secondary": "#6B7280",
+                        "inverse-surface": "#2d3133",
+                        "secondary-fixed": "#e9ddff",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "tertiary-container": "#916c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "32px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "sm": "8px",
+                        "3xl": "64px",
+                        "2xl": "48px",
+                        "margin-desktop": "32px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "page-title-mobile": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "hero-title": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "card-title": ["Plus Jakarta Sans"],
+                        "section-title": ["Plus Jakarta Sans"],
+                        "page-title": ["Plus Jakarta Sans"],
+                        "caption": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "page-title-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "800"}],
+                        "label-md": ["16px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "hero-title": ["48px", {"lineHeight": "1.2", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "card-title": ["22px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                        "section-title": ["24px", {"lineHeight": "1.3", "fontWeight": "800"}],
+                        "page-title": ["36px", {"lineHeight": "1.2", "fontWeight": "800"}],
+                        "caption": ["14px", {"lineHeight": "1.4", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .reward-gradient {
+            background: linear-gradient(135deg, #FF9966 0%, #FF5E62 100%);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+        }
+        .pastel-gradient-1 {
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+        }
+        .pastel-header-gradient {
+            background: linear-gradient(135deg, #f6f8ff 0%, #f1f0ff 100%);
+        }
+        .nav-glow {
+            box-shadow: 0 0 15px rgba(65, 67, 213, 0.2);
+        }
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating-doodle {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-text-primary font-body-md antialiased min-h-screen pb-32">
+<!-- Top Navigation -->
+<header class="bg-white/70 backdrop-blur-xl sticky top-0 z-50 flex justify-between items-center w-full px-margin-mobile py-4 border-b border-white/50">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl primary-gradient flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined text-[20px]">explore</span>
+</div>
+<span class="font-page-title text-[24px] tracking-tight font-extrabold text-primary">Found.it</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-on-surface-variant hover:text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-11 h-11 rounded-full border-2 border-white overflow-hidden shadow-md">
+<img alt="Alice Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYqskszM5EPswNP2YgyRkkta8mPIhHhSOeJ6RolT3bZYfY93DIyaR1s3Qqun0SgeYUQpsM-kA0iePAOHPt1JA-BnVK0kYE38V6Y3didL3l7I37FzKfFeZhKEK20OJECP1uCKs_E9ZXCm-RBniA1I7SFBJ59hLRF6dMcZAYAMflGAxfkJ_OHBsthVpZbG-dCKanbX1UDMnAu260IbCamfNdWw_FdBW7efpSEdkNOZe2XMBxmw1BV9uTOWNbr44jvYmk45724dKCtic"/>
+</div>
+</div>
+</header>
+<main class="px-margin-mobile py-lg space-y-xl relative overflow-hidden">
+<!-- Floating Background Doodles -->
+<div class="absolute -right-12 top-0 -z-10 opacity-30 w-48 h-48 floating-doodle">
+<img alt="" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLuInN9JSDHH6XyBeE6QIS3VUkw7VRdFpJ3E_k6g6qQes4Xbo4pczg29sm87mzPmPUIs-YPcxSOJJ1qTDSvlDBqldTeJ2F8jHGOetcbDBBYyDR4CDsCnBq7lA5OKQ7QKD2iQSRJO4bJ0Mq68Cx0HCZxWtXxOXWHqFqCm4W7Q2_yqk55RI0avxPmHZyxHXSmYCH36213uCbc7Vn7G1dVFIVFO93ng6KzrY2YKiNI8YZ-eiuBuSFE-oqD0NQ"/>
+</div>
+<!-- Welcome Header & XP Section -->
+<section class="space-y-md animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div>
+<h1 class="font-page-title-mobile text-page-title-mobile text-text-primary tracking-tight">Welcome Back, Alice! ✨</h1>
+<p class="text-text-secondary font-body-md mt-1 font-medium">Crushing it! 14 items returned 🏆</p>
+</div>
+<!-- XP Progress Card -->
+<div class="glass-card rounded-3xl p-lg flex flex-col gap-md relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-warning/10 to-transparent -mr-8 -mt-8 rounded-full blur-2xl"></div>
+<div class="flex justify-between items-center relative">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center text-warning">
+<span class="material-symbols-outlined fill-icon text-[20px]">military_tech</span>
+</div>
+<span class="font-label-md text-label-md">Level 12 Explorer</span>
+</div>
+<span class="font-label-md text-label-md text-primary bg-primary/5 px-3 py-1 rounded-full">1,240 / 1,500 XP</span>
+</div>
+<div class="space-y-2">
+<div class="h-4 w-full bg-surface-container rounded-full overflow-hidden p-1">
+<div class="h-full reward-gradient rounded-full w-[82%] shadow-[0_0_12px_rgba(255,94,98,0.4)] transition-all duration-1000 ease-out"></div>
+</div>
+<div class="flex justify-between items-center">
+<p class="font-caption text-caption text-text-secondary font-medium">260 XP until next badge! 🏅</p>
+<span class="material-symbols-outlined text-text-secondary text-[16px] animate-pulse">trending_up</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions Bento Grid -->
+<section class="space-y-md">
+<div class="flex items-center justify-between">
+<h2 class="font-section-title text-section-title text-text-primary">Need a Hand? 🤝</h2>
+</div>
+<div class="bento-grid">
+<!-- Report Lost Card -->
+<button class="flex flex-col items-start gap-4 p-lg bg-white rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 group border border-slate-100 relative overflow-hidden">
+<div class="absolute right-0 top-0 w-16 h-16 bg-danger/5 -mr-4 -mt-4 rounded-full"></div>
+<div class="w-14 h-14 rounded-2xl bg-danger/10 text-danger flex items-center justify-center group-hover:bg-danger group-hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-[28px]">search</span>
+</div>
+<div class="text-left">
+<span class="font-label-md text-label-md block">Lost it?</span>
+<span class="text-[12px] text-text-secondary font-medium">We'll find it!</span>
+</div>
+</button>
+<!-- Report Found Card -->
+<button class="flex flex-col items-start gap-4 p-lg bg-white rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 group border border-slate-100 relative overflow-hidden">
+<div class="absolute right-0 top-0 w-16 h-16 bg-success/5 -mr-4 -mt-4 rounded-full"></div>
+<div class="w-14 h-14 rounded-2xl bg-success/10 text-success flex items-center justify-center group-hover:bg-success group-hover:text-white transition-all shadow-sm">
+<span class="material-symbols-outlined text-[28px]">add_task</span>
+</div>
+<div class="text-left">
+<span class="font-label-md text-label-md block">Found it?</span>
+<span class="text-[12px] text-text-secondary font-medium">Be a hero 🦸</span>
+</div>
+</button>
+<!-- Community Buzz Banner -->
+<div class="flex items-center gap-md p-lg glass-card rounded-3xl border border-white shadow-sm col-span-2 relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 opacity-40">
+<img alt="" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLu7RHAYph5T42AZ1fGyBygVo0BAo6RkRUjIW_Bm_WFhmCoyI6msUSKrUdzIAtPu6zx05PgT1Hf6Je3aTHv3g1RO1PkjHZadmzg0ywR6TYBwoLw9sg9GT9CIllwCqgtLTEJRKGP9WDoBZuSB0junL5j1GP6M6vlJzxHDm-y5hwNSbgPRpUL0p9UgJ8xJKNGd9XbUtsRp_PbsKYiy5gwXXUiTXgTuxZMAIgxHcSJBQALu8TzeRK0RkPzLtSQ"/>
+</div>
+<div class="w-12 h-12 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">groups</span>
+</div>
+<div class="flex-grow">
+<p class="font-label-md text-label-md text-text-primary">Community Buzz 🐝</p>
+<p class="font-body-md text-[13px] text-text-secondary leading-tight mt-0.5">3 students searching in Quad now!</p>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- AI Matches Section -->
+<section class="space-y-md">
+<div class="flex justify-between items-center">
+<h2 class="font-section-title text-section-title text-text-primary">Perfect Matches ✨</h2>
+<button class="text-primary font-label-md text-[14px] bg-primary/5 px-4 py-1.5 rounded-full hover:bg-primary/10 transition-colors">View all</button>
+</div>
+<div class="space-y-4">
+<!-- Match Card 1 -->
+<div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3">
+<span class="bg-info-ai/10 text-info-ai font-bold text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur-md border border-info-ai/10">
+<span class="material-symbols-outlined text-[14px] fill-icon">auto_awesome</span>
+            98% MATCH
+        </span>
+</div>
+<div class="flex gap-4">
+<div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-inner">
+<img alt="iPhone 14" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDmK1p1AiJCsYW49Kl1sI8CjKlzIHeMLys2_v5omGgURqi2AaMBUzumK-f7W_4mx1OgukhHGXJz2pCmSmZ01SUpxa8qVnmwUtDtJdP5DWwp31t7zfxUpcv48157eWpEfAB6K2RGJRirwmWJjhAoVvYIROngzMc1hYrfEkjkWCWbFpDFJjZta0LIwpF9N-P8QixF_FpRSSpXlkWSBeePpF0exRoM3zNGcBwH75vWmnUSNJmUZAmZrMlB0JXaahjQ_ZUw5N01URXoe4"/>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<h3 class="font-bold text-lg text-text-primary leading-tight">iPhone 14 Pro 📱</h3>
+<p class="font-medium text-sm text-text-secondary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                    Central Library
+                </p>
+</div>
+<div class="flex items-center gap-4 mt-2">
+<button class="bg-primary text-white font-bold text-sm px-5 py-2 rounded-2xl shadow-lg shadow-primary/30 active:scale-95 transition-all">Claim</button>
+<span class="text-[12px] text-text-secondary font-medium">2h ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Match Card 2 -->
+<div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3">
+<span class="bg-info-ai/10 text-info-ai font-bold text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1.5 backdrop-blur-md border border-info-ai/10">
+<span class="material-symbols-outlined text-[14px] fill-icon">auto_awesome</span>
+            85% MATCH
+        </span>
+</div>
+<div class="flex gap-4">
+<div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-inner">
+<img alt="Keys" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSzh73sj6z26JUkYM39X87tUG8PW4wiBvtziMV7en6CoN6QzbY8DSIwWBweCFKRXZOoexPsEHbEWNR6VtYMyvFDjU1qRkcR5nQMl4LPca-cpR0couYTc6rc0PwbUJSq0ppF96BOMWY-zQdXh9U7OAS5i15r5-Co4-nN3lt7ACElqWk_H8fGo6fID1ZdWKVGVVEfbfx0n6a28RwNAwGg137MbaqsiTv3pfn17JdJkGScgG4g5z0Ezza16eCAjPFjBcKo_4fBS7p7Do"/>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<h3 class="font-bold text-lg text-text-primary leading-tight">Silver Keys 🔑</h3>
+<p class="font-medium text-sm text-text-secondary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                    Student Cafe
+                </p>
+</div>
+<div class="flex items-center gap-4 mt-2">
+<button class="bg-primary text-white font-bold text-sm px-5 py-2 rounded-2xl shadow-lg shadow-primary/30 active:scale-95 transition-all">Claim</button>
+<span class="text-[12px] text-text-secondary font-medium">Yesterday</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- My History Section -->
+<section class="space-y-md">
+<h2 class="font-section-title text-section-title text-text-primary">Recent Wins 🌈</h2>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-lg bg-white rounded-3xl border border-slate-50 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary/5 text-secondary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[24px]">headphones</span>
+</div>
+<div>
+<p class="font-bold text-text-primary">AirPods Pro Case</p>
+<p class="text-[12px] text-text-secondary font-medium">Reported 3 days ago</p>
+</div>
+</div>
+<span class="px-4 py-1.5 rounded-full bg-warning/10 text-warning font-bold text-[11px] border border-warning/10">PENDING</span>
+</div>
+<div class="flex items-center justify-between p-lg bg-white rounded-3xl border border-slate-50 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-success/5 text-success flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[24px]">verified</span>
+</div>
+<div>
+<p class="font-bold text-text-primary">Blue HydroFlask</p>
+<p class="text-[12px] text-text-secondary font-medium">Returned Oct 12</p>
+</div>
+</div>
+<span class="px-4 py-1.5 rounded-full bg-success/10 text-success font-bold text-[11px] border border-success/10">RETURNED</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 px-6 pb-8 pt-4 bg-white/80 backdrop-blur-2xl border-t border-white/50">
+<div class="flex justify-around items-center max-w-lg mx-auto">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center text-primary group" href="#">
+<div class="w-12 h-10 rounded-2xl bg-primary/10 flex items-center justify-center mb-1 transition-all nav-glow">
+<span class="material-symbols-outlined fill-icon">home</span>
+</div>
+<span class="text-[11px] font-bold uppercase tracking-wider">Home</span>
+</a>
+<!-- Community -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary transition-all group" href="#">
+<div class="w-12 h-10 rounded-2xl bg-transparent flex items-center justify-center mb-1 group-hover:bg-primary/5">
+<span class="material-symbols-outlined">explore</span>
+</div>
+<span class="text-[11px] font-bold uppercase tracking-wider">Explore</span>
+</a>
+<!-- Matches -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary transition-all group" href="#">
+<div class="w-12 h-10 rounded-2xl bg-transparent flex items-center justify-center mb-1 group-hover:bg-primary/5 relative">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="absolute top-2 right-3 w-2 h-2 bg-danger rounded-full ring-2 ring-white"></span>
+</div>
+<span class="text-[11px] font-bold uppercase tracking-wider">Matches</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary transition-all group" href="#">
+<div class="w-12 h-10 rounded-2xl bg-transparent flex items-center justify-center mb-1 group-hover:bg-primary/5">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+<span class="text-[11px] font-bold uppercase tracking-wider">Me</span>
+</a>
+</div>
+</nav>
+<!-- FAB for quick report -->
+<button class="fixed bottom-28 right-6 w-16 h-16 primary-gradient text-on-primary rounded-3xl shadow-[0_12px_24px_rgba(65,67,213,0.4)] flex items-center justify-center active:scale-90 hover:scale-105 transition-all z-40 border-2 border-white/20">
+<span class="material-symbols-outlined text-[36px]">add</span>
+</button>
+<script>
+    // Subtle scroll effects
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        if (window.scrollY > 20) {
+            header.classList.add('shadow-xl', 'bg-white/90');
+            header.classList.remove('bg-white/70');
+        } else {
+            header.classList.remove('shadow-xl', 'bg-white/90');
+            header.classList.add('bg-white/70');
+        }
+    });
+
+    // Card interactions
+    document.querySelectorAll('.rounded-3xl').forEach(card => {
+        card.addEventListener('touchstart', () => {
+            card.classList.add('scale-[0.98]');
+        });
+        card.addEventListener('touchend', () => {
+            card.classList.remove('scale-[0.98]');
+        });
+    });
+</script>
+</body></html>

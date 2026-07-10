@@ -180,10 +180,10 @@ export const ItemDetail: React.FC = () => {
     : ["https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&q=80&w=600"];
 
   return (
-    <div className="flex flex-col min-h-screen bg-surface -mt-6 -mx-6 md:m-0 pb-24 md:pb-0">
-
-      {/* Mobile Header (Hidden on Desktop since AppLayout handles it) */}
-      <header className="md:hidden bg-surface-container-lowest dark:bg-surface-container/80 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center px-4 py-3 shadow-sm border-b border-border-default">
+    <div className="flex flex-col min-h-screen bg-background text-on-surface font-body-md selection:bg-primary-fixed selection:text-primary pb-24 md:pb-0">
+      
+      {/* Mobile Header */}
+      <header className="md:hidden sticky top-0 z-40 bg-white/70 dark:bg-surface-container/80 backdrop-blur-md border-b border-border-default/50 px-4 py-3 flex justify-between items-center">
         <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-surface-container transition-colors">
           <ArrowLeft className="w-5 h-5 text-text-secondary" />
         </button>
@@ -194,251 +194,243 @@ export const ItemDetail: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 md:p-8 max-w-7xl mx-auto w-full">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-6 lg:py-8 w-full">
+        
+        {/* Back Button & Actions */}
+        <div className="flex items-center justify-between mb-6">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-bold text-text-secondary hover:text-primary transition-colors bg-surface-container-low dark:bg-surface-container px-5 py-2.5 rounded-full border border-border-default">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
+          <div className="hidden md:flex items-center gap-3">
+            <button className="w-11 h-11 rounded-full border border-border-default flex items-center justify-center hover:bg-white dark:hover:bg-surface-container hover:shadow-md transition-all">
+              <span className="material-symbols-outlined text-text-secondary">share</span>
+            </button>
+          </div>
+        </div>
 
-        {/* Breadcrumbs (Desktop) */}
-        <nav className="hidden md:flex mb-6 items-center gap-2 text-sm text-text-secondary font-semibold">
-          <button onClick={() => navigate('/community')} className="hover:text-primary transition-colors">Community</button>
-          <ChevronRight className="w-4 h-4" />
-          <span className="hover:text-primary cursor-pointer transition-colors">{item.category}</span>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-text-primary">Item #{item._id.substring(item._id.length - 6).toUpperCase()}</span>
-        </nav>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
-
-          {/* Left Column: Image Gallery & Description */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
-
-            {/* Image Gallery */}
-            <div className="flex flex-col gap-3 md:gap-4 px-4 md:px-0 pt-4 md:pt-0">
-              {/* Main Image */}
-              <div className="relative group aspect-[4/3] md:aspect-video rounded-3xl overflow-hidden shadow-sm bg-surface-container">
-                <img
-                  src={images[activeImage]}
-                  alt={item.itemName}
-                  className="w-full h-full object-cover transition-transform duration-700"
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="bg-success/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-sm">
-                    Status: {item.status}
-                  </span>
-                  <span className="bg-primary/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-sm">
-                    {item.category}
-                  </span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10">
+          
+          {/* Left: Media & Details */}
+          <div className="lg:col-span-7 space-y-8 md:space-y-10">
+            {/* Main Image */}
+            <div className="relative group aspect-[4/3] rounded-xl md:rounded-[24px] overflow-hidden shadow-xl md:shadow-2xl shadow-primary/5 border-2 md:border-4 border-white dark:border-surface-variant bg-surface-container">
+              <img alt={item.itemName} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={images[activeImage]} />
+              
+              {/* Status Badges */}
+              <div className="absolute top-4 left-4 md:top-6 md:left-6 flex flex-wrap gap-2 md:gap-3">
+                <div className={`bg-white/90 dark:bg-surface-container/90 backdrop-blur px-4 py-1.5 md:px-5 md:py-2 rounded-full font-bold text-[10px] md:text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm ${isLostItem ? 'text-danger' : 'text-warning'}`}>
+                  <span className={`w-2 h-2 rounded-full animate-pulse ${isLostItem ? 'bg-danger' : 'bg-warning'}`}></span>
+                  {item.status}
                 </div>
-                <button className="absolute bottom-4 right-4 bg-black/40 hover:bg-black/60 backdrop-blur-md p-2 rounded-full transition-all text-white">
-                  <Maximize2 className="w-5 h-5" />
-                </button>
+                <div className="bg-white/90 dark:bg-surface-container/90 backdrop-blur text-primary px-4 py-1.5 md:px-5 md:py-2 rounded-full font-bold text-[10px] md:text-xs uppercase tracking-wider shadow-sm">
+                  {item.category}
+                </div>
               </div>
-
-              {/* Thumbnails */}
-              {images.length > 1 && (
-                <div className="grid grid-cols-4 gap-2 md:gap-4">
-                  {images.map((img: string, idx: number) => (
-                    <button
-                      key={idx}
-                      onClick={() => setActiveImage(idx)}
-                      className={`aspect-square rounded-xl md:rounded-2xl overflow-hidden transition-all ${activeImage === idx ? 'ring-4 ring-primary/30 border-2 border-primary' : 'hover:opacity-80'}`}
-                    >
-                      <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              )}
+              <button className="absolute bottom-4 right-4 bg-black/40 hover:bg-black/60 backdrop-blur-md p-2 rounded-full transition-all text-white">
+                <Maximize2 className="w-5 h-5" />
+              </button>
             </div>
 
-
-          </div>
-
-          {/* Right Column: Details, Map & Actions */}
-          <div className="lg:col-span-5 flex flex-col gap-6 px-4 md:px-0">
-
-            {/* Quick Info Card */}
-            <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 shadow-sm border border-border-default">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">Item Name</span>
-                  <h1 className="text-2xl font-bold text-text-primary mt-1">{item.itemName}</h1>
-                </div>
-                <button className="hidden md:flex p-2 rounded-full hover:bg-surface-container transition-colors">
-                  <Share2 className="w-5 h-5 text-text-secondary" />
-                </button>
+            {/* Thumbnails */}
+            {images.length > 1 && (
+              <div className="grid grid-cols-4 gap-3 md:gap-4">
+                {images.map((img: string, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImage(idx)}
+                    className={`aspect-square rounded-xl md:rounded-2xl overflow-hidden transition-all border-2 ${activeImage === idx ? 'border-primary ring-2 ring-primary/30 shadow-md' : 'border-transparent hover:opacity-80'}`}
+                  >
+                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
               </div>
+            )}
 
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                    <MapPin className="w-5 h-5" />
+            {/* AI Confidence Highlight */}
+            {match && (
+              <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
+                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
+                    <div className="w-16 h-16 md:w-20 md:h-20 bg-primary-container/30 dark:bg-primary/20 rounded-full flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-3xl md:text-4xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>psychology_alt</span>
+                    </div>
+                    <div>
+                      <h4 className="text-3xl md:text-4xl font-extrabold text-primary tracking-tight">{match.score}% Match</h4>
+                      <p className="text-text-secondary font-medium mt-1">Our AI is confident this belongs to you!</p>
+                      {match.aiReason && <p className="text-xs text-text-secondary mt-2 italic">"{match.aiReason}"</p>}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-text-secondary font-semibold">{isLostItem ? 'Location Lost' : 'Last Seen Location'}</p>
-                    <p className="text-sm font-bold text-text-primary">{item.lastSeen || item.locationFound || item.locationLost}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-text-secondary font-semibold">Date {isLostItem ? 'Lost' : 'Reported'}</p>
-                    <p className="text-sm font-bold text-text-primary">
-                      {new Date(item.dateFound || item.dateLost).toLocaleDateString()} &bull; {new Date(item.dateFound || item.dateLost).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                    <User className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-text-secondary font-semibold">{isLostItem ? 'Owner' : 'Found By'}</p>
-                    <p className="text-sm font-bold text-text-primary">{item.finder?.name || item.owner?.name || 'Community Member'}</p>
+                  <div className="flex flex-col items-center px-6 md:border-l border-border-default w-full md:w-auto">
+                    <span className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-2">Verified Details</span>
+                    <div className="flex gap-2">
+                      <span className="w-2 h-2 rounded-full bg-success"></span>
+                      <span className="w-2 h-2 rounded-full bg-success"></span>
+                      <span className="w-2 h-2 rounded-full bg-success"></span>
+                    </div>
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* AI Confidence Score */}
-              {match && (() => {
-                const missingEvidence = match.missingEvidence || [];
-                return (
-                  <div className="bg-info-ai/10 rounded-2xl p-4 mb-8 border border-info-ai/20 animate-fade-in">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-info-ai fill-current" />
-                        <span className="text-sm font-bold text-info-ai">
-                          {match.score >= 80 ? 'Strong Match' : match.score >= 60 ? 'Possible Match' : 'Weak Match'}
-                        </span>
-                      </div>
-                      <span className="text-sm font-bold text-info-ai">{match.score}%</span>
-                    </div>
-                    <div className="w-full bg-info-ai/20 h-2 rounded-full overflow-hidden">
-                      <div className="bg-info-ai h-full rounded-full transition-all duration-1000" style={{ width: `${match.score}%` }}></div>
-                    </div>
-                    {match.aiReason && (
-                      <p className="text-xs text-info-ai/85 mt-2 font-medium italic">"{match.aiReason}"</p>
-                    )}
-
-                    {/* Missing Evidence Section */}
-                    {missingEvidence.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-info-ai/20 space-y-1">
-                        <span className="text-[10px] uppercase font-bold text-warning tracking-wider">Missing Evidence</span>
-                        <div className="grid grid-cols-1 gap-1">
-                          {missingEvidence.map((ev: string, idx: number) => (
-                            <div key={idx} className="flex items-center gap-1 text-[10px] text-warning font-semibold">
-                              <span>⚠</span>
-                              <span>{ev}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {match.breakdown && (
-                      <div className="mt-3 pt-3 border-t border-info-ai/20 space-y-2">
-                        <span className="text-[10px] uppercase font-bold text-info-ai/80 tracking-wider">Score Breakdown</span>
-                        <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-[10px] text-info-ai/80 font-bold">
-                          <div>Object: {match.breakdown.objectScore ?? 0}/30</div>
-                          <div>Brand: {match.breakdown.brandScore ?? 0}/15</div>
-                          <div>Color: {match.breakdown.colorScore ?? 0}/10</div>
-                          <div>Semantic: {match.breakdown.semanticScore ?? 0}/20</div>
-                          <div>
-                            Image: {missingEvidence.includes('Image not available') ? 'Not available' : `${match.breakdown.imageScore ?? 0}/15`}
-                          </div>
-                          <div>
-                            Receipt: {missingEvidence.includes('Receipt not available') ? 'Not available' : `${match.breakdown.ocrScore ?? 0}/10`}
-                          </div>
-                        </div>
-                      </div>
-                    )}
+            {/* Description */}
+            <div className="space-y-6">
+              <h3 className="text-xl md:text-2xl font-bold text-text-primary flex items-center gap-3">
+                <span className="material-symbols-outlined text-primary">notes</span>
+                Description
+              </h3>
+              <div className="bg-white dark:bg-surface-container p-6 md:p-8 rounded-xl md:rounded-[24px] border border-border-default leading-relaxed text-base md:text-lg text-text-primary italic shadow-sm">
+                "{item.description || 'No description provided.'}"
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {item.brand && (
+                  <div className="px-4 py-2 md:px-5 md:py-3 rounded-xl bg-surface-container text-text-secondary text-xs font-bold uppercase tracking-widest border border-border-default flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">sell</span> Brand: {item.brand}
                   </div>
-                );
-              })()}
-
-              {/* Actions */}
-              <div className="flex flex-col gap-3">
-                {['resolved', 'claimed', 'approved'].includes(item.status) ? (
-                  <div className="flex flex-col gap-2">
-                    <div className="w-full bg-[#0B0F1A]/80 text-white py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-sm border border-border-default backdrop-blur-md">
-                      <Verified className="w-5 h-5 text-success" />
-                      Item Claimed{item.owner?.name ? ` by ${item.owner.name}` : ''}
-                    </div>
-                    <button
-                      onClick={() => navigate(`/conflict/${item._id}`)}
-                      className="w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20 shadow-sm hover:scale-[1.02] active:scale-95"
-                    >
-                      <AlertTriangle className="w-5 h-5" />
-                      Conflict this claim
-                    </button>
-                    {isOwner && (
-                      <button
-                        onClick={() => setShowRevertModal(true)}
-                        className="text-xs text-text-secondary hover:text-primary transition-colors font-semibold py-2"
-                      >
-                        Mark as lost again
-                      </button>
-                    )}
+                )}
+                {item.color && (
+                  <div className="px-4 py-2 md:px-5 md:py-3 rounded-xl bg-surface-container text-text-secondary text-xs font-bold uppercase tracking-widest border border-border-default flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">palette</span> Color: {item.color}
                   </div>
-                ) : isFoundItem ? (
-                  isFinder ? (
-                    claimId ? (
-                      <button
-                        onClick={() => navigate(`/chat/finder/${claimId}`)}
-                        className="w-full bg-gradient-to-r from-primary to-[#6b38d4] text-white py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-95 transition-all"
-                      >
-                        <MessageSquare className="w-5 h-5" />
-                        Open Chat with Claimant
-                      </button>
-                    ) : (
-                      <div className="flex flex-col gap-2">
-                        <div className="text-center p-4 bg-surface-container rounded-2xl text-xs text-text-secondary font-medium">
-                          No active claims have been filed for this item yet. You will be notified when someone claims it.
-                        </div>
-                        <button
-                          onClick={() => setShowWithdrawModal(true)}
-                          className="w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20 shadow-sm hover:scale-[1.02] active:scale-95"
-                        >
-                          Withdraw Found Report
-                        </button>
-                      </div>
-                    )
-                  ) : (
-                    <button
-                      disabled={item?.finder?._id === currentUserId || item?.finder === currentUserId}
-                      onClick={() => navigate(`/claim/${item._id}`)}
-                      className={`w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${(item?.finder?._id === currentUserId || item?.finder === currentUserId)
-                          ? 'bg-text-secondary/20 text-text-secondary/50 cursor-not-allowed shadow-none'
-                          : 'bg-gradient-to-r from-primary to-[#6b38d4] text-white shadow-md hover:scale-[1.02] active:scale-95'
-                        }`}
-                    >
-                      <Verified className="w-5 h-5" />
-                      Claim Item
-                    </button>
-                  )
-                ) : (
-                  <>
-                    {isOwner ? (
-                      <button
-                        onClick={() => setShowResolveModal(true)}
-                        className="w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-surface-container-high text-text-primary shadow-sm hover:scale-[1.02] active:scale-95 border border-border-default"
-                      >
-                        <Verified className="w-5 h-5" />
-                        I Found This Item
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => navigate(`/report/found?lostItemId=${item._id}`)}
-                        className="w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all bg-danger text-white shadow-md hover:scale-[1.02] active:scale-95"
-                      >
-                        <Verified className="w-5 h-5" />
-                        I Found This!
-                      </button>
-                    )}
-                  </>
                 )}
               </div>
             </div>
           </div>
+
+          {/* Right: Action Sidebar */}
+          <aside className="lg:col-span-5">
+            <div className="sticky top-24 space-y-6 md:space-y-8">
+              
+              {/* Claim Card */}
+              <div className="bg-white dark:bg-surface-container p-6 md:p-8 lg:p-10 rounded-2xl md:rounded-[32px] shadow-xl border border-border-default relative overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
+                
+                <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary mb-2 md:mb-3">{item.itemName}</h2>
+                <p className="text-text-secondary mb-6 md:mb-8 text-sm md:text-base">Review the details and coordinate a return securely.</p>
+                
+                <div className="space-y-4">
+                  {['resolved', 'claimed', 'approved'].includes(item.status) ? (
+                    <div className="flex flex-col gap-3">
+                      <div className="w-full bg-[#0B0F1A]/80 dark:bg-surface-container-high text-white py-4 md:py-5 rounded-full font-bold text-sm md:text-base flex items-center justify-center gap-2 shadow-sm border border-border-default backdrop-blur-md">
+                        <span className="material-symbols-outlined text-success" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                        Item Claimed{item.owner?.name ? ` by ${item.owner.name}` : ''}
+                      </div>
+                      <button
+                        onClick={() => navigate(`/conflict/${item._id}`)}
+                        className="w-full py-4 md:py-5 rounded-full font-bold text-sm md:text-base flex items-center justify-center gap-2 transition-all bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20 shadow-sm active:scale-95"
+                      >
+                        <span className="material-symbols-outlined">warning</span>
+                        Conflict this claim
+                      </button>
+                      {isOwner && (
+                        <button onClick={() => setShowRevertModal(true)} className="text-xs text-text-secondary hover:text-primary transition-colors font-semibold py-2 text-center w-full">
+                          Mark as lost again
+                        </button>
+                      )}
+                    </div>
+                  ) : isFoundItem ? (
+                    isFinder ? (
+                      claimId ? (
+                        <button
+                          onClick={() => navigate(`/chat/finder/${claimId}`)}
+                          className="w-full bg-gradient-to-r from-primary to-[#6b38d4] text-white py-4 md:py-5 rounded-full font-extrabold text-sm md:text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-lg neon-shadow-primary flex items-center justify-center gap-3"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat_bubble</span>
+                          Open Chat with Claimant
+                        </button>
+                      ) : (
+                        <div className="flex flex-col gap-3">
+                          <div className="text-center p-4 bg-surface-container rounded-2xl text-xs text-text-secondary font-medium border border-border-default">
+                            No active claims have been filed for this item yet. You will be notified when someone claims it.
+                          </div>
+                          <button
+                            onClick={() => setShowWithdrawModal(true)}
+                            className="w-full py-4 rounded-full font-bold flex items-center justify-center gap-2 transition-all bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20 shadow-sm active:scale-95"
+                          >
+                            Withdraw Found Report
+                          </button>
+                        </div>
+                      )
+                    ) : (
+                      <button
+                        disabled={item?.finder?._id === currentUserId || item?.finder === currentUserId}
+                        onClick={() => navigate(`/claim/${item._id}`)}
+                        className={`w-full py-4 md:py-5 rounded-full font-extrabold text-sm md:text-lg transition-all flex items-center justify-center gap-3 ${(item?.finder?._id === currentUserId || item?.finder === currentUserId)
+                            ? 'bg-surface-container-high text-text-secondary/50 cursor-not-allowed border border-border-default'
+                            : 'bg-primary text-white hover:bg-primary/90 shadow-lg neon-shadow-primary active:scale-95'
+                          }`}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                        Claim This Item
+                      </button>
+                    )
+                  ) : (
+                    <>
+                      {isOwner ? (
+                        <button
+                          onClick={() => setShowResolveModal(true)}
+                          className="w-full py-4 md:py-5 rounded-full font-extrabold text-sm md:text-lg transition-all bg-surface-container-high text-text-primary shadow-sm hover:scale-[1.02] active:scale-95 border border-border-default flex items-center justify-center gap-3"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                          I Found This Item
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => navigate(`/report/found?lostItemId=${item._id}`)}
+                          className="w-full py-4 md:py-5 rounded-full font-extrabold text-sm md:text-lg transition-all bg-danger text-white shadow-lg active:scale-95 flex items-center justify-center gap-3"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                          I Found This!
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                <div className="mt-8 md:mt-10 pt-8 md:pt-10 border-t border-border-default space-y-4 md:space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-secondary text-lg md:text-xl">location_on</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] md:text-xs font-bold text-text-secondary uppercase tracking-widest">{isLostItem ? 'Lost At' : 'Found At'}</p>
+                      <p className="text-sm md:text-base font-bold text-text-primary truncate">{item.lastSeen || item.locationFound || item.locationLost}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-tertiary-fixed flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-tertiary text-lg md:text-xl">schedule</span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] md:text-xs font-bold text-text-secondary uppercase tracking-widest">{isLostItem ? 'Time Lost' : 'Time Reported'}</p>
+                      <p className="text-sm md:text-base font-bold text-text-primary">{new Date(item.dateFound || item.dateLost).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Safety Banner */}
+                <div className="mt-8 md:mt-10 p-4 md:p-5 bg-warning/5 rounded-xl border border-warning/20 flex gap-3 md:gap-4">
+                  <span className="material-symbols-outlined text-warning shrink-0">verified_user</span>
+                  <p className="text-xs md:text-sm font-medium text-warning/80 leading-snug">
+                    Meet in a public campus space for item handovers. Stay safe, FoundIt fam! 🫶
+                  </p>
+                </div>
+              </div>
+
+              {/* Profile Quick View */}
+              <div className="glass-card p-4 md:p-6 rounded-xl md:rounded-2xl flex items-center gap-4 border border-border-default shadow-sm bg-white dark:bg-surface-container">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 border-2 border-white dark:border-surface-variant flex items-center justify-center overflow-hidden shrink-0">
+                  <span className="material-symbols-outlined text-primary text-2xl">person</span>
+                </div>
+                <div className="flex-grow min-w-0">
+                  <p className="text-[10px] md:text-xs font-bold text-text-secondary uppercase tracking-widest">{isLostItem ? 'Reported By' : 'Found By'}</p>
+                  <h4 className="font-bold text-sm md:text-base text-text-primary truncate">{item.finder?.name || item.owner?.name || 'Community Member'}</h4>
+                  <div className="flex items-center gap-1 text-[10px] md:text-xs text-success font-bold mt-0.5">
+                    <span className="material-symbols-outlined text-sm">stars</span> Trusted Member
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
         </div>
       </main>
 
@@ -447,11 +439,11 @@ export const ItemDetail: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 md:p-8 w-full max-w-sm shadow-xl border border-border-default flex flex-col items-center text-center">
             <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center mb-6">
-              <Verified className="w-8 h-8" />
+              <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
             </div>
             <h3 className="text-xl font-bold text-text-primary mb-2">Item Found?</h3>
             <p className="text-sm text-text-secondary mb-8">
-              Are you sure you want to mark this item as found? This will close the report and stop any active AI matching. This action cannot be undone.
+              Are you sure you want to mark this item as found? This will close the report and stop any active AI matching.
             </p>
             <div className="flex w-full gap-3">
               <button
@@ -477,7 +469,7 @@ export const ItemDetail: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 md:p-8 w-full max-w-sm shadow-xl border border-border-default flex flex-col items-center text-center">
             <div className="w-16 h-16 bg-warning/10 text-warning rounded-full flex items-center justify-center mb-6">
-              <Verified className="w-8 h-8" />
+              <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
             </div>
             <h3 className="text-xl font-bold text-text-primary mb-2">Revert Status?</h3>
             <p className="text-sm text-text-secondary mb-8">
@@ -507,11 +499,11 @@ export const ItemDetail: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-3xl p-6 md:p-8 w-full max-w-sm shadow-xl border border-border-default flex flex-col items-center text-center">
             <div className="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-6">
-              <Verified className="w-8 h-8" />
+              <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>delete</span>
             </div>
             <h3 className="text-xl font-bold text-text-primary mb-2">Withdraw Report?</h3>
             <p className="text-sm text-text-secondary mb-8">
-              Are you sure you want to withdraw this found report? This will permanently delete the item from the system and it cannot be undone.
+              Are you sure you want to withdraw this found report? This will permanently delete the item.
             </p>
             <div className="flex w-full gap-3">
               <button

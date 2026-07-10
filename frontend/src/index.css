@@ -206,3 +206,54 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+@layer utilities {
+  .gen-z-card {
+    @apply bg-white dark:bg-surface-container rounded-[24px] transition-all duration-300;
+    box-shadow: 0 10px 40px -10px rgba(65, 67, 213, 0.08);
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .gen-z-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(65, 67, 213, 0.15);
+  }
+  .indigo-purple-gradient {
+    background: linear-gradient(135deg, #4143d5 0%, #6b38d4 100%);
+  }
+  .floating-sticker {
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+  .doodle-bg {
+    mask-image: linear-gradient(to bottom, black 50%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent);
+  }
+  .bubbly-stat {
+    border-radius: 100px;
+  }
+}
+@layer base {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .fill-icon {
+    font-variation-settings: 'FILL' 1;
+  }
+}
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  }
+  .dark .glass-card {
+    background: rgba(31, 41, 55, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .neon-shadow-primary {
+    box-shadow: 0 10px 25px -5px rgba(65, 67, 213, 0.4);
+  }
+}
