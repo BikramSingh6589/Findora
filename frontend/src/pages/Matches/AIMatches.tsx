@@ -219,8 +219,8 @@ export const AIMatches: React.FC = () => {
                 { label: 'Brand Match', value: breakdown.brandScore ?? 0, max: 15, color: 'bg-primary', isAvailable: true },
                 { label: 'Color Match', value: breakdown.colorScore ?? 0, max: 10, color: 'bg-warning', isAvailable: true },
                 { label: 'Description (Semantic)', value: breakdown.semanticScore ?? 0, max: 20, color: 'bg-info-ai', isAvailable: true },
-                { label: 'Image Match', value: breakdown.imageScore ?? 0, max: 15, color: 'bg-danger', isAvailable: !missingEvidence.includes('Image not available') },
-                { label: 'Receipt Match (OCR)', value: breakdown.ocrScore ?? 0, max: 10, color: 'bg-[#8455ef]', isAvailable: !missingEvidence.includes('Receipt not available') }
+                { label: 'Image Match', value: breakdown.imageScore ?? 0, max: 15, color: 'bg-danger', isAvailable: !missingEvidence.includes('Image not available') && !missingEvidence.includes('Image verification unavailable') },
+                { label: 'Receipt Match (OCR)', value: breakdown.ocrScore ?? 0, max: 10, color: 'bg-[#8455ef]', isAvailable: !missingEvidence.includes('Receipt not available') && !missingEvidence.includes('No receipt or text image uploaded') && !missingEvidence.includes('No matching identifier found') }
               ];
 
               const conf = getConfidenceLevel(match.score);

@@ -3,15 +3,58 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.extractIdentifiers = exports.extractTextFromImage = exports.preprocessImage = void 0;
+exports.extractIdentifiers = exports.extractTextFromImage = exports.preprocessImage = exports.preprocessImageBuffer = void 0;
+const axios_1 = __importDefault(require("axios"));
+const fs_1 = __importDefault(require("fs"));
+const sharp_1 = __importDefault(require("sharp"));
 const tesseract_js_1 = __importDefault(require("tesseract.js"));
+// Download or read local file helper
+const getImageBuffer = async (imagePath) => {
+    try {
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            const response = await axios_1.default.get(imagePath, { responseType: 'arraybuffer' });
+            return Buffer.from(response.data);
+        }
+        else if (fs_1.default.existsSync(imagePath)) {
+            return await fs_1.default.promises.readFile(imagePath);
+        }
+        return null;
+    }
+    catch (error) {
+        console.error(`[OCR Preprocessing] Failed to load image buffer from ${imagePath}:`, error);
+        return null;
+    }
+};
 /**
- * Simulates image preprocessing (resizing, grayscaling, contrast correction)
- * to improve OCR accuracy. Ready for custom Canvas/Sharp processing.
+ * Preprocesses image buffer (resizing, grayscaling, contrast correction)
+ * to improve Tesseract OCR recognition accuracy.
+ */
+const preprocessImageBuffer = async (imageBuffer) => {
+    try {
+        console.log('[OCR Preprocessing] Grayscaling, contrast boosting, normalising, and sharpening applied to visual source');
+        const processed = await (0, sharp_1.default)(imageBuffer)
+            .grayscale()
+            .resize({ width: 1600, withoutEnlargement: true }) // optimized width for characters readability
+            .normalize() // stretches luminance to max range (improves contrast)
+            .sharpen({ sigma: 1.2, m1: 1.0, m2: 2.0 }) // sharpens text outlines
+            .linear(1.3, -15) // multiplies pixels to drop gray background and highlight black text
+            .toBuffer();
+        return processed;
+    }
+    catch (error) {
+        console.error('[OCR Preprocessing] Sharp transformation failed, using fallback:', error);
+        return imageBuffer;
+    }
+};
+exports.preprocessImageBuffer = preprocessImageBuffer;
+/**
+ * Simulates preprocess path for legacy import compatibility if needed, but returns the buffer instead.
  */
 const preprocessImage = async (imagePathOrUrl) => {
-    console.log(`[OCR Preprocessing] Grayscaling, contrast boosting, and noise reduction applied to: ${imagePathOrUrl}`);
-    return imagePathOrUrl; // passes through for Tesseract.js
+    const raw = await getImageBuffer(imagePathOrUrl);
+    if (!raw)
+        return imagePathOrUrl;
+    return (0, exports.preprocessImageBuffer)(raw);
 };
 exports.preprocessImage = preprocessImage;
 /**
@@ -22,13 +65,16 @@ const extractTextFromImage = async (imagePathOrUrl) => {
         return { extractedText: '' };
     }
     try {
-        // Run simulated preprocessing
-        const preprocessedPath = await (0, exports.preprocessImage)(imagePathOrUrl);
-        const { data: { text } } = await tesseract_js_1.default.recognize(preprocessedPath, 'eng');
+        const rawBuffer = await getImageBuffer(imagePathOrUrl);
+        if (!rawBuffer) {
+            return { extractedText: '' };
+        }
+        const preprocessedBuffer = await (0, exports.preprocessImageBuffer)(rawBuffer);
+        const { data: { text } } = await tesseract_js_1.default.recognize(preprocessedBuffer, 'eng');
         // Clean up extracted text: replace newlines with space, normalize spaces
         const cleanedText = text
             .replace(/[\r\n]+/g, ' ')
-            .replace(/[^\w\s]/g, '')
+            .replace(/[^\w\s-]/g, ' ') // preserve dashes for serial numbers
             .replace(/\s+/g, ' ')
             .trim();
         return { extractedText: cleanedText };

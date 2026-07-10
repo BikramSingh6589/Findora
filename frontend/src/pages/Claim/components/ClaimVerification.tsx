@@ -259,9 +259,21 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext, f
                     <div className="grid grid-cols-2 gap-2 text-[10px] text-text-secondary font-bold">
                       <div>Object: {match.breakdown.objectScore ?? 0}/30</div>
                       <div>Description: {match.breakdown.semanticScore ?? 0}/20</div>
-                      <div>Image: {match.missingEvidence?.includes('Image not available') ? 'Not available' : `${match.breakdown.imageScore ?? 0}/15`}</div>
-                      <div>Receipt: {match.missingEvidence?.includes('Receipt not available') ? 'Not available' : `${match.breakdown.ocrScore ?? 0}/10`}</div>
+                      <div>Image: {match.missingEvidence?.includes('Image verification unavailable') ? 'Not available' : `${match.breakdown.imageScore ?? 0}/15`}</div>
+                      <div>Receipt: {(match.missingEvidence?.includes('No receipt or text image uploaded') || match.missingEvidence?.includes('No matching identifier found')) ? 'Not available' : `${match.breakdown.ocrScore ?? 0}/10`}</div>
                     </div>
+                  </div>
+                )}
+
+                {/* Missing Evidence Section */}
+                {match.missingEvidence && match.missingEvidence.length > 0 && (
+                  <div className="mt-3 space-y-1">
+                    {match.missingEvidence.map((ev: string, idx: number) => (
+                      <div key={idx} className="flex items-center gap-1 text-[11px] font-semibold text-warning">
+                        <span className="text-sm">⚠</span>
+                        <span>{ev}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
 

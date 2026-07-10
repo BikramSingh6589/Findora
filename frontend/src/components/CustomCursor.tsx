@@ -11,7 +11,7 @@ const CustomCursor: React.FC = () => {
   // LERP state
   const mouse = useRef({ x: 0, y: 0 });
   const outlinePos = useRef({ x: 0, y: 0 });
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     // Only show on desktop devices (non-touch)

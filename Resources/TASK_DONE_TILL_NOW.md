@@ -89,14 +89,20 @@
 
 ## Completed Work (Latest Update)
 
-- **Phase 6 final AI accuracy and UI integration fixes completed**:
-  - **Primary Object Detection**: Implemented English-syntax positional parsing inside `semanticMatching.service.ts` to identify the core noun (e.g. distinguishing a laptop modifier from a laptop bag or charger).
-  - **Object Mismatch Penalty**: Configured the matching engine to flag primary object mismatches (e.g. laptop vs bag, or bottle vs laptop) and restrict their maximum similarity to 30%.
-  - **Stop Words Exclusion**: Filtered out noise vocabulary (`lost`, `found`, `my`, `the`, `a`, `an`, `with`, `near`, `inside`, `outside`, `item`, `thing`) before comparing descriptions.
-  - **Weighted Score Formula**: Implemented a balanced 100-point formula: Main Object Match (30 pts), Brand Match (15 pts), Color Match (10 pts), Semantic description similarity (20 pts), Image evidence (15 pts), and OCR/identifier check (10 pts).
-  - **Evidence Cases & Missing Tags**: Configured image matching to enforce low limits for missing images (max 5 points if one is missing, max 3-5 points if both are missing). Tracks missing data as `missingEvidence` tags (`["Image not available"]`).
-  - **Normalized Confidence**: Normalized confidence scores so that `90-100%` requires identical objects and at least two strong verification signals (Image, Serial/OCR, or Semantic matches).
-  - **UI Updates**: Extended `AIMatches.tsx` and `ItemDetail.tsx` to handle the `objectScore` breakdown and dynamic warnings for missing evidence.
+- **Phase 6 AI Matching Polishing Completed**:
+  - **Image Matching Quality**: Replaced basic image comparison in `imageMatching.service.ts` with robust difference hashing (dHash), average hashing (aHash), aspect ratio similarity, and translation/rotation-invariant HSL color palette similarity.
+  - **OCR Processing Optimization**: Implemented visual (edge-energy and saturation) and context keyword checks in `ocr.service.ts` to detect text-heavy images (receipts, bills, invoices, IDs) and skip OCR for normal images.
+  - **Identifier Extraction**: Expanded identifiers detection in `ocr.service.ts` to parse Roll numbers, student IDs, product SKU codes, model numbers, and multi-format IMEIs. Exact identifier match boosts confidence score to 95%+.
+  - **Semantic Dictionary**: Added Eyewear, Vehicle, Storage, Cards, Money items, Books, Electronics, and Accessories.
+  - **BullMQ Background Worker**: Configured connection checks and graceful Direct execution fallbacks in `ai.worker.ts` and `server.ts`.
+  - **Admin Claim Management**: Connected AI matching insights (breakdown, missing evidence warnings, and matched fields) directly into the Admin Mediation detail modal.
+  - **Real Image Comparison Pipeline**: Replaced fake string comparisons in `imageMatching.service.ts` with a real image downsampling visual/color similarity analysis using the `sharp` library.
+  - **OCR Preprocessing with Sharp**: Added real image preprocessing filters in `ocr.service.ts` using `sharp` (grayscale, resizing, contrast stretching, sharpening) to optimize invoice/receipt reading.
+  - **Expanded Object Dictionary**: Added Wallet, ID, Keys, Books, Documents, Watch, Calculator, Clothing, Accessories, Storage, Umbrella, and Jewelry detection in `semanticMatching.service.ts`.
+  - **Resolved Notebook Ambiguity**: Evaluated context indicators (e.g. computer brands/chargers vs study keywords) to differentiate a laptop "notebook" from a writing "notebook".
+  - **Optimized Non-Blocking Worker Flow**: Decoupled matching comparisons from processing loops. Unprocessed targets are skipped and scheduled async.
+  - **Clean Wording & Context-Aware Reasons**: Configured custom item reasons (e.g. "wallet item") and divided missing evidence into distinct tags (`Image verification unavailable`, `No receipt or text image uploaded`, `No matching identifier found`).
+  - **Matched UI Refinements**: Updated matches breakdown, caution badges, and checklist indicators dynamically.
   - **Security & Build Safety**: Confirmed strict compilation safety for both backend and frontend builds.
   - **AI Matches UI Connected**: Connected real AIMatch API data to the frontend, removing all mock match data, static images, fake "Central Hub" locations, and hardcoded percentages (e.g. 92%, 94%, 98%) from the Claim Verification screen and Admin Dashboard alerts.
 - **Real-Time In-App Notification System (Phase 5 Part 1):** Implemented a complete real-time in-app notification system. Created a global `NotificationProvider` using React Context connected directly to Socket.IO and the REST API. Added `Notification` mongoose schema and controllers to manage fetching and updating (mark as read/unread). Extended `socket.service.ts` to emit `new_notification` events directly to personal user socket rooms. Completely removed hardcoded elements from the `NotificationCenter.tsx` dropdown, formatting and styling incoming messages with dynamic Tailwind CSS classes and precise Lucide icons. Integrated a custom bottom-right toast notification overlay for instant feedback. Updated chat messaging so that each chat directly spawns a `new_message` notification allowing recipients to click a "Reply" button and directly navigate to the relevant chat room.

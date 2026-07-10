@@ -11,7 +11,20 @@ import { compareSemanticText, detectPrimaryObject } from './semanticMatching.ser
  * Process AI data extraction (OCR, keywords, identifiers) and store it.
  * This separates ingestion from similarity scanning.
  */
-export const processAIData = async (itemId: string, type: 'lost' | 'found'): Promise<void> => {
+export const processAIData = async (itemId: string, type: 'lost' | 'found', isWorkerJob = false): Promise<void> => {
+  // If not called within background worker, check if BullMQ queue is active and dispatch
+  if (!isWorkerJob) {
+    try {
+      const { isQueueActive, dispatchAIMatchingJob } = require('../workers/ai.worker');
+      if (isQueueActive()) {
+        await dispatchAIMatchingJob(itemId, type);
+        return;
+      }
+    } catch (err) {
+      console.warn('[AI Service] Failed to dispatch via BullMQ. Falling back to direct execution.', err);
+    }
+  }
+
   try {
     const item = type === 'lost' ? await LostItem.findById(itemId) : await FoundItem.findById(itemId);
     if (!item) return;
@@ -27,9 +40,10 @@ export const processAIData = async (itemId: string, type: 'lost' | 'found'): Pro
     // Preprocess images and extract text
     let extractedText = '';
     if (item.images && item.images.length > 0) {
+      const context = `${item.itemName || ''} ${item.description || ''}`;
       const ocrPromises = item.images.map(async (img: string) => {
         const preprocessedImg = await preprocessImage(img);
-        return extractTextFromImage(preprocessedImg);
+        return extractTextFromImage(preprocessedImg, context);
       });
       const ocrResults = await Promise.all(ocrPromises);
       extractedText = ocrResults
@@ -87,14 +101,11 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
     let count = 0;
 
     for (const target of targets) {
-      // Ensure target is processed or fallback safely
+      // Ensure target is processed. Skip to prevent request thread blocking, processing asynchronously in bg.
       if (!target.aiData || !target.aiData?.processed) {
-        console.log(`[Matching Engine] Target item ${target._id} not processed yet. Processing on-the-fly.`);
-        // Run OCR processing on target item as a fallback
-        await processAIData(target._id.toString(), type === 'lost' ? 'found' : 'lost');
-        // Reload target
-        const reloadedTarget = type === 'lost' ? await FoundItem.findById(target._id) : await LostItem.findById(target._id);
-        if (!reloadedTarget || !reloadedTarget.aiData || !reloadedTarget.aiData?.processed) continue;
+        console.log(`[Matching Engine] Target item ${target._id} not processed yet. Skipping active comparison, queueing background processing.`);
+        processAIData(target._id.toString(), type === 'lost' ? 'found' : 'lost').catch(console.error);
+        continue;
       }
 
       const descA = sourceItem.description || '';
@@ -110,18 +121,12 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
       const primaryObjB = detectPrimaryObject(wordsB);
 
       const matchedFields: string[] = [];
-      const missingEvidence: string[] = [];
 
       // 1. Main Object Match (30 points)
       let objectScore = 0;
       if (primaryObjA && primaryObjB && primaryObjA === primaryObjB) {
         objectScore = 30;
-        matchedFields.push('Same device type');
-        if (primaryObjA === 'computer') matchedFields.push('Notebook matched Laptop');
-        else if (primaryObjA === 'charger') matchedFields.push('Adapter matched Charger');
-        else if (primaryObjA === 'phone') matchedFields.push('Phone matched Mobile');
-        else if (primaryObjA === 'earphones') matchedFields.push('Earbuds matched Earphones');
-        else if (primaryObjA === 'bag') matchedFields.push('Bag matched Backpack');
+        matchedFields.push('Same item type');
       } else if (!primaryObjA && !primaryObjB) {
         // generic category check
         if (sourceItem.category && target.category && String(sourceItem.category).trim().toLowerCase() === String(target.category).trim().toLowerCase()) {
@@ -172,9 +177,6 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
       if (imageScore >= 12) {
         matchedFields.push('Similar images');
       }
-      if (!imgA || !imgB) {
-        missingEvidence.push('Image not available');
-      }
 
       // 6. OCR / Identifier Score (10 points max)
       const sourceIds = sourceItem.aiData?.identifiers || [];
@@ -191,8 +193,20 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
         const ocrSimilarity = textSimilarity(ocrA, ocrB);
         ocrScore = Math.min(Math.round(ocrSimilarity * 2), 2); // max 2 points
       }
-      if (matchingIds.length === 0) {
-        missingEvidence.push('Receipt not available');
+
+      // Calculate missing evidence
+      const missingEvidence: string[] = [];
+      if (!imgA || !imgB) {
+        missingEvidence.push('Image verification unavailable');
+      }
+      
+      const hasOcrA = !!sourceItem.aiData?.extractedText?.trim();
+      const hasOcrB = !!target.aiData?.extractedText?.trim();
+      
+      if (!hasOcrA || !hasOcrB) {
+        missingEvidence.push('No receipt or text image uploaded');
+      } else if (matchingIds.length === 0) {
+        missingEvidence.push('No matching identifier found');
       }
 
       // Calculate initial sum
@@ -200,33 +214,45 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
 
       // Normalization and Penalties
       let finalScore = scoreSum;
+      const unrelated = isMismatch || (!primaryObjA && !primaryObjB && String(sourceItem.category).trim().toLowerCase() !== String(target.category).trim().toLowerCase());
+      
       if (isMismatch) {
-        // Different objects: cap at 30%
-        finalScore = Math.min(finalScore, 30);
+        // Different objects: cap at 20% (low match, well below 40%)
+        finalScore = Math.min(finalScore, 20);
+      } else if (unrelated) {
+        // Unrelated categories/objects: cap at 25% (well below 40%)
+        finalScore = Math.min(finalScore, 25);
       } else {
         // Normalization checks
         const hasStrongImage = (imageScore >= 12);
         const hasStrongSerial = (ocrScore === 10);
         const hasStrongSemantic = (semanticScore >= 16);
-
-        let strongSignalsCount = 0;
-        if (hasStrongImage) strongSignalsCount++;
-        if (hasStrongSerial) strongSignalsCount++;
-        if (hasStrongSemantic) strongSignalsCount++;
-
         const sameObject = (primaryObjA && primaryObjB && primaryObjA === primaryObjB);
 
-        if (finalScore >= 90) {
-          if (!sameObject || strongSignalsCount < 2) {
-            // Cap at 89% if missing proof
-            finalScore = Math.min(finalScore, 89);
+        const hasStrongEvidence = hasStrongImage || hasStrongSerial || hasStrongSemantic;
+
+        // Exact identifier match strongly improves confidence
+        if (matchingIds.length > 0) {
+          finalScore = Math.max(finalScore + 35, 95);
+        } else {
+          if (finalScore >= 90) {
+            if (!sameObject || !hasStrongEvidence) {
+              // Cap at 89% if missing proof
+              finalScore = Math.min(finalScore, 89);
+            }
+          }
+
+          // Text-only matches (no images and no serial code) stay within 70-85%
+          const isTextOnly = !imgA && !imgB && matchingIds.length === 0;
+          if (isTextOnly && finalScore > 85) {
+            finalScore = 85;
           }
         }
       }
 
       finalScore = Math.min(Math.max(Math.round(finalScore), 0), 100);
 
-      // Generate clean aiReason sentence
+      // Generate clean context-aware aiReason sentence (Task 7)
       let aiReason = 'Both reports share matching characteristics.';
       if (isMismatch) {
         aiReason = 'Items have different primary object types.';
@@ -235,7 +261,16 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
       } else {
         const brandText = sourceItem.brand || target.brand || '';
         const objectText = primaryObjA || 'item';
-        aiReason = `Both reports describe the same ${brandText} ${objectText} device with matching accessories.`.replace(/\s+/g, ' ');
+        const brandStr = brandText ? `${brandText.charAt(0).toUpperCase() + brandText.slice(1)} ` : '';
+        
+        if (objectText === 'computer' || objectText === 'laptop' || objectText === 'macbook') {
+          aiReason = `Both items appear to be ${brandStr}laptops with matching accessories.`;
+        } else if (objectText === 'charger' || objectText === 'adapter') {
+          aiReason = `Both reports describe a similar ${brandStr}charger item with matching characteristics.`;
+        } else {
+          aiReason = `Both reports describe a similar ${brandStr}${objectText} item.`;
+        }
+        aiReason = aiReason.replace(/\s+/g, ' ');
       }
 
       const lostId = type === 'lost' ? itemId : target._id;

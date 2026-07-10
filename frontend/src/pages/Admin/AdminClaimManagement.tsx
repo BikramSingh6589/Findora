@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, XCircle, Clock, Eye, Search, X } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, Eye, Search, X, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 
@@ -43,6 +43,9 @@ export const AdminClaimManagement: React.FC = () => {
   const [search, setSearch] = useState('');
   const [selectedClaim, setSelectedClaim] = useState<any | null>(null);
   const [successModal, setSuccessModal] = useState<{ isOpen: boolean; message: string }>({ isOpen: false, message: '' });
+  
+  const [claimAIMatch, setClaimAIMatch] = useState<any | null>(null);
+  const [loadingAIMatch, setLoadingAIMatch] = useState(false);
 
   const fetchClaims = async () => {
     try {
@@ -75,6 +78,37 @@ export const AdminClaimManagement: React.FC = () => {
       socket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    const fetchAIMatch = async () => {
+      if (!selectedClaim || !selectedClaim.lostItemId) {
+        setClaimAIMatch(null);
+        return;
+      }
+      try {
+        setLoadingAIMatch(true);
+        const foundId = selectedClaim.foundItemId?._id || selectedClaim.foundItemId;
+        const lostId = selectedClaim.lostItemId?._id || selectedClaim.lostItemId;
+        const res = await axios.get(`${API_BASE}/api/ai/matches/${foundId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        if (res.data && res.data.success) {
+          const matches = res.data.matches || [];
+          const matching = matches.find((m: any) => {
+            const mLostId = m.lostItem?._id || m.lostItem;
+            return String(mLostId) === String(lostId);
+          });
+          setClaimAIMatch(matching || null);
+        }
+      } catch (err) {
+        console.error('Failed to fetch AI match details for claim', err);
+        setClaimAIMatch(null);
+      } finally {
+        setLoadingAIMatch(false);
+      }
+    };
+    fetchAIMatch();
+  }, [selectedClaim]);
 
   const [actionModal, setActionModal] = useState<{ isOpen: boolean; type: 'approve' | 'reject' | 'verifyCode' | 'verifyLocation'; claimId: string; inputText: string; }>({ 
     isOpen: false, type: 'approve', claimId: '', inputText: '' 
@@ -458,6 +492,89 @@ export const AdminClaimManagement: React.FC = () => {
                   <p className="text-xs text-text-secondary mt-0.5">Reported By: {selectedClaim.foundItemId?.finder?.name || 'Helper'}</p>
                 </div>
               </div>
+
+              {/* AI Matching Insights (Task 7) */}
+              {selectedClaim.lostItemId ? (
+                <div className="bg-info-ai/5 border border-info-ai/20 p-5 rounded-2xl space-y-4">
+                  <div className="flex items-center gap-2 text-info-ai">
+                    <Sparkles className="w-5 h-5 fill-current" />
+                    <h4 className="font-extrabold text-xs uppercase tracking-wider">AI Match Insights</h4>
+                  </div>
+                  
+                  {loadingAIMatch ? (
+                    <div className="flex items-center gap-2 text-xs text-text-secondary">
+                      <div className="animate-spin rounded-full h-3 w-3 border-t-2 border-primary"></div>
+                      <span>Retrieving AI match details...</span>
+                    </div>
+                  ) : claimAIMatch ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-black text-text-primary">{claimAIMatch.score}% AI Match Confidence</span>
+                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                          claimAIMatch.score >= 80 ? 'bg-success/10 text-success' : claimAIMatch.score >= 60 ? 'bg-warning/10 text-warning' : 'bg-danger/10 text-danger'
+                        }`}>
+                          {claimAIMatch.score >= 80 ? 'Strong Match' : claimAIMatch.score >= 60 ? 'Possible Match' : 'Weak Match'}
+                        </span>
+                      </div>
+                      
+                      {claimAIMatch.aiReason && (
+                        <p className="text-xs text-text-secondary italic">"{claimAIMatch.aiReason}"</p>
+                      )}
+
+                      {/* Matched Fields */}
+                      {claimAIMatch.matchedFields && claimAIMatch.matchedFields.length > 0 && (
+                        <div className="space-y-1">
+                          <h5 className="font-bold text-xs text-text-primary">Why AI Matched:</h5>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-text-secondary font-medium">
+                            {claimAIMatch.matchedFields.map((field: string, idx: number) => (
+                              <div key={idx} className="flex items-center gap-1">
+                                <span className="text-success font-bold">✓</span>
+                                <span>{field}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Missing Evidence */}
+                      {claimAIMatch.missingEvidence && claimAIMatch.missingEvidence.length > 0 && (
+                        <div className="p-3 bg-warning/5 rounded-xl border border-warning/15 space-y-1">
+                          <h5 className="font-bold text-xs text-warning">Evidence Warnings:</h5>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-warning/90 font-medium">
+                            {claimAIMatch.missingEvidence.map((ev: string, idx: number) => (
+                              <div key={idx} className="flex items-center gap-1">
+                                <span>⚠</span>
+                                <span>{ev}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Score Breakdown */}
+                      {claimAIMatch.breakdown && (
+                        <div className="space-y-2 pt-3 border-t border-border-default/50">
+                          <h5 className="font-bold text-xs text-text-primary">AI Similarity Breakdown:</h5>
+                          <div className="grid grid-cols-2 gap-3 text-[11px] text-text-secondary font-bold">
+                            <div>Object Type Match: {claimAIMatch.breakdown.objectScore ?? 0}/30</div>
+                            <div>Brand Resemblance: {claimAIMatch.breakdown.brandScore ?? 0}/15</div>
+                            <div>Color Similarity: {claimAIMatch.breakdown.colorScore ?? 0}/10</div>
+                            <div>Semantic Description: {claimAIMatch.breakdown.semanticScore ?? 0}/20</div>
+                            <div>Image Match: {claimAIMatch.missingEvidence?.includes('Image verification unavailable') ? 'Not available' : `${claimAIMatch.breakdown.imageScore ?? 0}/15`}</div>
+                            <div>Receipt/OCR: {(claimAIMatch.missingEvidence?.includes('No receipt or text image uploaded') || claimAIMatch.missingEvidence?.includes('No matching identifier found')) ? 'Not available' : `${claimAIMatch.breakdown.ocrScore ?? 0}/10`}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-text-secondary">No AI matching details found for these linked items.</p>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-surface-container-low p-4 rounded-2xl border border-border-default/50 text-center text-xs text-text-secondary">
+                  No linked Lost Item reported by this claimant. Purely manual verification based on answers.
+                </div>
+              )}
 
               {/* Claimant & Finder Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Clock, Zap, Filter, Timer, MapPin, Trophy, Image, User, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Zap, Timer, MapPin, Trophy, Image, User, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -77,26 +77,6 @@ const LiveTimer: React.FC<{ createdAt: string | undefined, defaultText: string, 
   );
 };
 
-const LiveTimerBadge: React.FC<{ createdAt: string | undefined, defaultText: string, dangerFallback: boolean }> = ({ createdAt, defaultText, dangerFallback }) => {
-  const [timeState, setTimeState] = useState(() => createdAt ? calculateTimeLeft(createdAt) : { timeLeft: defaultText, isDanger: dangerFallback, rawMs: 0 });
-
-  useEffect(() => {
-    if (!createdAt) return;
-    const interval = setInterval(() => {
-      setTimeState(calculateTimeLeft(createdAt));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [createdAt]);
-
-  return (
-    <div className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 mt-3 w-fit transition-colors ${
-      timeState.isDanger ? 'bg-danger/10 text-danger' : 'bg-surface-container text-text-secondary'
-    }`}>
-      <Clock className="w-3 h-3" />
-      {timeState.timeLeft.replace(' left', '')}
-    </div>
-  );
-};
 
 export const CommunityBoard: React.FC = () => {
   const navigate = useNavigate();

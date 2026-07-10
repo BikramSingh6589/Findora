@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteLostItem = exports.updateLostItem = exports.getLostItemById = exports.getLostItems = exports.createLostItem = void 0;
+exports.revertLostItem = exports.resolveLostItem = exports.deleteLostItem = exports.updateLostItem = exports.getLostItemById = exports.getLostItems = exports.createLostItem = void 0;
 const LostItem_1 = __importDefault(require("../models/LostItem"));
 const cloudinary_service_1 = require("../services/cloudinary.service");
 const ai_service_1 = require("../services/ai.service");
@@ -124,3 +124,53 @@ const deleteLostItem = async (req, res, next) => {
     }
 };
 exports.deleteLostItem = deleteLostItem;
+const resolveLostItem = async (req, res, next) => {
+    try {
+        const item = await LostItem_1.default.findById(req.params.id);
+        if (!item) {
+            (0, response_1.sendError)(res, 'Lost item not found', 404);
+            return;
+        }
+        // Verify ownership
+        if (item.owner.toString() !== req.user._id.toString()) {
+            (0, response_1.sendError)(res, 'Access denied', 403);
+            return;
+        }
+        if (item.status === 'resolved') {
+            (0, response_1.sendError)(res, 'Item is already resolved', 400);
+            return;
+        }
+        item.status = 'resolved';
+        await item.save();
+        (0, response_1.sendSuccess)(res, { item }, 'Lost item marked as resolved successfully');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.resolveLostItem = resolveLostItem;
+const revertLostItem = async (req, res, next) => {
+    try {
+        const item = await LostItem_1.default.findById(req.params.id);
+        if (!item) {
+            (0, response_1.sendError)(res, 'Lost item not found', 404);
+            return;
+        }
+        // Verify ownership
+        if (item.owner.toString() !== req.user._id.toString()) {
+            (0, response_1.sendError)(res, 'Access denied', 403);
+            return;
+        }
+        if (item.status !== 'resolved') {
+            (0, response_1.sendError)(res, 'Item is not resolved', 400);
+            return;
+        }
+        item.status = 'active';
+        await item.save();
+        (0, response_1.sendSuccess)(res, { item }, 'Lost item reverted to active successfully');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.revertLostItem = revertLostItem;

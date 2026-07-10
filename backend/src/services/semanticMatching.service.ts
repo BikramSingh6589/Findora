@@ -6,12 +6,23 @@ export interface SemanticMatchingResult {
 }
 
 const PRIMARY_OBJECTS: { [key: string]: string[] } = {
-  'computer': ['laptop', 'notebook', 'computer', 'macbook'],
+  'computer': ['laptop', 'macbook', 'computer', 'pc', 'notebook'],
   'phone': ['phone', 'mobile', 'iphone', 'smartphone'],
-  'bag': ['bag', 'backpack'],
-  'bottle': ['bottle', 'flask'],
-  'charger': ['charger', 'adapter', 'power supply', 'power supply adapter', 'charger brick', 'power brick'],
-  'earphones': ['earbuds', 'earphones', 'headphones']
+  'wallet': ['wallet', 'purse', 'card holder', 'billfold', 'cardholder'],
+  'id': ['id card', 'identity card', 'college id', 'student card', 'badge', 'pass', 'license'],
+  'keys': ['key', 'keys', 'keychain', 'fob', 'keyfob'],
+  'books': ['book', 'textbook', 'copy', 'notebook'],
+  'documents': ['document', 'file', 'certificate', 'paper'],
+  'accessories': ['watch', 'smartwatch', 'band', 'earphones', 'headphones', 'earbuds', 'airpods', 'headset'],
+  'bottle': ['bottle', 'flask', 'thermos', 'tumbler'],
+  'bag': ['bag', 'backpack', 'knapsack', 'handbag', 'briefcase'],
+  'electronics': ['calculator', 'mouse', 'keyboard', 'tablet'],
+  'clothing': ['jacket', 'shirt', 'hoodie', 'sweater', 'coat', 'cap', 'hat'],
+  'storage': ['pendrive', 'usb', 'flash drive', 'hard disk', 'hdd', 'ssd', 'hard drive'],
+  'umbrella': ['umbrella'],
+  'jewelry': ['ring', 'chain', 'bracelet', 'necklace'],
+  'eyewear': ['glasses', 'spectacles', 'eyeglasses'],
+  'vehicle': ['cycle', 'bicycle', 'bike']
 };
 
 const STOP_WORDS = new Set([
@@ -24,13 +35,43 @@ const BRANDS = new Set([
   'acer', 'microsoft', 'lg', 'oneplus', 'xiaomi', 'huawei', 'toshiba'
 ]);
 
-// Get primary object type from words
+// Get primary object type from words list
 export const detectPrimaryObject = (words: string[]): string | null => {
   let primaryObj: string | null = null;
   let maxIndex = -1;
 
+  // Pre-process context for "notebook" to resolve study vs laptop laptop ambiguity
+  const hasNotebook = words.includes('notebook');
+  let notebookCategory: string | null = null;
+  if (hasNotebook) {
+    const computerIndicators = ['dell', 'hp', 'lenovo', 'macbook', 'asus', 'acer', 'computer', 'charger', 'adapter'];
+    const studyIndicators = ['math', 'class', 'subject', 'notes', 'pages', 'spiral', 'study', 'ruled', 'writing', 'physics', 'chemistry'];
+    
+    const isComputer = words.some(w => computerIndicators.includes(w));
+    const isStudy = words.some(w => studyIndicators.includes(w));
+
+    if (isComputer) {
+      notebookCategory = 'computer';
+    } else if (isStudy) {
+      notebookCategory = 'books';
+    } else {
+      notebookCategory = 'books'; // Default stationery unless computer context indicators present
+    }
+  }
+
   for (const [objType, keywords] of Object.entries(PRIMARY_OBJECTS)) {
     for (const keyword of keywords) {
+      if (keyword === 'notebook') {
+        if (notebookCategory === objType) {
+          const lastIdx = words.lastIndexOf('notebook');
+          if (lastIdx !== -1 && lastIdx > maxIndex) {
+            maxIndex = lastIdx;
+            primaryObj = objType;
+          }
+        }
+        continue;
+      }
+
       const keywordWords = keyword.split(' ');
       if (keywordWords.length > 1) {
         // Multi-word search
@@ -93,7 +134,6 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
 
   // Mismatch check
   if (primaryObjA && primaryObjB && primaryObjA !== primaryObjB) {
-    // Return early with low score if primary objects mismatch (e.g. laptop vs bag)
     return {
       score: 0.1,
       matchedConcepts: [`Different objects (${primaryObjA} vs ${primaryObjB})`],
@@ -106,7 +146,7 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
   let semanticScore = 0;
   if (primaryObjA && primaryObjB && primaryObjA === primaryObjB) {
     semanticScore += 0.5; // Strong base for matching main object type
-    matchedConcepts.push(`Same device type (${primaryObjA})`);
+    matchedConcepts.push(`Same item type`);
   }
 
   // 2. Brand Matching
@@ -120,17 +160,17 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
       matchedConcepts.push(`Same brand ${brand.charAt(0).toUpperCase() + brand.slice(1)}`);
     }
   } else if (brandsA.length > 0 && brandsB.length > 0 && brandsA[0] !== brandsB[0]) {
-    // Penalty for different brands of the same object
     semanticScore -= 0.15;
   }
 
   // 3. Keyword / Accessory / Meaning-based word matches
-  // Synonym grouping for scoring secondary words
   const SYNONYM_MAP: { [key: string]: string[] } = {
     'charger': ['charger', 'adapter', 'power supply', 'supply', 'cord', 'cable', 'wire'],
     'sleeve': ['sleeve', 'case', 'cover', 'bag', 'backpack'],
     'bottle': ['bottle', 'flask', 'thermos', 'tumbler'],
-    'earphones': ['earbuds', 'earphones', 'headphones', 'airpods']
+    'earphones': ['earbuds', 'earphones', 'headphones', 'airpods'],
+    'purse': ['purse', 'wallet', 'cardholder', 'pouch'],
+    'identity': ['id', 'card', 'badge', 'pass', 'license']
   };
 
   const getSecondaryConcept = (word: string): string => {
@@ -152,7 +192,6 @@ export const compareSemanticText = (textA: string, textB: string): SemanticMatch
   if (relevantConceptMatches.length > 0) {
     semanticScore += Math.min(relevantConceptMatches.length * 0.15, 0.4);
     for (const concept of relevantConceptMatches) {
-      // Find original words
       const origA = wordsA.find(w => getSecondaryConcept(w) === concept) || concept;
       const origB = wordsB.find(w => getSecondaryConcept(w) === concept) || concept;
       if (origA === origB) {

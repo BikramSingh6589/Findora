@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  ArrowLeft, Share2, Maximize2,
-  MapPin, Calendar, User, Sparkles, Verified, MessageSquare, ChevronRight, AlertTriangle
-} from 'lucide-react';
+import { ArrowLeft, Share2, Maximize2 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -249,25 +246,121 @@ export const ItemDetail: React.FC = () => {
             {/* AI Confidence Highlight */}
             {match && (
               <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
-                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-primary-container/30 dark:bg-primary/20 rounded-full flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-3xl md:text-4xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>psychology_alt</span>
-                    </div>
-                    <div>
-                      <h4 className="text-3xl md:text-4xl font-extrabold text-primary tracking-tight">{match.score}% Match</h4>
-                      <p className="text-text-secondary font-medium mt-1">Our AI is confident this belongs to you!</p>
-                      {match.aiReason && <p className="text-xs text-text-secondary mt-2 italic">"{match.aiReason}"</p>}
+                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-6">
+                  
+                  {/* Confidence Header */}
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-border-default/50">
+                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-primary-container/30 dark:bg-primary/20 rounded-full flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-3xl md:text-4xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>psychology_alt</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                            match.score >= 80 ? 'bg-success/15 text-success' : match.score >= 60 ? 'bg-warning/15 text-warning' : 'bg-danger/15 text-danger'
+                          }`}>
+                            {match.score >= 80 ? 'Strong Match' : match.score >= 60 ? 'Possible Match' : 'Weak Match'}
+                          </span>
+                        </div>
+                        <h4 className="text-3xl md:text-4xl font-extrabold text-primary tracking-tight">{match.score}% AI Match</h4>
+                        {match.aiReason && <p className="text-sm text-text-secondary mt-2 italic">"{match.aiReason}"</p>}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-center px-6 md:border-l border-border-default w-full md:w-auto">
-                    <span className="text-xs font-bold uppercase tracking-widest text-text-secondary mb-2">Verified Details</span>
-                    <div className="flex gap-2">
-                      <span className="w-2 h-2 rounded-full bg-success"></span>
-                      <span className="w-2 h-2 rounded-full bg-success"></span>
-                      <span className="w-2 h-2 rounded-full bg-success"></span>
+
+                  {/* Why AI Matched Checkmarks */}
+                  {match.matchedFields && match.matchedFields.length > 0 && (
+                    <div className="space-y-2">
+                      <h5 className="font-bold text-sm text-text-primary">Why AI matched:</h5>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text-secondary font-medium">
+                        {match.matchedFields.map((field: string, idx: number) => (
+                          <div key={idx} className="flex items-center gap-1.5">
+                            <span className="text-success font-bold">✓</span>
+                            <span>{field}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Missing Evidence warnings */}
+                  {match.missingEvidence && match.missingEvidence.length > 0 && (
+                    <div className="p-3 bg-warning/5 rounded-xl border border-warning/15 space-y-1.5">
+                      <h5 className="font-bold text-xs text-warning">Evidence Alerts</h5>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-warning/90 font-medium">
+                        {match.missingEvidence.map((ev: string, idx: number) => (
+                          <div key={idx} className="flex items-center gap-1.5">
+                            <span>⚠</span>
+                            <span>{ev}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Score Breakdown Bars */}
+                  {match.breakdown && (
+                    <div className="space-y-3 pt-6 border-t border-border-default/50">
+                      <h5 className="font-bold text-sm text-text-primary">AI Similarity Breakdown</h5>
+                      <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
+                        <div>
+                          <div className="flex justify-between text-text-secondary mb-1">
+                            <span>Object type match</span>
+                            <span>{match.breakdown.objectScore}/30</span>
+                          </div>
+                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full bg-success rounded-full" style={{ width: `${Math.round((match.breakdown.objectScore / 30) * 100)}%` }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-text-secondary mb-1">
+                            <span>Brand resemblance</span>
+                            <span>{match.breakdown.brandScore}/15</span>
+                          </div>
+                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary rounded-full" style={{ width: `${Math.round((match.breakdown.brandScore / 15) * 100)}%` }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-text-secondary mb-1">
+                            <span>Color similarity</span>
+                            <span>{match.breakdown.colorScore}/10</span>
+                          </div>
+                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full bg-warning rounded-full" style={{ width: `${Math.round((match.breakdown.colorScore / 10) * 100)}%` }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-text-secondary mb-1">
+                            <span>Semantic description</span>
+                            <span>{match.breakdown.semanticScore}/20</span>
+                          </div>
+                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full bg-info-ai rounded-full" style={{ width: `${Math.round((match.breakdown.semanticScore / 20) * 100)}%` }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-text-secondary mb-1">
+                            <span>Image analysis</span>
+                            <span>{match.missingEvidence?.includes('Image verification unavailable') ? 'Not available' : `${match.breakdown.imageScore}/15`}</span>
+                          </div>
+                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full bg-danger rounded-full" style={{ width: `${match.missingEvidence?.includes('Image verification unavailable') ? 0 : Math.round((match.breakdown.imageScore / 15) * 100)}%` }}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-text-secondary mb-1">
+                            <span>Receipt / OCR verification</span>
+                            <span>{(match.missingEvidence?.includes('No receipt or text image uploaded') || match.missingEvidence?.includes('No matching identifier found')) ? 'Not available' : `${match.breakdown.ocrScore}/10`}</span>
+                          </div>
+                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                            <div className="h-full bg-[#8455ef] rounded-full" style={{ width: `${(match.missingEvidence?.includes('No receipt or text image uploaded') || match.missingEvidence?.includes('No matching identifier found')) ? 0 : Math.round((match.breakdown.ocrScore / 10) * 100)}%` }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               </div>
             )}

@@ -21,5 +21,7 @@ router.post('/', auth_middleware_1.protect, upload_middleware_1.upload.array('im
 router.get('/', auth_middleware_1.protect, lostItem_controller_1.getLostItems);
 router.get('/:id', auth_middleware_1.protect, lostItem_controller_1.getLostItemById);
 router.put('/:id', auth_middleware_1.protect, upload_middleware_1.upload.array('images', 5), (0, validate_middleware_1.validateRequest)(lostItemSchema), lostItem_controller_1.updateLostItem);
+router.patch('/:id/resolve', auth_middleware_1.protect, lostItem_controller_1.resolveLostItem);
+router.patch('/:id/revert', auth_middleware_1.protect, lostItem_controller_1.revertLostItem);
 router.delete('/:id', auth_middleware_1.protect, lostItem_controller_1.deleteLostItem);
 exports.default = router;

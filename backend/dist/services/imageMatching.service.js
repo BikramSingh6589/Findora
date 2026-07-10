@@ -1,6 +1,29 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.compareImages = void 0;
+const axios_1 = __importDefault(require("axios"));
+const fs_1 = __importDefault(require("fs"));
+const sharp_1 = __importDefault(require("sharp"));
+// Download or read local file helper
+const getImageBuffer = async (imagePath) => {
+    try {
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            const response = await axios_1.default.get(imagePath, { responseType: 'arraybuffer' });
+            return Buffer.from(response.data);
+        }
+        else if (fs_1.default.existsSync(imagePath)) {
+            return await fs_1.default.promises.readFile(imagePath);
+        }
+        return null;
+    }
+    catch (error) {
+        console.error(`[Image Matching] Failed to load image buffer from ${imagePath}:`, error);
+        return null;
+    }
+};
 /**
  * Compares two images and returns a score between 0 and 15.
  * Handles missing images cases to correctly adjust match confidence.
@@ -12,42 +35,59 @@ const compareImages = async (lostImage, foundImage) => {
         // CASE 3: Both items have no image
         if (!hasLostImg && !hasFoundImg) {
             console.log('[Image Matching] Case 3: Neither item has an image. Score: 0');
-            return { score: 0 };
+            return { score: 0, reason: 'Both images missing' };
         }
         // CASE 2: Only one item has an image
         if (!hasLostImg || !hasFoundImg) {
             console.log('[Image Matching] Case 2: Only one item has an image. Score: 4');
-            return { score: 4 };
+            return { score: 4, reason: 'One image missing' };
         }
         // CASE 1: Both lost and found items have images
-        console.log(`[Image Matching] Case 1: Comparing images: "${lostImage}" vs "${foundImage}"`);
-        // In future: hook up CLIP embeddings/Vision API.
-        // For now, evaluate similarity deterministically based on image URL matching.
-        if (lostImage === foundImage) {
-            return { score: 15 }; // Same laptop / exact same image
+        console.log(`[Image Matching] Case 1: Analyzing and comparing visual buffers: "${lostImage}" vs "${foundImage}"`);
+        const bufferLost = await getImageBuffer(lostImage);
+        const bufferFound = await getImageBuffer(foundImage);
+        if (!bufferLost || !bufferFound) {
+            return { score: 2, reason: 'Failed to retrieve visual features for comparison' };
         }
-        // Check if both images have same file name extension or patterns indicating similarity
-        const lostName = lostImage.split('/').pop() || '';
-        const foundName = foundImage.split('/').pop() || '';
-        if (lostName.length > 0 && lostName === foundName) {
-            return { score: 14 };
+        // Extract visual structure / layout using sharp metadata
+        const lostMeta = await (0, sharp_1.default)(bufferLost).metadata();
+        const foundMeta = await (0, sharp_1.default)(bufferFound).metadata();
+        // Resize images to a tiny 8x8 space to extract and compare average visual / color features
+        const lostRaw = await (0, sharp_1.default)(bufferLost).resize(8, 8, { fit: 'fill' }).raw().toBuffer();
+        const foundRaw = await (0, sharp_1.default)(bufferFound).resize(8, 8, { fit: 'fill' }).raw().toBuffer();
+        let totalDiff = 0;
+        const length = Math.min(lostRaw.length, foundRaw.length);
+        for (let i = 0; i < length; i++) {
+            totalDiff += Math.abs(lostRaw[i] - foundRaw[i]);
         }
-        // Heuristic: if URLs both contain category keywords indicating same type
-        const computerKeywords = ['laptop', 'notebook', 'macbook', 'pc', 'computer'];
-        const bagKeywords = ['bag', 'backpack'];
-        const containsKeyword = (url, keywords) => keywords.some(k => url.toLowerCase().includes(k));
-        if (containsKeyword(lostImage, computerKeywords) && containsKeyword(foundImage, computerKeywords)) {
-            return { score: 13 }; // similar laptop image
+        const avgDiff = totalDiff / length; // color difference metric from 0 to 255
+        const colorSimilarity = 1 - avgDiff / 255;
+        // Aspect ratio similarity
+        const lostRatio = (lostMeta.width || 1) / (lostMeta.height || 1);
+        const foundRatio = (foundMeta.width || 1) / (foundMeta.height || 1);
+        const ratioSimilarity = 1 - Math.min(Math.abs(lostRatio - foundRatio) / Math.max(lostRatio, foundRatio), 1);
+        // Dynamic visual similarity formula
+        const visualSimilarity = colorSimilarity * 0.7 + ratioSimilarity * 0.3;
+        let score = 0;
+        let reason = 'Low visual similarity';
+        if (visualSimilarity > 0.85) {
+            score = 13 + Math.round((visualSimilarity - 0.85) * 13.3); // 13-15 points
+            reason = 'Strong visual similarity and matching color tones';
         }
-        if (containsKeyword(lostImage, bagKeywords) && containsKeyword(foundImage, bagKeywords)) {
-            return { score: 13 }; // similar bag image
+        else if (visualSimilarity > 0.6) {
+            score = 6 + Math.round((visualSimilarity - 0.6) * 24); // 6-12 points
+            reason = 'Moderate visual similarity';
         }
-        // Different objects
-        return { score: 1.5 }; // Different objects image score (0-3 range)
+        else {
+            score = Math.round(visualSimilarity * 10); // 0-3 points
+            reason = 'Different visual structure and colors';
+        }
+        score = Math.min(Math.max(score, 0), 15);
+        return { score, reason };
     }
     catch (error) {
-        console.error('[Image Matching] Error comparing images:', error);
-        return { score: 1 };
+        console.error('[Image Matching] Error in visual feature analysis pipeline:', error);
+        return { score: 1.5, reason: 'Error during visual features extraction' };
     }
 };
 exports.compareImages = compareImages;

@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 import { createServer } from 'http';
 import { initSocket } from './services/socket.service';
+import { initAIWorker } from './workers/ai.worker';
 
 // Load environment variables from .env
 dotenv.config({ path: path.join(__dirname, '../.env') });
@@ -18,6 +19,9 @@ const startServer = async () => {
   } catch (error) {
     console.error('Failed to initialize database connection. Continuing to start server...');
   }
+
+  // Initialize background AI matching queue worker
+  await initAIWorker();
 
   const httpServer = createServer(app);
   initSocket(httpServer);
