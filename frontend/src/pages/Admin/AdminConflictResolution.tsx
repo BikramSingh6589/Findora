@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Shield, AlertTriangle, ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
@@ -216,8 +216,11 @@ export const AdminConflictResolution = () => {
                 setConfirmModal(prev => ({ ...prev, isOpen: false }));
                 setResolving(true);
                 try {
-                  await axios.post(`${API_BASE}/api/claims/conflict/${id}/resolve`, {
+                  const token = localStorage.getItem('token');
+                  await axios.post(`http://localhost:5000/api/claims/conflict/${itemId}/resolve`, {
                     denyConflict: true
+                  }, {
+                    headers: { Authorization: `Bearer ${token}` }
                   });
                   alert('Conflict denied successfully!');
                   navigate('/admin/conflicts');

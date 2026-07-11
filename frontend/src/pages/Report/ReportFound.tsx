@@ -26,6 +26,7 @@ export const ReportFound: React.FC = () => {
     color: '',
     brand: '',
     description: '',
+    images: [],
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -38,16 +39,38 @@ export const ReportFound: React.FC = () => {
   const handleSubmit = async () => {
     setError(null);
     try {
-      await axios.post(`${API_BASE}/api/found-items`, {
-        itemName: formData.itemName,
-        category: formData.category || 'Accessories',
-        brand: formData.brand || 'N/A',
-        color: formData.color || 'N/A',
-        description: formData.description || 'N/A',
-        locationFound: formData.location || 'Student Union',
-        lastSeen: formData.location || 'Student Union',
-        dateFound: formData.foundDate ? new Date(formData.foundDate) : new Date(),
-        linkedLostItem: lostItemId || undefined
+      const token = localStorage.getItem('token');
+      const formDataToSend = new FormData();
+      formDataToSend.append('itemName', formData.itemName);
+      formDataToSend.append('category', formData.category || 'Accessories');
+      formDataToSend.append('brand', formData.brand || 'N/A');
+      formDataToSend.append('color', formData.color || 'N/A');
+      formDataToSend.append('description', formData.description || 'N/A');
+      formDataToSend.append('locationFound', formData.location || 'Student Union');
+      formDataToSend.append('lastSeen', formData.location || 'Student Union');
+      
+      const foundDateObj = formData.foundDate && formData.foundTime
+        ? new Date(`${formData.foundDate}T${formData.foundTime}`)
+        : formData.foundDate
+        ? new Date(formData.foundDate)
+        : new Date();
+      formDataToSend.append('dateFound', foundDateObj.toISOString());
+
+      if (lostItemId) {
+        formDataToSend.append('linkedLostItem', lostItemId);
+      }
+
+      if (formData.images && formData.images.length > 0) {
+        formData.images.forEach(file => {
+          formDataToSend.append('images', file);
+        });
+      }
+
+      await axios.post(`${API_BASE}/api/found-items`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: token ? `Bearer ${token}` : ''
+        }
       });
       setCurrentStep(4);
     } catch (err: any) {

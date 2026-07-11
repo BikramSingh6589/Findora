@@ -1,18 +1,126 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import { Search, EyeOff, Send, CheckCircle, Rocket, BellRing, ArrowRight, UserSearch, Stars } from 'lucide-react';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const SuggestOwner: React.FC = () => {
   const navigate = useNavigate();
+  const { itemId } = useParams();
+
   const [isSuccess, setIsSuccess] = useState(false);
   const [query, setQuery] = useState('');
   const [showAutoSuggest, setShowAutoSuggest] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  
+  const [users, setUsers] = useState<any[]>([]);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [reason, setReason] = useState('');
+  const [isAnonymous, setIsAnonymous] = useState(true);
+  
+  const [item, setItem] = useState<any | null>(null);
+  const [match, setMatch] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      if (!itemId) return;
+      try {
+        setLoading(true);
+        // 1. Fetch item details (try found items first, fallback to lost items)
+        let fetchedItem = null;
+        try {
+          const res = await axios.get(`${API_BASE}/api/found-items/${itemId}`);
+          if (res.data?.success) {
+            fetchedItem = res.data.item;
+          }
+        } catch (err: any) {
+          if (err.response?.status === 404) {
+            const res2 = await axios.get(`${API_BASE}/api/lost-items/${itemId}`);
+            if (res2.data?.success) {
+              fetchedItem = res2.data.item;
+            }
+          }
+        }
+        setItem(fetchedItem);
+
+        // 2. Fetch users leaderboard for the autocomplete directory
+        const usersRes = await axios.get(`${API_BASE}/api/users/leaderboard`);
+        if (usersRes.data?.success && usersRes.data.users) {
+          setUsers(usersRes.data.users);
+        }
+
+        // 3. Fetch matches to find if there is an AI match score
+        const matchRes = await axios.get(`${API_BASE}/api/ai/matches/${itemId}`);
+        if (matchRes.data?.success && matchRes.data.matches && matchRes.data.matches.length > 0) {
+          // Take the highest matching score
+          const sorted = [...matchRes.data.matches].sort((a: any, b: any) => b.score - a.score);
+          setMatch(sorted[0]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch data for suggest owner page', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [itemId]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSuccess(true);
+    if (!selectedUser || !itemId) return;
+
+    try {
+      setIsSubmitting(true);
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${API_BASE}/api/community/${itemId}/suggest-owner`,
+        {
+          suggestedUserId: selectedUser._id || selectedUser.id,
+          note: reason,
+          isAnonymous // if backend supports it or can be saved
+        },
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        }
+      );
+      setIsSuccess(true);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.error || 'Failed to submit suggestion. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const filteredUsers = users.filter((u: any) => 
+    u.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <div className="flex-grow flex items-center justify-center p-10 min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!item) {
+    return (
+      <div className="max-w-4xl mx-auto py-16 px-4 text-center">
+        <h2 className="text-2xl font-bold text-text-primary">Item not found</h2>
+        <p className="text-text-secondary mt-2">The item you are looking for does not exist or has been deleted.</p>
+        <button 
+          onClick={() => navigate('/community')}
+          className="mt-6 bg-primary text-white font-bold py-2.5 px-6 rounded-xl hover:scale-105 transition-transform"
+        >
+          Back to Community Board
+        </button>
+      </div>
+    );
+  }
 
   if (isSuccess) {
     return (
@@ -28,29 +136,42 @@ export const SuggestOwner: React.FC = () => {
             
             {/* Left Column: Visual & Stats */}
             <div className="w-full lg:w-5/12 flex flex-col items-center lg:items-start text-center lg:text-left gap-8">
-              <div className="relative w-full max-w-[320px] animate-pulse">
+              <div className="relative w-full max-w-[320px] flex justify-center">
                 <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl scale-75"></div>
-                <img 
-                  alt="Success Illustration" 
-                  className="w-full h-auto relative z-10 drop-shadow-2xl" 
-                  src="/images/suggest_owner_illustration.png"
-                />
+                {item.images && item.images[0] ? (
+                  <img 
+                    alt={item.itemName} 
+                    className="w-48 h-48 rounded-full object-cover relative z-10 border border-border-default shadow-lg" 
+                    src={item.images[0]}
+                  />
+                ) : (
+                  <div className="w-48 h-48 rounded-full bg-primary/10 flex items-center justify-center relative z-10 text-primary">
+                    <Stars className="w-16 h-16" />
+                  </div>
+                )}
               </div>
               
               {/* Match Confidence Card */}
               <div className="w-full bg-surface-container-low rounded-3xl p-6 border border-border-default flex flex-col gap-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-sm text-text-secondary uppercase tracking-wider">Match Confidence</span>
+                  <span className="font-bold text-sm text-text-secondary uppercase tracking-wider">AI Confidence Match</span>
                   <Stars className="w-5 h-5 text-info-ai fill-current" />
                 </div>
                 <div className="flex items-end gap-2">
-                  <span className="font-extrabold text-4xl text-primary leading-none">85%</span>
+                  <span className="font-extrabold text-4xl text-primary leading-none">
+                    {match ? `${match.score}%` : 'Pending'}
+                  </span>
                   <span className="font-bold text-sm text-text-secondary mb-1">Probability</span>
                 </div>
                 <div className="w-full h-3 bg-surface-container rounded-full overflow-hidden mt-2">
-                  <div className="h-full bg-gradient-to-r from-primary to-[#8455ef] rounded-full transition-all duration-1000 ease-out" style={{ width: '85%' }}></div>
+                  <div 
+                    className="h-full bg-gradient-to-r from-primary to-[#8455ef] rounded-full transition-all duration-1000 ease-out" 
+                    style={{ width: match ? `${match.score}%` : '50%' }}
+                  ></div>
                 </div>
-                <p className="text-xs text-text-secondary mt-1">Based on user profile tags and historical item proximity.</p>
+                <p className="text-xs text-text-secondary mt-1">
+                  {match ? 'Based on active backend AI matched characteristics.' : 'Awaiting comparison analysis against database entries.'}
+                </p>
               </div>
             </div>
             
@@ -65,7 +186,7 @@ export const SuggestOwner: React.FC = () => {
                   Thank You for Your Help!
                 </h1>
                 <p className="text-lg text-text-secondary leading-relaxed">
-                  Your suggestion has been logged! Our AI is now checking if <span className="font-bold text-text-primary">Alex Rivera</span> has a matching lost item report in the campus database.
+                  Your suggestion has been logged! Our AI is now comparing if <span className="font-bold text-text-primary">{selectedUser?.name || 'the user'}</span> has a matching report in the campus database.
                 </p>
               </div>
               
@@ -85,8 +206,8 @@ export const SuggestOwner: React.FC = () => {
                     <BellRing className="w-6 h-6 text-warning" />
                   </div>
                   <div className="space-y-1">
-                    <h4 className="font-bold text-text-primary">Alex Notified</h4>
-                    <p className="text-xs text-text-secondary">We've sent a discreet ping to Alex to verify.</p>
+                    <h4 className="font-bold text-text-primary">Notifications Sent</h4>
+                    <p className="text-xs text-text-secondary">Moderators and matched parties have been notified.</p>
                   </div>
                 </div>
               </div>
@@ -95,21 +216,21 @@ export const SuggestOwner: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-border-default">
                 <button 
                   onClick={() => navigate('/community')}
-                  className="flex-1 bg-gradient-to-r from-primary to-[#8455ef] text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg hover:scale-[1.03] active:scale-95 transition-all flex items-center justify-center gap-2 group"
+                  className="flex-1 bg-gradient-to-r from-primary to-[#8455ef] text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg hover:scale-[1.03] active:scale-95 transition-all flex items-center justify-center gap-2 group cursor-pointer"
                 >
                   Return to Community Board
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <button 
                   onClick={() => navigate('/leaderboard')}
-                  className="flex-1 bg-transparent border-2 border-primary text-primary font-bold py-3.5 px-6 rounded-2xl hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 bg-transparent border-2 border-primary text-primary font-bold py-3.5 px-6 rounded-2xl hover:bg-primary/5 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <UserSearch className="w-5 h-5" />
                   View Leaderboard
                 </button>
               </div>
               <p className="text-center md:text-left text-xs text-text-secondary">
-                Helping a fellow student reduces campus stress by 25%. You're a hero! ðŸŽ“
+                Helping a fellow student reduces campus stress by 25%. You're a hero! 🎓
               </p>
             </div>
           </div>
@@ -119,7 +240,7 @@ export const SuggestOwner: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
+    <div className="max-w-4xl mx-auto py-8 px-4 animate-fade-in">
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-primary mb-2">Suggest an Owner</h1>
         <p className="text-text-secondary">Do you recognize this item? Help us reconnect it with its owner!</p>
@@ -133,16 +254,24 @@ export const SuggestOwner: React.FC = () => {
             <h3 className="font-bold text-text-primary mb-4 text-lg">Item Details</h3>
             <div className="flex gap-4">
               <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container shrink-0">
-                <img 
-                  alt="Item" 
-                  className="w-full h-full object-cover" 
-                  src="https://lh3.googleusercontent.com/aida/AP1WRLuZvCgyHr43N0iFlOKyk6UiEoE0zimYrO69w8_AHQ8wkOimQ_lDiQavSvRYS9r-JEJoj726-4HVicEqIuvmsDoTUaIfckvI4Q2Hdhbwou3_7ZRBWuEz0RATnEwV0bpv8GEJ44d-8g-mNEt96uyyu-Udm3-tCEI0NRQXXlICHkTozaHjHmAH5nAYF0uq2UAbrJxMfUFfQzyRlW2kWXmLjMwab74EQcE2ZKBpxgrOAlXt5sYCxyy3JqV5HA" 
-                />
+                {item.images && item.images[0] ? (
+                  <img 
+                    alt={item.itemName} 
+                    className="w-full h-full object-cover" 
+                    src={item.images[0]} 
+                  />
+                ) : (
+                  <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary">
+                    <Stars className="w-8 h-8" />
+                  </div>
+                )}
               </div>
               <div>
-                <p className="font-bold text-text-primary">Silver MacBook Air</p>
-                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold uppercase tracking-wide mt-1 inline-block">Electronics</span>
-                <p className="text-xs text-text-secondary mt-2 line-clamp-2">Left near the window study carrels. Has a "Computer Science" sticker on the lid.</p>
+                <p className="font-bold text-text-primary">{item.itemName}</p>
+                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold uppercase tracking-wide mt-1 inline-block">
+                  {item.category || 'General'}
+                </span>
+                <p className="text-xs text-text-secondary mt-2 line-clamp-2">{item.description || 'No description provided.'}</p>
               </div>
             </div>
           </div>
@@ -166,46 +295,51 @@ export const SuggestOwner: React.FC = () => {
               {/* Student ID Input */}
               <div className="space-y-2">
                 <label className="font-bold text-text-primary flex items-center justify-between text-sm">
-                  Student Name or ID
-                  <span className="text-text-secondary text-[10px] font-normal">Campus Directory Verified</span>
+                  Student Name
+                  <span className="text-text-secondary text-[10px] font-normal">Campus Directory Lookup</span>
                 </label>
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary w-5 h-5" />
                   <input 
                     className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-border-default bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm outline-none" 
-                    placeholder="Start typing name or @username..." 
+                    placeholder="Search name or username..." 
                     type="text"
+                    required
                     value={query}
                     onChange={(e) => {
                       setQuery(e.target.value);
-                      setShowAutoSuggest(e.target.value.length > 2);
+                      setShowAutoSuggest(e.target.value.length >= 1);
                       setSelectedUser(null);
                     }}
                   />
                   
-                  {/* Mock Auto-suggest dropdown */}
-                  {showAutoSuggest && (
+                  {/* Dynamic Auto-suggest dropdown */}
+                  {showAutoSuggest && filteredUsers.length > 0 && (
                     <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-xl border border-border-default overflow-hidden z-20">
-                      <div 
-                        className="px-4 py-3 hover:bg-surface-container-low cursor-pointer flex items-center gap-3"
-                        onClick={() => { setQuery('John Doe'); setShowAutoSuggest(false); setSelectedUser('JD'); }}
-                      >
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">JD</div>
-                        <div>
-                          <p className="text-sm font-bold text-text-primary">John Doe</p>
-                          <p className="text-[10px] text-text-secondary">Computer Science Â· @johndoe24</p>
+                      {filteredUsers.map((u: any) => (
+                        <div 
+                          key={u._id || u.id}
+                          className="px-4 py-3 hover:bg-surface-container-low cursor-pointer flex items-center gap-3 transition-colors border-b border-border-default last:border-b-0"
+                          onClick={() => { 
+                            setQuery(u.name); 
+                            setShowAutoSuggest(false); 
+                            setSelectedUser(u); 
+                          }}
+                        >
+                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
+                            {u.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-text-primary">{u.name}</p>
+                            <p className="text-[10px] text-text-secondary">Level {u.level || 1} · {u.xp || 0} XP</p>
+                          </div>
                         </div>
-                      </div>
-                      <div 
-                        className="px-4 py-3 hover:bg-surface-container-low cursor-pointer flex items-center gap-3"
-                        onClick={() => { setQuery('Jane Smith'); setShowAutoSuggest(false); setSelectedUser('JS'); }}
-                      >
-                        <div className="w-8 h-8 rounded-full bg-warning/20 flex items-center justify-center text-warning text-xs font-bold">JS</div>
-                        <div>
-                          <p className="text-sm font-bold text-text-primary">Jane Smith</p>
-                          <p className="text-[10px] text-text-secondary">Digital Arts Â· @jsmith_art</p>
-                        </div>
-                      </div>
+                      ))}
+                    </div>
+                  )}
+                  {showAutoSuggest && filteredUsers.length === 0 && (
+                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-surface-container-lowest dark:bg-surface-container rounded-xl shadow-xl border border-border-default p-4 text-center text-xs text-text-secondary z-20">
+                      No matching students found
                     </div>
                   )}
                 </div>
@@ -215,9 +349,12 @@ export const SuggestOwner: React.FC = () => {
               <div className="space-y-2">
                 <label className="font-bold text-text-primary text-sm">Why do you think this belongs to them?</label>
                 <textarea 
+                  required
                   className="w-full p-4 rounded-2xl border border-border-default bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm outline-none resize-none" 
-                  placeholder="e.g., 'I saw them wearing these in the cafe yesterday' or 'They posted about losing this on their story'." 
+                  placeholder="e.g. 'They lost a laptop with similar stickers' or 'I saw them carrying this exact bottle earlier today'..." 
                   rows={4}
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
                 ></textarea>
               </div>
 
@@ -233,7 +370,12 @@ export const SuggestOwner: React.FC = () => {
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <input 
+                    type="checkbox" 
+                    className="sr-only peer" 
+                    checked={isAnonymous} 
+                    onChange={(e) => setIsAnonymous(e.target.checked)} 
+                  />
                   <div className="w-11 h-6 bg-border-default peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-container-lowest dark:bg-surface-container after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
@@ -242,16 +384,16 @@ export const SuggestOwner: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                 <button 
                   type="submit"
-                  disabled={!selectedUser}
-                  className="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold text-sm shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
+                  disabled={!selectedUser || isSubmitting}
+                  className="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold text-sm shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:scale-100 cursor-pointer"
                 >
-                  Submit Suggestion
+                  {isSubmitting ? 'Logging...' : 'Submit Suggestion'}
                   <Send className="w-4 h-4" />
                 </button>
                 <button 
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl border-2 border-border-default text-text-secondary font-bold hover:bg-surface-container transition-colors text-sm"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl border-2 border-border-default text-text-secondary font-bold hover:bg-surface-container transition-colors text-sm cursor-pointer"
                 >
                   Cancel
                 </button>

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getConflictsByItem = exports.resolveConflict = exports.submitConflict = exports.claimantVerifyLocation = exports.adminNotifyClaimantLocation = exports.adminVerifyLocation = exports.adminVerifyDropoffCode = exports.finderHandoverChoice = exports.mediationResolve = exports.mediateClaim = exports.resolveClaim = exports.rejectClaim = exports.approveClaim = exports.cancelClaim = exports.getClaimById = exports.getClaims = exports.submitClaim = void 0;
+exports.getConflictsByItem = exports.resolveConflict = exports.initiateConflictHandover = exports.submitConflict = exports.claimantVerifyLocation = exports.adminNotifyClaimantLocation = exports.adminVerifyLocation = exports.adminVerifyDropoffCode = exports.finderHandoverChoice = exports.mediationResolve = exports.mediateClaim = exports.resolveClaim = exports.rejectClaim = exports.approveClaim = exports.cancelClaim = exports.getClaimById = exports.getClaims = exports.submitClaim = void 0;
 const uuid_1 = require("uuid");
 const Claim_1 = __importDefault(require("../models/Claim"));
 const FoundItem_1 = __importDefault(require("../models/FoundItem"));
@@ -897,21 +897,116 @@ const submitConflict = async (req, res, next) => {
 };
 exports.submitConflict = submitConflict;
 /**
- * Resolve a conflict (Admin only).
+ * Initiate an in-person handover for a conflict (Admin only).
  */
-const resolveConflict = async (req, res, next) => {
+const initiateConflictHandover = async (req, res, next) => {
     try {
         const { foundItemId } = req.params;
-        const { winningClaimId } = req.body;
         const foundItem = await FoundItem_1.default.findById(foundItemId);
         if (!foundItem) {
             (0, response_1.sendError)(res, 'Found item not found', 404);
             return;
         }
         const claims = await Claim_1.default.find({ foundItemId, mediationRequested: true });
+        if (claims.length < 2) {
+            (0, response_1.sendError)(res, 'Not enough conflicting claims to initiate handover', 400);
+            return;
+        }
+        const conflictCode = 'CFL-' + Math.floor(1000 + Math.random() * 9000);
+        // Create notifications for claimants
+        const Notification = require('../models/Notification').default;
         for (const claim of claims) {
+            claim.mediationStatus = 'pending_handover';
+            claim.conflictCode = conflictCode;
+            await claim.save();
+            try {
+                const notif = await Notification.create({
+                    recipient: claim.claimant,
+                    title: 'Urgent: In-Person Mediation Required',
+                    message: `Your claim for "${foundItem.itemName}" requires in-person resolution. Please bring the product (if you have it) to the Admin Office immediately. Your conflict code is ${conflictCode}.`,
+                    type: 'claim_update',
+                    read: false
+                });
+                const { getIO } = require('../services/socket.service');
+                getIO().to(`user:${claim.claimant}`).emit('new_notification', notif);
+            }
+            catch (err) {
+                console.error('Failed to create notification', err);
+            }
+        }
+        foundItem.status = 'conflict_handover';
+        await foundItem.save();
+        (0, response_1.sendSuccess)(res, { conflictCode }, 'In-person handover initiated successfully');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.initiateConflictHandover = initiateConflictHandover;
+/**
+ * Resolve a conflict (Admin only).
+ */
+const resolveConflict = async (req, res, next) => {
+    try {
+        const { foundItemId } = req.params;
+        const { winningClaimId, denyConflict } = req.body;
+        const foundItem = await FoundItem_1.default.findById(foundItemId);
+        if (!foundItem) {
+            (0, response_1.sendError)(res, 'Found item not found', 404);
+            return;
+        }
+        const claims = await Claim_1.default.find({ foundItemId, mediationRequested: true });
+        const { getIO } = require('../services/socket.service');
+        const Notification = require('../models/Notification').default;
+        if (denyConflict) {
+            // Find the newest claim (the one that caused the conflict)
+            const sortedClaims = [...claims].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+            const conflictClaim = sortedClaims[0];
+            for (const claim of claims) {
+                if (claim._id.toString() === conflictClaim._id.toString()) {
+                    claim.status = 'rejected';
+                    claim.mediationStatus = 'rejected';
+                    claim.remarks = 'Conflict claim denied by admin.';
+                    try {
+                        const notif = await Notification.create({
+                            recipient: claim.claimant,
+                            title: 'Conflict Claim Denied',
+                            message: `Your conflict claim for "${foundItem.itemName}" has been denied by the admin.`,
+                            type: 'claim_update',
+                            read: false
+                        });
+                        getIO().to(`user:${claim.claimant}`).emit('new_notification', notif);
+                    }
+                    catch (e) { }
+                }
+                else {
+                    // Restore original claim
+                    claim.mediationRequested = false;
+                    claim.mediationStatus = 'approved'; // It was likely approved if it was claimed
+                    claim.status = 'approved';
+                    try {
+                        const notif = await Notification.create({
+                            recipient: claim.claimant,
+                            title: 'Conflict Resolved',
+                            message: `The conflict for "${foundItem.itemName}" was denied. Your original claim remains valid.`,
+                            type: 'claim_update',
+                            read: false
+                        });
+                        getIO().to(`user:${claim.claimant}`).emit('new_notification', notif);
+                    }
+                    catch (e) { }
+                }
+                await claim.save();
+            }
+            await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'claimed' });
+            (0, response_1.sendSuccess)(res, null, 'Conflict denied and original claim restored');
+            return;
+        }
+        for (const claim of claims) {
+            let title = '';
+            let message = '';
             if (winningClaimId && claim._id.toString() === winningClaimId) {
-                claim.status = 'approved';
+                claim.status = 'resolved';
                 claim.mediationStatus = 'approved';
                 claim.remarks = 'Dispute resolved in favor of this claimant.';
                 const qrToken = require('uuid').v4();
@@ -919,22 +1014,38 @@ const resolveConflict = async (req, res, next) => {
                 claim.qrCodeUrl = await (0, qr_service_1.generateQR)(qrToken);
                 const hours = 48;
                 claim.qrExpiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
+                title = 'Conflict Resolved: You Won';
+                message = `The admin has resolved the conflict for "${foundItem.itemName}" in your favor. You may now collect the item.`;
             }
             else {
                 claim.status = 'rejected';
                 claim.mediationStatus = 'rejected';
                 claim.remarks = winningClaimId ? 'Dispute resolved in favor of another claimant.' : 'Dispute rejected for all parties.';
+                title = 'Conflict Resolved: Claim Rejected';
+                message = winningClaimId ? `The admin has resolved the conflict for "${foundItem.itemName}" in favor of another claimant.` : `The admin has rejected all claims for "${foundItem.itemName}".`;
             }
             await claim.save();
+            try {
+                const notif = await Notification.create({
+                    recipient: claim.claimant,
+                    title,
+                    message,
+                    type: 'claim_update',
+                    read: false
+                });
+                getIO().to(`user:${claim.claimant}`).emit('new_notification', notif);
+            }
+            catch (err) {
+                console.error('Failed to create notification', err);
+            }
         }
         if (winningClaimId) {
-            await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'claimed' });
+            await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'resolved' });
         }
         else {
             await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'active' });
         }
         try {
-            const { getIO } = require('../services/socket.service');
             const io = getIO();
             io.emit('conflict_resolved', { itemId: foundItemId });
         }

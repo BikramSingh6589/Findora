@@ -76,6 +76,7 @@ router.post('/:foundItemId/conflict', upload_middleware_1.upload.array('proof', 
     next();
 }, claim_controller_1.submitConflict);
 router.get('/conflict/:foundItemId', admin_middleware_1.adminOnly, claim_controller_1.getConflictsByItem);
+router.post('/conflict/:foundItemId/initiate-handover', admin_middleware_1.adminOnly, claim_controller_1.initiateConflictHandover);
 router.post('/conflict/:foundItemId/resolve', admin_middleware_1.adminOnly, claim_controller_1.resolveConflict);
 // Admin Handover Routes
 const claim_controller_2 = require("../controllers/claim.controller");

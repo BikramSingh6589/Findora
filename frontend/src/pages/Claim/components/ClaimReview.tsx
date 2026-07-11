@@ -9,9 +9,10 @@ interface Props {
   updateData: (newData: Partial<ClaimFormData>) => void;
   onEdit: () => void;
   onSubmit: () => void;
+  proofFiles: File[];
 }
 
-export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmit }) => {
+export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmit, proofFiles }) => {
   const { user } = useAuth();
   const [lostItems, setLostItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +72,7 @@ export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmi
               </button>
               <button
                 onClick={confirmSubmit}
-                className="px-6 py-2 rounded-xl bg-primary text-white font-bold hover:scale-105 transition-transform"
+                className="px-6 py-2 rounded-xl bg-primary text-white font-bold hover:scale-105 transition-transform cursor-pointer"
               >
                 Yes, Proceed
               </button>
@@ -106,24 +107,45 @@ export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmi
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Proof Thumbnail */}
         <div className="md:col-span-1">
-          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm border border-border-default h-full">
-            <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
-              <Image className="text-primary w-5 h-5" />
-              Proof Provided
-            </h3>
-            <div className="relative group rounded-xl overflow-hidden aspect-square shadow-sm cursor-zoom-in">
-              <img
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80"
-                alt="Proof of ownership"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <button className="bg-surface-container-lowest dark:bg-surface-container/20 backdrop-blur-md p-2 rounded-full text-white">
-                  ðŸ”
-                </button>
-              </div>
+          <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-5 shadow-sm border border-border-default h-full flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                <Image className="text-primary w-5 h-5" />
+                Proof Provided
+              </h3>
+              
+              {proofFiles && proofFiles.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3">
+                  {proofFiles.map((file, idx) => {
+                    const isImage = file.type.startsWith('image/');
+                    return (
+                      <div key={idx} className="relative group rounded-xl overflow-hidden aspect-square shadow-sm bg-surface border border-border-default flex flex-col items-center justify-center p-2">
+                        {isImage ? (
+                          <img
+                            className="w-full h-full object-cover rounded-lg"
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center gap-2 text-primary">
+                            <FileText className="w-12 h-12" />
+                            <span className="text-xs font-bold truncate max-w-full px-2">{file.name}</span>
+                          </div>
+                        )}
+                        <div className="mt-1 text-[10px] text-text-secondary text-center truncate max-w-full">{file.name}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-border-default border-dashed p-6 text-center text-xs text-text-secondary bg-surface">
+                  No proof documents uploaded.
+                </div>
+              )}
             </div>
-            <p className="mt-3 text-xs text-text-secondary text-center">proof_of_ownership_id.jpg</p>
+            {proofFiles.length > 0 && (
+              <p className="mt-3 text-xs text-text-secondary text-center">{proofFiles.length} file(s) attached</p>
+            )}
           </div>
         </div>
 
@@ -135,7 +157,7 @@ export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmi
                 <FileText className="text-primary w-5 h-5" />
                 Questionnaire Summary
               </h3>
-              <button onClick={onEdit} className="text-primary font-semibold flex items-center gap-1 hover:underline text-sm">
+              <button onClick={onEdit} className="text-primary font-semibold flex items-center gap-1 hover:underline text-sm cursor-pointer bg-transparent border-0">
                 <Edit3 className="w-4 h-4" /> Edit Answers
               </button>
             </div>
@@ -146,14 +168,14 @@ export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmi
                 <p className="text-sm text-text-secondary">Where did you last see the item?</p>
                 <p className="font-semibold text-sm text-text-primary mt-1 flex items-center gap-1">
                   <MapPin className="w-4 h-4 text-primary" />
-                  {data.location || 'Main Library, 2nd Floor Study Lounge'}
+                  {data.location || 'Not provided'}
                 </p>
               </div>
 
               <div className="p-4 rounded-xl bg-surface border-l-4 border-primary">
                 <p className="text-xs font-bold text-primary mb-1 uppercase tracking-wider">Unique Features</p>
                 <p className="text-sm text-text-secondary">Are there any specific markings or stickers?</p>
-                <p className="font-semibold text-sm text-text-primary mt-1">{data.identifiers || 'A small scratch on the bottom left corner and a \'Senior Student\' sticker on the front lid.'}</p>
+                <p className="font-semibold text-sm text-text-primary mt-1">{data.identifiers || 'Not provided'}</p>
               </div>
 
               <div className="p-4 rounded-xl bg-surface border-l-4 border-primary">
@@ -161,7 +183,7 @@ export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmi
                 <p className="text-sm text-text-secondary">Approximate time of loss?</p>
                 <p className="font-semibold text-sm text-text-primary mt-1 flex items-center gap-1">
                   <Clock className="w-4 h-4 text-primary" />
-                  {data.lostDate ? `${data.lostDate} at ${data.lostTime || 'N/A'}` : 'Tuesday, Oct 24th, between 2:00 PM and 4:30 PM'}
+                  {data.lostDate ? `${data.lostDate} at ${data.lostTime || 'N/A'}` : 'Not provided'}
                 </p>
               </div>
             </div>
@@ -221,7 +243,7 @@ export const ClaimReview: React.FC<Props> = ({ data, updateData, onEdit, onSubmi
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <button
             onClick={handleInterceptSubmit}
-            className="flex-1 px-8 py-3 rounded-full bg-primary text-white font-bold hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg text-sm group"
+            className="flex-1 px-8 py-3 rounded-full bg-primary text-white font-bold hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg text-sm group cursor-pointer border-0"
           >
             Contact Finder
             <MessageSquare className="w-4 h-4" />

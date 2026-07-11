@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { FileText, MapPin, Camera, UploadCloud, Image as ImageIcon, Sparkles, Brain, ChevronRight, Check } from 'lucide-react';
 import type { ReportFormData } from '../types';
 
@@ -10,6 +10,48 @@ interface Props {
 }
 
 export const StepDetails: React.FC<Props> = ({ data, updateData, onNext, onPrev }) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const images = data.images || [];
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFiles = Array.from(e.target.files);
+      const combined = [...images, ...selectedFiles].slice(0, 4);
+      updateData({ images: combined });
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const updated = images.filter((_, i) => i !== index);
+    updateData({ images: updated });
+  };
+
+  const getContextualTip = () => {
+    const category = (data.category || '').toLowerCase();
+    const name = (data.itemName || '').toLowerCase();
+
+    if (category.includes('electronic') || name.includes('laptop') || name.includes('macbook') || name.includes('phone') || name.includes('ipad')) {
+      return "Taking clear, close-up photos of serial numbers (S/N) or model codes helps our AI uniquely match your item with 95%+ confidence.";
+    }
+    if (category.includes('document') || name.includes('id') || name.includes('card') || name.includes('passport')) {
+      return "Capturing document reference numbers, logos, or barcode stripes helps our AI verify ownership instantly.";
+    }
+    if (name.includes('wallet') || name.includes('purse') || name.includes('bag')) {
+      return "Photographing specific brand badges, interior dividers, or custom keychains helps our AI identify ownership.";
+    }
+    if (name.includes('key')) {
+      return "Photographing the key patterns, specific key rings, or car fobs increases matching accuracy significantly.";
+    }
+    if (name.includes('bottle') || name.includes('flask') || name.includes('mug')) {
+      return "Photographing custom stickers, scratch marks, or cap styles helps our AI matching accuracy.";
+    }
+    return "Taking clear, well-lit photos from different angles (front, back, and details) significantly increases AI matching accuracy.";
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onNext();
@@ -124,28 +166,59 @@ export const StepDetails: React.FC<Props> = ({ data, updateData, onNext, onPrev 
                 </div>
                 <h3 className="text-xl font-bold text-text-primary">Upload Photos</h3>
               </div>
-              <span className="font-semibold text-xs text-text-secondary">0 / 4</span>
+              <span className="font-semibold text-xs text-text-secondary">{images.length} / 4</span>
             </div>
             
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              multiple 
+              accept="image/*" 
+              className="hidden" 
+            />
+
             <div className="grid grid-cols-2 gap-4">
-              {/* Main Upload Action */}
-              <button type="button" className="col-span-2 aspect-[16/9] rounded-2xl bg-surface flex flex-col items-center justify-center gap-2 group hover:bg-primary/5 hover:border-primary transition-all border border-transparent">
-                <div className="w-12 h-12 rounded-full bg-surface-container-lowest dark:bg-surface-container shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                  <UploadCloud className="w-8 h-8" />
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold text-sm text-primary">Upload Item Photos</p>
-                  <p className="text-xs text-text-secondary">PNG, JPG up to 10MB</p>
-                </div>
-              </button>
+              {images.length < 4 && (
+                <button 
+                  type="button" 
+                  onClick={handleUploadClick}
+                  className="col-span-2 aspect-[16/9] rounded-2xl bg-surface flex flex-col items-center justify-center gap-2 group hover:bg-primary/5 hover:border-primary transition-all border border-transparent cursor-pointer"
+                >
+                  <div className="w-12 h-12 rounded-full bg-surface-container-lowest dark:bg-surface-container shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <UploadCloud className="w-8 h-8" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold text-sm text-primary">Upload Item Photos</p>
+                    <p className="text-xs text-text-secondary">PNG, JPG up to 10MB</p>
+                  </div>
+                </button>
+              )}
               
-              {/* Empty States for Slots */}
-              <div className="aspect-square rounded-xl bg-surface border border-border-default border-dashed flex items-center justify-center text-text-secondary/30">
-                <ImageIcon className="w-6 h-6" />
-              </div>
-              <div className="aspect-square rounded-xl bg-surface border border-border-default border-dashed flex items-center justify-center text-text-secondary/30">
-                <ImageIcon className="w-6 h-6" />
-              </div>
+              {/* Display Uploaded Previews */}
+              {images.map((file, index) => (
+                <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-border-default bg-surface group">
+                  <img 
+                    src={URL.createObjectURL(file)} 
+                    alt={`Preview ${index + 1}`} 
+                    className="w-full h-full object-cover" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-2 right-2 p-1 bg-danger text-white rounded-full hover:bg-danger/80 flex items-center justify-center cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-xs">delete</span>
+                  </button>
+                </div>
+              ))}
+
+              {/* Empty Slots */}
+              {Array.from({ length: Math.max(0, 4 - images.length) }).slice(images.length < 4 ? 2 : 0).map((_, idx) => (
+                <div key={idx} className="aspect-square rounded-xl bg-surface border border-border-default border-dashed flex items-center justify-center text-text-secondary/30">
+                  <ImageIcon className="w-6 h-6" />
+                </div>
+              ))}
             </div>
           </section>
 
@@ -157,7 +230,7 @@ export const StepDetails: React.FC<Props> = ({ data, updateData, onNext, onPrev 
                 <h4 className="font-semibold text-sm text-primary">Pro Tip for AI Matching</h4>
               </div>
               <p className="text-sm text-on-surface-variant leading-relaxed">
-                Taking clear, well-lit photos from different angles (front, back, and any serial numbers) significantly increases our <span className="font-bold text-primary">AI Matching</span> accuracy by up to 85%.
+                {getContextualTip()}
               </p>
             </div>
             {/* Decorative Element */}

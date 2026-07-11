@@ -11,13 +11,24 @@ interface Props {
   updateData: (d: Partial<ClaimFormData>) => void;
   onNext: () => void;
   foundItemId?: string;
+  item: any | null;
+  loadingItem: boolean;
+  match: any | null;
+  loadingMatch: boolean;
 }
 
-export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext, foundItemId }) => {
+export const ClaimVerification: React.FC<Props> = ({ 
+  data, 
+  updateData, 
+  onNext, 
+  foundItemId: _foundItemId,
+  item,
+  loadingItem,
+  match,
+  loadingMatch
+}) => {
   const { user } = useAuth();
   const [myLostItems, setMyLostItems] = useState<any[]>([]);
-  const [match, setMatch] = useState<any | null>(null);
-  const [loadingMatch, setLoadingMatch] = useState<boolean>(true);
 
   useEffect(() => {
     if (!user) return;
@@ -35,40 +46,6 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext, f
     };
     fetchMyItems();
   }, [user]);
-
-  useEffect(() => {
-    const fetchMatch = async () => {
-      if (!foundItemId) {
-        setLoadingMatch(false);
-        return;
-      }
-      try {
-        setLoadingMatch(true);
-        const res = await axios.get(`${API_BASE}/api/ai/matches`);
-        if (res.data?.success && res.data.matches) {
-          let foundMatch = null;
-          if (data.lostItemId) {
-            foundMatch = res.data.matches.find(
-              (m: any) =>
-                (m.foundItem?._id === foundItemId || m.foundItem === foundItemId) &&
-                (m.lostItem?._id === data.lostItemId || m.lostItem === data.lostItemId)
-            );
-          } else {
-            foundMatch = res.data.matches.find(
-              (m: any) =>
-                (m.foundItem?._id === foundItemId || m.foundItem === foundItemId)
-            );
-          }
-          setMatch(foundMatch || null);
-        }
-      } catch (err) {
-        console.error('Error fetching AI match for claim verification', err);
-      } finally {
-        setLoadingMatch(false);
-      }
-    };
-    fetchMatch();
-  }, [foundItemId, data.lostItemId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,11 +81,18 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext, f
         <div className="lg:col-span-8">
           <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[20px] p-8 shadow-sm border border-border-default">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-text-primary mb-2">Verify Ownership</h1>
+              <h1 className="text-3xl font-bold text-text-primary mb-2">
+                {item ? `Verify Ownership of ${item.itemName}` : 'Verify Ownership'}
+              </h1>
               <p className="text-base text-text-secondary">Help us confirm you're the rightful owner by answering a few quick questions about your item.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            {loadingItem ? (
+              <div className="flex items-center justify-center p-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-8">
               {/* Optional: Select existing Lost Item */}
               {myLostItems.length > 0 && (
                 <div className="space-y-2 p-4 rounded-xl border border-primary/20 bg-primary/5">
@@ -200,6 +184,7 @@ export const ClaimVerification: React.FC<Props> = ({ data, updateData, onNext, f
                 </button>
               </div>
             </form>
+            )}
           </div>
         </div>
 

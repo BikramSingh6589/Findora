@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Eye, Edit3, Laptop, MapPin, Calendar, Image as ImageIcon, ZoomIn, Camera, Star, Medal, ArrowLeft, Send, Check } from 'lucide-react';
 import type { ReportFormData } from '../types';
 
@@ -103,16 +103,29 @@ export const StepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              <div className="aspect-square rounded-2xl overflow-hidden border border-border-default hover:-translate-y-1 transition-transform cursor-zoom-in relative group">
-                <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80" alt="Item" />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ZoomIn className="text-white w-8 h-8" />
+              {data.images && data.images.length > 0 ? (
+                data.images.map((file, idx) => (
+                  <div key={idx} className="aspect-square rounded-2xl overflow-hidden border border-border-default hover:-translate-y-1 transition-transform cursor-zoom-in relative group bg-surface flex items-center justify-center">
+                    <img className="w-full h-full object-cover" src={URL.createObjectURL(file)} alt={`Item ${idx + 1}`} />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ZoomIn className="text-white w-8 h-8" />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-2 sm:col-span-3 p-6 text-center text-xs text-text-secondary border border-dashed border-border-default rounded-xl bg-surface">
+                  No photos uploaded.
                 </div>
-              </div>
-              <div className="aspect-square rounded-2xl border-2 border-dashed border-primary/20 bg-primary/5 flex flex-col items-center justify-center gap-2 text-primary hover:bg-primary/10 transition-colors cursor-pointer group">
-                <Camera className="w-8 h-8 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-bold">Add More</span>
-              </div>
+              )}
+              {(!data.images || data.images.length < 4) && (
+                <div 
+                  onClick={onEdit}
+                  className="aspect-square rounded-2xl border-2 border-dashed border-primary/20 bg-primary/5 flex flex-col items-center justify-center gap-2 text-primary hover:bg-primary/10 transition-colors cursor-pointer group"
+                >
+                  <Camera className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold">Add More</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

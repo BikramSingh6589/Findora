@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Camera, UploadCloud, ArrowLeft, ShieldAlert } from 'lucide-react';
-import { useNotification } from '../../contexts/NotificationContext';
 
 export const ConflictClaim = () => {
   const { itemId } = useParams();
   const navigate = useNavigate();
-  const { addNotification } = useNotification();
   
   const [item, setItem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +29,7 @@ export const ConflictClaim = () => {
         }
       } catch (error) {
         console.error('Error fetching item:', error);
-        addNotification('error', 'Failed to load item details');
+        alert('Failed to load item details');
       } finally {
         setLoading(false);
       }
@@ -74,7 +72,7 @@ export const ConflictClaim = () => {
       }
     } catch (error: any) {
       setErrorMsg(error.response?.data?.error || 'Failed to submit dispute');
-      addNotification('error', error.response?.data?.error || 'Failed to submit dispute');
+      alert(error.response?.data?.error || 'Failed to submit dispute');
     } finally {
       setSubmitting(false);
     }

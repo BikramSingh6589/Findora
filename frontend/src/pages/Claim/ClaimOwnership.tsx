@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -36,12 +36,75 @@ export const ClaimOwnership: React.FC = () => {
   const initialState = getInitialState();
   const [currentStep, setCurrentStep] = useState(initialState.currentStep);
   const [formData, setFormData] = useState<ClaimFormData>(initialState.formData);
+  const [proofFiles, setProofFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const [item, setItem] = useState<any | null>(null);
+  const [loadingItem, setLoadingItem] = useState<boolean>(true);
+  const [match, setMatch] = useState<any | null>(null);
+  const [loadingMatch, setLoadingMatch] = useState<boolean>(true);
+
   // Auto-save draft on change
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem(draftKey, JSON.stringify({ currentStep, formData }));
   }, [currentStep, formData, draftKey]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!itemId) {
+        setLoadingItem(false);
+        setLoadingMatch(false);
+        return;
+      }
+      try {
+        setLoadingItem(true);
+        // Try found-items first, fallback to lost-items
+        let fetchedItem = null;
+        try {
+          const res = await axios.get(`${API_BASE}/api/found-items/${itemId}`);
+          if (res.data?.success) {
+            fetchedItem = { ...res.data.item, itemType: 'found' };
+          }
+        } catch (err: any) {
+          if (err.response?.status === 404) {
+            try {
+              const res2 = await axios.get(`${API_BASE}/api/lost-items/${itemId}`);
+              if (res2.data?.success) {
+                fetchedItem = { ...res2.data.item, itemType: 'lost' };
+              }
+            } catch (err2) {
+              console.error(err2);
+            }
+          } else {
+            console.error(err);
+          }
+        }
+        setItem(fetchedItem);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingItem(false);
+      }
+
+      try {
+        setLoadingMatch(true);
+        const res = await axios.get(`${API_BASE}/api/ai/matches/${itemId}`);
+        if (res.data?.success && res.data.matches && res.data.matches.length > 0) {
+          // Find/sort matches by confidence descending
+          const sorted = [...res.data.matches].sort((a: any, b: any) => b.score - a.score);
+          setMatch(sorted[0]);
+        } else {
+          setMatch(null);
+        }
+      } catch (err) {
+        console.error('Error fetching AI match for claim ownership', err);
+        setMatch(null);
+      } finally {
+        setLoadingMatch(false);
+      }
+    };
+    fetchData();
+  }, [itemId]);
 
   const nextStep = () => setCurrentStep((prev: number) => prev + 1);
   const prevStep = () => setCurrentStep((prev: number) => Math.max(prev - 1, 1));
@@ -64,16 +127,31 @@ export const ClaimOwnership: React.FC = () => {
         }
       }
 
-      const res = await axios.post(`${API_BASE}/api/claims`, {
-        foundItemId: finalItemId,
-        lostItemId: formData.lostItemId || undefined,
-        answers: {
-          location: formData.location,
-          dateDetails: `${formData.lostDate} ${formData.lostTime}`,
-          colorMatch: '',
-          specialMarks: formData.identifiers,
-        },
-        proofUrls: (formData as any).proofUrls || []
+      const token = localStorage.getItem('token');
+      const formDataToSend = new FormData();
+      formDataToSend.append('foundItemId', finalItemId || '');
+      if (formData.lostItemId) {
+        formDataToSend.append('lostItemId', formData.lostItemId);
+      }
+      formDataToSend.append('answers', JSON.stringify({
+        location: formData.location,
+        dateDetails: `${formData.lostDate} ${formData.lostTime}`,
+        colorMatch: '',
+        specialMarks: formData.identifiers,
+      }));
+
+      // Append files
+      if (proofFiles && proofFiles.length > 0) {
+        proofFiles.forEach((file) => {
+          formDataToSend.append('proof', file);
+        });
+      }
+
+      const res = await axios.post(`${API_BASE}/api/claims`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: token ? `Bearer ${token}` : ''
+        }
       });
 
       localStorage.removeItem(draftKey);
@@ -109,13 +187,37 @@ export const ClaimOwnership: React.FC = () => {
 
         <div className="bg-surface-container-lowest dark:bg-surface-container rounded-[24px] shadow-sm border border-border-default overflow-hidden">
           {currentStep === 1 && (
-            <ClaimVerification data={formData} updateData={updateData} onNext={nextStep} foundItemId={itemId} />
+            <ClaimVerification 
+              data={formData} 
+              updateData={updateData} 
+              onNext={nextStep} 
+              foundItemId={itemId}
+              item={item}
+              loadingItem={loadingItem}
+              match={match}
+              loadingMatch={loadingMatch}
+            />
           )}
           {currentStep === 2 && (
-            <ClaimProof data={formData} updateData={updateData} onNext={nextStep} onPrev={prevStep} />
+            <ClaimProof 
+              data={formData} 
+              updateData={updateData} 
+              onNext={nextStep} 
+              onPrev={prevStep}
+              item={item}
+              match={match}
+              proofFiles={proofFiles}
+              setProofFiles={setProofFiles}
+            />
           )}
           {currentStep === 3 && (
-            <ClaimReview data={formData} updateData={updateData} onSubmit={handleSubmit} onEdit={() => setCurrentStep(1)} />
+            <ClaimReview 
+              data={formData} 
+              updateData={updateData} 
+              onSubmit={handleSubmit} 
+              onEdit={() => setCurrentStep(1)} 
+              proofFiles={proofFiles}
+            />
           )}
         </div>
         

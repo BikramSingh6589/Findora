@@ -17,6 +17,7 @@ export const ItemDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [match, setMatch] = useState<any | null>(null);
+  const [loadingMatch, setLoadingMatch] = useState(true);
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [resolving, setResolving] = useState(false);
   const [showRevertModal, setShowRevertModal] = useState(false);
@@ -28,19 +29,22 @@ export const ItemDetail: React.FC = () => {
     const fetchItemMatch = async () => {
       if (!itemId || !user) return;
       try {
-        const res = await axios.get(`${API_BASE}/api/ai/matches`);
-        if (res.data && res.data.success && res.data.matches) {
-          const foundMatch = res.data.matches.find(
-            (m: any) =>
-              (m.lostItem?._id === itemId || m.lostItem === itemId) ||
-              (m.foundItem?._id === itemId || m.foundItem === itemId)
-          );
-          if (foundMatch) {
-            setMatch(foundMatch);
-          }
+        setLoadingMatch(true);
+        const token = localStorage.getItem('token');
+        const res = await axios.get(`${API_BASE}/api/ai/matches/${itemId}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (res.data && res.data.success && res.data.matches && res.data.matches.length > 0) {
+          const sortedMatches = [...res.data.matches].sort((a: any, b: any) => b.score - a.score);
+          setMatch(sortedMatches[0]);
+        } else {
+          setMatch(null);
         }
       } catch (err) {
         console.error('Error fetching match for details page', err);
+        setMatch(null);
+      } finally {
+        setLoadingMatch(false);
       }
     };
     fetchItemMatch();
@@ -244,7 +248,14 @@ export const ItemDetail: React.FC = () => {
             )}
 
             {/* AI Confidence Highlight */}
-            {match && (
+            {loadingMatch ? (
+              <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
+                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-6 flex flex-col items-center justify-center py-12 text-center">
+                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary mb-4"></div>
+                  <h4 className="text-base font-bold text-text-primary">Loading AI analysis...</h4>
+                </div>
+              </div>
+            ) : match ? (
               <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
                 <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-6">
                   
@@ -292,6 +303,21 @@ export const ItemDetail: React.FC = () => {
                           <div key={idx} className="flex items-center gap-1.5">
                             <span>⚠</span>
                             <span>{ev}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Match Warnings & Conflicts (Negative Signals) */}
+                  {match.negativeSignals && match.negativeSignals.length > 0 && (
+                    <div className="p-3 bg-danger/5 rounded-xl border border-danger/15 space-y-1.5">
+                      <h5 className="font-bold text-xs text-danger">Match Warnings & Conflicts</h5>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-danger/90 font-semibold">
+                        {match.negativeSignals.map((sig: string, idx: number) => (
+                          <div key={idx} className="flex items-center gap-1.5">
+                            <span>⚠</span>
+                            <span>{sig}</span>
                           </div>
                         ))}
                       </div>
@@ -361,6 +387,16 @@ export const ItemDetail: React.FC = () => {
                     </div>
                   )}
 
+                </div>
+              </div>
+            ) : (
+              <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
+                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-2 text-center py-8">
+                  <div className="w-12 h-12 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span className="material-symbols-outlined text-text-secondary text-2xl">psychology_alt</span>
+                  </div>
+                  <h4 className="text-base font-bold text-text-primary">No AI match has been found for this item yet.</h4>
+                  <p className="text-xs text-text-secondary max-w-sm mx-auto">We'll continue checking as new reports are added.</p>
                 </div>
               </div>
             )}

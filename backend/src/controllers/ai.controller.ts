@@ -64,11 +64,6 @@ export const getItemMatches = async (req: AuthenticatedRequest, res: Response, n
     const isFinder = foundItem && String(foundItem.finder) === String(req.user._id);
     const isAdmin = req.user.role === 'admin';
 
-    if (!isOwner && !isFinder && !isAdmin) {
-      sendError(res, 'Access denied. You do not own this item.', 403);
-      return;
-    }
-
     const matches = await AIMatch.find({
       $or: [
         { lostItem: itemId },
@@ -90,7 +85,22 @@ export const getItemMatches = async (req: AuthenticatedRequest, res: Response, n
       return matchObj;
     });
 
-    sendSuccess(res, { matches: activeMatches }, 'Item matches retrieved successfully');
+    // Filter matches to those where the user is either the owner of the lost item or the finder of the found item
+    const userMatches = activeMatches.filter(m => {
+      const lostItemOwner = m.lostItem ? String((m.lostItem as any).owner) : '';
+      const foundItemFinder = m.foundItem ? String((m.foundItem as any).finder) : '';
+      return lostItemOwner === String(req.user._id) || foundItemFinder === String(req.user._id);
+    });
+
+    if (!isOwner && !isFinder && !isAdmin && userMatches.length === 0) {
+      sendError(res, 'Access denied. You do not own this item.', 403);
+      return;
+    }
+
+    // Admins and item owners/finders get all active matches for the item, other authorized users get only matches they are part of
+    const responseMatches = (isOwner || isFinder || isAdmin) ? activeMatches : userMatches;
+
+    sendSuccess(res, { matches: responseMatches }, 'Item matches retrieved successfully');
   } catch (error) {
     next(error);
   }

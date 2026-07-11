@@ -7,6 +7,7 @@ export interface ReportFormData {
   color: string;
   brand: string;
   description: string;
+  images?: File[];
 }
 
 export interface LostFormData {
@@ -17,4 +18,5 @@ export interface LostFormData {
   description: string;
   color: string;
   brand: string;
+  images?: File[];
 }

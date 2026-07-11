@@ -1,5 +1,5 @@
-﻿import React from 'react';
-import { FileText, MapPin, Camera, UploadCloud, Image as ImageIcon, Sparkles, Brain, ChevronRight, Check } from 'lucide-react';
+import React from 'react';
+import { FileText, Camera, UploadCloud, Image as ImageIcon, Sparkles, Brain, ChevronRight, Check } from 'lucide-react';
 import type { LostFormData } from '../types';
 
 interface Props {
@@ -10,6 +10,48 @@ interface Props {
 }
 
 export const LostStepDetails: React.FC<Props> = ({ data, updateData, onNext, onPrev }) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const images = data.images || [];
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFiles = Array.from(e.target.files);
+      const combined = [...images, ...selectedFiles].slice(0, 4);
+      updateData({ images: combined });
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const updated = images.filter((_, i) => i !== index);
+    updateData({ images: updated });
+  };
+
+  const getContextualTip = () => {
+    const category = (data.category || '').toLowerCase();
+    const name = (data.itemName || '').toLowerCase();
+
+    if (category.includes('electronic') || name.includes('laptop') || name.includes('macbook') || name.includes('phone') || name.includes('ipad')) {
+      return "Adding a reference photo with clear visibility of unique details helps our AI visual matching recognize your device instantly.";
+    }
+    if (category.includes('document') || name.includes('id') || name.includes('card') || name.includes('passport')) {
+      return "Adding a placeholder reference photo of the document type (e.g. standard ID layout) assists the AI in scanning text/OCR regions.";
+    }
+    if (name.includes('wallet') || name.includes('purse') || name.includes('bag')) {
+      return "Uploading a photo showing the exact color, shape, and exterior logo helps visual matching confirm a match.";
+    }
+    if (name.includes('key')) {
+      return "Uploading a photo of standard keys or keychains matching yours helps the AI distinguish them.";
+    }
+    if (name.includes('bottle') || name.includes('flask') || name.includes('mug')) {
+      return "Uploading a photo of the brand/color of your bottle helps AI visual matching find it.";
+    }
+    return "Adding a reference photo of a similar item or the actual item can boost our AI visual matching accuracy by up to 90%!";
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onNext();
@@ -49,50 +91,59 @@ export const LostStepDetails: React.FC<Props> = ({ data, updateData, onNext, onP
               <div className="p-2 bg-primary/10 text-primary rounded-lg">
                 <FileText className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-text-primary">Additional Details</h3>
+              <h3 className="text-xl font-bold text-text-primary">Item Information</h3>
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-              {/* Color */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Lost Date/Time */}
+              <div className="space-y-2">
+                <label className="font-semibold text-sm text-text-primary block">Approximate Date & Time Lost</label>
+                <input
+                  required
+                  type="datetime-local"
+                  className="w-full px-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none bg-surface transition-all"
+                  value={data.lostDateTime}
+                  onChange={(e) => updateData({ lostDateTime: e.target.value })}
+                />
+              </div>
+
+              {/* Color & Brand */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="font-semibold text-sm text-text-primary block">Color</label>
                   <input
-                    className="w-full px-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none bg-surface"
-                    placeholder="e.g., Space Gray"
+                    className="w-full px-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none bg-surface transition-all"
+                    placeholder="e.g. Space Gray"
                     value={data.color}
-                    onChange={e => updateData({ color: e.target.value })}
+                    onChange={(e) => updateData({ color: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="font-semibold text-sm text-text-primary block">Brand / Model</label>
                   <input
-                    className="w-full px-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none bg-surface"
-                    placeholder="e.g., Apple, JBL"
+                    className="w-full px-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none bg-surface transition-all"
+                    placeholder="e.g. Apple MacBook Air"
                     value={data.brand}
-                    onChange={e => updateData({ brand: e.target.value })}
+                    onChange={(e) => updateData({ brand: e.target.value })}
                   />
                 </div>
               </div>
 
-              {/* Where last seen - more specific */}
+              {/* Detailed Description */}
               <div className="space-y-2">
-                <label className="font-semibold text-sm text-text-primary block">Exact spot (if known)</label>
-                <div className="relative group">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-primary transition-colors w-5 h-5" />
-                  <input
-                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none bg-surface"
-                    placeholder="e.g., Table near the window on Floor 2"
-                    value={data.description}
-                    onChange={e => updateData({ description: e.target.value })}
-                  />
-                </div>
+                <label className="font-semibold text-sm text-text-primary block">Unique Details</label>
+                <textarea
+                  className="w-full px-4 py-3.5 rounded-xl border border-border-default focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none bg-surface resize-none transition-all"
+                  placeholder="Describe your item details, stickers, scratches, case type..."
+                  rows={5}
+                  value={data.description}
+                  onChange={(e) => updateData({ description: e.target.value })}
+                ></textarea>
               </div>
 
               {/* Reference Photo */}
               <div className="space-y-2">
                 <label className="font-semibold text-sm text-text-primary block">Reference photo (optional)</label>
-                <p className="text-xs text-text-secondary">Upload any photo of the item (from your gallery or similar images online).</p>
               </div>
             </div>
           </section>
@@ -109,25 +160,59 @@ export const LostStepDetails: React.FC<Props> = ({ data, updateData, onNext, onP
                 </div>
                 <h3 className="text-xl font-bold text-text-primary">Reference Photos</h3>
               </div>
-              <span className="font-semibold text-xs text-text-secondary">0 / 4</span>
+              <span className="font-semibold text-xs text-text-secondary">{images.length} / 4</span>
             </div>
 
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              multiple 
+              accept="image/*" 
+              className="hidden" 
+            />
+
             <div className="grid grid-cols-2 gap-4">
-              <button type="button" className="col-span-2 aspect-[16/9] rounded-2xl bg-surface flex flex-col items-center justify-center gap-2 group hover:bg-primary/5 hover:border-primary transition-all border border-transparent">
-                <div className="w-12 h-12 rounded-full bg-surface-container-lowest dark:bg-surface-container shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                  <UploadCloud className="w-8 h-8" />
+              {images.length < 4 && (
+                <button 
+                  type="button" 
+                  onClick={handleUploadClick}
+                  className="col-span-2 aspect-[16/9] rounded-2xl bg-surface flex flex-col items-center justify-center gap-2 group hover:bg-primary/5 hover:border-primary transition-all border border-transparent cursor-pointer"
+                >
+                  <div className="w-12 h-12 rounded-full bg-surface-container-lowest dark:bg-surface-container shadow-sm flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <UploadCloud className="w-8 h-8" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold text-sm text-primary">Upload Reference Photo</p>
+                    <p className="text-xs text-text-secondary">PNG, JPG up to 10MB</p>
+                  </div>
+                </button>
+              )}
+              
+              {/* Display Uploaded Previews */}
+              {images.map((file, index) => (
+                <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-border-default bg-surface group">
+                  <img 
+                    src={URL.createObjectURL(file as Blob)} 
+                    alt={`Preview ${index + 1}`} 
+                    className="w-full h-full object-cover" 
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-2 right-2 p-1 bg-danger text-white rounded-full hover:bg-danger/80 flex items-center justify-center cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-xs">delete</span>
+                  </button>
                 </div>
-                <div className="text-center">
-                  <p className="font-semibold text-sm text-primary">Upload Reference Photo</p>
-                  <p className="text-xs text-text-secondary">PNG, JPG up to 10MB</p>
+              ))}
+
+              {/* Empty Slots */}
+              {Array.from({ length: Math.max(0, 4 - images.length) }).slice(images.length < 4 ? 2 : 0).map((_, idx) => (
+                <div key={idx} className="aspect-square rounded-xl bg-surface border border-border-default border-dashed flex items-center justify-center text-text-secondary/30">
+                  <ImageIcon className="w-6 h-6" />
                 </div>
-              </button>
-              <div className="aspect-square rounded-xl bg-surface border border-border-default border-dashed flex items-center justify-center text-text-secondary/30">
-                <ImageIcon className="w-6 h-6" />
-              </div>
-              <div className="aspect-square rounded-xl bg-surface border border-border-default border-dashed flex items-center justify-center text-text-secondary/30">
-                <ImageIcon className="w-6 h-6" />
-              </div>
+              ))}
             </div>
           </section>
 
@@ -139,7 +224,7 @@ export const LostStepDetails: React.FC<Props> = ({ data, updateData, onNext, onP
                 <h4 className="font-semibold text-sm text-primary">AI Tip</h4>
               </div>
               <p className="text-sm text-on-surface-variant leading-relaxed">
-                Adding a reference photo can boost our <span className="font-bold text-primary">AI visual matching</span> accuracy by up to 90%!
+                {getContextualTip()}
               </p>
             </div>
             <div className="absolute -right-4 -bottom-4 opacity-10">

@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import { Eye, Edit3, MapPin, Calendar, Image as ImageIcon, ZoomIn, ArrowLeft, Send, Check, Search } from 'lucide-react';
+import axios from 'axios';
 import type { LostFormData } from '../types';
 
 interface Props {
@@ -9,6 +10,19 @@ interface Props {
 }
 
 export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
+  const [foundCount, setFoundCount] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    axios.get(`${API_BASE}/api/found-items?limit=1`)
+      .then(res => {
+        if (res.data?.success && typeof res.data.total === 'number') {
+          setFoundCount(res.data.total);
+        }
+      })
+      .catch(err => console.error('Failed to fetch found items count', err));
+  }, []);
+
   return (
     <div>
       {/* Stepper */}
@@ -108,23 +122,33 @@ export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
                 <ImageIcon className="text-primary w-5 h-5" />
                 Photos
               </h2>
-              <span className="text-xs font-bold text-text-secondary">1 File</span>
+              <span className="text-xs font-bold text-text-secondary">{data.images?.length || 0} Files</span>
             </div>
 
             <div className="space-y-4">
-              <div className="relative group cursor-pointer overflow-hidden rounded-xl h-32 bg-surface">
-                <img
-                  alt="Reference"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  src="https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=300&q=80"
-                />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <ZoomIn className="text-white w-6 h-6" />
+              {data.images && data.images.length > 0 ? (
+                data.images.map((file, idx) => (
+                  <div key={idx} className="relative group cursor-pointer overflow-hidden rounded-xl h-32 bg-surface flex items-center justify-center border border-border-default">
+                    <img
+                      alt={`Reference ${idx + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      src={URL.createObjectURL(file as Blob)}
+                    />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <ZoomIn className="text-white w-6 h-6" />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-6 text-center text-xs text-text-secondary border border-dashed border-border-default rounded-xl bg-surface">
+                  No reference photos uploaded.
                 </div>
-              </div>
-              <button className="w-full py-2 border-2 border-dashed border-border-default rounded-xl text-text-secondary font-bold text-xs hover:border-primary hover:text-primary transition-colors">
-                + Add Photos
-              </button>
+              )}
+              {(!data.images || data.images.length < 4) && (
+                <button onClick={onEdit} className="w-full py-2 border-2 border-dashed border-border-default rounded-xl text-text-secondary font-bold text-xs hover:border-primary hover:text-primary transition-colors cursor-pointer">
+                  + Add Photos
+                </button>
+              )}
             </div>
           </div>
 
@@ -136,7 +160,7 @@ export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
                 <h3 className="font-semibold text-base">AI is Ready!</h3>
               </div>
               <p className="text-sm opacity-90 leading-relaxed mb-4">
-                Once submitted, our AI will instantly scan <strong>2,430+ found items</strong> across campus to find a match.
+                Once submitted, our AI will instantly scan <strong>{foundCount !== null ? `${foundCount}+` : 'all'} active found items</strong> across campus to find a match.
               </p>
               <div className="flex justify-between text-xs opacity-80">
                 <span>Avg match time</span>
