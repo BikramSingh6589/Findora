@@ -8,7 +8,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export interface AppNotification {
   _id: string;
-  type: 'match' | 'claim_approved' | 'claim_rejected' | 'pickup_reminder' | 'system' | 'new_message';
+  type: string;
   title: string;
   message: string;
   read: boolean;
@@ -24,6 +24,7 @@ interface NotificationContextType {
   markAllAsRead: () => Promise<void>;
   clearAllNotifications: () => Promise<void>;
   fetchNotifications: () => Promise<void>;
+  extractAndShowCode: (notif: AppNotification) => boolean;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -37,7 +38,7 @@ export const useNotification = () => {
 };
 
 // Toast Component
-const Toast = ({ notification, onClose }: { notification: AppNotification; onClose: () => void }) => {
+const Toast = ({ notification, onClose, onClick }: { notification: AppNotification; onClose: () => void; onClick: () => void }) => {
   useEffect(() => {
     const timer = setTimeout(onClose, 5000);
     return () => clearTimeout(timer);
@@ -54,15 +55,18 @@ const Toast = ({ notification, onClose }: { notification: AppNotification; onClo
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-[9999] bg-surface-container-lowest dark:bg-surface-container rounded-xl p-4 shadow-xl dark:shadow-md border border-border-default min-w-[300px] max-w-sm flex items-start gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300">
-      <div className="shrink-0 p-2 rounded-lg bg-surface-container-low dark:bg-surface">
+    <div 
+      className="fixed bottom-4 right-4 z-[9999] bg-surface-container-lowest dark:bg-surface-container rounded-xl p-4 shadow-xl dark:shadow-md border border-border-default min-w-[300px] max-w-sm flex items-start gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300 cursor-pointer hover:border-primary/50 transition-colors"
+      onClick={() => { onClick(); onClose(); }}
+    >
+      <div className="shrink-0 p-2 rounded-lg bg-surface-container-low dark:bg-surface pointer-events-none">
         {getIcon()}
       </div>
-      <div className="flex-1">
+      <div className="flex-1 pointer-events-none">
         <h4 className="font-bold text-sm text-text-primary">{notification.title}</h4>
         <p className="text-xs text-text-secondary mt-1">{notification.message}</p>
       </div>
-      <button onClick={onClose} className="text-text-secondary hover:text-text-primary">
+      <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="text-text-secondary hover:text-text-primary z-10">
         &times;
       </button>
     </div>
@@ -74,6 +78,16 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [toastNotification, setToastNotification] = useState<AppNotification | null>(null);
+  const [activeCodeModal, setActiveCodeModal] = useState<string | null>(null);
+
+  const extractAndShowCode = (notif: AppNotification): boolean => {
+    const match = notif.message.match(/CFL-\d+/);
+    if (match) {
+      setActiveCodeModal(match[0]);
+      return true;
+    }
+    return false;
+  };
 
   const fetchNotifications = async () => {
     if (!token) return;
@@ -114,13 +128,11 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const clearAllNotifications = async () => {
     try {
       setNotifications([]);
-      await axios.delete(`${API_BASE}/api/notifications/all`, {
+      await axios.delete(`${API_BASE}/api/notifications`, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch (err) {
-      console.error('Failed to clear all notifications:', err);
-      // fallback fetch if it failed to delete completely
-      fetchNotifications();
+      console.error('Failed to clear notifications:', err);
     }
   };
 
@@ -129,10 +141,12 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       fetchNotifications();
 
       const newSocket = io(API_BASE, {
-        auth: { token },
+        auth: { token }
       });
+      setSocket(newSocket);
 
       newSocket.on('connect', () => {
+        console.log('Notification socket connected');
         newSocket.emit('join_user');
       });
 
@@ -141,13 +155,12 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         setToastNotification(notif);
       });
 
-      setSocket(newSocket);
-
       return () => {
         newSocket.disconnect();
       };
     } else {
       setNotifications([]);
+      setToastNotification(null);
       if (socket) {
         socket.disconnect();
         setSocket(null);
@@ -158,10 +171,43 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, clearAllNotifications, fetchNotifications }}>
+    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, clearAllNotifications, fetchNotifications, extractAndShowCode }}>
       {children}
       {toastNotification && (
-        <Toast notification={toastNotification} onClose={() => setToastNotification(null)} />
+        <Toast 
+          notification={toastNotification} 
+          onClose={() => setToastNotification(null)}
+          onClick={() => {
+            if (!toastNotification.read) markAsRead(toastNotification._id);
+            extractAndShowCode(toastNotification);
+          }}
+        />
+      )}
+      
+      {/* CFL Code Modal */ }
+      {activeCodeModal && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-surface-container w-full max-w-sm rounded-3xl border border-primary/30 shadow-2xl shadow-primary/10 p-8 text-center flex flex-col items-center animate-in zoom-in-95 duration-300">
+            <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-6 border border-primary/40">
+              <Sparkles className="w-10 h-10 text-primary" />
+            </div>
+            <h3 className="text-2xl font-black text-white mb-2">Your Conflict Code</h3>
+            <p className="text-text-secondary mb-6 text-sm">Please show this code to the admin during your in-person mediation.</p>
+            
+            <div className="bg-black/50 border border-primary/20 rounded-2xl p-6 w-full mb-8 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors"></div>
+              <span className="relative text-xs font-bold tracking-widest text-primary/70 uppercase block mb-2">Code</span>
+              <span className="relative text-4xl font-black text-white tracking-widest font-mono">{activeCodeModal}</span>
+            </div>
+
+            <button
+              onClick={() => setActiveCodeModal(null)}
+              className="w-full py-4 bg-primary text-white rounded-xl hover:bg-primary/90 font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 active:scale-95"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
       )}
     </NotificationContext.Provider>
   );

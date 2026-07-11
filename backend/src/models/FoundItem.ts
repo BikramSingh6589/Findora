@@ -13,7 +13,7 @@ const FoundItemSchema = new Schema({
   specialAppearance: { type: String, default: '' },
   additionalNotes:   { type: String, default: '' },
   images:            { type: [String], default: [] },
-  status:            { type: String, enum: ['active', 'claimed', 'resolved', 'archived'], default: 'active' },
+  status:            { type: String, enum: ['active', 'claimed', 'resolved', 'archived', 'disputed', 'conflict_handover'], default: 'active' },
   lockedBy:          { type: Schema.Types.ObjectId, ref: 'User', default: null },
   lockedUntil:       { type: Date, default: null },
   adminResolved:     { type: Boolean, default: false },

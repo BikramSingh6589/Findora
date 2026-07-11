@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.claimantVerifyLocation = exports.adminNotifyClaimantLocation = exports.adminVerifyLocation = exports.adminVerifyDropoffCode = exports.finderHandoverChoice = exports.mediationResolve = exports.mediateClaim = exports.resolveClaim = exports.rejectClaim = exports.approveClaim = exports.cancelClaim = exports.getClaimById = exports.getClaims = exports.submitClaim = void 0;
+exports.getConflictsByItem = exports.resolveConflict = exports.submitConflict = exports.claimantVerifyLocation = exports.adminNotifyClaimantLocation = exports.adminVerifyLocation = exports.adminVerifyDropoffCode = exports.finderHandoverChoice = exports.mediationResolve = exports.mediateClaim = exports.resolveClaim = exports.rejectClaim = exports.approveClaim = exports.cancelClaim = exports.getClaimById = exports.getClaims = exports.submitClaim = void 0;
 const uuid_1 = require("uuid");
 const Claim_1 = __importDefault(require("../models/Claim"));
 const FoundItem_1 = __importDefault(require("../models/FoundItem"));
@@ -839,3 +839,126 @@ const claimantVerifyLocation = async (req, res, next) => {
     }
 };
 exports.claimantVerifyLocation = claimantVerifyLocation;
+/**
+ * Submit a conflict claim.
+ */
+const submitConflict = async (req, res, next) => {
+    try {
+        let { foundItemId, answers, proofUrls: incomingProofUrls } = req.body;
+        if (!foundItemId) {
+            (0, response_1.sendError)(res, 'Found item ID is required', 400);
+            return;
+        }
+        const foundItem = await FoundItem_1.default.findById(foundItemId);
+        if (!foundItem) {
+            (0, response_1.sendError)(res, 'Found item not found', 404);
+            return;
+        }
+        if (foundItem.status !== 'claimed' && foundItem.status !== 'resolved' && foundItem.status !== 'disputed') {
+            (0, response_1.sendError)(res, 'Item must be in a claimed state to be disputed', 400);
+            return;
+        }
+        const existingClaim = await Claim_1.default.findOne({ foundItemId, claimant: req.user._id });
+        if (existingClaim) {
+            (0, response_1.sendError)(res, 'You have already filed a claim or dispute for this item', 400);
+            return;
+        }
+        const files = (req.files || []);
+        const uploadedProofUrls = await Promise.all(files.map(f => (0, cloudinary_service_1.uploadImage)(f.buffer, 'claim-proofs')));
+        const finalProofUrls = [
+            ...(Array.isArray(incomingProofUrls) ? incomingProofUrls : []),
+            ...uploadedProofUrls,
+        ];
+        const confidence = await calculateConfidence(foundItemId, undefined, answers);
+        const claim = await Claim_1.default.create({
+            foundItemId,
+            claimant: req.user._id,
+            answers,
+            proofUrls: finalProofUrls,
+            confidence,
+            status: 'pending',
+            mediationRequested: true,
+            mediationStatus: 'pending'
+        });
+        await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'disputed' });
+        // Mark original claim as disputed
+        await Claim_1.default.updateMany({ foundItemId, _id: { $ne: claim._id }, status: { $in: ['pending', 'approved', 'resolved'] } }, { $set: { mediationRequested: true, mediationStatus: 'pending' } });
+        try {
+            const { getIO } = require('../services/socket.service');
+            const io = getIO();
+            io.emit('item_disputed', { itemId: foundItemId });
+        }
+        catch (e) { }
+        (0, response_1.sendSuccess)(res, { claim }, 'Dispute submitted successfully', 201);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.submitConflict = submitConflict;
+/**
+ * Resolve a conflict (Admin only).
+ */
+const resolveConflict = async (req, res, next) => {
+    try {
+        const { foundItemId } = req.params;
+        const { winningClaimId } = req.body;
+        const foundItem = await FoundItem_1.default.findById(foundItemId);
+        if (!foundItem) {
+            (0, response_1.sendError)(res, 'Found item not found', 404);
+            return;
+        }
+        const claims = await Claim_1.default.find({ foundItemId, mediationRequested: true });
+        for (const claim of claims) {
+            if (winningClaimId && claim._id.toString() === winningClaimId) {
+                claim.status = 'approved';
+                claim.mediationStatus = 'approved';
+                claim.remarks = 'Dispute resolved in favor of this claimant.';
+                const qrToken = require('uuid').v4();
+                claim.qrToken = qrToken;
+                claim.qrCodeUrl = await (0, qr_service_1.generateQR)(qrToken);
+                const hours = 48;
+                claim.qrExpiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
+            }
+            else {
+                claim.status = 'rejected';
+                claim.mediationStatus = 'rejected';
+                claim.remarks = winningClaimId ? 'Dispute resolved in favor of another claimant.' : 'Dispute rejected for all parties.';
+            }
+            await claim.save();
+        }
+        if (winningClaimId) {
+            await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'claimed' });
+        }
+        else {
+            await FoundItem_1.default.findByIdAndUpdate(foundItemId, { status: 'active' });
+        }
+        try {
+            const { getIO } = require('../services/socket.service');
+            const io = getIO();
+            io.emit('conflict_resolved', { itemId: foundItemId });
+        }
+        catch (e) { }
+        (0, response_1.sendSuccess)(res, null, 'Conflict resolved successfully');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.resolveConflict = resolveConflict;
+/**
+ * Get all conflicts for a specific item (Admin).
+ */
+const getConflictsByItem = async (req, res, next) => {
+    try {
+        const { foundItemId } = req.params;
+        const claims = await Claim_1.default.find({ foundItemId, mediationRequested: true })
+            .populate('claimant')
+            .populate('foundItemId');
+        (0, response_1.sendSuccess)(res, { claims }, 'Conflicts retrieved');
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.getConflictsByItem = getConflictsByItem;

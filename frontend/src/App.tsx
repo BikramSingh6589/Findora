@@ -29,6 +29,9 @@ import { AdminClaimManagement } from './pages/Admin/AdminClaimManagement';
 import { AdminItemModeration } from './pages/Admin/AdminItemModeration';
 import { AdminUserManagement } from './pages/Admin/AdminUserManagement';
 import { AdminCommModeration } from './pages/Admin/AdminCommModeration';
+import { ConflictClaim } from './pages/Claim/ConflictClaim';
+import { AdminConflictResolution } from './pages/Admin/AdminConflictResolution';
+import { AdminConflicts } from './pages/Admin/AdminConflicts';
 import { ProtectedRoute, AdminProtectedRoute } from './components/ProtectedRoute';
 
 
@@ -48,9 +51,11 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="claims" element={<AdminClaimManagement />} />
+            <Route path="conflicts" element={<AdminConflicts />} />
             <Route path="items" element={<AdminItemModeration />} />
             <Route path="users" element={<AdminUserManagement />} />
             <Route path="community" element={<AdminCommModeration />} />
+            <Route path="conflict/:itemId" element={<AdminConflictResolution />} />
           </Route>
         </Route>
 
@@ -64,6 +69,7 @@ function App() {
             <Route path="report/lost" element={<ReportLost />} />
             <Route path="claim/:itemId" element={<ClaimOwnership />} />
             <Route path="claim" element={<ClaimOwnership />} />
+            <Route path="conflict/:itemId" element={<ConflictClaim />} />
             <Route path="community" element={<CommunityBoard />} />
             <Route path="item/:itemId" element={<ItemDetail />} />
             <Route path="matches" element={<AIMatches />} />

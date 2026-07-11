@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, XCircle, Clock, Eye, Search, X, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -36,6 +37,7 @@ const StatusBadge: React.FC<{ claim: any }> = ({ claim }) => {
 };
 
 export const AdminClaimManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [claims, setClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -388,18 +390,11 @@ export const AdminClaimManagement: React.FC = () => {
                         ) : claim.mediationRequested || claim.mediationStatus === 'pending' ? (
                           <div className="flex gap-2">
                             <button 
-                              onClick={(e) => { e.stopPropagation(); approve(claim._id); }} 
-                              className="p-1.5 bg-success/10 text-success rounded-lg hover:bg-success/20 transition-colors" 
-                              title="Approve"
+                              onClick={(e) => { e.stopPropagation(); navigate(`/admin/conflict/${claim.foundItemId?._id || claim.foundItemId}`); }} 
+                              className="px-3 py-1.5 bg-warning text-white rounded-lg hover:bg-warning/90 transition-colors text-xs font-bold" 
+                              title="Resolve Conflict"
                             >
-                              <CheckCircle2 className="w-4 h-4" />
-                            </button>
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); reject(claim._id); }} 
-                              className="p-1.5 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors" 
-                              title="Reject"
-                            >
-                              <XCircle className="w-4 h-4" />
+                              Resolve Conflict
                             </button>
                           </div>
                         ) : (
@@ -439,11 +434,8 @@ export const AdminClaimManagement: React.FC = () => {
                       </div>
                     ) : !isClosed && (claim.mediationRequested || claim.mediationStatus === 'pending') ? (
                       <div className="flex gap-2">
-                        <button onClick={(e) => { e.stopPropagation(); approve(claim._id); }} className="flex-1 py-2 bg-success text-white rounded-xl font-bold text-xs hover:bg-success/90 transition-colors">
-                          Approve
-                        </button>
-                        <button onClick={(e) => { e.stopPropagation(); reject(claim._id); }} className="flex-1 py-2 bg-danger text-white rounded-xl font-bold text-xs hover:bg-danger/90 transition-colors">
-                          Reject
+                        <button onClick={(e) => { e.stopPropagation(); navigate(`/admin/conflict/${claim.foundItemId?._id || claim.foundItemId}`); }} className="flex-1 py-2 bg-warning text-white rounded-xl font-bold text-xs hover:bg-warning/90 transition-colors">
+                          Resolve Conflict
                         </button>
                       </div>
                     ) : !isClosed && (

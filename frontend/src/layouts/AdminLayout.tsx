@@ -51,6 +51,10 @@ export const AdminLayout: React.FC = () => {
             <ShieldCheck className="w-5 h-5" />
             <span>Claims</span>
           </Link>
+          <Link to="/admin/conflicts" className={navItemClass('/admin/conflicts')}>
+            <MessageSquareWarning className="w-5 h-5" />
+            <span>Conflicts</span>
+          </Link>
           <Link to="/admin/items" className={navItemClass('/admin/items')}>
             <ListChecks className="w-5 h-5" />
             <span>Items</span>

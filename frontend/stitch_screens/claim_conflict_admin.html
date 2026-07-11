@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Conflict Resolution | FoundIt!</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-glow-primary {
+            box-shadow: 0 0 20px rgba(91, 95, 239, 0.4);
+        }
+        .neon-glow-error {
+            box-shadow: 0 0 20px rgba(147, 0, 10, 0.4);
+        }
+        .bento-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(12, 1fr);
+        }
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            overflow-x: hidden;
+        }
+        .doodle-overlay {
+            pointer-events: none;
+            position: absolute;
+            z-index: 50;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#e1e0ff",
+                      "outline": "#908fa0",
+                      "error": "#ffb4ab",
+                      "surface-variant": "#2d3449",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "secondary-container": "#571bc1",
+                      "on-primary-fixed": "#05006c",
+                      "secondary-fixed": "#e9ddff",
+                      "surface-container-low": "#131b2e",
+                      "inverse-on-surface": "#283044",
+                      "on-primary-fixed-variant": "#2c2cc3",
+                      "on-tertiary-fixed": "#261a00",
+                      "tertiary-fixed": "#ffdf9f",
+                      "surface-container-lowest": "#060e20",
+                      "surface-container": "#171f33",
+                      "on-secondary-fixed": "#23005c",
+                      "tertiary": "#f9bd22",
+                      "tertiary-fixed-dim": "#f9bd22",
+                      "outline-variant": "#464555",
+                      "on-primary-container": "#f9f6ff",
+                      "on-background": "#dae2fd",
+                      "on-tertiary-container": "#fff7ee",
+                      "surface-container-highest": "#2d3449",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary-container": "#c4abff",
+                      "primary-container": "#5b5fef",
+                      "on-tertiary": "#402d00",
+                      "on-secondary": "#3c0091",
+                      "primary": "#c0c1ff",
+                      "on-primary": "#0e00aa",
+                      "background": "#0b1326",
+                      "error-container": "#93000a",
+                      "surface-dim": "#0b1326",
+                      "secondary": "#d0bcff",
+                      "on-surface": "#dae2fd",
+                      "surface-container-high": "#222a3d",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "tertiary-container": "#916c00",
+                      "on-surface-variant": "#c6c5d7",
+                      "on-error": "#690005",
+                      "surface-tint": "#c0c1ff",
+                      "inverse-primary": "#474adb",
+                      "surface-bright": "#31394d",
+                      "surface": "#0b1326",
+                      "inverse-surface": "#dae2fd",
+                      "on-tertiary-fixed-variant": "#5c4300"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "bento-gap": "20px",
+                      "gutter": "16px",
+                      "container-padding": "24px",
+                      "breakpoint-md": "768px",
+                      "unit": "8px",
+                      "breakpoint-lg": "1200px"
+              },
+              "fontFamily": {
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "headline-lg-mobile": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "label-caps": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "title-md": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="min-h-screen pb-32">
+<!-- Top Navigation -->
+<header class="bg-surface/80 backdrop-blur-xl dark:bg-surface/80 text-primary dark:text-primary w-full top-0 sticky border-b border-white/10 shadow-[0_0_20px_rgba(192,193,255,0.2)] z-50">
+<div class="flex justify-between items-center px-container-padding py-unit w-full max-w-breakpoint-lg mx-auto">
+<h1 class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent">FoundIt!</h1>
+<div class="hidden md:flex gap-8 items-center">
+<nav class="flex gap-6">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="#">Home</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="#">My Items</a>
+<a class="text-primary font-bold border-b-2 border-primary" href="#">Disputes</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="#">Admin Panel</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined p-2 hover:bg-surface-variant/50 rounded-full cursor-pointer transition-all">notifications</span>
+<div class="w-10 h-10 rounded-full border-2 border-primary p-0.5">
+<img class="w-full h-full object-cover rounded-full" data-alt="A portrait of a trendy Gen Z student with neon-accented glasses, smiling warmly. The photo has a cool purple-toned studio lighting aesthetic with a soft-focus background, perfectly matching a premium dark-themed interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-E4IGTcaOBG0qZN5oChSyVrXjjqz_qZtrkz0PMrZdC2to4w_E5xHorhFaOlW1PJ7jvXhtRrmYq3qp06j5xP8pS8S-VlBLrcKmITDvIBljfIoKmrWG61YpHy99yuPyBH8q__oTpA4DviRjTqP-AJ6q_gVXNJIRE-DcFkAWc-tzbNchGH4kuBQdgO3XbBlTEaIBn2RSQ3cmJ-UfjS5hWmdd_M0qrUhy5I5Uh7X9VfBaWs7HhalSs4wC"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Side Nav for Desktop -->
+<aside class="hidden lg:flex flex-col h-screen py-gutter bg-surface-container-lowest/90 backdrop-blur-2xl dark:bg-surface-container-lowest/90 h-full w-64 fixed left-0 top-0 border-r border-white/5 shadow-2xl z-40">
+<div class="px-6 mb-10 pt-20">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">shield_person</span>
+</div>
+<div>
+<p class="font-title-md text-title-md text-primary">Alex Rivera</p>
+<p class="font-label-caps text-label-caps text-outline">Verified Admin</p>
+</div>
+</div>
+<nav class="space-y-2">
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 rounded-lg transition-all group" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-body-md text-body-md">Home</span>
+</a>
+<a class="flex items-center gap-3 p-3 bg-primary-container text-on-primary-container rounded-lg mx-2 my-1 shadow-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<span class="font-body-md text-body-md">Disputes</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 rounded-lg transition-all group" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Vault</span>
+</a>
+<a class="flex items-center gap-3 p-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 rounded-lg transition-all group" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Stats</span>
+</a>
+</nav>
+</div>
+</aside>
+<main class="max-w-breakpoint-lg mx-auto px-container-padding pt-10 lg:ml-72">
+<!-- Header Section -->
+<section class="mb-10 relative">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<span class="px-4 py-1 rounded-full bg-error-container text-on-error-container font-label-caps text-label-caps flex items-center gap-1 neon-glow-error">
+<span class="material-symbols-outlined text-sm">warning</span>
+                            DISPUTED ITEM
+                        </span>
+<span class="text-outline font-label-caps text-label-caps">CASE #882-J</span>
+</div>
+<h2 class="font-display-lg text-display-lg text-primary flex items-center gap-4">
+                        Silver MacBook Pro
+                        <span class="text-4xl">💻</span>
+</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg mt-2">Found at: <span class="text-tertiary">Student Union Lounge, 3rd Floor</span></p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 rounded-lg border border-outline/30 font-title-md text-title-md hover:bg-surface-variant transition-all">View Item Details</button>
+</div>
+</div>
+<!-- Decorative Doodle -->
+<svg class="doodle-overlay top-0 right-0 w-32 h-32 opacity-40 hidden md:block" viewbox="0 0 100 100">
+<path d="M10,50 Q25,10 50,50 T90,50" fill="none" stroke="#c0c1ff" stroke-dasharray="5,5" stroke-width="2"></path>
+<circle cx="90" cy="50" fill="#c0c1ff" r="3"></circle>
+</svg>
+</section>
+<!-- Bento Comparison Grid -->
+<div class="bento-grid">
+<!-- Left Side: Original Claimant -->
+<div class="col-span-12 md:col-span-6 glass-card rounded-lg p-8 relative overflow-hidden group border-t-4 border-t-primary-container">
+<div class="absolute top-4 right-4 bg-primary-container/20 px-3 py-1 rounded-full border border-primary/30">
+<p class="font-label-caps text-label-caps text-primary">CLAIMANT A (ORIGINAL)</p>
+</div>
+<div class="flex items-center gap-6 mb-8">
+<div class="relative">
+<img class="w-24 h-24 rounded-2xl object-cover border-2 border-primary/50 p-1" data-alt="A professional headshot of a young male university student wearing a tech-style hoodie. He has a serious but honest expression. High-end lighting with deep shadows and vibrant blue backlighting creates a cyberpunk-lite aesthetic suitable for a premium dark interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK5SVMCF-j9JDxA7fbEHSet2tXvSA32kkR9VVhUp2Oh0rVrekcGw3PhyyeimxhXvdzM3yBQ_jFiPot8k6rblVwTcASumi0yRPFr1E9jXnqowfq7nO7-fLjiiuYhXMEyyduPs7Zh2kIzmzEijpFihXFSUmpYXc6K85fgKzJPv8h-CbrgkzCnB_kJumy-FcHYim0nAfF4g6_imorFZG6ZnVxhK9pIPY6Nauke2zOdbfTnNsjdrxMb-Cq"/>
+<div class="absolute -bottom-2 -right-2 bg-background p-1 rounded-lg">
+<div class="bg-primary px-3 py-1 rounded-md text-on-primary font-bold text-sm shadow-lg">98% Match</div>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Jordan Smith</h3>
+<p class="text-outline font-body-md text-body-md">Computer Science Junior</p>
+<div class="flex gap-1 mt-2">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline text-sm">star</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-high/50 p-4 rounded-xl border border-white/5">
+<p class="font-label-caps text-label-caps text-outline mb-2">TEXT PROOF & DESCRIPTION</p>
+<p class="font-body-md text-body-md italic text-on-surface-variant leading-relaxed">
+                            "I left my MacBook Pro 14-inch on the sofa near the windows in the Union around 2:15 PM yesterday. It has a tiny scratch on the top left lid near the Apple logo and a 'GitHub' sticker on the bottom right of the keyboard deck. It's in a grey felt sleeve."
+                        </p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-center gap-3 cursor-pointer hover:bg-surface-variant transition-all border border-white/5">
+<span class="material-symbols-outlined text-primary">image</span>
+<span class="font-label-caps text-label-caps">VIEW PHOTOS (3)</span>
+</div>
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-center gap-3 cursor-pointer hover:bg-surface-variant transition-all border border-white/5">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+<span class="font-label-caps text-label-caps">SERIAL CHECK</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl bg-surface-variant/50 hover:bg-surface-variant text-on-surface font-title-md text-title-md flex items-center justify-center gap-2 transition-all active:scale-95">
+<span class="material-symbols-outlined">chat_bubble</span>
+                        Message Jordan
+                    </button>
+</div>
+</div>
+<!-- Right Side: Disputing Claimant -->
+<div class="col-span-12 md:col-span-6 glass-card rounded-lg p-8 relative overflow-hidden group border-t-4 border-t-tertiary">
+<div class="absolute top-4 right-4 bg-tertiary/20 px-3 py-1 rounded-full border border-tertiary/30">
+<p class="font-label-caps text-label-caps text-tertiary">CLAIMANT B (DISPUTING)</p>
+</div>
+<div class="flex items-center gap-6 mb-8">
+<div class="relative">
+<img class="w-24 h-24 rounded-2xl object-cover border-2 border-tertiary/50 p-1" data-alt="A portrait of a stylish female university student with dyed pink hair and a leather jacket. She looks confident and direct. The image features high-contrast neon lighting with magenta and cyan highlights, fitting perfectly into an expressive, modern glassmorphic design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIe1LxZUOFIp7eYYZuWJFeKtJbUZF8ohTJwYttVPt6p8dk3BeQOEnvq4HEcY2L3HB2gslo94_lZlrybcjbxlWe6xBjiImMzNC9m5OEU7KVHKD8U2CnlkrAD-B2-9Uu1rfk0mU6oyK2JD9_nW4tXLUCwkQAj-KvvHDT8at2ZlGY7yjM4V4R6nyjtfsbajb07IEwKXFFTOVnfw7kAGupIj1Q2aPjjin1VzMg178-w3aMTT5i-5hVgvJT"/>
+<div class="absolute -bottom-2 -right-2 bg-background p-1 rounded-lg">
+<div class="bg-tertiary px-3 py-1 rounded-md text-on-tertiary font-bold text-sm shadow-lg">64% Match</div>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Mia Wong</h3>
+<p class="text-outline font-body-md text-body-md">Visual Arts Senior</p>
+<div class="flex gap-1 mt-2">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline text-sm">star</span>
+<span class="material-symbols-outlined text-outline text-sm">star</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-high/50 p-4 rounded-xl border border-white/5">
+<p class="font-label-caps text-label-caps text-outline mb-2">TEXT PROOF & DESCRIPTION</p>
+<p class="font-body-md text-body-md italic text-on-surface-variant leading-relaxed">
+                            "Hey, that's definitely mine. I was working in the Union all afternoon and must have left it when I rushed to my 3 PM lecture. It's a silver MacBook Pro, 14 inch. I don't have a case but there's a sticker on it."
+                        </p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-center gap-3 cursor-pointer hover:bg-surface-variant transition-all border border-white/5 opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined text-outline">image_not_supported</span>
+<span class="font-label-caps text-label-caps">NO PHOTOS</span>
+</div>
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-center gap-3 cursor-pointer hover:bg-surface-variant transition-all border border-white/5">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="font-label-caps text-label-caps">GPS LOGS</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-xl bg-surface-variant/50 hover:bg-surface-variant text-on-surface font-title-md text-title-md flex items-center justify-center gap-2 transition-all active:scale-95">
+<span class="material-symbols-outlined">chat_bubble</span>
+                        Message Mia
+                    </button>
+</div>
+</div>
+<!-- AI Insights Card (Full Width) -->
+<div class="col-span-12 glass-card rounded-lg p-6 flex flex-col md:flex-row items-center gap-8 border-l-4 border-l-tertiary">
+<div class="flex-shrink-0">
+<div class="w-20 h-20 rounded-full bg-gradient-to-tr from-primary to-tertiary flex items-center justify-center neon-glow-primary">
+<span class="material-symbols-outlined text-4xl text-on-primary" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+</div>
+<div class="flex-grow">
+<h4 class="font-title-md text-title-md text-primary mb-1">FoundIt! AI Insight</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Claimant A provided specific serial number fragments that match the device's metadata. Claimant B's description of a "sticker" is generic and contradicts the specific "GitHub" sticker found on the device.
+                    </p>
+</div>
+<div class="flex-shrink-0 w-full md:w-auto">
+<div class="bg-surface-container-highest px-6 py-4 rounded-xl text-center">
+<p class="font-label-caps text-label-caps text-outline mb-1">AI CONFIDENCE</p>
+<p class="font-display-lg text-display-lg text-primary">99.2%</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Space for footer -->
+<div class="h-10"></div>
+</main>
+<!-- Sticky Action Footer -->
+<footer class="fixed bottom-0 left-0 w-full z-50 px-container-padding py-6 bg-surface-container/70 backdrop-blur-lg border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<div class="max-w-breakpoint-lg mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary animate-pulse">info</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Reviewing Case <strong class="text-primary">#882-J</strong></p>
+</div>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="px-8 py-3 rounded-xl bg-error-container text-on-error-container font-title-md text-title-md hover:bg-error transition-all active:scale-95 flex items-center gap-2 neon-glow-error" onclick="confirmAction('reject')">
+<span class="material-symbols-outlined">cancel</span>
+                    Reject Both Claims
+                </button>
+<button class="px-8 py-3 rounded-xl border-2 border-primary-container text-primary-container font-title-md text-title-md hover:bg-primary-container/10 transition-all active:scale-95 flex items-center gap-2" onclick="confirmAction('mia')">
+                    Approve Disputing Claim
+                </button>
+<button class="px-8 py-3 rounded-xl bg-primary-container text-on-primary-container font-title-md text-title-md hover:brightness-110 shadow-lg neon-glow-primary transition-all active:scale-95 flex items-center gap-2" onclick="confirmAction('jordan')">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+                    Approve Original Claim
+                </button>
+</div>
+</div>
+</footer>
+<!-- Success Modal Overlay (Hidden by default) -->
+<div class="fixed inset-0 z-[60] bg-background/90 backdrop-blur-md items-center justify-center hidden" id="modal-overlay">
+<div class="glass-card p-12 rounded-xl text-center max-w-md mx-auto relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-tertiary"></div>
+<span class="material-symbols-outlined text-7xl text-primary mb-6 block" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">Case Resolved!</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8">Notification sent to claimants. The item status has been updated in the global registry.</p>
+<button class="w-full py-4 rounded-xl bg-primary-container text-on-primary-container font-title-md text-title-md shadow-xl neon-glow-primary" onclick="window.location.reload()">Return to Dashboard</button>
+</div>
+</div>
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface-container/70 backdrop-blur-lg border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-150">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-caps text-label-caps">Explore</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(87,27,193,0.4)] active:scale-90 duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<span class="font-label-caps text-label-caps">Claims</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-150">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-caps text-label-caps">Post</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity active:scale-90 duration-150">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-caps text-label-caps">Account</span>
+</div>
+</nav>
+<script>
+        function confirmAction(who) {
+            const overlay = document.getElementById('modal-overlay');
+            overlay.style.display = 'flex';
+            overlay.classList.add('animate-in', 'fade-in', 'zoom-in', 'duration-300');
+            
+            // Add subtle sparkle effect
+            const colors = ['#c0c1ff', '#f9bd22', '#d0bcff'];
+            for(let i=0; i<20; i++) {
+                createSparkle(colors[Math.floor(Math.random() * colors.length)]);
+            }
+        }
+
+        function createSparkle(color) {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'fixed';
+            sparkle.style.width = '4px';
+            sparkle.style.height = '4px';
+            sparkle.style.borderRadius = '50%';
+            sparkle.style.backgroundColor = color;
+            sparkle.style.top = Math.random() * 100 + 'vh';
+            sparkle.style.left = Math.random() * 100 + 'vw';
+            sparkle.style.zIndex = '100';
+            sparkle.style.boxShadow = `0 0 10px ${color}`;
+            document.body.appendChild(sparkle);
+
+            const animation = sparkle.animate([
+                { transform: 'scale(0) translateY(0)', opacity: 0 },
+                { transform: 'scale(1.5) translateY(-50px)', opacity: 1, offset: 0.5 },
+                { transform: 'scale(0) translateY(-100px)', opacity: 0 }
+            ], {
+                duration: 1000 + Math.random() * 1000,
+                easing: 'ease-out'
+            });
+
+            animation.onfinish = () => sparkle.remove();
+        }
+    </script>
+</body></html>

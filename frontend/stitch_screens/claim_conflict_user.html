@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dispute Item | FoundIt!</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#e1e0ff",
+                    "outline": "#908fa0",
+                    "error": "#ffb4ab",
+                    "surface-variant": "#2d3449",
+                    "on-secondary-fixed-variant": "#5516be",
+                    "secondary-container": "#571bc1",
+                    "on-primary-fixed": "#05006c",
+                    "secondary-fixed": "#e9ddff",
+                    "surface-container-low": "#131b2e",
+                    "inverse-on-surface": "#283044",
+                    "on-primary-fixed-variant": "#2c2cc3",
+                    "on-tertiary-fixed": "#261a00",
+                    "tertiary-fixed": "#ffdf9f",
+                    "surface-container-lowest": "#060e20",
+                    "surface-container": "#171f33",
+                    "on-secondary-fixed": "#23005c",
+                    "tertiary": "#f9bd22",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "outline-variant": "#464555",
+                    "on-primary-container": "#f9f6ff",
+                    "on-background": "#dae2fd",
+                    "on-tertiary-container": "#fff7ee",
+                    "surface-container-highest": "#2d3449",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary-container": "#c4abff",
+                    "primary-container": "#5b5fef",
+                    "on-tertiary": "#402d00",
+                    "on-secondary": "#3c0091",
+                    "primary": "#c0c1ff",
+                    "on-primary": "#0e00aa",
+                    "background": "#0b1326",
+                    "error-container": "#93000a",
+                    "surface-dim": "#0b1326",
+                    "secondary": "#d0bcff",
+                    "on-surface": "#dae2fd",
+                    "surface-container-high": "#222a3d",
+                    "secondary-fixed-dim": "#d0bcff",
+                    "tertiary-container": "#916c00",
+                    "on-surface-variant": "#c6c5d7",
+                    "on-error": "#690005",
+                    "surface-tint": "#c0c1ff",
+                    "inverse-primary": "#474adb",
+                    "surface-bright": "#31394d",
+                    "surface": "#0b1326",
+                    "inverse-surface": "#dae2fd",
+                    "on-tertiary-fixed-variant": "#5c4300"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "bento-gap": "20px",
+                    "gutter": "16px",
+                    "container-padding": "24px",
+                    "breakpoint-md": "768px",
+                    "unit": "8px",
+                    "breakpoint-lg": "1200px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "label-caps": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "title-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(23, 31, 51, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .neon-glow-primary {
+            box-shadow: 0 0 20px rgba(192, 193, 255, 0.3);
+        }
+
+        .neon-glow-error {
+            box-shadow: 0 0 15px rgba(255, 180, 171, 0.4);
+        }
+
+        .bento-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(12, 1fr);
+        }
+
+        .input-glow:focus {
+            outline: none;
+            border-color: #c0c1ff;
+            box-shadow: 0 0 10px rgba(192, 193, 255, 0.5);
+        }
+
+        .doodle-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 2s ease-in-out forwards;
+        }
+
+        @keyframes draw {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes pulse-red {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; text-shadow: 0 0 12px rgba(255, 180, 171, 0.8); }
+            100% { opacity: 0.8; }
+        }
+
+        .animate-pulse-red {
+            animation: pulse-red 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<!-- Top Warning Banner (Task-Focused suppression of Global Nav) -->
+<div class="w-full bg-error-container/20 backdrop-blur-md border-b border-error/20 py-3 px-container-padding flex items-center justify-center gap-3 sticky top-0 z-50">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<p class="font-label-caps text-label-caps text-error animate-pulse-red tracking-widest">
+            ATTENTION: DISPUTE FILING UNDER REVIEW. ACCURATE DATA MANDATORY.
+        </p>
+</div>
+<!-- Main Content Canvas -->
+<main class="max-w-breakpoint-lg mx-auto px-container-padding py-12">
+<!-- Header Section -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="relative">
+<h1 class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                    Dispute Claim
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">
+                    Case ID: <span class="text-primary">#FND-8829-PRO</span>
+</p>
+<!-- Hand-drawn Doodle Overlay -->
+<svg class="absolute -right-12 -top-4 w-24 h-24 text-tertiary opacity-40 hidden md:block" viewbox="0 0 100 100">
+<path class="doodle-path" d="M10,50 Q30,10 50,50 T90,50" fill="none" stroke="currentColor" stroke-width="2"></path>
+</svg>
+</div>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-caps text-label-caps" onclick="window.history.back()">
+<span class="material-symbols-outlined">arrow_back</span>
+                CANCEL &amp; EXIT
+            </button>
+</header>
+<div class="bento-grid">
+<!-- Item Summary Card (Bento 4x4) -->
+<section class="col-span-12 md:col-span-5 glass-card rounded-lg p-6 flex flex-col gap-6">
+<div class="relative rounded-lg overflow-hidden h-64 border border-white/5">
+<img class="w-full h-full object-cover" data-alt="A high-end MacBook Pro 16-inch laptop resting on a sleek dark grey university desk. The lighting is moody and cinematic with vibrant neon purple and indigo accents reflecting off the metallic surface of the laptop. The scene is modern, tech-focused, and high-fidelity, embodying a professional yet Gen Z campus aesthetic with soft background blurs." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVeaTPjVkSc53JST7YgzzOOm-5OVKdC1rLbj6sh4xzxzFA721nniVKrhZ5WpyhfM6cNG997qEvn_h2yAjkBawdMUMA8-_qvd1JNUR_cqh0OBaJd2qtfhiWo6IWTVLY8q1AC1OxzYfJ95YNrifl07Foo3HiFXqCrmNQZaC7zhkdbDudcKNrVq1pLqeW9n4bGI0LeNzSlzeWjcOPXtr5vTocHJoVBsTr9E1HPNlZQE2ftCowW0MCX2Qn"/>
+<div class="absolute top-4 right-4">
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full font-label-caps text-label-caps shadow-lg">
+                            FOUND ITEM
+                        </span>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="text-tertiary">💻</span>
+<h2 class="font-title-md text-title-md">MacBook Pro 16"</h2>
+</div>
+<p class="text-on-surface-variant font-body-md text-body-md">
+                        Space Gray, Apple Silicon. Found in the South Wing Library, 3rd Floor.
+                    </p>
+</div>
+<div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-6">
+<div>
+<p class="text-outline text-label-caps font-label-caps mb-1 uppercase">Date Reported</p>
+<p class="font-title-md text-body-md">Oct 24, 2023</p>
+</div>
+<div>
+<p class="text-outline text-label-caps font-label-caps mb-1 uppercase">Location</p>
+<p class="font-title-md text-body-md">Main Library</p>
+</div>
+</div>
+</section>
+<!-- Dispute Form Card (Bento 8x8) -->
+<form class="col-span-12 md:col-span-7 glass-card rounded-lg p-8 flex flex-col gap-8">
+<div class="space-y-6">
+<h3 class="font-headline-lg text-headline-lg text-primary">Verify Ownership</h3>
+<!-- Serial Number Input -->
+<div class="group">
+<label class="block text-label-caps font-label-caps text-outline mb-2 tracking-widest">SERIAL NUMBER (LAST 5 DIGITS)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest/50 border-white/10 rounded-lg py-4 px-5 font-body-md text-body-md input-glow transition-all" placeholder="e.g. X1234" required="" type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline group-focus-within:text-primary">pin</span>
+</div>
+<p class="text-label-caps text-outline-variant mt-2 italic">Found on the bottom of the chassis or in 'About This Mac'.</p>
+</div>
+<!-- Distinguishing Marks -->
+<div>
+<label class="block text-label-caps font-label-caps text-outline mb-2 tracking-widest">DISTINGUISHING MARKS / STICKERS</label>
+<textarea class="w-full bg-surface-container-highest/50 border-white/10 rounded-lg py-4 px-5 font-body-md text-body-md input-glow transition-all" placeholder="Describe any scratches, specific stickers, or keyboard skin colors..." rows="3"></textarea>
+</div>
+<!-- Proof Upload Dropzone -->
+<div>
+<label class="block text-label-caps font-label-caps text-outline mb-4 tracking-widest">UPLOAD PROOF (MANDATORY)</label>
+<div class="border-2 border-dashed border-primary/30 rounded-lg p-10 flex flex-col items-center justify-center bg-primary/5 hover:bg-primary/10 transition-all cursor-pointer group" id="dropzone">
+<div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-4 neon-glow-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-primary-container text-3xl">cloud_upload</span>
+</div>
+<p class="font-title-md text-title-md text-on-surface mb-1">Drag &amp; Drop Files</p>
+<p class="font-body-md text-on-surface-variant">Receipts, original box photos, or past photos with the item.</p>
+<input class="hidden" id="file-input" type="file"/>
+</div>
+</div>
+</div>
+<div class="pt-4 flex flex-col gap-4">
+<div class="flex items-start gap-3">
+<input class="mt-1 rounded bg-surface-container border-white/20 text-primary focus:ring-primary" required="" type="checkbox"/>
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                            I solemnly swear that the information provided is 100% accurate. I understand that fraudulent claims may lead to university disciplinary action.
+                        </p>
+</div>
+<button class="w-full py-5 bg-primary text-on-primary font-display-lg text-title-md rounded-lg neon-glow-primary hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-3" type="submit">
+                        SUBMIT FORMAL DISPUTE
+                        <span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</form>
+<!-- Community Impact Card (Bento 12x1) -->
+<aside class="col-span-12 glass-card rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-l-tertiary">
+<div class="flex items-center gap-4">
+<div class="bg-tertiary/10 p-3 rounded-full">
+<span class="material-symbols-outlined text-tertiary text-4xl">verified_user</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-tertiary">Verified Dispute Process</h4>
+<p class="text-body-md text-on-surface-variant">Our AI-assisted verification ensures 99.8% recovery accuracy for student items.</p>
+</div>
+</div>
+<div class="flex -space-x-4">
+<div class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young diverse college student smiling, professional headshot with soft studio lighting and a subtle blue background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHemRiVnfEBZxXUdrS55qRe7je17niWqlJxppR1GbznlpuCJv1eMpB6YjU-LOMIv2o15lALhMlT9wmEDcJ5fNMFCYJHdg8rZVDcIEYM39elrpKoF_yNaV3NSGaEc43gFkvm2XuJTNrzNwZrjGcXPkBM4DCUyvMD0eCI47Hf30Pq-WBgQuMCQn9l8mnNV_zKDB4-GH7XDNe1kxbEdKGP44DjOO1KTIkcbL4aWzlxzfiqCa48k6v9-qX"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a male student with glasses, warm lighting, collegiate atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJ37lt4BkRP7H4NUdfEIewTF_OdsLmMSkBuypXpUqcQ8aDm0d0dEoHFNvSgGfh9LkeznIxTgb7ZVL-OwNcednXCz2c85Es8J3u48VKl1uUd-ge8srri0BpK9yoGW90bSturExwlIES-TTv6TfM1KDBb693riv2wUptjFf6kGfwrRQE1Wkc3dP0D2_m88hPGc3Zi_anhIUre-tMK661N2_r46VG7KZfQ6G8G23SVZUgj8EiWt3X4ijV"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Young female student with bright colorful hair, creative expression, soft focus background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOem_mYBJ7sOGUGHNTEg4_iVSOAv4xPKmKVR3HiaHqTt9Qb6Uy26j1LTHJRKxQDykRwoMDyuQH5MWt1Rqn8ivGI02Dkt16hn7SHTRu-QipTy4Rh83HvksuPwPubxBKLe68YoAhtLOkBw_6zoIy_WrggLd8ahd83xQQua7dee1VKqLwF4F0gRmRbbX0pk6x85H78W5mkWuwjfVL1ti2tixYEpG8BGfl5Yv0oiiqA8yYA-wJtsQzqovt"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-background bg-surface-container-highest flex items-center justify-center text-label-caps font-label-caps bg-surface-container">
+                        +42
+                    </div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Success Toast (Hidden by default) -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 glass-card border-primary/40 rounded-full px-8 py-4 flex items-center gap-3 opacity-0 translate-y-20 transition-all duration-500 z-[100]" id="success-toast">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<p class="font-title-md text-body-md text-primary">Dispute Filed Successfully! Redirecting...</p>
+</div>
+<!-- Scripts for micro-interactions -->
+<script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('file-input');
+        const form = document.querySelector('form');
+        const toast = document.getElementById('success-toast');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('bg-primary/20', 'border-primary');
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.classList.remove('bg-primary/20', 'border-primary');
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('bg-primary/20', 'border-primary');
+            const files = e.dataTransfer.files;
+            if(files.length > 0) {
+                dropzone.querySelector('p.font-title-md').textContent = `${files.length} file(s) selected`;
+                dropzone.querySelector('span.material-symbols-outlined').textContent = 'task';
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if(fileInput.files.length > 0) {
+                dropzone.querySelector('p.font-title-md').textContent = fileInput.files[0].name;
+                dropzone.querySelector('span.material-symbols-outlined').textContent = 'task';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            toast.classList.remove('opacity-0', 'translate-y-20');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-20');
+                // Normally redirect here
+                alert("This is a demo. Dispute for Case #FND-8829-PRO has been logged.");
+            }, 3000);
+        });
+    </script>
+</body></html>

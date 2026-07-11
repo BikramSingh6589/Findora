@@ -96,7 +96,8 @@ export const CommunityBoard: React.FC = () => {
         setLoading(true);
         const res = await axios.get(`${API_BASE}/api/found-items`);
         if (res.data && res.data.success) {
-          const mapped = (res.data.items || []).map((dbItem: any) => {
+          const mapped = (res.data.items || [])
+            .map((dbItem: any) => {
             const { timeLeft, isDanger } = calculateTimeLeft(dbItem.createdAt);
             return {
               id: dbItem._id,
@@ -398,16 +399,10 @@ export const CommunityBoard: React.FC = () => {
 
                   <div className="mt-auto">
                     {item.status === 'claimed' || item.status === 'resolved' || item.status === 'approved' ? (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/conflict/${item._id}`);
-                        }}
-                        className="w-full h-12 rounded-xl bg-danger/10 border border-danger/50 text-danger font-bold flex items-center justify-center gap-2 hover:bg-danger hover:text-white transition-all active:scale-95"
-                      >
-                        <AlertTriangle className="w-5 h-5" />
-                        Conflict this claim
-                      </button>
+                      <div className="w-full h-12 rounded-xl bg-success/10 border border-success/50 text-success font-bold flex items-center justify-center gap-2">
+                        <CheckCircle2 className="w-5 h-5" />
+                        Resolved
+                      </div>
                     ) : (
                       <button
                         onClick={(e) => { e.stopPropagation(); navigate(`/report/found?lostItemId=${item._id}`); }}
@@ -444,6 +439,7 @@ export const CommunityBoard: React.FC = () => {
           ) : (
             filteredItems.map(item => {
               const isResolved = item.status === 'resolved' || item.status === 'approved' || item.status === 'claimed';
+              const isDisputed = item.status === 'disputed';
               const isLocked = item.lockedUntil && new Date(item.lockedUntil).getTime() > Date.now();
               const lockedByMe = item.lockedBy === currentUserId;
 
@@ -509,7 +505,12 @@ export const CommunityBoard: React.FC = () => {
                     </div>
 
                     <div className="mt-auto">
-                      {isResolved ? (
+                      {isDisputed ? (
+                        <button disabled className="w-full h-12 rounded-xl bg-danger/10 border border-danger/50 text-danger font-bold flex items-center justify-center gap-2 cursor-not-allowed opacity-80">
+                          <AlertTriangle className="w-5 h-5" />
+                          Conflict in Process
+                        </button>
+                      ) : isResolved ? (
                         <button 
                           onClick={(e) => { e.stopPropagation(); navigate(`/conflict/${item.id}`); }}
                           className="w-full h-12 rounded-xl bg-danger/10 border border-danger/50 text-danger font-bold flex items-center justify-center gap-2 hover:bg-danger hover:text-white transition-all active:scale-95"

@@ -11,7 +11,7 @@ interface NotificationCenterProps {
 export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose }) => {
   const [filter, setFilter] = useState<'All' | 'Unread' | 'Important'>('All');
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { notifications, markAsRead, markAllAsRead, clearAllNotifications } = useNotification();
+  const { notifications, markAsRead, markAllAsRead, clearAllNotifications, extractAndShowCode } = useNotification();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,6 +60,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
   const handleNotificationClick = async (notif: AppNotification) => {
     if (!notif.read) {
       await markAsRead(notif._id);
+    }
+    
+    if (extractAndShowCode && extractAndShowCode(notif)) {
+      onClose();
+      return;
     }
     
     // Navigate based on type

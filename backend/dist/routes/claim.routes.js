@@ -57,6 +57,26 @@ router.post('/:id/reject', admin_middleware_1.adminOnly, (0, validate_middleware
 router.post('/:id/resolve', claim_controller_1.resolveClaim);
 router.post('/:id/mediate', claim_controller_1.mediateClaim);
 router.post('/:id/mediation-resolve', admin_middleware_1.adminOnly, claim_controller_1.mediationResolve);
+// Conflict resolution routes
+router.post('/:foundItemId/conflict', upload_middleware_1.upload.array('proof', 5), (req, res, next) => {
+    if (typeof req.body.answers === 'string') {
+        try {
+            req.body.answers = JSON.parse(req.body.answers);
+        }
+        catch (e) { }
+    }
+    if (typeof req.body.proofUrls === 'string') {
+        try {
+            req.body.proofUrls = JSON.parse(req.body.proofUrls);
+        }
+        catch (e) {
+            req.body.proofUrls = [req.body.proofUrls];
+        }
+    }
+    next();
+}, claim_controller_1.submitConflict);
+router.get('/conflict/:foundItemId', admin_middleware_1.adminOnly, claim_controller_1.getConflictsByItem);
+router.post('/conflict/:foundItemId/resolve', admin_middleware_1.adminOnly, claim_controller_1.resolveConflict);
 // Admin Handover Routes
 const claim_controller_2 = require("../controllers/claim.controller");
 router.post('/:id/finder-handover', claim_controller_2.finderHandoverChoice);

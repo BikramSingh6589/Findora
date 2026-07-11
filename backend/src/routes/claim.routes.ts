@@ -9,7 +9,11 @@ import {
   rejectClaim,
   resolveClaim,
   mediateClaim,
-  mediationResolve
+  mediationResolve,
+  submitConflict,
+  resolveConflict,
+  getConflictsByItem,
+  initiateConflictHandover
 } from '../controllers/claim.controller';
 import { protect } from '../middleware/auth.middleware';
 import { adminOnly } from '../middleware/admin.middleware';
@@ -78,6 +82,25 @@ router.post('/:id/reject', adminOnly, validateRequest(adminDecisionSchema), reje
 router.post('/:id/resolve', resolveClaim);
 router.post('/:id/mediate', mediateClaim);
 router.post('/:id/mediation-resolve', adminOnly, mediationResolve);
+
+// Conflict resolution routes
+router.post(
+  '/:foundItemId/conflict',
+  upload.array('proof', 5),
+  (req: any, res: any, next: any) => {
+    if (typeof req.body.answers === 'string') {
+      try { req.body.answers = JSON.parse(req.body.answers); } catch (e) {}
+    }
+    if (typeof req.body.proofUrls === 'string') {
+      try { req.body.proofUrls = JSON.parse(req.body.proofUrls); } catch (e) { req.body.proofUrls = [req.body.proofUrls]; }
+    }
+    next();
+  },
+  submitConflict
+);
+router.get('/conflict/:foundItemId', adminOnly, getConflictsByItem);
+router.post('/conflict/:foundItemId/initiate-handover', adminOnly, initiateConflictHandover);
+router.post('/conflict/:foundItemId/resolve', adminOnly, resolveConflict);
 
 // Admin Handover Routes
 import { finderHandoverChoice, adminVerifyDropoffCode, adminVerifyLocation, adminNotifyClaimantLocation, claimantVerifyLocation } from '../controllers/claim.controller';

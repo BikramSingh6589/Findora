@@ -33,6 +33,9 @@ export const ChatHistory: React.FC = () => {
   }, []);
 
   const filteredClaims = claims.filter(claim => {
+    // If a conflict was filed, the admin handles it entirely in-person. No user chat should be established.
+    if (claim.mediationRequested) return false;
+
     const itemName = claim.foundItemId?.itemName || '';
     const claimantName = claim.claimant?.name || '';
     const finderName = claim.foundItemId?.finder?.name || '';
