@@ -1,14 +1,17 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-// Configure Cloudinary instance
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'your_cloud_name',
-  api_key: process.env.CLOUDINARY_API_KEY || 'your_api_key',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'your_api_secret',
-});
+const configureCloudinary = () => {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'your_cloud_name',
+    api_key: process.env.CLOUDINARY_API_KEY || 'your_api_key',
+    api_secret: process.env.CLOUDINARY_API_SECRET || 'your_api_secret',
+  });
+};
 
 export const uploadImage = (buffer: Buffer, folder = 'lost-found'): Promise<string> => {
   return new Promise((resolve, reject) => {
+    configureCloudinary(); // Configure at runtime after .env is loaded
+
     // If dynamic cloud credentials are placeholder defaults, return a mock URL to prevent crash
     if (
       !process.env.CLOUDINARY_CLOUD_NAME ||
@@ -33,6 +36,8 @@ export const uploadImage = (buffer: Buffer, folder = 'lost-found'): Promise<stri
 
 export const deleteImage = async (publicId: string): Promise<void> => {
   try {
+    configureCloudinary(); // Configure at runtime
+    
     if (
       !process.env.CLOUDINARY_CLOUD_NAME ||
       process.env.CLOUDINARY_CLOUD_NAME === 'your_cloud_name'
