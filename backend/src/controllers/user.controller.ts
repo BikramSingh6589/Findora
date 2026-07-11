@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import User from '../models/User';
 import LostItem from '../models/LostItem';
 import FoundItem from '../models/FoundItem';
+import Claim from '../models/Claim';
 import { sendSuccess, sendError } from '../utils/response';
 
 export const getMe = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -69,6 +70,24 @@ export const getUserReports = async (req: AuthenticatedRequest, res: Response, n
     const foundItems = await FoundItem.find({ finder: userId }).sort({ createdAt: -1 });
     
     sendSuccess(res, { lostItems, foundItems }, 'User reports retrieved');
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserHistory = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user._id;
+    const [lostItems, foundItems, claims] = await Promise.all([
+      LostItem.find({ owner: userId }).sort({ createdAt: -1 }),
+      FoundItem.find({ finder: userId }).sort({ createdAt: -1 }),
+      Claim.find({ claimant: userId })
+        .populate('foundItemId', 'itemName category brand color images status locationFound')
+        .populate('lostItemId', 'itemName category brand color status locationLost')
+        .sort({ createdAt: -1 }),
+    ]);
+    
+    sendSuccess(res, { lostItems, foundItems, claims }, 'User history retrieved');
   } catch (error) {
     next(error);
   }

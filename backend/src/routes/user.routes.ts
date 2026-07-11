@@ -5,7 +5,8 @@ import {
   updateMe,
   getLeaderboard,
   getUserById,
-  getUserReports
+  getUserReports,
+  getUserHistory
 } from '../controllers/user.controller';
 import { protect } from '../middleware/auth.middleware';
 import { adminOnly } from '../middleware/admin.middleware';
@@ -20,6 +21,7 @@ const updateMeSchema = z.object({
 });
 
 router.get('/me', protect, getMe);
+router.get('/me/history', protect, getUserHistory);
 router.put('/me', protect, validateRequest(updateMeSchema), updateMe);
 router.get('/leaderboard', protect, getLeaderboard);
 router.get('/:id', protect, adminOnly, getUserById);

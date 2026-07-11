@@ -32,7 +32,6 @@ export const FinderChat: React.FC = () => {
   const [resolving, setResolving] = useState(false);
 
   // Chat access state
-  const [chatBlocked, setChatBlocked] = useState<{ blocked: boolean; reason: string }>({ blocked: false, reason: '' });
   const [chatFrozen, setChatFrozen] = useState<{ frozen: boolean; reason: string }>({ frozen: false, reason: '' });
 
   // Handover state
@@ -167,8 +166,7 @@ export const FinderChat: React.FC = () => {
     });
 
     // Conflict claim blocked — no socket room for conflict parties
-    socket.on('conflict_chat_blocked', (data: any) => {
-      setChatBlocked({ blocked: true, reason: data.message });
+    socket.on('conflict_chat_blocked', () => {
       setLoading(false);
     });
 

@@ -202,7 +202,7 @@ export const Profile: React.FC = () => {
         <div className="p-8 border-b border-border-default flex flex-col md:flex-row justify-between items-center gap-4">
           <h2 className="text-2xl font-bold">Item History</h2>
           <div className="flex bg-surface rounded-xl p-1 w-full md:w-auto overflow-x-auto">
-            <button className="px-4 py-1 bg-surface-container-lowest dark:bg-surface-container shadow-sm rounded-lg text-sm font-bold text-primary whitespace-nowrap">All Activity</button>
+            <button onClick={() => navigate('/history')} className="px-4 py-1 bg-surface-container-lowest dark:bg-surface-container shadow-sm rounded-lg text-sm font-bold text-primary whitespace-nowrap cursor-pointer hover:bg-surface-container transition-colors">All Activity</button>
           </div>
         </div>
 

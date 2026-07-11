@@ -9,6 +9,7 @@ import { OtpVerification } from './pages/Auth/OtpVerification';
 import { ResetPassword } from './pages/Auth/ResetPassword';
 import { AdminLogin } from './pages/Auth/AdminLogin';
 import { Profile } from './pages/Profile';
+import { History } from './pages/History/History';
 import { ReportSelection } from './pages/Report/ReportSelection';
 import { ReportFound } from './pages/Report/ReportFound';
 import { ReportLost } from './pages/Report/ReportLost';
@@ -64,6 +65,7 @@ function App() {
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="history" element={<History />} />
             <Route path="report" element={<ReportSelection />} />
             <Route path="report/found" element={<ReportFound />} />
             <Route path="report/lost" element={<ReportLost />} />
