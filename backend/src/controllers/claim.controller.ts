@@ -977,7 +977,8 @@ export const submitConflict = async (req: AuthenticatedRequest, res: Response, n
       confidence,
       status: 'pending',
       mediationRequested: true,
-      mediationStatus: 'pending'
+      mediationStatus: 'pending',
+      isConflictClaim: true
     });
 
     await FoundItem.findByIdAndUpdate(foundItemId, { status: 'disputed' });

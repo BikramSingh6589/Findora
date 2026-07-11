@@ -26,6 +26,7 @@ const ClaimSchema = new Schema({
   finderHandoverLocation: { type: String, default: '' },
   finderDropoffCode:  { type: String, default: '' },
   locationNotifiedToClaimant: { type: Boolean, default: false },
+  isConflictClaim: { type: Boolean, default: false },
 }, { timestamps: true });
 
 ClaimSchema.index({ status: 1, claimant: 1 });

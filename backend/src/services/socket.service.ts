@@ -73,6 +73,31 @@ export const initSocket = (httpServer: any) => {
           return;
         }
 
+        // Block conflict claimants from establishing a socket chat room
+        // Conflicts are handled exclusively by admin — no direct user-to-user chat
+        if ((claim as any).isConflictClaim && !isAdmin) {
+          socket.emit('conflict_chat_blocked', {
+            message: 'This conflict is being handled by the admin. No direct chat is allowed between parties.'
+          });
+          return;
+        }
+
+        // Block resolved claims from joining (chat is frozen)
+        if (claim.status === 'resolved' && !isAdmin) {
+          socket.emit('chat_frozen', {
+            message: 'This claim has been resolved. The chat is now closed.',
+            status: 'resolved'
+          });
+          // Still join the room so they can see message history, but cannot send
+          socket.join(`claim:${claimId}`);
+          const messages = await ChatMessage.find({ claimId })
+            .populate('sender', 'name profilePic')
+            .sort({ createdAt: 1 })
+            .exec();
+          socket.emit('message_history', messages);
+          return;
+        }
+
         const roomName = `claim:${claimId}`;
         socket.join(roomName);
 
@@ -110,13 +135,19 @@ export const initSocket = (httpServer: any) => {
           return;
         }
 
-        // Freeze chat if claim is resolved or frozen by active/approved mediation
+        // Block conflict claims from sending messages
+        if ((claim as any).isConflictClaim && userRole !== 'admin') {
+          socket.emit('error_message', 'Conflict claims are handled by admin. No direct chat allowed.');
+          return;
+        }
+
+        // Freeze chat for resolved or admin-approved claims
         if (claim.status === 'resolved') {
-          socket.emit('error_message', 'Chat is closed because the claim is resolved.');
+          socket.emit('error_message', 'Chat is closed. This claim has been resolved.');
           return;
         }
         if (claim.mediationStatus === 'approved') {
-          socket.emit('error_message', 'Chat is frozen due to admin mediation resolution.');
+          socket.emit('error_message', 'Chat is frozen. Admin has made a decision on this claim.');
           return;
         }
 

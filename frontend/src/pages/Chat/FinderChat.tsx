@@ -31,6 +31,10 @@ export const FinderChat: React.FC = () => {
   const [qrExpiresHours, setQrExpiresHours] = useState(24);
   const [resolving, setResolving] = useState(false);
 
+  // Chat access state
+  const [chatBlocked, setChatBlocked] = useState<{ blocked: boolean; reason: string }>({ blocked: false, reason: '' });
+  const [chatFrozen, setChatFrozen] = useState<{ frozen: boolean; reason: string }>({ frozen: false, reason: '' });
+
   // Handover state
   const [handoverChoice, setHandoverChoice] = useState<'me' | 'other'>('me');
   const [handoverLocation, setHandoverLocation] = useState('');
@@ -162,6 +166,18 @@ export const FinderChat: React.FC = () => {
       } : prev);
     });
 
+    // Conflict claim blocked — no socket room for conflict parties
+    socket.on('conflict_chat_blocked', (data: any) => {
+      setChatBlocked({ blocked: true, reason: data.message });
+      setLoading(false);
+    });
+
+    // Resolved claim — chat is frozen, history is still visible
+    socket.on('chat_frozen', (data: any) => {
+      setChatFrozen({ frozen: true, reason: data.message });
+      setLoading(false);
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -256,6 +272,129 @@ export const FinderChat: React.FC = () => {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <p className="text-text-secondary text-sm">Loading chat room details...</p>
+      </div>
+    );
+  }
+
+  // CONFLICT CLAIM — show appropriate screen based on actual claim status from REST API
+  if (claim.isConflictClaim) {
+    // Admin resolved in FAVOR of this conflict claimant
+    if (claim.status === 'resolved') {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">
+          <div className="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mb-6 border border-success/20">
+            <CheckCircle2 className="w-12 h-12 text-success" />
+          </div>
+          <h2 className="text-2xl font-black text-white mb-3">Conflict Resolved — You Won!</h2>
+          <p className="text-text-secondary max-w-md mb-2">
+            The admin has reviewed all evidence and resolved the conflict in your favor. The item belongs to you.
+          </p>
+          <div className="mt-6 p-4 bg-surface-container rounded-2xl border border-success/30 max-w-sm w-full">
+            <p className="text-xs text-text-secondary font-semibold uppercase tracking-widest mb-1">Status</p>
+            <p className="text-success font-bold flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4" /> Admin Resolved — In Your Favor
+            </p>
+          </div>
+          <button onClick={() => navigate('/chats')} className="mt-6 px-6 py-3 bg-surface-container border border-border-default rounded-xl text-sm font-bold text-text-primary hover:border-primary/50 transition-colors">
+            Back to Messages
+          </button>
+        </div>
+      );
+    }
+
+    // Admin resolved AGAINST this conflict claimant (or denied the conflict)
+    if (claim.status === 'rejected') {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">
+          <div className="w-24 h-24 bg-danger/10 rounded-full flex items-center justify-center mb-6 border border-danger/20">
+            <AlertTriangle className="w-12 h-12 text-danger" />
+          </div>
+          <h2 className="text-2xl font-black text-white mb-3">Conflict Resolved — Claim Denied</h2>
+          <p className="text-text-secondary max-w-md mb-2">
+            The admin has reviewed all evidence and resolved the conflict against your claim. The item was awarded to the other party.
+          </p>
+          <div className="mt-6 p-4 bg-surface-container rounded-2xl border border-danger/30 max-w-sm w-full">
+            <p className="text-xs text-text-secondary font-semibold uppercase tracking-widest mb-1">Status</p>
+            <p className="text-danger font-bold flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" /> Conflict Claim Rejected
+            </p>
+            {claim.remarks && <p className="text-xs text-text-secondary mt-2">{claim.remarks}</p>}
+          </div>
+          <button onClick={() => navigate('/chats')} className="mt-6 px-6 py-3 bg-surface-container border border-border-default rounded-xl text-sm font-bold text-text-primary hover:border-primary/50 transition-colors">
+            Back to Messages
+          </button>
+        </div>
+      );
+    }
+
+    // Still pending — admin has not made a decision yet
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center">
+        <div className="w-24 h-24 bg-warning/10 rounded-full flex items-center justify-center mb-6 border border-warning/20">
+          <Shield className="w-12 h-12 text-warning" />
+        </div>
+        <h2 className="text-2xl font-black text-white mb-3">Conflict Under Admin Review</h2>
+        <p className="text-text-secondary max-w-md mb-2">
+          Your conflict claim has been submitted. The admin is reviewing evidence from both parties and will make a final decision.
+        </p>
+        <p className="text-text-secondary/60 text-sm max-w-md">
+          You will receive an in-app notification with your <strong className="text-primary">CFL code</strong> once the admin initiates the in-person handover.
+        </p>
+        <div className="mt-8 p-4 bg-surface-container rounded-2xl border border-border-default max-w-sm w-full">
+          <p className="text-xs text-text-secondary font-semibold uppercase tracking-widest mb-1">Status</p>
+          <p className="text-warning font-bold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" /> Pending Admin Decision
+          </p>
+        </div>
+        <button onClick={() => navigate('/chats')} className="mt-6 px-6 py-3 bg-surface-container border border-border-default rounded-xl text-sm font-bold text-text-primary hover:border-primary/50 transition-colors">
+          Back to Messages
+        </button>
+      </div>
+    );
+  }
+
+  // RESOLVED CLAIM — chat history visible but frozen
+  if (chatFrozen.frozen) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-80px)] md:h-[calc(100vh-100px)] -mt-6 -mx-6 md:m-0 bg-surface">
+        {/* Frozen Header */}
+        <header className="bg-surface-container-lowest dark:bg-surface-container/80 sticky top-0 z-40 flex items-center px-4 md:px-8 py-4 shadow-sm border-b border-border-default gap-3">
+          <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-surface-container transition-colors">
+            <ArrowLeft className="w-5 h-5 text-text-secondary" />
+          </button>
+          <CheckCircle2 className="w-5 h-5 text-success" />
+          <span className="font-bold text-text-primary">Claim Resolved</span>
+          <span className="ml-auto text-xs px-3 py-1 bg-success/10 text-success rounded-full font-bold border border-success/20">RESOLVED</span>
+        </header>
+
+        {/* Frozen Banner */}
+        <div className="bg-success/5 border-b border-success/20 px-4 py-3 flex items-center gap-3">
+          <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
+          <p className="text-sm text-success font-semibold">This claim has been fully resolved. The chat is now closed and read-only.</p>
+        </div>
+
+        {/* Messages — read only */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 opacity-75">
+          {messages.map((msg: any, i: number) => {
+            const senderId = msg.sender?._id || msg.sender?.id || msg.sender;
+            const isMe = senderId === currentUserId;
+            return (
+              <div key={i} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-xs md:max-w-md px-4 py-2.5 rounded-2xl text-sm ${isMe ? 'bg-primary/20 text-white rounded-br-sm' : 'bg-surface-container text-text-primary rounded-bl-sm'}`}>
+                  {msg.content}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Frozen Input */}
+        <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest">
+          <div className="flex items-center gap-3 px-4 py-3 bg-surface-container rounded-2xl border border-success/20">
+            <CheckCircle2 className="w-4 h-4 text-success" />
+            <p className="text-sm text-text-secondary">Chat is closed — this claim has been resolved.</p>
+          </div>
+        </div>
       </div>
     );
   }

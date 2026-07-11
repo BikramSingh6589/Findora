@@ -33,9 +33,6 @@ export const ChatHistory: React.FC = () => {
   }, []);
 
   const filteredClaims = claims.filter(claim => {
-    // If a conflict was filed, the admin handles it entirely in-person. No user chat should be established.
-    if (claim.mediationRequested) return false;
-
     const itemName = claim.foundItemId?.itemName || '';
     const claimantName = claim.claimant?.name || '';
     const finderName = claim.foundItemId?.finder?.name || '';
@@ -104,7 +101,19 @@ export const ChatHistory: React.FC = () => {
             let statusLabel = 'Open';
             let badgeStyle = 'bg-success/10 text-success';
             
-            if (claim.status === 'resolved') {
+            if (claim.isConflictClaim) {
+              // Conflict claim — show outcome
+              if (claim.status === 'resolved') {
+                statusLabel = 'Conflict Won';
+                badgeStyle = 'bg-success/10 text-success';
+              } else if (claim.status === 'rejected') {
+                statusLabel = 'Conflict Denied';
+                badgeStyle = 'bg-danger/10 text-danger';
+              } else {
+                statusLabel = 'Admin Review';
+                badgeStyle = 'bg-warning/10 text-warning';
+              }
+            } else if (claim.status === 'resolved') {
               if (claim.qrToken) {
                 statusLabel = 'Waiting to scan';
                 badgeStyle = 'bg-warning/10 text-warning';
