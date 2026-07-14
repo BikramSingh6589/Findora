@@ -5,10 +5,10 @@ interface AuthContextType {
   token: string | null;
   user: any | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  adminLogin: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
+  adminLogin: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   register: (data: any) => Promise<any>;
-  verifyOtp: (email: string, otp: string) => Promise<void>;
+  verifyOtp: (email: string, otp: string, rememberMe?: boolean) => Promise<void>;
   logout: () => void;
   loading: boolean;
   error: string | null;
@@ -19,7 +19,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [token, setToken] = useState<string | null>(() => {
+    return sessionStorage.getItem('token') || localStorage.getItem('token');
+  });
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,12 +58,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchUser();
   }, [token]);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, rememberMe: boolean = false) => {
     setError(null);
     try {
       const res = await axios.post(`${API_BASE}/api/auth/login`, { email, password });
       const { token: receivedToken, user: receivedUser } = res.data;
-      localStorage.setItem('token', receivedToken);
+      if (rememberMe) {
+        localStorage.setItem('token', receivedToken);
+      } else {
+        sessionStorage.setItem('token', receivedToken);
+      }
       setToken(receivedToken);
       setUser(receivedUser);
     } catch (err: any) {
@@ -71,12 +77,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const adminLogin = async (email: string, password: string) => {
+  const adminLogin = async (email: string, password: string, rememberMe: boolean = false) => {
     setError(null);
     try {
       const res = await axios.post(`${API_BASE}/api/auth/admin/login`, { email, password });
       const { token: receivedToken, user: receivedUser } = res.data;
-      localStorage.setItem('token', receivedToken);
+      if (rememberMe) {
+        localStorage.setItem('token', receivedToken);
+      } else {
+        sessionStorage.setItem('token', receivedToken);
+      }
       setToken(receivedToken);
       setUser(receivedUser);
     } catch (err: any) {
@@ -98,12 +108,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const verifyOtp = async (email: string, otp: string) => {
+  const verifyOtp = async (email: string, otp: string, rememberMe: boolean = false) => {
     setError(null);
     try {
       const res = await axios.post(`${API_BASE}/api/auth/verify-otp`, { email, otp });
       const { token: receivedToken, user: receivedUser } = res.data;
-      localStorage.setItem('token', receivedToken);
+      if (rememberMe) {
+        localStorage.setItem('token', receivedToken);
+      } else {
+        sessionStorage.setItem('token', receivedToken);
+      }
       setToken(receivedToken);
       setUser(receivedUser);
     } catch (err: any) {
@@ -115,6 +129,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setToken(null);
     setUser(null);
   };

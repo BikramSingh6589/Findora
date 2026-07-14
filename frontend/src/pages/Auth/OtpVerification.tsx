@@ -14,6 +14,7 @@ export const OtpVerification: React.FC = () => {
   // Get state info passed from Register or ForgotPassword
   const email = location.state?.email || '';
   const purpose = location.state?.purpose || 'signup'; // 'signup' | 'reset'
+  const rememberMe = location.state?.rememberMe || false;
 
   const [otpValues, setOtpValues] = useState<string[]>(['', '', '', '', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,7 +121,7 @@ export const OtpVerification: React.FC = () => {
     setIsSubmitting(true);
     try {
       if (purpose === 'signup') {
-        await verifyOtp(email, fullOtp);
+        await verifyOtp(email, fullOtp, rememberMe);
         setSuccess(true);
         setTimeout(() => {
           navigate('/');

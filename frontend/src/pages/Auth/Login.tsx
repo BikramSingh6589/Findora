@@ -14,6 +14,7 @@ export const Login: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       
       const username = email.split('@')[0];
       const displayName = username.charAt(0).toUpperCase() + username.slice(1);
@@ -47,7 +48,7 @@ export const Login: React.FC = () => {
       setLocalError(errMsg);
       if (errMsg.toLowerCase().includes('verify') || errMsg.toLowerCase().includes('otp')) {
         setTimeout(() => {
-          navigate('/verify-otp', { state: { email, purpose: 'signup' } });
+          navigate('/verify-otp', { state: { email, purpose: 'signup', rememberMe } });
         }, 1500);
       } else {
         showFailure('Oops! Something went wrong 🤷', errMsg);
@@ -166,7 +167,13 @@ export const Login: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 px-1">
-              <input className="w-5 h-5 rounded-lg border-border-default text-primary focus:ring-primary" id="remember" type="checkbox" />
+              <input 
+                className="w-5 h-5 rounded-lg border-border-default text-primary focus:ring-primary" 
+                id="remember" 
+                type="checkbox" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
               <label className="text-sm text-text-secondary select-none" htmlFor="remember">Remember this device for 30 days</label>
             </div>
 

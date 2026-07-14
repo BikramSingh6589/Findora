@@ -10,6 +10,10 @@ export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [matches, setMatches] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
+  const [dashboardStats, setDashboardStats] = useState<{ totalReturns: number; topCategories: any[] }>({
+    totalReturns: 0,
+    topCategories: []
+  });
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -42,6 +46,18 @@ export const Dashboard: React.FC = () => {
           );
           setHistory(combined);
         }
+        
+        try {
+          const statsRes = await axios.get(`${API_BASE}/api/stats/dashboard`);
+          if (statsRes.data && statsRes.data.success) {
+            setDashboardStats({
+              totalReturns: statsRes.data.totalReturns || 0,
+              topCategories: statsRes.data.topCategories || []
+            });
+          }
+        } catch (err) {
+          console.error('Error fetching dashboard stats', err);
+        }
       } catch (err) {
         console.error('Error loading dashboard details', err);
       }
@@ -51,9 +67,12 @@ export const Dashboard: React.FC = () => {
 
   const userName = user?.name || 'Explorer';
   const userXP = user?.xp || 0;
-  const userLevel = user?.level || 1;
-  const xpNeeded = userLevel * 100;
-  const xpPercent = Math.min(Math.round((userXP / xpNeeded) * 100), 100);
+  // Level is 100 XP per level
+  const computedLevel = Math.floor(userXP / 100) + 1;
+  const userLevel = computedLevel > (user?.level || 1) ? computedLevel : (user?.level || 1);
+  const currentLevelXP = userXP % 100;
+  const xpNeeded = 100;
+  const xpPercent = currentLevelXP; // Since it's out of 100
   const returnsCount = history.filter(h => h.statusLabel === 'claimed' || h.statusLabel === 'resolved').length || 0;
 
   return (
@@ -73,7 +92,7 @@ export const Dashboard: React.FC = () => {
           <div className="mt-6 md:mt-8 w-full">
             <div className="flex justify-between items-end mb-3">
               <span className="font-bold text-sm md:text-base text-primary">Explorer Progress</span>
-              <span className="font-bold text-xs md:text-sm text-text-secondary">{userXP} / {xpNeeded} XP</span>
+              <span className="font-bold text-xs md:text-sm text-text-secondary">{currentLevelXP} / {xpNeeded} XP</span>
             </div>
             <div className="w-full h-4 md:h-5 bg-primary-fixed/50 dark:bg-surface-container-high rounded-full p-1 border-2 border-white dark:border-surface-variant">
               <div className="h-full reward-gradient rounded-full shadow-[0_0_15px_rgba(249,189,34,0.3)] transition-all duration-1000" style={{ width: `${xpPercent}%` }}></div>
@@ -139,39 +158,34 @@ export const Dashboard: React.FC = () => {
           </div>
           
           {/* Campus Insights Bubbly Viz */}
-          <div className="gen-z-card p-6 md:p-8 border border-white dark:border-surface-variant">
+          <div className="gen-z-card p-6 md:p-8 border border-white dark:border-surface-variant hover:-translate-y-1 transition-transform">
             <h4 className="text-lg md:text-xl font-bold mb-6 md:mb-8 text-text-primary">Campus Insights ✨</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              <div className="flex flex-col items-center justify-center p-6 md:p-8 bg-primary-fixed/20 bubbly-stat dark:bg-primary/10">
-                <span className="text-3xl md:text-4xl font-black text-primary">1,240</span>
+              <div className="flex flex-col items-center justify-center p-6 md:p-8 bg-primary-fixed/20 bubbly-stat dark:bg-primary/10 transition-transform hover:scale-105 cursor-default">
+                <span className="text-3xl md:text-4xl font-black text-primary">{dashboardStats.totalReturns.toLocaleString()}</span>
                 <span className="text-xs md:text-sm font-bold text-primary/70 uppercase mt-2">Total Returns</span>
               </div>
               <div className="md:col-span-2 bg-surface-container-low dark:bg-surface-container-high p-6 md:p-8 rounded-[32px] flex flex-col gap-6">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center text-warning shrink-0">
-                      <span className="material-symbols-outlined text-xl">library_books</span>
+                <h5 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-2">Top Categories Returned</h5>
+                {dashboardStats.topCategories.length > 0 ? (
+                  dashboardStats.topCategories.map((cat, idx) => (
+                    <div key={idx} className="flex justify-between items-center group">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${idx === 0 ? 'bg-warning/20 text-warning' : idx === 1 ? 'bg-secondary-fixed/50 text-secondary' : 'bg-primary/20 text-primary'}`}>
+                          <span className="material-symbols-outlined text-xl">{idx === 0 ? 'category' : idx === 1 ? 'shopping_bag' : 'devices'}</span>
+                        </div>
+                        <span className="font-bold text-text-primary truncate">{cat.name} ({cat.count})</span>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        {Array.from({ length: cat.intensity || 1 }).map((_, i) => (
+                          <div key={i} className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${idx === 0 ? 'bg-warning' : idx === 1 ? 'bg-secondary' : 'bg-primary'} ${i > 0 ? 'opacity-' + (50 - i * 20) : ''}`}></div>
+                        ))}
+                      </div>
                     </div>
-                    <span className="font-bold text-text-primary truncate">Main Library</span>
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-warning"></div>
-                    <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-warning opacity-50"></div>
-                    <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-warning opacity-20"></div>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-secondary-fixed/50 flex items-center justify-center text-secondary shrink-0">
-                      <span className="material-symbols-outlined text-xl">coffee</span>
-                    </div>
-                    <span className="font-bold text-text-primary truncate">Student Union</span>
-                  </div>
-                  <div className="flex gap-1 shrink-0">
-                    <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-secondary"></div>
-                    <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-secondary opacity-20"></div>
-                  </div>
-                </div>
+                  ))
+                ) : (
+                  <p className="text-text-secondary text-sm italic">Not enough data to display top categories yet.</p>
+                )}
               </div>
             </div>
           </div>

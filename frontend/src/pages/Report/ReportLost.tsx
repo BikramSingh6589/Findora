@@ -22,6 +22,7 @@ export const ReportLost: React.FC = () => {
     images: [],
   });
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -31,6 +32,7 @@ export const ReportLost: React.FC = () => {
 
   const handleSubmit = async () => {
     setError(null);
+    setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
       const formDataToSend = new FormData();
@@ -58,6 +60,8 @@ export const ReportLost: React.FC = () => {
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.error || 'Failed to submit report. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -72,7 +76,7 @@ export const ReportLost: React.FC = () => {
           <LostStepDetails data={formData} updateData={updateData} onNext={nextStep} onPrev={prevStep} />
         )}
         {currentStep === 3 && (
-          <LostStepReview data={formData} onSubmit={handleSubmit} onEdit={() => setCurrentStep(1)} />
+          <LostStepReview data={formData} onSubmit={handleSubmit} onEdit={() => setCurrentStep(1)} isSubmitting={isSubmitting} />
         )}
         {currentStep === 4 && (
           <ReportLostSuccess />

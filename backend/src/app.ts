@@ -17,6 +17,7 @@ import notificationRoutes from './routes/notification.routes';
 import aiRoutes from './routes/ai.routes';
 import handoverRoutes from './routes/handover.routes';
 import chatRoutes from './routes/chat.routes';
+import statsRoutes from './routes/stats.routes';
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/handover', handoverRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

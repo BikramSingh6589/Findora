@@ -7,9 +7,9 @@ export const addXP = async (userId: string, amount: number): Promise<void> => {
 
     user.xp = (user.xp || 0) + amount;
     
-    // Level Up calculation: e.g. Level = floor(sqrt(XP / 100)) + 1
-    const newLevel = Math.floor(Math.sqrt(user.xp / 100)) + 1;
-    if (newLevel > (user.level || 1)) {
+    // Level Up calculation: 100 XP per level
+    const newLevel = Math.floor(user.xp / 100) + 1;
+    if (newLevel !== (user.level || 1)) {
       user.level = newLevel;
       // Award level up badge
       const levelBadge = `Level ${newLevel} Achiever`;
