@@ -582,7 +582,7 @@ export const FinderChat: React.FC = () => {
           )}
 
           {/* Message Input Area / Mobile QR Scan Area */}
-          {!isResolved && !isPendingMediation && !chatFrozen.frozen && isApproved ? (
+          {!isResolved && !isPendingMediation && !chatFrozen.frozen ? (
             <form onSubmit={handleSendMessage} className="bg-surface-container-lowest dark:bg-surface-container p-3 md:p-4 border-t border-border-default z-30">
               <div className="max-w-4xl mx-auto flex items-center gap-3 bg-surface-container p-1 md:p-1.5 rounded-full border border-border-default focus-within:ring-2 focus-within:ring-primary/20 transition-all">
                 <input 
@@ -605,13 +605,6 @@ export const FinderChat: React.FC = () => {
               >
                 <QrCode className="w-5 h-5" /> Scan Claimant QR
               </button>
-            </div>
-          ) : claim.status === 'pending' ? (
-            <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest z-30">
-              <div className="flex items-center gap-3 px-4 py-3 bg-surface-container rounded-2xl border border-warning/20">
-                <Lock className="w-4 h-4 text-warning" />
-                <p className="text-sm text-text-secondary font-semibold">Chat is locked until the claim is approved by a moderator.</p>
-              </div>
             </div>
           ) : claim.status === 'rejected' ? (
             <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest z-30">

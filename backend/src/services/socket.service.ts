@@ -82,21 +82,7 @@ export const initSocket = (httpServer: any) => {
           return;
         }
 
-        // Block chat if claim status is not approved or resolved
-        if (claim.status !== 'approved' && claim.status !== 'resolved' && !isAdmin) {
-          socket.emit('chat_blocked', {
-            message: 'Chat is locked until this claim is approved by a moderator.',
-            status: claim.status
-          });
-          // Still join the room to view message history, but cannot send
-          socket.join(`claim:${claimId}`);
-          const messages = await ChatMessage.find({ claimId })
-            .populate('sender', 'name profilePic')
-            .sort({ createdAt: 1 })
-            .exec();
-          socket.emit('message_history', messages);
-          return;
-        }
+
 
         // Block resolved claims from joining (chat is frozen)
         if (claim.status === 'resolved' && !isAdmin) {
@@ -157,11 +143,7 @@ export const initSocket = (httpServer: any) => {
           return;
         }
 
-        // Block sending messages for pending claims
-        if (claim.status !== 'approved' && claim.status !== 'resolved' && !isAdmin) {
-          socket.emit('error_message', 'Chat is locked until the claim is approved by a moderator.');
-          return;
-        }
+
 
         // Freeze chat for resolved or admin-approved claims
         if (claim.status === 'resolved') {
