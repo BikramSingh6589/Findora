@@ -7,9 +7,10 @@ interface Props {
   data: LostFormData;
   onEdit: () => void;
   onSubmit: () => void;
+  isSubmitting?: boolean;
 }
 
-export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
+export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit, isSubmitting }) => {
   const [foundCount, setFoundCount] = React.useState<number | null>(null);
 
   React.useEffect(() => {
@@ -176,10 +177,11 @@ export const LostStepReview: React.FC<Props> = ({ data, onEdit, onSubmit }) => {
           <div className="flex flex-col gap-4">
             <button
               onClick={onSubmit}
-              className="w-full py-4 rounded-xl font-bold text-lg text-white bg-primary shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group"
+              disabled={isSubmitting}
+              className={`w-full py-4 rounded-xl font-bold text-lg text-white bg-primary shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              Submit Report
-              <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              {isSubmitting ? 'Submitting...' : 'Submit Report'}
+              {!isSubmitting && <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />}
             </button>
             <button
               onClick={onEdit}

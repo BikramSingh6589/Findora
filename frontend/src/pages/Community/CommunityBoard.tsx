@@ -199,6 +199,13 @@ export const CommunityBoard: React.FC = () => {
       });
     });
 
+    socket.on('new_lost_item', (dbItem: any) => {
+      setLostItems(prev => {
+        if (prev.some(item => item._id === dbItem._id || item.id === dbItem._id)) return prev;
+        return [dbItem, ...prev];
+      });
+    });
+
     socket.on('item_claimed', (data: { itemId: string }) => {
       setItems(prev => prev.map(item => 
         item.id === data.itemId 

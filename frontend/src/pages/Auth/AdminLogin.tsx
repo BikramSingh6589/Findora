@@ -9,6 +9,7 @@ export const AdminLogin: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export const AdminLogin: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      await adminLogin(email, password);
+      await adminLogin(email, password, rememberMe);
       navigate('/admin');
     } catch (err: any) {
       setError(err.message || 'Admin login failed');
@@ -101,7 +102,13 @@ export const AdminLogin: React.FC = () => {
 
             {/* Remember Me */}
             <div className="flex items-center gap-2">
-              <input className="w-5 h-5 rounded border-border-default text-primary focus:ring-primary" id="remember" type="checkbox" />
+              <input 
+                className="w-5 h-5 rounded border-border-default text-primary focus:ring-primary" 
+                id="remember" 
+                type="checkbox" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
               <label className="text-sm text-text-secondary cursor-pointer" htmlFor="remember">Remember this device for 30 days</label>
             </div>
 

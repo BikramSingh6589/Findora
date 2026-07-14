@@ -76,8 +76,15 @@ export const FinderChat: React.FC = () => {
 
     socketRef.current = socket;
 
-    // Join room
-    socket.emit('join_room', { claimId: itemId });
+    // Join room on connect and reconnect
+    socket.on('connect', () => {
+      socket.emit('join_room', { claimId: itemId });
+    });
+
+    // Also emit immediately in case it's already connected (rare but safe)
+    if (socket.connected) {
+      socket.emit('join_room', { claimId: itemId });
+    }
 
     // Listen for history
     socket.on('message_history', (history: any[]) => {

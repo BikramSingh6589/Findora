@@ -24,6 +24,15 @@ export const createLostItem = async (req: AuthenticatedRequest, res: Response, n
     // Award XP for reporting a lost item
     await addXP(req.user._id, 10);
 
+    // Emit real-time update
+    try {
+      const { getIO } = require('../services/socket.service');
+      const itemWithOwner = await LostItem.findById(item._id).populate('owner', 'name profilePic');
+      getIO().emit('new_lost_item', itemWithOwner);
+    } catch (e) {
+      console.warn('Socket emit failed for new_lost_item:', e);
+    }
+
     sendSuccess(res, { item }, 'Lost item reported successfully', 201);
   } catch (error) {
     next(error);
