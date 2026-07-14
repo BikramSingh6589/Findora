@@ -6,7 +6,7 @@ trigger: always_on
 
 Whenever any code is added, modified, removed, or refactored, always maintain an audit document.
 
-## Audit Folder
+## Audit Folder inside resource folder
 
 - Ensure an `Audit` folder exists in the project root.
 - If it does not exist, create it.

@@ -659,14 +659,7 @@ export const mediationResolve = async (req: AuthenticatedRequest, res: Response,
       claim.mediationStatus = 'approved';
       claim.remarks = 'Ownership confirmed by Admin Mediation - Awaiting handover';
 
-      // Generate secure QR token & upload QR code image to Cloudinary if not present
-      if (!claim.qrToken) {
-        const qrToken = uuidv4();
-        const qrCodeUrl = await generateQR(qrToken);
-        claim.qrToken = qrToken;
-        claim.qrCodeUrl = qrCodeUrl;
-        claim.qrExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
-      }
+      // No QR code is generated for Admin Mediation per user requirement.
       await claim.save();
 
       // Notify connected users via socket

@@ -60,91 +60,125 @@ export const History: React.FC = () => {
     const isClaim = item.type === 'claim' || item.type === 'conflict';
     const targetItem = isClaim ? item.foundItemId : item;
     
-    // Status text mapping
-    let statusText = '';
-    let statusColor = '';
-    let StatusIcon = HistoryIcon;
-    
-    if (isClaim) {
-      if (item.status === 'pending') {
-        statusText = 'Pending Verification';
-        statusColor = 'text-warning bg-warning/10';
-        StatusIcon = Info;
-      } else if (item.status === 'approved' || item.status === 'resolved') {
-        statusText = 'Claim Approved';
-        statusColor = 'text-success bg-success/10';
-        StatusIcon = CheckCircle;
-      } else if (item.type === 'conflict') {
-        statusText = 'Conflict Identified';
-        statusColor = 'text-danger bg-danger/10';
-        StatusIcon = ShieldAlert;
-      } else {
-        statusText = item.status;
-        statusColor = 'text-text-secondary bg-surface-container';
-      }
-    } else {
-      if (item.status === 'resolved') {
-        statusText = 'Returned';
-        statusColor = 'text-success bg-success/10';
-        StatusIcon = CheckCircle;
-      } else if (item.status === 'active' && item.aiMatchScore > 80) {
-        statusText = 'AI Match Found';
-        statusColor = 'text-info-ai bg-info-ai/10';
-        StatusIcon = Bot;
-      } else {
-        statusText = item.status === 'active' ? 'Active' : item.status;
-        statusColor = 'text-text-secondary bg-surface-container';
-      }
+    // 1. Conflict Card
+    if (item.type === 'conflict') {
+      return (
+        <div key={item._id} onClick={() => navigate(`/item/${targetItem?._id}`)} className="bg-white p-6 rounded-2xl border border-danger/20 shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer transition-all md:col-span-1 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start mb-4">
+              <span className="px-4 py-1 bg-danger/10 text-danger rounded-full text-sm font-semibold">Conflict Identified</span>
+              <span className="text-sm text-text-secondary">{item.date.toLocaleDateString()}</span>
+            </div>
+            <h3 className="text-xl font-semibold text-text-primary mb-1">{targetItem?.itemName || 'Unknown Item'}</h3>
+            <p className="text-base text-text-secondary mb-6 line-clamp-2">Multiple students have claimed this item. Professional mediation required.</p>
+          </div>
+          <button className="w-full py-2.5 border-2 border-danger text-danger rounded-xl font-semibold hover:bg-danger hover:text-white transition-all flex items-center justify-center gap-2">
+            <ShieldAlert className="w-5 h-5" /> Contact Support
+          </button>
+        </div>
+      );
     }
 
-    return (
-      <div key={item._id} onClick={() => navigate(`/item/${targetItem?._id}`)} className={`p-6 rounded-2xl border border-border-default shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 md:col-span-1 cursor-pointer flex flex-col justify-between ${item.type === 'conflict' ? 'bg-white border-danger/20' : 'bg-card-bg'}`}>
-        <div>
-          <div className="flex justify-between items-start mb-4">
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${statusColor}`}>
-              <StatusIcon className="w-4 h-4" /> {statusText}
-            </span>
-            <span className="text-xs text-text-secondary">{item.date.toLocaleDateString()}</span>
-          </div>
-          
-          <div className="flex gap-4 mb-6">
-            <div 
-              className="w-20 h-20 rounded-xl bg-cover bg-center shrink-0 border border-border-default"
-              style={{ backgroundImage: `url(${targetItem?.images?.[0] || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400'})` }}
-            />
-            <div>
-              <h3 className="font-semibold text-lg text-text-primary line-clamp-1">{targetItem?.itemName || 'Unknown Item'}</h3>
-              <p className="text-sm text-text-secondary line-clamp-2 mt-1">
-                {isClaim ? 'Claim placed for found item' : (item.type === 'lost' ? `Lost at ${item.locationLost}` : `Found at ${item.locationFound}`)}
-              </p>
+    // 2. Pending Claim Card
+    if (isClaim && item.status === 'pending') {
+      return (
+        <div key={item._id} onClick={() => navigate(`/item/${targetItem?._id}`)} className="bg-card-bg p-6 rounded-2xl border border-border-default shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer transition-all md:col-span-1 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start mb-4">
+              <span className="px-4 py-1 bg-warning/10 text-warning rounded-full text-sm font-semibold">Pending Verification</span>
+              <span className="text-sm text-text-secondary">{item.date.toLocaleDateString()}</span>
+            </div>
+            <div className="flex gap-4 mb-6">
+              <div 
+                className="w-20 h-20 rounded-xl bg-cover bg-center shrink-0"
+                style={{ backgroundImage: `url(${targetItem?.images?.[0] || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400'})` }}
+              />
+              <div>
+                <h3 className="text-lg font-semibold text-text-primary line-clamp-1">{targetItem?.itemName || 'Unknown Item'}</h3>
+                <p className="text-sm text-text-secondary italic line-clamp-2 mt-1">Claim placed for found item</p>
+              </div>
             </div>
           </div>
-        </div>
-
-        {isClaim && item.status === 'pending' && (
-          <div className="p-3 bg-surface-container-low rounded-xl">
-            <div className="flex items-center gap-2 text-xs text-text-secondary mb-2">
+          <div className="p-4 bg-surface-container-low rounded-xl mb-2">
+            <div className="flex items-center gap-2 text-sm text-text-secondary mb-2">
               <Info className="w-4 h-4" /> Admin is reviewing your proof
             </div>
             <div className="w-full bg-outline-variant h-1.5 rounded-full overflow-hidden">
               <div className="bg-warning w-3/4 h-full rounded-full"></div>
             </div>
           </div>
-        )}
-        
-        {item.type === 'conflict' && (
-          <button className="w-full py-2.5 mt-2 border border-danger text-danger rounded-xl text-sm font-semibold hover:bg-danger hover:text-white transition-all flex items-center justify-center gap-2">
-             Contact Support
-          </button>
-        )}
-        
-        {!isClaim && item.type !== 'conflict' && (
-           <div className="mt-auto flex items-center justify-end">
-             <button className="text-primary text-sm font-semibold flex items-center gap-1 hover:underline decoration-2 underline-offset-4">
-               View Details <ChevronRight className="w-4 h-4" />
-             </button>
-           </div>
-        )}
+        </div>
+      );
+    }
+
+    // 3. AI Match Card
+    if (!isClaim && item.status === 'active' && item.aiMatchScore > 80) {
+      return (
+        <div key={item._id} onClick={() => navigate(`/item/${targetItem?._id}`)} className="relative p-6 rounded-2xl bg-white border-2 border-info-ai/30 shadow-lg shadow-info-ai/5 hover:scale-[1.02] cursor-pointer transition-all duration-300 md:col-span-1 overflow-hidden flex flex-col justify-between">
+          <div className="absolute top-0 right-0 p-3 bg-info-ai/10 rounded-bl-2xl">
+            <Bot className="text-info-ai w-6 h-6" />
+          </div>
+          <div>
+            <div className="mb-4">
+              <span className="px-4 py-1 bg-info-ai/10 text-info-ai rounded-full text-sm font-semibold animate-pulse">AI Match Found</span>
+            </div>
+            <h3 className="text-xl font-semibold text-text-primary mb-2 line-clamp-1">{targetItem?.itemName || 'Unknown Item'}</h3>
+            <p className="text-base text-text-secondary mb-6">A high match was found for your report!</p>
+          </div>
+          <div className="flex gap-2">
+            <button className="flex-1 py-2 bg-info-ai text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-info-ai/30 transition-all">It's Mine!</button>
+            <button className="px-4 py-2 border border-border-default text-text-secondary rounded-xl hover:bg-surface-container transition-all">Not it</button>
+          </div>
+        </div>
+      );
+    }
+
+    // 4. Default / Success Card
+    const isReturned = item.status === 'resolved' || item.status === 'approved';
+    const statusText = isReturned ? 'Returned' : (item.status === 'active' ? 'Active' : item.status);
+    const statusColor = isReturned ? 'bg-success/10 text-success' : 'bg-surface-container-highest text-text-primary';
+    
+    return (
+      <div key={item._id} onClick={() => navigate(`/item/${targetItem?._id}`)} className={`p-6 rounded-2xl border ${isReturned ? 'border-success/30 bg-white/50 backdrop-blur-md' : 'border-border-default bg-card-bg'} shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer transition-all duration-300 md:col-span-1 flex flex-col justify-between`}>
+        <div>
+          <div className="flex justify-between items-start mb-4">
+            <span className={`px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 ${statusColor}`}>
+              {isReturned ? <CheckCircle className="w-4 h-4" /> : <HistoryIcon className="w-4 h-4" />} {statusText}
+            </span>
+            <span className="text-sm text-text-secondary">{item.date.toLocaleDateString()}</span>
+          </div>
+          <div className="flex gap-4 mb-6">
+            <div 
+              className="w-24 h-24 rounded-xl bg-cover bg-center shrink-0 shadow-inner"
+              style={{ backgroundImage: `url(${targetItem?.images?.[0] || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400'})` }}
+            />
+            <div className="flex flex-col justify-center">
+              <h3 className="text-xl font-semibold text-text-primary line-clamp-1">{targetItem?.itemName || 'Unknown Item'}</h3>
+              <p className="text-sm text-text-secondary line-clamp-2 mt-1">
+                {item.type === 'lost' ? `Lost at ${item.locationLost}` : `Found at ${item.locationFound}`}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-auto flex items-center justify-between">
+          {isReturned ? (
+            <>
+              <div className="flex -space-x-2">
+                <img className="w-8 h-8 rounded-full border-2 border-surface object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" alt="User" />
+                <div className="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-[10px] text-on-primary font-bold border-2 border-surface">+1</div>
+              </div>
+              <button className="text-primary font-semibold text-sm flex items-center gap-1 hover:underline decoration-2 underline-offset-4">
+                View Case <ChevronRight className="w-4 h-4" />
+              </button>
+            </>
+          ) : (
+            <div className="w-full flex items-center justify-end">
+              <button className="text-primary font-semibold text-sm flex items-center gap-1 hover:underline decoration-2 underline-offset-4">
+                View Details <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     );
   };
@@ -186,10 +220,10 @@ export const History: React.FC = () => {
             <button 
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-2.5 rounded-full font-semibold whitespace-nowrap transition-all duration-200 ${
+              className={`px-6 py-2.5 rounded-full font-semibold whitespace-nowrap ${
                 activeTab === tab.id 
-                  ? 'bg-primary text-on-primary shadow-lg shadow-primary/25 scale-105' 
-                  : 'bg-surface-container-highest text-text-primary hover:bg-surface-variant hover:scale-[1.03]'
+                  ? 'bg-primary text-on-primary shadow-lg shadow-primary/25 transition-transform active:scale-95' 
+                  : 'bg-surface-container-highest text-text-primary hover:bg-surface-variant transition-all hover:scale-[1.03]'
               }`}
             >
               {tab.label}

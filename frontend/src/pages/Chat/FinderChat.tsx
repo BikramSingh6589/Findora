@@ -351,51 +351,7 @@ export const FinderChat: React.FC = () => {
     );
   }
 
-  // RESOLVED CLAIM — chat history visible but frozen
-  if (chatFrozen.frozen) {
-    return (
-      <div className="flex flex-col h-[calc(100vh-80px)] md:h-[calc(100vh-100px)] -mt-6 -mx-6 md:m-0 bg-surface">
-        {/* Frozen Header */}
-        <header className="bg-surface-container-lowest dark:bg-surface-container/80 sticky top-0 z-40 flex items-center px-4 md:px-8 py-4 shadow-sm border-b border-border-default gap-3">
-          <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-surface-container transition-colors">
-            <ArrowLeft className="w-5 h-5 text-text-secondary" />
-          </button>
-          <CheckCircle2 className="w-5 h-5 text-success" />
-          <span className="font-bold text-text-primary">Claim Resolved</span>
-          <span className="ml-auto text-xs px-3 py-1 bg-success/10 text-success rounded-full font-bold border border-success/20">RESOLVED</span>
-        </header>
 
-        {/* Frozen Banner */}
-        <div className="bg-success/5 border-b border-success/20 px-4 py-3 flex items-center gap-3">
-          <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
-          <p className="text-sm text-success font-semibold">This claim has been fully resolved. The chat is now closed and read-only.</p>
-        </div>
-
-        {/* Messages — read only */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 opacity-75">
-          {messages.map((msg: any, i: number) => {
-            const senderId = msg.sender?._id || msg.sender?.id || msg.sender;
-            const isMe = senderId === currentUserId;
-            return (
-              <div key={i} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-xs md:max-w-md px-4 py-2.5 rounded-2xl text-sm ${isMe ? 'bg-primary/20 text-white rounded-br-sm' : 'bg-surface-container text-text-primary rounded-bl-sm'}`}>
-                  {msg.content}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Frozen Input */}
-        <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest">
-          <div className="flex items-center gap-3 px-4 py-3 bg-surface-container rounded-2xl border border-success/20">
-            <CheckCircle2 className="w-4 h-4 text-success" />
-            <p className="text-sm text-text-secondary">Chat is closed — this claim has been resolved.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   const foundItem = claim.foundItemId || {};
   const finder = foundItem.finder || {};
@@ -482,13 +438,23 @@ export const FinderChat: React.FC = () => {
             className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6 bg-surface relative"
           >
             {/* Status Information Overlays */}
-            {isResolved ? (
+            {isPeerResolved ? (
               <div className="bg-success/10 border border-success/30 p-4 rounded-2xl flex items-center gap-3 max-w-xl mx-auto mb-6">
                 <Check className="text-success w-6 h-6 shrink-0" />
                 <div>
                   <h4 className="font-bold text-success text-sm">Claim Handover Resolved</h4>
                   <p className="text-xs text-text-secondary mt-0.5">
                     Ownership has been confirmed! {isClaimant ? 'Show the QR code below to the finder to verify the handover.' : 'Please scan the claimant\'s QR code to confirm transfer.'}
+                  </p>
+                </div>
+              </div>
+            ) : isAdminApproved ? (
+              <div className="bg-info-ai/10 border border-info-ai/30 p-4 rounded-2xl flex items-center gap-3 max-w-xl mx-auto mb-6">
+                <Shield className="text-info-ai w-6 h-6 shrink-0" />
+                <div>
+                  <h4 className="font-bold text-info-ai text-sm">Mediated to Admin</h4>
+                  <p className="text-xs text-text-secondary mt-0.5">
+                    This issue has been mediated to the admin. The admin will resolve this issue. Please follow admin instructions.
                   </p>
                 </div>
               </div>
@@ -593,7 +559,7 @@ export const FinderChat: React.FC = () => {
           </div>
 
           {/* Claimant QR Display when resolved */}
-          {isResolved && isClaimant && claim.qrCodeUrl && (
+          {isPeerResolved && isClaimant && claim.qrCodeUrl && (
             <div className="bg-surface-container-lowest dark:bg-surface-container p-6 border-t border-border-default flex flex-col items-center justify-center">
               <QrCode className="w-8 h-8 text-primary mb-2" />
               <h4 className="font-bold text-text-primary text-sm">Secure Handover QR Code</h4>
@@ -606,8 +572,8 @@ export const FinderChat: React.FC = () => {
             </div>
           )}
 
-          {/* Message Input Area */}
-          {!isResolved && !isPendingMediation && (
+          {/* Message Input Area / Mobile QR Scan Area */}
+          {!isResolved && !isPendingMediation && !chatFrozen.frozen ? (
             <form onSubmit={handleSendMessage} className="bg-surface-container-lowest dark:bg-surface-container p-3 md:p-4 border-t border-border-default z-30">
               <div className="max-w-4xl mx-auto flex items-center gap-3 bg-surface-container p-1 md:p-1.5 rounded-full border border-border-default focus-within:ring-2 focus-within:ring-primary/20 transition-all">
                 <input 
@@ -622,7 +588,23 @@ export const FinderChat: React.FC = () => {
                 </button>
               </div>
             </form>
-          )}
+          ) : isPeerResolved && isFinder ? (
+            <div className="lg:hidden bg-surface-container-lowest dark:bg-surface-container p-4 border-t border-border-default z-30">
+              <button
+                onClick={() => navigate(`/handover/scan/${claim._id}`)}
+                className="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-md"
+              >
+                <QrCode className="w-5 h-5" /> Scan Claimant QR
+              </button>
+            </div>
+          ) : chatFrozen.frozen || isResolved || isPendingMediation ? (
+            <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest z-30">
+              <div className="flex items-center gap-3 px-4 py-3 bg-surface-container rounded-2xl border border-success/20">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                <p className="text-sm text-text-secondary">Chat is closed — {chatFrozen.reason || 'claim resolved or mediated.'}</p>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {/* Sidebar Info Section (Hidden on Mobile) */}
