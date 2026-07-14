@@ -27,6 +27,11 @@ const ClaimSchema = new Schema({
   finderDropoffCode:  { type: String, default: '' },
   locationNotifiedToClaimant: { type: Boolean, default: false },
   isConflictClaim: { type: Boolean, default: false },
+  ocrData: {
+    extractedText: { type: String, default: '' },
+    identifiers:   { type: [String], default: [] },
+    ocrProcessed:  { type: Boolean, default: false }
+  }
 }, { timestamps: true });
 
 ClaimSchema.index({ status: 1, claimant: 1 });

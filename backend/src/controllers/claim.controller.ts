@@ -159,8 +159,53 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
       ...uploadedProofUrls,
     ];
 
+    // OCR Processing on proof documents
+    let extractedText = '';
+    let identifiers: string[] = [];
+    if (finalProofUrls.length > 0) {
+      try {
+        const { extractTextFromImage, extractIdentifiers, preprocessImage } = require('../services/ocr.service');
+        const ocrPromises = finalProofUrls.map(async (url: string) => {
+          const isImg = url.match(/\.(jpg|jpeg|png|webp|gif)/i) || url.includes('cloudinary') || url.includes('unsplash');
+          if (isImg) {
+            const preprocessed = await preprocessImage(url);
+            const res = await extractTextFromImage(preprocessed, 'claim proof invoice receipt');
+            return res?.extractedText || '';
+          }
+          return '';
+        });
+        const ocrResults = await Promise.all(ocrPromises);
+        extractedText = ocrResults.filter(Boolean).join(' ').trim();
+        identifiers = extractIdentifiers(extractedText);
+        console.log(`[Claim OCR] Extracted identifiers from proof: ${identifiers}`);
+      } catch (err) {
+        console.error('[Claim OCR] Failed to run OCR on claim proof documents:', err);
+      }
+    }
+
     // Calculate confidence match score
-    const confidence = await calculateConfidence(foundItemId, lostItemId, answers);
+    let confidence = await calculateConfidence(foundItemId, lostItemId, answers);
+
+    // Boost confidence if OCR proof identifiers match FoundItem or LostItem identifiers
+    if (identifiers.length > 0) {
+      try {
+        const foundItem = await FoundItem.findById(foundItemId);
+        const lostItem = lostItemId ? await LostItem.findById(lostItemId) : null;
+        
+        const foundItemIds = foundItem?.aiData?.identifiers || [];
+        const lostItemIds = lostItem?.aiData?.identifiers || [];
+        
+        const matchesFoundItem = identifiers.some((id: string) => foundItemIds.includes(id));
+        const matchesLostItem = identifiers.some((id: string) => lostItemIds.includes(id));
+        
+        if (matchesFoundItem || matchesLostItem) {
+          console.log('[Claim Verification] OCR match confirmed between proof and item identifiers! Boosting confidence.');
+          confidence = Math.min(confidence + 20, 100);
+        }
+      } catch (err) {
+        console.error('[Claim Verification] Error matching identifiers:', err);
+      }
+    }
 
     // Create the Claim
     const claim = await Claim.create({
@@ -171,6 +216,11 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
       proofUrls: finalProofUrls,
       confidence,
       status: 'pending',
+      ocrData: {
+        extractedText,
+        identifiers,
+        ocrProcessed: true
+      }
     });
 
     // Reserve the FoundItem and clear any locks
