@@ -16,6 +16,7 @@ export const ConflictClaim = () => {
     specialMarks: '',
   });
   const [proofFile, setProofFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -223,12 +224,32 @@ export const ConflictClaim = () => {
                     className="hidden" 
                     accept="image/*"
                     onChange={(e) => {
+                      setUploadError(null);
                       if (e.target.files && e.target.files[0]) {
-                        setProofFile(e.target.files[0]);
+                        const file = e.target.files[0];
+                        const isImg = file.type.startsWith('image/');
+                        const isValidSize = file.size <= 10 * 1024 * 1024;
+                        if (!isImg) {
+                          setUploadError("Only image files (JPG, JPEG, PNG) are allowed.");
+                          setProofFile(null);
+                          return;
+                        }
+                        if (!isValidSize) {
+                          setUploadError("File size must be less than 10MB.");
+                          setProofFile(null);
+                          return;
+                        }
+                        setProofFile(file);
                       }
                     }}
                   />
                 </label>
+                {uploadError && (
+                  <p className="text-danger text-xs font-semibold mt-2 bg-danger/10 border border-danger/20 rounded-xl px-4 py-2 flex items-center gap-2">
+                    <span>⚠</span>
+                    <span>{uploadError}</span>
+                  </p>
+                )}
               </div>
             </div>
 

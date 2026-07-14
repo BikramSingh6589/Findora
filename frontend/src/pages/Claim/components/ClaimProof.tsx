@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Check, UploadCloud, FileText, Trash2, Lightbulb, Bot, ChevronRight, ArrowLeft } from 'lucide-react';
 import type { ClaimFormData } from '../types';
 
@@ -24,6 +24,7 @@ export const ClaimProof: React.FC<Props> = ({
   setProofFiles
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -31,13 +32,33 @@ export const ClaimProof: React.FC<Props> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
+      setUploadError(null);
       const selected = Array.from(e.target.files);
-      setProofFiles(prev => [...prev, ...selected].slice(0, 5));
+      
+      const validFiles = selected.filter(file => {
+        const isImg = file.type.startsWith('image/');
+        const isPdf = file.type === 'application/pdf';
+        const isValidSize = file.size <= 10 * 1024 * 1024;
+        if (!isImg && !isPdf) {
+          setUploadError("Only JPG, JPEG, PNG, or PDF files are allowed.");
+          return false;
+        }
+        if (!isValidSize) {
+          setUploadError("File size must be less than 10MB.");
+          return false;
+        }
+        return true;
+      });
+      
+      setProofFiles(prev => [...prev, ...validFiles].slice(0, 5));
     }
   };
 
   const handleRemoveFile = (index: number) => {
     setProofFiles(prev => prev.filter((_, i) => i !== index));
+    if (proofFiles.length <= 1) {
+      setUploadError(null);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -158,6 +179,12 @@ export const ClaimProof: React.FC<Props> = ({
                 className="hidden" 
               />
             </div>
+            {uploadError && (
+              <p className="text-danger text-xs font-semibold mt-3 bg-danger/5 border border-danger/20 rounded-xl px-4 py-2 flex items-center gap-2">
+                <span>⚠</span>
+                <span>{uploadError}</span>
+              </p>
+            )}
 
             {/* File Preview */}
             {proofFiles.length > 0 && (

@@ -65,8 +65,9 @@ export const QRScan: React.FC = () => {
     }
   };
 
-  const itemName = item?.itemName || 'MacBook Pro';
-  const itemLocation = item?.locationFound || 'Campus Library';
+  const itemName = item?.itemName || 'Item';
+  const itemLocation = item?.locationFound || item?.locationLost || 'Campus';
+  const caseLabel = item?.claimId || (itemId ? `Case #${itemId.substring(0, 8)}` : '');
 
   return (
     <div className="flex flex-col min-h-screen bg-surface -mt-6 -mx-6 md:m-0">
@@ -78,7 +79,7 @@ export const QRScan: React.FC = () => {
           </button>
           <div className="flex flex-col">
             <h1 className="font-bold text-lg md:text-2xl text-primary">Confirm Recovery</h1>
-            <p className="text-text-secondary text-xs">Case #{itemId?.substring(0, 8) || 'LF-89021'}</p>
+            <p className="text-text-secondary text-xs">{caseLabel}</p>
           </div>
         </div>
 
