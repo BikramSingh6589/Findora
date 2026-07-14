@@ -270,10 +270,18 @@ export const ItemDetail: React.FC = () => {
               <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
                 <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-2 text-center py-8">
                   <div className="w-12 h-12 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="material-symbols-outlined text-text-secondary text-2xl">lock</span>
+                    <span className="material-symbols-outlined text-text-secondary text-2xl">
+                      {matchError.toLowerCase().includes('access denied') || matchError.toLowerCase().includes('403') ? 'lock' : 'error'}
+                    </span>
                   </div>
-                  <h4 className="text-base font-bold text-text-primary">AI Match Insights Restricted</h4>
-                  <p className="text-xs text-text-secondary max-w-sm mx-auto">AI match parameters are only visible to the reporter of this item or potential match participants.</p>
+                  <h4 className="text-base font-bold text-text-primary">
+                    {matchError.toLowerCase().includes('access denied') || matchError.toLowerCase().includes('403') ? 'AI Match Insights Restricted' : 'Error Loading AI Matches'}
+                  </h4>
+                  <p className="text-xs text-text-secondary max-w-sm mx-auto">
+                    {matchError.toLowerCase().includes('access denied') || matchError.toLowerCase().includes('403')
+                      ? 'AI match parameters are only visible to the reporter of this item or potential match participants.'
+                      : matchError}
+                  </p>
                 </div>
               </div>
             ) : item.aiData && !item.aiData.processed ? (
@@ -455,7 +463,7 @@ export const ItemDetail: React.FC = () => {
                             <div className="flex gap-2 pt-4 border-t border-border-default/50">
                               {isLostItem ? (
                                 <button
-                                  onClick={() => navigate(`/claim/${counterpartItem._id}`)}
+                                  onClick={() => navigate(`/claim/${counterpartItem._id}`, { state: { lostItemId: item._id } })}
                                   className="px-4 py-2.5 bg-primary text-white font-bold rounded-xl text-xs hover:scale-105 active:scale-95 transition-all select-none border-0 cursor-pointer"
                                 >
                                   Claim This Item

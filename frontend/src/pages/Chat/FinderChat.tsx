@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { 
   ArrowLeft, Shield, Send, CheckCircle2, Package, 
-  AlertTriangle, Check, QrCode
+  AlertTriangle, Check, QrCode, Lock
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
@@ -376,6 +376,8 @@ export const FinderChat: React.FC = () => {
   // Only show pending mediation banner if NOT yet resolved by admin
   const isPendingMediation =
     claim.mediationStatus === 'pending' && !isResolved;
+  
+  const isApproved = claim.status === 'approved' || claim.status === 'resolved';
   return (
     <div className="flex flex-col h-[calc(100vh-80px)] md:h-[calc(100vh-100px)] -mt-6 -mx-6 md:m-0 bg-surface">
       {/* Header */}
@@ -573,7 +575,7 @@ export const FinderChat: React.FC = () => {
           )}
 
           {/* Message Input Area / Mobile QR Scan Area */}
-          {!isResolved && !isPendingMediation && !chatFrozen.frozen ? (
+          {!isResolved && !isPendingMediation && !chatFrozen.frozen && isApproved ? (
             <form onSubmit={handleSendMessage} className="bg-surface-container-lowest dark:bg-surface-container p-3 md:p-4 border-t border-border-default z-30">
               <div className="max-w-4xl mx-auto flex items-center gap-3 bg-surface-container p-1 md:p-1.5 rounded-full border border-border-default focus-within:ring-2 focus-within:ring-primary/20 transition-all">
                 <input 
@@ -596,6 +598,20 @@ export const FinderChat: React.FC = () => {
               >
                 <QrCode className="w-5 h-5" /> Scan Claimant QR
               </button>
+            </div>
+          ) : claim.status === 'pending' ? (
+            <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest z-30">
+              <div className="flex items-center gap-3 px-4 py-3 bg-surface-container rounded-2xl border border-warning/20">
+                <Lock className="w-4 h-4 text-warning" />
+                <p className="text-sm text-text-secondary font-semibold">Chat is locked until the claim is approved by a moderator.</p>
+              </div>
+            </div>
+          ) : claim.status === 'rejected' ? (
+            <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest z-30">
+              <div className="flex items-center gap-3 px-4 py-3 bg-surface-container rounded-2xl border border-danger/20">
+                <Lock className="w-4 h-4 text-danger" />
+                <p className="text-sm text-text-secondary font-semibold">Chat is disabled because this claim has been rejected.</p>
+              </div>
             </div>
           ) : chatFrozen.frozen || isResolved || isPendingMediation ? (
             <div className="px-4 py-3 border-t border-border-default bg-surface-container-lowest z-30">

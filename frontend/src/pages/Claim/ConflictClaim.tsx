@@ -198,9 +198,20 @@ export const ConflictClaim = () => {
                   Upload Proof (Mandatory)
                 </label>
                 <label className={`border-2 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center transition-all cursor-pointer group ${proofFile ? 'border-success/50 bg-success/5' : 'border-primary/30 bg-primary/5 hover:bg-primary/10'}`}>
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${proofFile ? 'bg-success/20 text-success' : 'bg-primary/20 text-primary'}`}>
-                    <UploadCloud className="w-8 h-8" />
-                  </div>
+                  {proofFile && (
+                    <div className="w-24 h-24 rounded-lg overflow-hidden border border-success/30 shadow-md mb-4 bg-black/20">
+                      <img 
+                        src={URL.createObjectURL(proofFile)} 
+                        alt="Proof Preview" 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                  )}
+                  {!proofFile && (
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110 bg-primary/20 text-primary">
+                      <UploadCloud className="w-8 h-8" />
+                    </div>
+                  )}
                   <p className={`text-lg font-bold mb-1 ${proofFile ? 'text-success' : 'text-white'}`}>
                     {proofFile ? proofFile.name : 'Drag & Drop or Click'}
                   </p>

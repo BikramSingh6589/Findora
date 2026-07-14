@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 import { ClaimVerification } from './components/ClaimVerification';
@@ -13,6 +13,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 export const ClaimOwnership: React.FC = () => {
   const navigate = useNavigate();
   const { itemId } = useParams();
+  const location = useLocation();
 
   // Load draft from local storage if available
   const draftKey = `claimDraft_${itemId}`;
@@ -21,6 +22,7 @@ export const ClaimOwnership: React.FC = () => {
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
+    const stateLostItemId = location.state?.lostItemId;
     return {
       currentStep: 1,
       formData: {
@@ -29,6 +31,7 @@ export const ClaimOwnership: React.FC = () => {
         lostTime: '',
         identifiers: '',
         additionalInfo: '',
+        lostItemId: stateLostItemId || '',
       }
     };
   };

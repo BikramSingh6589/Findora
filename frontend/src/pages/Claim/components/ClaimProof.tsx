@@ -166,7 +166,15 @@ export const ClaimProof: React.FC<Props> = ({
                 {proofFiles.map((file, idx) => (
                   <div key={idx} className="flex items-center justify-between p-4 bg-surface rounded-xl border border-border-default hover:-translate-y-0.5 transition-transform">
                     <div className="flex items-center gap-3">
-                      <FileText className="text-primary w-5 h-5" />
+                      {file.type.startsWith('image/') ? (
+                        <img 
+                          src={URL.createObjectURL(file)} 
+                          alt="Preview" 
+                          className="w-10 h-10 object-cover rounded-lg border border-border-default bg-surface-container"
+                        />
+                      ) : (
+                        <FileText className="text-primary w-5 h-5" />
+                      )}
                       <div>
                         <p className="font-semibold text-sm text-text-primary truncate max-w-[200px] md:max-w-xs">{file.name}</p>
                         <p className="text-xs text-text-secondary">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
