@@ -16,8 +16,10 @@ export const ItemDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
-  const [match, setMatch] = useState<any | null>(null);
+  const [matches, setMatches] = useState<any[]>([]);
   const [loadingMatch, setLoadingMatch] = useState(true);
+  const [matchError, setMatchError] = useState<string | null>(null);
+  const [expandedMatches, setExpandedMatches] = useState<{[key: string]: boolean}>({});
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [resolving, setResolving] = useState(false);
   const [showRevertModal, setShowRevertModal] = useState(false);
@@ -26,28 +28,31 @@ export const ItemDetail: React.FC = () => {
   const [withdrawing, setWithdrawing] = useState(false);
 
   useEffect(() => {
-    const fetchItemMatch = async () => {
+    const fetchItemMatches = async () => {
       if (!itemId || !user) return;
       try {
         setLoadingMatch(true);
+        setMatchError(null);
         const token = localStorage.getItem('token');
         const res = await axios.get(`${API_BASE}/api/ai/matches/${itemId}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
-        if (res.data && res.data.success && res.data.matches && res.data.matches.length > 0) {
-          const sortedMatches = [...res.data.matches].sort((a: any, b: any) => b.score - a.score);
-          setMatch(sortedMatches[0]);
+        if (res.data && res.data.success && res.data.matches) {
+          const activeMatches = res.data.matches.filter((m: any) => m.status !== 'dismissed');
+          const sortedMatches = [...activeMatches].sort((a: any, b: any) => b.score - a.score);
+          setMatches(sortedMatches);
         } else {
-          setMatch(null);
+          setMatches([]);
         }
-      } catch (err) {
-        console.error('Error fetching match for details page', err);
-        setMatch(null);
+      } catch (err: any) {
+        console.error('Error fetching matches for details page', err);
+        setMatchError(err.response?.data?.error || err.message || 'Failed to fetch AI matches');
+        setMatches([]);
       } finally {
         setLoadingMatch(false);
       }
     };
-    fetchItemMatch();
+    fetchItemMatches();
   }, [itemId, user]);
 
   useEffect(() => {
@@ -147,15 +152,21 @@ export const ItemDetail: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isFinder && item?._id) {
-      axios.get(`${API_BASE}/api/claims`).then(res => {
-        const matchedClaim = res.data?.claims?.find((c: any) => c.foundItemId?._id === item._id || c.foundItemId === item._id);
+    if (item?._id && user) {
+      const token = localStorage.getItem('token');
+      axios.get(`${API_BASE}/api/claims`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      }).then(res => {
+        const matchedClaim = res.data?.claims?.find((c: any) => 
+          (c.foundItemId?._id === item._id || c.foundItemId === item._id) &&
+          (c.claimant?._id === currentUserId || c.claimant === currentUserId || isFinder)
+        );
         if (matchedClaim) {
           setClaimId(matchedClaim._id);
         }
       }).catch(err => console.error(err));
     }
-  }, [isFinder, item]);
+  }, [isFinder, item, user, currentUserId]);
   if (loading) {
     return (
       <div className="flex-grow flex items-center justify-center min-h-[60vh]">
@@ -247,7 +258,7 @@ export const ItemDetail: React.FC = () => {
               </div>
             )}
 
-            {/* AI Confidence Highlight */}
+            {/* AI Confidence Highlight & Match List */}
             {loadingMatch ? (
               <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
                 <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-6 flex flex-col items-center justify-center py-12 text-center">
@@ -255,141 +266,25 @@ export const ItemDetail: React.FC = () => {
                   <h4 className="text-base font-bold text-text-primary">Loading AI analysis...</h4>
                 </div>
               </div>
-            ) : match ? (
+            ) : matchError ? (
               <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
-                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-6">
-                  
-                  {/* Confidence Header */}
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-border-default/50">
-                    <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
-                      <div className="w-16 h-16 md:w-20 md:h-20 bg-primary-container/30 dark:bg-primary/20 rounded-full flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-3xl md:text-4xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>psychology_alt</span>
-                      </div>
-                      <div>
-                        <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
-                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                            match.score >= 80 ? 'bg-success/15 text-success' : match.score >= 60 ? 'bg-warning/15 text-warning' : 'bg-danger/15 text-danger'
-                          }`}>
-                            {match.score >= 80 ? 'Strong Match' : match.score >= 60 ? 'Possible Match' : 'Weak Match'}
-                          </span>
-                        </div>
-                        <h4 className="text-3xl md:text-4xl font-extrabold text-primary tracking-tight">{match.score}% AI Match</h4>
-                        {match.aiReason && <p className="text-sm text-text-secondary mt-2 italic">"{match.aiReason}"</p>}
-                      </div>
-                    </div>
+                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-2 text-center py-8">
+                  <div className="w-12 h-12 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span className="material-symbols-outlined text-text-secondary text-2xl">lock</span>
                   </div>
-
-                  {/* Why AI Matched Checkmarks */}
-                  {match.matchedFields && match.matchedFields.length > 0 && (
-                    <div className="space-y-2">
-                      <h5 className="font-bold text-sm text-text-primary">Why AI matched:</h5>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text-secondary font-medium">
-                        {match.matchedFields.map((field: string, idx: number) => (
-                          <div key={idx} className="flex items-center gap-1.5">
-                            <span className="text-success font-bold">✓</span>
-                            <span>{field}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Missing Evidence warnings */}
-                  {match.missingEvidence && match.missingEvidence.length > 0 && (
-                    <div className="p-3 bg-warning/5 rounded-xl border border-warning/15 space-y-1.5">
-                      <h5 className="font-bold text-xs text-warning">Evidence Alerts</h5>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-warning/90 font-medium">
-                        {match.missingEvidence.map((ev: string, idx: number) => (
-                          <div key={idx} className="flex items-center gap-1.5">
-                            <span>⚠</span>
-                            <span>{ev}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Match Warnings & Conflicts (Negative Signals) */}
-                  {match.negativeSignals && match.negativeSignals.length > 0 && (
-                    <div className="p-3 bg-danger/5 rounded-xl border border-danger/15 space-y-1.5">
-                      <h5 className="font-bold text-xs text-danger">Match Warnings & Conflicts</h5>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-danger/90 font-semibold">
-                        {match.negativeSignals.map((sig: string, idx: number) => (
-                          <div key={idx} className="flex items-center gap-1.5">
-                            <span>⚠</span>
-                            <span>{sig}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Score Breakdown Bars */}
-                  {match.breakdown && (
-                    <div className="space-y-3 pt-6 border-t border-border-default/50">
-                      <h5 className="font-bold text-sm text-text-primary">AI Similarity Breakdown</h5>
-                      <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
-                        <div>
-                          <div className="flex justify-between text-text-secondary mb-1">
-                            <span>Object type match</span>
-                            <span>{match.breakdown.objectScore}/30</span>
-                          </div>
-                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                            <div className="h-full bg-success rounded-full" style={{ width: `${Math.round((match.breakdown.objectScore / 30) * 100)}%` }}></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-text-secondary mb-1">
-                            <span>Brand resemblance</span>
-                            <span>{match.breakdown.brandScore}/15</span>
-                          </div>
-                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary rounded-full" style={{ width: `${Math.round((match.breakdown.brandScore / 15) * 100)}%` }}></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-text-secondary mb-1">
-                            <span>Color similarity</span>
-                            <span>{match.breakdown.colorScore}/10</span>
-                          </div>
-                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                            <div className="h-full bg-warning rounded-full" style={{ width: `${Math.round((match.breakdown.colorScore / 10) * 100)}%` }}></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-text-secondary mb-1">
-                            <span>Semantic description</span>
-                            <span>{match.breakdown.semanticScore}/20</span>
-                          </div>
-                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                            <div className="h-full bg-info-ai rounded-full" style={{ width: `${Math.round((match.breakdown.semanticScore / 20) * 100)}%` }}></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-text-secondary mb-1">
-                            <span>Image analysis</span>
-                            <span>{match.missingEvidence?.includes('Image verification unavailable') ? 'Not available' : `${match.breakdown.imageScore}/15`}</span>
-                          </div>
-                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                            <div className="h-full bg-danger rounded-full" style={{ width: `${match.missingEvidence?.includes('Image verification unavailable') ? 0 : Math.round((match.breakdown.imageScore / 15) * 100)}%` }}></div>
-                          </div>
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-text-secondary mb-1">
-                            <span>Receipt / OCR verification</span>
-                            <span>{(match.missingEvidence?.includes('No receipt or text image uploaded') || match.missingEvidence?.includes('No matching identifier found')) ? 'Not available' : `${match.breakdown.ocrScore}/10`}</span>
-                          </div>
-                          <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                            <div className="h-full bg-[#8455ef] rounded-full" style={{ width: `${(match.missingEvidence?.includes('No receipt or text image uploaded') || match.missingEvidence?.includes('No matching identifier found')) ? 0 : Math.round((match.breakdown.ocrScore / 10) * 100)}%` }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
+                  <h4 className="text-base font-bold text-text-primary">AI Match Insights Restricted</h4>
+                  <p className="text-xs text-text-secondary max-w-sm mx-auto">AI match parameters are only visible to the reporter of this item or potential match participants.</p>
                 </div>
               </div>
-            ) : (
+            ) : item.aiData && !item.aiData.processed ? (
+              <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
+                <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-6 flex flex-col items-center justify-center py-12 text-center">
+                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary mb-4"></div>
+                  <h4 className="text-base font-bold text-text-primary">AI Matching in progress...</h4>
+                  <p className="text-xs text-text-secondary max-w-sm">We are analyzing your item's parameters and images to generate matches.</p>
+                </div>
+              </div>
+            ) : matches.length === 0 ? (
               <div className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
                 <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-6 md:p-8 space-y-2 text-center py-8">
                   <div className="w-12 h-12 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-2">
@@ -398,6 +293,219 @@ export const ItemDetail: React.FC = () => {
                   <h4 className="text-base font-bold text-text-primary">No AI match has been found for this item yet.</h4>
                   <p className="text-xs text-text-secondary max-w-sm mx-auto">We'll continue checking as new reports are added.</p>
                 </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <h3 className="text-xl font-extrabold text-primary flex items-center gap-2">
+                  <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>psychology_alt</span>
+                  AI Smart Matches ({matches.length})
+                </h3>
+                {matches.map((m: any) => {
+                  const counterpartItem = isLostItem ? m.foundItem : m.lostItem;
+                  if (!counterpartItem) return null;
+                  
+                  const isExpanded = !!expandedMatches[m._id];
+                  const confidenceText = m.score >= 80 ? 'Strong Match' : m.score >= 60 ? 'Possible Match' : 'Weak Match';
+                  const confidenceColor = m.score >= 80 ? 'bg-success/15 text-success' : m.score >= 60 ? 'bg-warning/15 text-warning' : 'bg-danger/15 text-danger';
+                  
+                  return (
+                    <div key={m._id} className="glass-card p-1 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl md:rounded-[24px] border border-primary/10">
+                      <div className="bg-white dark:bg-surface-container rounded-lg md:rounded-[20px] p-5 md:p-6 space-y-4">
+                        
+                        {/* Match Summary Row */}
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                              <span className="material-symbols-outlined text-primary text-xl">package</span>
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${confidenceColor}`}>
+                                  {confidenceText} ({m.score}%)
+                                </span>
+                              </div>
+                              <h4 className="font-bold text-base text-text-primary mt-1">{counterpartItem.itemName}</h4>
+                              <p className="text-xs text-text-secondary mt-0.5">Reported: {new Date(counterpartItem.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => setExpandedMatches(prev => ({ ...prev, [m._id]: !prev[m._id] }))}
+                            className="px-4 py-2 border border-border-default rounded-xl text-xs font-bold hover:bg-surface-container transition-colors select-none bg-transparent text-text-primary"
+                          >
+                            {isExpanded ? 'Hide Details' : 'Show Details'}
+                          </button>
+                        </div>
+
+                        {/* Collapsible Content */}
+                        {isExpanded && (
+                          <div className="space-y-4 pt-4 border-t border-border-default/50">
+                            {m.aiReason && (
+                              <p className="text-xs text-text-secondary italic">"{m.aiReason}"</p>
+                            )}
+
+                            {/* Why AI Matched */}
+                            {m.matchedFields && m.matchedFields.length > 0 && (
+                              <div className="space-y-2">
+                                <h5 className="font-bold text-xs text-text-primary">Why AI matched:</h5>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text-secondary font-medium">
+                                  {m.matchedFields.map((field: string, idx: number) => (
+                                    <div key={idx} className="flex items-center gap-1.5">
+                                      <span className="text-success font-bold">✓</span>
+                                      <span>{field}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Missing Evidence warnings */}
+                            {m.missingEvidence && m.missingEvidence.length > 0 && (
+                              <div className="p-3 bg-warning/5 rounded-xl border border-warning/15 space-y-1.5">
+                                <h5 className="font-bold text-xs text-warning">Evidence Alerts</h5>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-warning/90 font-medium">
+                                  {m.missingEvidence.map((ev: string, idx: number) => (
+                                    <div key={idx} className="flex items-center gap-1.5">
+                                      <span>⚠</span>
+                                      <span>{ev}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Match Warnings & Conflicts */}
+                            {m.negativeSignals && m.negativeSignals.length > 0 && (
+                              <div className="p-3 bg-danger/5 rounded-xl border border-danger/15 space-y-1.5">
+                                <h5 className="font-bold text-xs text-danger">Match Warnings & Conflicts</h5>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px] text-danger/90 font-semibold">
+                                  {m.negativeSignals.map((sig: string, idx: number) => (
+                                    <div key={idx} className="flex items-center gap-1.5">
+                                      <span>⚠</span>
+                                      <span>{sig}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Score Breakdown */}
+                            {m.breakdown && (
+                              <div className="space-y-3 pt-4 border-t border-border-default/50">
+                                <h5 className="font-bold text-xs text-text-primary">AI Similarity Breakdown</h5>
+                                <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
+                                  <div>
+                                    <div className="flex justify-between text-text-secondary mb-1">
+                                      <span>Object type match</span>
+                                      <span>{m.breakdown.objectScore}/30</span>
+                                    </div>
+                                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                                      <div className="h-full bg-success rounded-full" style={{ width: `${Math.round((m.breakdown.objectScore / 30) * 100)}%` }}></div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex justify-between text-text-secondary mb-1">
+                                      <span>Brand resemblance</span>
+                                      <span>{m.breakdown.brandScore}/15</span>
+                                    </div>
+                                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                                      <div className="h-full bg-primary rounded-full" style={{ width: `${Math.round((m.breakdown.brandScore / 15) * 100)}%` }}></div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex justify-between text-text-secondary mb-1">
+                                      <span>Color similarity</span>
+                                      <span>{m.breakdown.colorScore}/10</span>
+                                    </div>
+                                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                                      <div className="h-full bg-warning rounded-full" style={{ width: `${Math.round((m.breakdown.colorScore / 10) * 100)}%` }}></div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex justify-between text-text-secondary mb-1">
+                                      <span>Semantic description</span>
+                                      <span>{m.breakdown.semanticScore}/20</span>
+                                    </div>
+                                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                                      <div className="h-full bg-info-ai rounded-full" style={{ width: `${Math.round((m.breakdown.semanticScore / 20) * 100)}%` }}></div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex justify-between text-text-secondary mb-1">
+                                      <span>Image analysis</span>
+                                      <span>{m.missingEvidence?.includes('Image verification unavailable') ? 'Not available' : `${m.breakdown.imageScore}/15`}</span>
+                                    </div>
+                                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                                      <div className="h-full bg-danger rounded-full" style={{ width: `${m.missingEvidence?.includes('Image verification unavailable') ? 0 : Math.round((m.breakdown.imageScore / 15) * 100)}%` }}></div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex justify-between text-text-secondary mb-1">
+                                      <span>Receipt / OCR verification</span>
+                                      <span>{(m.missingEvidence?.includes('No receipt or text image uploaded') || m.missingEvidence?.includes('No matching identifier found')) ? 'Not available' : `${m.breakdown.ocrScore}/10`}</span>
+                                    </div>
+                                    <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                                      <div className="h-full bg-[#8455ef] rounded-full" style={{ width: `${(m.missingEvidence?.includes('No receipt or text image uploaded') || m.missingEvidence?.includes('No matching identifier found')) ? 0 : Math.round((m.breakdown.ocrScore / 10) * 100)}%` }}></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Action Buttons inside Card */}
+                            <div className="flex gap-2 pt-4 border-t border-border-default/50">
+                              {isLostItem ? (
+                                <button
+                                  onClick={() => navigate(`/claim/${counterpartItem._id}`)}
+                                  className="px-4 py-2.5 bg-primary text-white font-bold rounded-xl text-xs hover:scale-105 active:scale-95 transition-all select-none border-0 cursor-pointer"
+                                >
+                                  Claim This Item
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      const token = localStorage.getItem('token');
+                                      const res = await axios.post(`${API_BASE}/api/claims`, {
+                                        foundItemId: item._id,
+                                        lostItemId: counterpartItem._id,
+                                        answers: {
+                                          location: item.locationFound || item.locationLost || '',
+                                          dateDetails: '',
+                                          colorMatch: 'yes',
+                                          specialMarks: ''
+                                        }
+                                      }, {
+                                        headers: token ? { Authorization: `Bearer ${token}` } : {}
+                                      });
+                                      if (res.data?.success && res.data.claim) {
+                                        const cId = res.data.claim._id || res.data.claim.id;
+                                        navigate(`/chat/finder/${cId}`);
+                                      }
+                                    } catch (err) {
+                                      console.error('Failed to open finder chat', err);
+                                      alert('Failed to open chat with claimant');
+                                    }
+                                  }}
+                                  className="px-4 py-2.5 bg-primary text-white font-bold rounded-xl text-xs hover:scale-105 active:scale-95 transition-all select-none border-0 cursor-pointer"
+                                >
+                                  Chat with Owner
+                                </button>
+                              )}
+                              <button
+                                onClick={() => navigate(`/item/${counterpartItem._id}`)}
+                                className="px-4 py-2 border border-border-default text-primary font-bold rounded-xl text-xs hover:bg-surface-container transition-all select-none bg-transparent cursor-pointer"
+                              >
+                                View Details
+                              </button>
+                            </div>
+
+                          </div>
+                        )}
+
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
@@ -439,6 +547,15 @@ export const ItemDetail: React.FC = () => {
                 <div className="space-y-4">
                   {['resolved', 'claimed', 'approved'].includes(item.status) ? (
                     <div className="flex flex-col gap-3">
+                      {claimId && (
+                        <button
+                          onClick={() => navigate(`/chat/finder/${claimId}`)}
+                          className="w-full bg-gradient-to-r from-primary to-[#6b38d4] text-white py-4 md:py-5 rounded-full font-extrabold text-sm md:text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-lg neon-shadow-primary flex items-center justify-center gap-3 cursor-pointer border-0"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat_bubble</span>
+                          Open Chat
+                        </button>
+                      )}
                       <div className="w-full bg-[#0B0F1A]/80 dark:bg-surface-container-high text-white py-4 md:py-5 rounded-full font-bold text-sm md:text-base flex items-center justify-center gap-2 shadow-sm border border-border-default backdrop-blur-md">
                         <span className="material-symbols-outlined text-success" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
                         Item Claimed{item.owner?.name ? ` by ${item.owner.name}` : ''}

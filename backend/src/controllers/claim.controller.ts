@@ -123,15 +123,27 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
       return;
     }
 
-    // Business Rule: Claimant cannot be the finder of the found item
+    let claimantId = req.user._id;
+
+    // Business Rule: Claimant cannot be the finder of the found item,
+    // EXCEPT when the finder is starting a claim/chat on behalf of the matched lost item owner.
     if (foundItem.finder.toString() === req.user._id.toString()) {
-      sendError(res, 'You cannot claim an item that you reported as found', 400);
-      return;
+      if (!lostItemId) {
+        sendError(res, 'You cannot claim an item that you reported as found', 400);
+        return;
+      }
+      const lostItem = await LostItem.findById(lostItemId);
+      if (!lostItem) {
+        sendError(res, 'Lost item not found', 404);
+        return;
+      }
+      claimantId = lostItem.owner;
     }
+
     // Business Rule: Retrieve existing claim if it already exists
     const existingClaim = await Claim.findOne({
       foundItemId,
-      claimant: req.user._id,
+      claimant: claimantId,
     });
     if (existingClaim) {
       sendSuccess(res, { claim: existingClaim }, 'Retrieved existing claim.', 200);
@@ -154,7 +166,7 @@ export const submitClaim = async (req: AuthenticatedRequest, res: Response, next
     const claim = await Claim.create({
       foundItemId,
       lostItemId: lostItemId || undefined,
-      claimant: req.user._id,
+      claimant: claimantId,
       answers,
       proofUrls: finalProofUrls,
       confidence,
@@ -343,6 +355,16 @@ export const approveClaim = async (req: AuthenticatedRequest, res: Response, nex
     claim.status = 'approved';
     claim.mediationStatus = 'approved'; // clear pending mediation flag
     claim.remarks = remarks;
+
+    // Generate secure QR token & upload QR code image to Cloudinary if not present
+    if (!claim.qrToken) {
+      const qrToken = uuidv4();
+      const qrCodeUrl = await generateQR(qrToken);
+      claim.qrToken = qrToken;
+      claim.qrCodeUrl = qrCodeUrl;
+      claim.qrExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+    }
+
     await claim.save();
 
     // Notify connected users via socket
@@ -636,6 +658,15 @@ export const mediationResolve = async (req: AuthenticatedRequest, res: Response,
       claim.status = 'approved'; 
       claim.mediationStatus = 'approved';
       claim.remarks = 'Ownership confirmed by Admin Mediation - Awaiting handover';
+
+      // Generate secure QR token & upload QR code image to Cloudinary if not present
+      if (!claim.qrToken) {
+        const qrToken = uuidv4();
+        const qrCodeUrl = await generateQR(qrToken);
+        claim.qrToken = qrToken;
+        claim.qrCodeUrl = qrCodeUrl;
+        claim.qrExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+      }
       await claim.save();
 
       // Notify connected users via socket

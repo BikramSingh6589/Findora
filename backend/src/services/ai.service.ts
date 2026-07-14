@@ -11,6 +11,56 @@ import { compareSemanticText, detectPrimaryObject } from './semanticMatching.ser
  * Process AI data extraction (OCR, keywords, identifiers) and store it.
  * This separates ingestion from similarity scanning.
  */
+/**
+ * Helper to process AI data extraction (OCR, keywords, identifiers) and store it on the item.
+ */
+export const processItemAIData = async (item: any, type: 'lost' | 'found'): Promise<void> => {
+  console.log(`[AI Data Ingestion] Processing ${type} item ${item._id}`);
+
+  // Preprocess images and extract text
+  let extractedText = '';
+  if (item.images && item.images.length > 0) {
+    const context = `${item.itemName || ''} ${item.description || ''}`;
+    const ocrPromises = item.images.map(async (img: string) => {
+      const preprocessedImg = await preprocessImage(img);
+      return extractTextFromImage(preprocessedImg, context);
+    });
+    const ocrResults = await Promise.all(ocrPromises);
+    extractedText = ocrResults
+      .map(res => res?.extractedText)
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+  }
+
+  // Generate keywords
+  const textToExtractKeywords = `${item.itemName || ''} ${item.description || ''} ${extractedText}`;
+  const cleanWords = textToExtractKeywords
+    .toLowerCase()
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2); // only keywords > 2 chars
+  const keywords = [...new Set(cleanWords)];
+
+  // Extract identifiers (serial numbers, IMEI, model numbers, invoice IDs)
+  const identifiers = extractIdentifiers(textToExtractKeywords);
+
+  // Save AI Metadata directly to item
+  item.aiData = {
+    extractedText,
+    keywords,
+    identifiers,
+    processed: true
+  };
+
+  await item.save();
+  console.log(`[AI Data Ingestion] Completed processing for ${type} item ${item._id}. Identifiers: ${identifiers}`);
+};
+
+/**
+ * Process AI data extraction (OCR, keywords, identifiers) and store it.
+ * This separates ingestion from similarity scanning.
+ */
 export const processAIData = async (itemId: string, type: 'lost' | 'found', isWorkerJob = false): Promise<void> => {
   // If not called within background worker, check if BullMQ queue is active and dispatch
   if (!isWorkerJob) {
@@ -35,46 +85,7 @@ export const processAIData = async (itemId: string, type: 'lost' | 'found', isWo
       return;
     }
 
-    console.log(`[AI Data Ingestion] Processing ${type} item ${itemId}`);
-
-    // Preprocess images and extract text
-    let extractedText = '';
-    if (item.images && item.images.length > 0) {
-      const context = `${item.itemName || ''} ${item.description || ''}`;
-      const ocrPromises = item.images.map(async (img: string) => {
-        const preprocessedImg = await preprocessImage(img);
-        return extractTextFromImage(preprocessedImg, context);
-      });
-      const ocrResults = await Promise.all(ocrPromises);
-      extractedText = ocrResults
-        .map(res => res?.extractedText)
-        .filter(Boolean)
-        .join(' ')
-        .trim();
-    }
-
-    // Generate keywords
-    const textToExtractKeywords = `${item.itemName || ''} ${item.description || ''} ${extractedText}`;
-    const cleanWords = textToExtractKeywords
-      .toLowerCase()
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ')
-      .split(/\s+/)
-      .filter(w => w.length > 2); // only keywords > 2 chars
-    const keywords = [...new Set(cleanWords)];
-
-    // Extract identifiers (serial numbers, IMEI, model numbers, invoice IDs)
-    const identifiers = extractIdentifiers(textToExtractKeywords);
-
-    // Save AI Metadata directly to item
-    item.aiData = {
-      extractedText,
-      keywords,
-      identifiers,
-      processed: true
-    };
-
-    await item.save();
-    console.log(`[AI Data Ingestion] Completed processing for ${type} item ${itemId}. Identifiers: ${identifiers}`);
+    await processItemAIData(item, type);
 
     // Trigger Matching
     await triggerMatching(itemId, type);
@@ -101,11 +112,15 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
     let count = 0;
 
     for (const target of targets) {
-      // Ensure target is processed. Skip to prevent request thread blocking, processing asynchronously in bg.
+      // Ensure target is processed. Do NOT skip target inline processing.
       if (!target.aiData || !target.aiData?.processed) {
-        console.log(`[Matching Engine] Target item ${target._id} not processed yet. Skipping active comparison, queueing background processing.`);
-        processAIData(target._id.toString(), type === 'lost' ? 'found' : 'lost').catch(console.error);
-        continue;
+        console.log(`[Matching Engine] Target item ${target._id} not processed yet. Processing inline to ensure match is not skipped.`);
+        try {
+          await processItemAIData(target, type === 'lost' ? 'found' : 'lost');
+        } catch (err) {
+          console.error(`[Matching Engine] Failed to process target item ${target._id} inline:`, err);
+          continue;
+        }
       }
 
       const descA = sourceItem.description || '';
@@ -186,14 +201,16 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
       let brandScore = 0;
       if (sourceItem.brand && target.brand && String(sourceItem.brand).trim().toLowerCase() === String(target.brand).trim().toLowerCase() && !hasBrandConflict) {
         brandScore = 15;
-        matchedFields.push(`Same brand: ${sourceItem.brand}`);
+        const brandFormatted = sourceItem.brand.trim().charAt(0).toUpperCase() + sourceItem.brand.trim().slice(1);
+        matchedFields.push(`Same brand: ${brandFormatted}`);
       }
 
       // 3. Color Match (10 points)
       let colorScore = 0;
       if (sourceItem.color && target.color && String(sourceItem.color).trim().toLowerCase() === String(target.color).trim().toLowerCase() && !hasColorConflict) {
         colorScore = 10;
-        matchedFields.push(`Same color: ${sourceItem.color}`);
+        const colorFormatted = sourceItem.color.trim().charAt(0).toUpperCase() + sourceItem.color.trim().slice(1);
+        matchedFields.push(`Same color: ${colorFormatted}`);
       }
 
       // 4. Semantic Description Score (20 points)
@@ -212,7 +229,29 @@ export const triggerMatching = async (itemId: string, type: 'lost' | 'found'): P
       // Filter duplicate semantic concepts
       const cleanSemanticConcepts = semanticConcepts.filter(concept => {
         const conceptLower = concept.toLowerCase();
-        if (primaryObjA && (conceptLower.includes(primaryObjA.toLowerCase()) || primaryObjA.toLowerCase().includes(conceptLower))) {
+        
+        // Reject meaningless tokens like "same n", "same x", or single letter concepts
+        const matchSameSingle = conceptLower.match(/^same\s+([a-z0-9])$/);
+        if (matchSameSingle) return false;
+        
+        // If concept contains a single letter word, or is just single/double letters
+        const words = conceptLower.split(/\s+/);
+        if (words.some(w => w.length === 1 && w !== 'a')) return false;
+
+        // Also check if it's too short / meaningless
+        const coreWord = conceptLower.replace('same ', '').trim();
+        if (coreWord.length <= 2) return false;
+
+        if (primaryObjA && (conceptLower.includes(primaryObjA.toLowerCase()) || primaryObjA.toLowerCase().includes(conceptLower) || conceptLower.includes(primaryObjA.toLowerCase().replace('item type: ', '')))) {
+          return false;
+        }
+        if (primaryObjB && (conceptLower.includes(primaryObjB.toLowerCase()) || primaryObjB.toLowerCase().includes(conceptLower))) {
+          return false;
+        }
+        if (sourceItem.category && conceptLower.includes(String(sourceItem.category).toLowerCase())) {
+          return false;
+        }
+        if (target.category && conceptLower.includes(String(target.category).toLowerCase())) {
           return false;
         }
         if (conceptLower.includes('same item type') || conceptLower.includes('same category')) {

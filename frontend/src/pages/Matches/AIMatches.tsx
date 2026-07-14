@@ -72,6 +72,31 @@ export const AIMatches: React.FC = () => {
     }
   };
 
+  const handleChatWithOwner = async (match: any) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(`${API_BASE}/api/claims`, {
+        foundItemId: match.foundItem._id || match.foundItem.id,
+        lostItemId: match.lostItem._id || match.lostItem.id,
+        answers: {
+          location: match.foundItem.locationFound || '',
+          dateDetails: '',
+          colorMatch: 'yes',
+          specialMarks: ''
+        }
+      }, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      if (res.data?.success && res.data.claim) {
+        const claimId = res.data.claim._id || res.data.claim.id;
+        navigate(`/chat/finder/${claimId}`);
+      }
+    } catch (err) {
+      console.error('Failed to initiate chat with owner', err);
+      alert('Failed to start chat with the owner.');
+    }
+  };
+
   const getConfidenceLevel = (score: number) => {
     if (score >= 80) return { text: 'Strong Match', color: 'text-success border-success/30 bg-success/10' };
     if (score >= 60) return { text: 'Possible Match', color: 'text-warning border-warning/30 bg-warning/10' };
@@ -374,8 +399,8 @@ export const AIMatches: React.FC = () => {
                           </button>
                         ) : (
                           <button
-                            onClick={() => navigate(`/chat/finder/${matchItem._id || matchItem.id}`)}
-                            className="flex-grow flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold rounded-2xl shadow-md hover:scale-[1.02] active:scale-95 transition-all text-sm"
+                            onClick={() => handleChatWithOwner(match)}
+                            className="flex-grow flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-primary to-[#6b38d4] text-white font-bold rounded-2xl shadow-md hover:scale-[1.02] active:scale-95 transition-all text-sm cursor-pointer"
                           >
                             <MessageCircle className="w-4 h-4" />
                             Chat with Owner

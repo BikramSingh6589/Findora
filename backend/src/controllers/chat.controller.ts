@@ -6,7 +6,7 @@ import { sendSuccess, sendError } from '../utils/response';
 export const getChatMessages = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { itemId } = req.params;
-    const messages = await ChatMessage.find({ itemId })
+    const messages = await ChatMessage.find({ claimId: itemId })
       .populate('sender', 'name profilePic role')
       .sort({ createdAt: 1 });
 
@@ -19,7 +19,7 @@ export const getChatMessages = async (req: AuthenticatedRequest, res: Response, 
 export const sendChatMessage = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { itemId } = req.params;
-    const { content, type } = req.body;
+    const { content } = req.body;
 
     if (!content) {
       sendError(res, 'Message content is required', 400);
@@ -27,10 +27,9 @@ export const sendChatMessage = async (req: AuthenticatedRequest, res: Response, 
     }
 
     const message = await ChatMessage.create({
-      itemId,
+      claimId: itemId,
       sender: req.user._id,
-      content,
-      type: type || 'text'
+      content
     });
 
     const populated = await ChatMessage.findById(message._id)
